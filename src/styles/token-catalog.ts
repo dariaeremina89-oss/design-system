@@ -824,7 +824,7 @@ export const typographyTokens = [
     }
   },
   {
-    "name": "Subtitle,
+    "name": "Subtitle",
     "token": "--subtitle",
     "family": "Inter",
     "weight": 400,
@@ -843,7 +843,7 @@ export const typographyTokens = [
     }
   },
   {
-    "name": "Body,
+    "name": "Body",
     "token": "--body",
     "family": "Inter",
     "weight": 400,
@@ -862,7 +862,7 @@ export const typographyTokens = [
     }
   },
   {
-    "name": "Caption,
+    "name": "Caption",
     "token": "--caption",
     "family": "Inter",
     "weight": 400,
@@ -881,7 +881,7 @@ export const typographyTokens = [
     }
   },
   {
-    "name": "Overline,
+    "name": "Overline",
     "token": "--overline",
     "family": "Inter",
     "weight": 400,
@@ -900,7 +900,7 @@ export const typographyTokens = [
     }
   },
   {
-    "name": "Code,
+    "name": "Code",
     "token": "--code",
     "family": "Roboto Mono",
     "weight": 400,
