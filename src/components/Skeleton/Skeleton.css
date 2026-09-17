@@ -1,0 +1,27 @@
+.fdoc-skeleton {
+  display: block;
+  min-width: var(--elements-16);
+  min-height: var(--elements-16);
+  border-radius: var(--radius-large);
+  background:
+    linear-gradient(
+      100deg,
+      var(--background-base-skeleton) 20%,
+      var(--neutral-25) 48%,
+      var(--background-base-skeleton) 76%
+    );
+  background-size: 220% 100%;
+  animation: fdoc-skeleton-wave 1.6s linear 0.5s infinite;
+}
+
+.fdoc-skeleton--text { border-radius: var(--radius-small); }
+.fdoc-skeleton--circle { border-radius: var(--radius-full); }
+
+@keyframes fdoc-skeleton-wave {
+  0% { background-position: 100% 0; }
+  100% { background-position: -120% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fdoc-skeleton { animation: none; }
+}
