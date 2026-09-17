@@ -52,6 +52,12 @@ export const Error: Story = {
   },
 };
 
+export const Required: Story = {
+  args: {
+    required: true,
+  },
+};
+
 export const WithDescriptionAndCounter: Story = {
   args: {
     defaultValue: 'Input text',
@@ -67,6 +73,7 @@ export const WithSlots: Story = {
     leadingIcon: <span aria-hidden="true">◉</span>,
     trailingIcon: <span aria-hidden="true">◌</span>,
     sum: '00,00',
+    sumIcon: <span aria-hidden="true">⌁</span>,
     caret: true,
   },
 };
