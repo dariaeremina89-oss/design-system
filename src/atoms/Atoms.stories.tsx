@@ -26,6 +26,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const cssVar = (token: string) => `var(${token})`;
+const groupName = (token: string, depth: number) => token.slice(2).split('-').slice(0, depth).join('-');
 
 const TokenList = ({ tokens }: { tokens: readonly { token: string; value: string | number; reference?: string }[] }) => (
   <div className="fdoc-atoms__tokens">
@@ -47,11 +48,45 @@ const ColorGrid = ({ tokens }: { tokens: readonly { token: string; value: string
         style={{ backgroundColor: cssVar(item.token) }}
       >
         <span>{item.token}</span>
-        {item.reference ? <code>→ {item.reference}</code> : <code>{item.value}</code>}
+        {item.reference ? <code>alias → {item.reference}</code> : <code>value · {item.value}</code>}
       </div>
     ))}
   </div>
 );
+
+const primitiveColorGroups = [...new Set(primitiveColorTokens.map((item) => groupName(item.token, 1)))] as string[];
+const semanticColorGroups = [...new Set(semanticColorTokens.map((item) => groupName(item.token, 2)))] as string[];
+
+export const TokenHierarchy: Story = {
+  render: () => (
+    <div className="fdoc-atoms">
+      <h1>Token hierarchy</h1>
+      <p className="fdoc-atoms__note">
+        Primitive tokens store base values. Semantic tokens are aliases built on top of them and are used by components.
+      </p>
+      <div className="fdoc-atoms__layer-grid">
+        <div className="fdoc-atoms__layer-card">
+          <strong>1 · Primitive</strong>
+          <code>--white-1000</code>
+          <span>Base color value</span>
+        </div>
+        <div className="fdoc-atoms__layer-arrow">→</div>
+        <div className="fdoc-atoms__layer-card">
+          <strong>2 · Semantic</strong>
+          <code>--background-base-default</code>
+          <span>Alias → --white-1000</span>
+        </div>
+        <div className="fdoc-atoms__layer-arrow">→</div>
+        <div className="fdoc-atoms__layer-card">
+          <strong>3 · Component</strong>
+          <code>Input background</code>
+          <span>Uses the semantic token</span>
+        </div>
+      </div>
+      <pre className="fdoc-atoms__code">{`--background-base-default: var(--white-1000);`}</pre>
+    </div>
+  ),
+};
 
 export const Colors: Story = {
   render: () => (
@@ -59,11 +94,21 @@ export const Colors: Story = {
       <h1>Colors</h1>
       <section className="fdoc-atoms__section">
         <h2>Primitive colors</h2>
-        <ColorGrid tokens={primitiveColorTokens} />
+        {primitiveColorGroups.map((group) => (
+          <section key={group} className="fdoc-atoms__subsection">
+            <h3>{group}</h3>
+            <ColorGrid tokens={primitiveColorTokens.filter((item) => groupName(item.token, 1) === group)} />
+          </section>
+        ))}
       </section>
       <section className="fdoc-atoms__section">
-        <h2>Semantic colors → primitives</h2>
-        <ColorGrid tokens={semanticColorTokens} />
+        <h2>Semantic colors → primitive colors</h2>
+        {semanticColorGroups.map((group) => (
+          <section key={group} className="fdoc-atoms__subsection">
+            <h3>{group}</h3>
+            <ColorGrid tokens={semanticColorTokens.filter((item) => groupName(item.token, 2) === group)} />
+          </section>
+        ))}
       </section>
     </div>
   ),
@@ -74,7 +119,7 @@ export const Typography: Story = {
     <div className="fdoc-atoms">
       <h1>Typography</h1>
       <section className="fdoc-atoms__section">
-        <h2>Typography styles</h2>
+        <h2>Typography styles → primitives</h2>
         {typographyTokens.map((item) => (
           <div key={item.name} className="fdoc-atoms__type-row">
             <div
@@ -86,7 +131,8 @@ export const Typography: Story = {
             <div className="fdoc-atoms__type-meta">
               <span>{item.token}</span>
               <span>Desktop {item.size}/{item.lineHeight} · Mobile {item.mobileSize}/{item.mobileLineHeight}</span>
-              <code>family → {item.references.family} · size → {item.references.size} · line-height → {item.references.lineHeight}</code>
+              <code>family → {item.references.family} · weight → {item.references.weight}</code>
+              <code>size → {item.references.size} · line-height → {item.references.lineHeight}</code>
             </div>
           </div>
         ))}
