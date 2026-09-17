@@ -640,9 +640,9 @@
   --background-base-inverse-light-disabled: var(--neutral-200);
 
   /* Typography primitives */
-  --font-family-title: "TT Commons Pro Expanded";
-  --font-family-sans: "Inter";
-  --font-family-mono: "Roboto Mono";
+  --font-family-title: "TT Commons Pro Expanded", "Arial Narrow", Arial, sans-serif;
+  --font-family-sans: Inter, Arial, sans-serif;
+  --font-family-mono: "Roboto Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --font-weight-regular: 400;
   --font-style-regular-italic: Italic;
   --font-style-semibold-italic: Semi Bold Italic;
