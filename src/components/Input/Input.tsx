@@ -4,6 +4,7 @@ import {
   useId,
   type ChangeEvent,
   type InputHTMLAttributes,
+  type ReactNode,
 } from 'react';
 import { Icon, type IconName } from '../Icon/Icon';
 import { Skeleton } from '../Skeleton/Skeleton';
@@ -16,23 +17,23 @@ export interface InputProps
   /** Размер поля: 56 или 48 px по высоте. */
   size?: InputSize;
   /** Подпись над полем. Передача false скрывает подпись. */
-  label?: React.ReactNode;
+  label?: ReactNode;
   /** Дополнительное описание внутри поля под основным текстом. */
-  description?: React.ReactNode;
+  description?: ReactNode;
   /** Текст ошибки. При передаче поле получает error-состояние. */
-  error?: React.ReactNode;
+  error?: ReactNode;
   /** Признак обязательного поля. Отображает звездочку рядом с Label. */
   required?: boolean;
   /** Подсказка под полем. */
-  caption?: React.ReactNode;
+  caption?: ReactNode;
   /** Счетчик справа в строке подсказки. */
-  counter?: React.ReactNode;
+  counter?: ReactNode;
   /** Имя иконки из библиотеки слева. */
   leadingIcon?: IconName;
   /** Имя иконки из библиотеки справа. */
   trailingIcon?: IconName;
   /** Значение иконки/суффикса справа от поля. */
-  sum?: React.ReactNode;
+  sum?: ReactNode;
   /** Имя иконки из библиотеки рядом со значением sum. */
   sumIcon?: IconName;
   /** Показывает caret из библиотеки в правом слоте. */
