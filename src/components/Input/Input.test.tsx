@@ -35,13 +35,14 @@ describe('Input', () => {
     expect(screen.getByText('20 / 100')).toBeInTheDocument();
   });
 
-  it('clears a filled value when clear button is pressed', async () => {
+  it('clears an uncontrolled value when clear button is pressed', async () => {
     const user = userEvent.setup();
     const onClear = vi.fn();
     render(<Input label="Поиск" defaultValue="Запрос" clearable onClear={onClear} />);
 
     await user.click(screen.getByRole('button', { name: 'Очистить поле' }));
     expect(onClear).toHaveBeenCalledOnce();
+    expect(screen.getByLabelText('Поиск')).toHaveValue('');
   });
 
   it('does not render the clear button for disabled inputs', () => {
