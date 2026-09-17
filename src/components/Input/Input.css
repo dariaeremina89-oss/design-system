@@ -17,7 +17,8 @@
   font-size: var(--caption-size);
   font-weight: var(--caption-weight-base);
   line-height: var(--caption-line-height);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .fdoc-input__label--error {
@@ -122,7 +123,8 @@
   color: var(--text-base-secondary);
   font-size: var(--caption-size);
   line-height: var(--caption-line-height);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .fdoc-input__slot {
@@ -190,7 +192,8 @@
 .fdoc-input__caption {
   flex: 1 1 auto;
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .fdoc-input__caption--error {
