@@ -3,7 +3,6 @@ import { Icon, iconNames } from '../components/Icon/Icon';
 import { Skeleton as SkeletonBlock } from '../components/Skeleton/Skeleton';
 import {
   borderTokens,
-  colorTokens,
   depthTokens,
   effectTokens,
   elementTokens,
@@ -28,18 +27,18 @@ type Story = StoryObj<typeof meta>;
 
 const cssVar = (token: string) => `var(${token})`;
 
-const TokenList = ({ tokens }: { tokens: readonly { token: string; value: string | number }[] }) => (
+const TokenList = ({ tokens }: { tokens: readonly { token: string; value: string | number; reference?: string }[] }) => (
   <div className="fdoc-atoms__tokens">
     {tokens.map((item) => (
       <div key={item.token} className="fdoc-atoms__token">
         <span className="fdoc-atoms__label">{item.token}</span>
-        <code>{String(item.value)}</code>
+        <code>{item.reference ? `→ ${item.reference}` : String(item.value)}</code>
       </div>
     ))}
   </div>
 );
 
-const ColorGrid = ({ tokens }: { tokens: readonly { token: string; value: string }[] }) => (
+const ColorGrid = ({ tokens }: { tokens: readonly { token: string; value: string; reference?: string }[] }) => (
   <div className="fdoc-atoms__swatches">
     {tokens.map((item) => (
       <div
@@ -48,7 +47,7 @@ const ColorGrid = ({ tokens }: { tokens: readonly { token: string; value: string
         style={{ backgroundColor: cssVar(item.token) }}
       >
         <span>{item.token}</span>
-        <code>{item.value}</code>
+        {item.reference ? <code>→ {item.reference}</code> : <code>{item.value}</code>}
       </div>
     ))}
   </div>
@@ -59,11 +58,11 @@ export const Colors: Story = {
     <div className="fdoc-atoms">
       <h1>Colors</h1>
       <section className="fdoc-atoms__section">
-        <h2>Primitive</h2>
+        <h2>Primitive colors</h2>
         <ColorGrid tokens={primitiveColorTokens} />
       </section>
       <section className="fdoc-atoms__section">
-        <h2>Semantic</h2>
+        <h2>Semantic colors → primitives</h2>
         <ColorGrid tokens={semanticColorTokens} />
       </section>
     </div>
@@ -75,28 +74,25 @@ export const Typography: Story = {
     <div className="fdoc-atoms">
       <h1>Typography</h1>
       <section className="fdoc-atoms__section">
+        <h2>Typography styles</h2>
         {typographyTokens.map((item) => (
           <div key={item.name} className="fdoc-atoms__type-row">
             <div
               className="fdoc-atoms__type-sample"
-              style={{
-                fontFamily: item.family,
-                fontSize: item.size,
-                lineHeight: `${item.lineHeight}px`,
-                fontWeight: item.weight,
-              }}
+              style={{ fontFamily: item.family, fontSize: item.size, lineHeight: `${item.lineHeight}px`, fontWeight: item.weight }}
             >
               Aa — {item.name}
             </div>
             <div className="fdoc-atoms__type-meta">
               <span>{item.token}</span>
               <span>Desktop {item.size}/{item.lineHeight} · Mobile {item.mobileSize}/{item.mobileLineHeight}</span>
+              <code>family → {item.references.family} · size → {item.references.size} · line-height → {item.references.lineHeight}</code>
             </div>
           </div>
         ))}
       </section>
       <section className="fdoc-atoms__section">
-        <h2>Primitive type tokens</h2>
+        <h2>Typography primitives</h2>
         <TokenList tokens={typographyPrimitiveTokens} />
       </section>
     </div>
@@ -115,13 +111,13 @@ export const Spacing: Story = {
 export const SizesAndRadii: Story = {
   render: () => (
     <div className="fdoc-atoms">
-      <h1>Sizes, radii, depth and borders</h1>
+      <h1>Sizes and radii</h1>
       <section className="fdoc-atoms__section">
-        <h2>Element sizes</h2>
-        <TokenList tokens={elementTokens} />
+        <h2>Space</h2>
+        <TokenList tokens={spacingTokens} />
       </section>
       <section className="fdoc-atoms__section">
-        <h2>Radii</h2>
+        <h2>Radius</h2>
         <TokenList tokens={radiusTokens} />
       </section>
       <section className="fdoc-atoms__section">
@@ -129,7 +125,11 @@ export const SizesAndRadii: Story = {
         <TokenList tokens={depthTokens} />
       </section>
       <section className="fdoc-atoms__section">
-        <h2>Borders</h2>
+        <h2>Elements</h2>
+        <TokenList tokens={elementTokens} />
+      </section>
+      <section className="fdoc-atoms__section">
+        <h2>Border</h2>
         <TokenList tokens={borderTokens} />
       </section>
       <section className="fdoc-atoms__section">
@@ -143,7 +143,8 @@ export const SizesAndRadii: Story = {
 export const Shadows: Story = {
   render: () => (
     <div className="fdoc-atoms">
-      <h1>Shadows</h1>
+      <h1>Effects</h1>
+      <p className="fdoc-atoms__note">Effect styles are kept separately from Variables and mapped to frontend shadow tokens.</p>
       <div className="fdoc-atoms__shadow-grid">
         {effectTokens.map((item) => (
           <div key={item.token} className="fdoc-atoms__shadow-card" style={{ boxShadow: cssVar(item.token) }}>
