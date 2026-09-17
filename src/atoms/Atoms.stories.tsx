@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Icon, iconNames, type IconName } from '../components/Icon/Icon';
-import { Skeleton } from '../components/Skeleton/Skeleton';
+import { Skeleton as SkeletonBlock } from '../components/Skeleton/Skeleton';
 import './atoms.css';
 
 const meta = {
@@ -171,9 +171,9 @@ export const Skeleton: Story = {
     <div className="fdoc-atoms">
       <h1>Skeleton</h1>
       <div className="fdoc-atoms__section">
-        <Skeleton width="280px" height="16px" shape="text" />
-        <Skeleton width="100%" height="56px" />
-        <Skeleton width="48px" height="48px" shape="circle" />
+        <SkeletonBlock width="280px" height="16px" shape="text" />
+        <SkeletonBlock width="100%" height="56px" />
+        <SkeletonBlock width="48px" height="48px" shape="circle" />
       </div>
     </div>
   ),
