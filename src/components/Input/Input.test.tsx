@@ -20,6 +20,13 @@ describe('Input', () => {
     expect(input).toHaveAccessibleDescription('Проверьте адрес');
   });
 
+  it('marks a required field for assistive technology and shows the required marker', () => {
+    render(<Input label="Имя" required />);
+
+    expect(screen.getByRole('textbox')).toHaveAttribute('aria-required', 'true');
+    expect(screen.getByText('*')).toBeInTheDocument();
+  });
+
   it('renders description and counter together', () => {
     render(
       <Input
@@ -33,6 +40,10 @@ describe('Input', () => {
     expect(screen.getByText('Описание поля')).toBeInTheDocument();
     expect(screen.getByText('Подсказка')).toBeInTheDocument();
     expect(screen.getByText('20 / 100')).toBeInTheDocument();
+    expect(screen.getByLabelText('Комментарий')).toHaveAttribute(
+      'aria-describedby',
+      expect.stringContaining('description'),
+    );
   });
 
   it('clears an uncontrolled value when clear button is pressed', async () => {
