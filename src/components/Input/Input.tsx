@@ -20,6 +20,8 @@ export interface InputProps
   description?: ReactNode;
   /** Текст ошибки. При передаче поле получает error-состояние. */
   error?: ReactNode;
+  /** Признак обязательного поля. Отображает звездочку рядом с Label. */
+  required?: boolean;
   /** Подсказка под полем. */
   caption?: ReactNode;
   /** Счетчик справа в строке подсказки. */
@@ -30,12 +32,16 @@ export interface InputProps
   trailingIcon?: ReactNode;
   /** Значение иконки/суффикса справа от поля. */
   sum?: ReactNode;
+  /** Иконка рядом со значением sum. */
+  sumIcon?: ReactNode;
   /** Показывает caret в правом слоте. */
   caret?: boolean;
   /** Показывает кнопку очистки при непустом значении. */
   clearable?: boolean;
   /** Обработчик очистки значения. */
   onClear?: () => void;
+  /** Иконка кнопки очистки. */
+  clearIcon?: ReactNode;
   /** Показывает скелетон вместо поля. */
   skeleton?: boolean;
   /** Класс внешнего контейнера компонента. */
@@ -55,14 +61,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     label,
     description,
     error,
+    required = false,
     caption,
     counter,
     leadingIcon,
     trailingIcon,
     sum,
+    sumIcon,
     caret = false,
     clearable = false,
     onClear,
+    clearIcon = '×',
     skeleton = false,
     disabled = false,
     value,
@@ -80,7 +89,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const currentValue = isControlled ? value : internalValue;
   const descriptionId = description !== undefined ? `${inputId}-description` : undefined;
   const errorId = error !== undefined ? `${inputId}-error` : undefined;
-  const helperId = [descriptionId, errorId].filter(Boolean).join(' ') || undefined;
+  const captionId = !error && caption !== undefined ? `${inputId}-caption` : undefined;
+  const counterId = counter !== undefined ? `${inputId}-counter` : undefined;
+  const helperId = [descriptionId, errorId, captionId, counterId].filter(Boolean).join(' ') || undefined;
   const hasValue = String(currentValue ?? '').length > 0;
   const showClear = clearable && hasValue && !disabled && !skeleton;
   const isError = Boolean(error);
@@ -126,10 +137,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     <div className={joinClassNames('fdoc-input', `fdoc-input--${size}`, wrapperClassName)}>
       {label !== false && label !== undefined && (
         <label
-          className={joinClassNames('fdoc-input__label', isError && 'fdoc-input__label--error')}
+          className={joinClassNames(
+            'fdoc-input__label',
+            isError && 'fdoc-input__label--error',
+            disabled && 'fdoc-input__label--disabled',
+            isError && disabled && 'fdoc-input__label--error-disabled',
+          )}
           htmlFor={inputId}
         >
           {label}
+          {required && <span className="fdoc-input__required" aria-hidden="true">*</span>}
         </label>
       )}
 
@@ -156,18 +173,28 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             value={isControlled ? value : internalValue}
             placeholder={resolvedPlaceholder}
             maxLength={maxLength}
+            required={required}
+            aria-required={required || undefined}
             aria-invalid={isError || undefined}
             aria-describedby={helperId}
             onChange={handleChange}
           />
           {description !== undefined && (
-            <span id={descriptionId} className="fdoc-input__description">
+            <span
+              id={descriptionId}
+              className={joinClassNames('fdoc-input__description', disabled && 'fdoc-input__description--disabled')}
+            >
               {description}
             </span>
           )}
         </span>
 
-        {sum !== undefined && <span className="fdoc-input__sum">{sum}</span>}
+        {sum !== undefined && (
+          <span className={joinClassNames('fdoc-input__sum', disabled && 'fdoc-input__sum--disabled')}>
+            {sum}
+            {sumIcon !== undefined && <span className="fdoc-input__sum-icon" aria-hidden="true">{sumIcon}</span>}
+          </span>
+        )}
 
         {showClear && (
           <button
@@ -176,7 +203,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             aria-label="Очистить поле"
             onClick={handleClear}
           >
-            ×
+            {clearIcon}
           </button>
         )}
 
@@ -186,15 +213,23 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           </span>
         )}
 
-        {caret && <span className="fdoc-input__caret" aria-hidden="true" />}
+        {caret && <span className="fdoc-input__caret" aria-hidden="true">|</span>}
       </div>
 
       {(caption !== undefined || counter !== undefined || error !== undefined) && (
         <div className="fdoc-input__helper">
-          <span id={errorId} className={joinClassNames('fdoc-input__caption', isError && 'fdoc-input__caption--error')}>
+          <span
+            id={errorId ?? captionId}
+            className={joinClassNames(
+              'fdoc-input__caption',
+              isError && 'fdoc-input__caption--error',
+              disabled && 'fdoc-input__caption--disabled',
+              isError && disabled && 'fdoc-input__caption--error-disabled',
+            )}
+          >
             {error ?? caption}
           </span>
-          {counter !== undefined && <span className="fdoc-input__counter">{counter}</span>}
+          {counter !== undefined && <span id={counterId} className="fdoc-input__counter">{counter}</span>}
         </div>
       )}
     </div>
