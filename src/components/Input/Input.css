@@ -44,7 +44,7 @@
   align-items: center;
   gap: var(--space-16);
   min-width: 0;
-  min-height: 56px;
+  min-height: var(--size-input-medium);
   padding: var(--space-12);
   border: var(--border-small) solid var(--border-base-secondary);
   border-radius: var(--radius-middle);
@@ -53,7 +53,7 @@
 }
 
 .fdoc-input--small .fdoc-input__field {
-  min-height: 48px;
+  min-height: var(--size-input-small);
   padding-top: var(--space-8);
   padding-bottom: var(--space-8);
 }
@@ -63,14 +63,14 @@
 }
 
 .fdoc-input__field:focus-within {
-  padding: calc(var(--space-12) - 1px);
+  padding: calc(var(--space-12) - var(--border-small));
   border-width: var(--border-middle);
   border-color: var(--border-primary-default);
 }
 
 .fdoc-input--small .fdoc-input__field:focus-within {
-  padding-top: calc(var(--space-8) - 1px);
-  padding-bottom: calc(var(--space-8) - 1px);
+  padding-top: calc(var(--space-8) - var(--border-small));
+  padding-bottom: calc(var(--space-8) - var(--border-small));
 }
 
 .fdoc-input__field--disabled {
@@ -153,11 +153,11 @@
 
 .fdoc-input__slot {
   display: inline-flex;
-  flex: 0 0 24px;
+  flex: 0 0 var(--elements-24);
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: var(--elements-24);
+  height: var(--elements-24);
   color: currentColor;
 }
 
@@ -179,18 +179,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: var(--elements-16);
+  height: var(--elements-16);
   margin-left: var(--space-4);
 }
 
 .fdoc-input__clear {
   display: inline-flex;
-  flex: 0 0 32px;
+  flex: 0 0 var(--elements-32);
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: var(--elements-32);
+  height: var(--elements-32);
   padding: 0;
   border: 0;
   color: var(--text-base-secondary);
