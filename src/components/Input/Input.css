@@ -25,6 +25,20 @@
   color: var(--text-error-secondary);
 }
 
+.fdoc-input__label--disabled {
+  color: var(--text-base-secondary-disabled);
+}
+
+.fdoc-input__label--error-disabled {
+  color: var(--text-error-secondary-disabled);
+}
+
+.fdoc-input__required {
+  flex: 0 0 auto;
+  color: var(--text-error-secondary);
+  white-space: nowrap;
+}
+
 .fdoc-input__field {
   display: flex;
   align-items: center;
@@ -76,6 +90,10 @@
   border-color: var(--border-error-default);
 }
 
+.fdoc-input__field--error.fdoc-input__field--disabled {
+  border-color: var(--border-error-disabled);
+}
+
 .fdoc-input__field--disabled {
   color: var(--text-base-default-disabled);
   cursor: not-allowed;
@@ -83,6 +101,7 @@
 
 .fdoc-input__content {
   display: flex;
+  position: relative;
   flex: 1 1 auto;
   flex-direction: column;
   gap: var(--space-4);
@@ -123,8 +142,13 @@
   color: var(--text-base-secondary);
   font-size: var(--caption-size);
   line-height: var(--caption-line-height);
-  overflow-wrap: break-word;
-  word-break: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fdoc-input__description--disabled {
+  color: var(--text-base-secondary-disabled);
 }
 
 .fdoc-input__slot {
@@ -147,13 +171,26 @@
   white-space: nowrap;
 }
 
-.fdoc-input__clear {
+.fdoc-input__sum--disabled {
+  color: var(--text-base-default-disabled);
+}
+
+.fdoc-input__sum-icon {
   display: inline-flex;
-  flex: 0 0 24px;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
+  margin-left: var(--space-4);
+}
+
+.fdoc-input__clear {
+  display: inline-flex;
+  flex: 0 0 32px;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
   padding: 0;
   border: 0;
   color: var(--text-base-secondary);
@@ -168,13 +205,18 @@
 }
 
 .fdoc-input__caret {
-  flex: 0 0 8px;
-  width: 8px;
-  height: 8px;
-  margin-right: var(--space-4);
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(45deg) translateY(-2px);
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  color: var(--text-base-default);
+  font-size: var(--subtitle-size);
+  line-height: var(--subtitle-line-height);
+  pointer-events: none;
+}
+
+.fdoc-input__field--disabled .fdoc-input__slot,
+.fdoc-input__field--disabled .fdoc-input__caret {
+  color: var(--text-base-secondary-disabled);
 }
 
 .fdoc-input__helper {
@@ -198,6 +240,14 @@
 
 .fdoc-input__caption--error {
   color: var(--text-error-secondary);
+}
+
+.fdoc-input__caption--disabled {
+  color: var(--text-base-secondary-disabled);
+}
+
+.fdoc-input__caption--error-disabled {
+  color: var(--text-error-secondary-disabled);
 }
 
 .fdoc-input__counter {
