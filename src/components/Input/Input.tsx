@@ -6,6 +6,8 @@ import {
   type InputHTMLAttributes,
   type ReactNode,
 } from 'react';
+import { Icon, type IconName } from '../Icon/Icon';
+import { Skeleton } from '../Skeleton/Skeleton';
 import './Input.css';
 
 export type InputSize = 'medium' | 'small';
@@ -26,22 +28,22 @@ export interface InputProps
   caption?: ReactNode;
   /** Счетчик справа в строке подсказки. */
   counter?: ReactNode;
-  /** Левая иконка или другой визуальный слот. */
-  leadingIcon?: ReactNode;
-  /** Правая иконка или другой визуальный слот. */
-  trailingIcon?: ReactNode;
+  /** Имя иконки из библиотеки слева. */
+  leadingIcon?: IconName;
+  /** Имя иконки из библиотеки справа. */
+  trailingIcon?: IconName;
   /** Значение иконки/суффикса справа от поля. */
   sum?: ReactNode;
-  /** Иконка рядом со значением sum. */
-  sumIcon?: ReactNode;
-  /** Показывает caret в правом слоте. */
+  /** Имя иконки из библиотеки рядом со значением sum. */
+  sumIcon?: IconName;
+  /** Показывает caret из библиотеки в правом слоте. */
   caret?: boolean;
   /** Показывает кнопку очистки при непустом значении. */
   clearable?: boolean;
   /** Обработчик очистки значения. */
   onClear?: () => void;
-  /** Иконка кнопки очистки. */
-  clearIcon?: ReactNode;
+  /** Имя иконки кнопки очистки. */
+  clearIcon?: IconName;
   /** Показывает скелетон вместо поля. */
   skeleton?: boolean;
   /** Класс внешнего контейнера компонента. */
@@ -71,7 +73,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     caret = false,
     clearable = false,
     onClear,
-    clearIcon = '×',
+    clearIcon = 'cross',
     skeleton = false,
     disabled = false,
     value,
@@ -95,12 +97,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const hasValue = String(currentValue ?? '').length > 0;
   const showClear = clearable && hasValue && !disabled && !skeleton;
   const isError = Boolean(error);
+
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!isControlled) {
       setInternalValue(event.currentTarget.value);
     }
     inputProps.onChange?.(event);
   };
+
   const handleClear = () => {
     if (!isControlled) {
       setInternalValue('');
@@ -116,15 +120,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       >
         {label !== false && label !== undefined && (
           <div className="fdoc-input__label">
-            <span className="fdoc-input__skeleton fdoc-input__skeleton--label" />
+            <Skeleton className="fdoc-input__skeleton--label" width="64px" height="8px" />
           </div>
         )}
         <div className="fdoc-input__field fdoc-input__field--skeleton">
-          <span className="fdoc-input__skeleton fdoc-input__skeleton--text" />
+          <Skeleton className="fdoc-input__skeleton--text" width="64px" height="11px" />
         </div>
         {(caption !== undefined || counter !== undefined) && (
           <div className="fdoc-input__helper">
-            <span className="fdoc-input__skeleton fdoc-input__skeleton--caption" />
+            <Skeleton className="fdoc-input__skeleton--caption" width="64px" height="8px" />
           </div>
         )}
       </div>
@@ -159,7 +163,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       >
         {leadingIcon !== undefined && (
           <span className="fdoc-input__slot fdoc-input__slot--leading" aria-hidden="true">
-            {leadingIcon}
+            <Icon name={leadingIcon} size={24} />
           </span>
         )}
 
@@ -192,7 +196,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         {sum !== undefined && (
           <span className={joinClassNames('fdoc-input__sum', disabled && 'fdoc-input__sum--disabled')}>
             {sum}
-            {sumIcon !== undefined && <span className="fdoc-input__sum-icon" aria-hidden="true">{sumIcon}</span>}
+            {sumIcon !== undefined && (
+              <span className="fdoc-input__sum-icon" aria-hidden="true">
+                <Icon name={sumIcon} size={16} />
+              </span>
+            )}
           </span>
         )}
 
@@ -203,17 +211,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             aria-label="Очистить поле"
             onClick={handleClear}
           >
-            {clearIcon}
+            <Icon name={clearIcon} size={24} />
           </button>
         )}
 
         {trailingIcon !== undefined && (
           <span className="fdoc-input__slot fdoc-input__slot--trailing" aria-hidden="true">
-            {trailingIcon}
+            <Icon name={trailingIcon} size={24} />
           </span>
         )}
 
-        {caret && <span className="fdoc-input__caret" aria-hidden="true">|</span>}
+        {caret && (
+          <span className="fdoc-input__caret" aria-hidden="true">
+            <Icon name="caret" size={24} />
+          </span>
+        )}
       </div>
 
       {(caption !== undefined || counter !== undefined || error !== undefined) && (
@@ -229,7 +241,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           >
             {error ?? caption}
           </span>
-          {counter !== undefined && <span id={counterId} className="fdoc-input__counter">{counter}</span>}
+          {counter !== undefined && (
+            <span id={counterId} className="fdoc-input__counter">
+              {counter}
+            </span>
+          )}
         </div>
       )}
     </div>

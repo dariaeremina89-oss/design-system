@@ -1,0 +1,57 @@
+.fdoc-atoms {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 960px;
+  color: var(--text-base-default);
+}
+
+.fdoc-atoms__section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fdoc-atoms__swatches,
+.fdoc-atoms__tokens,
+.fdoc-atoms__icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.fdoc-atoms__swatch,
+.fdoc-atoms__token {
+  min-height: 72px;
+  padding: 12px;
+  border: 1px solid var(--border-base-secondary);
+  border-radius: var(--radius-middle);
+  background: var(--background-base-default);
+}
+
+.fdoc-atoms__swatch {
+  display: flex;
+  align-items: flex-end;
+  color: var(--text-base-default);
+  font-size: var(--caption-size);
+}
+
+.fdoc-atoms__icon {
+  display: flex;
+  min-height: 96px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--border-base-secondary);
+  border-radius: var(--radius-middle);
+  color: var(--icon-base-default);
+}
+
+.fdoc-atoms__label {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-base-secondary);
+  font-family: var(--font-family-code);
+  font-size: var(--caption-size);
+}

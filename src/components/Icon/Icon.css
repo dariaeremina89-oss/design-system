@@ -1,0 +1,16 @@
+.fdoc-icon {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: var(--fdoc-icon-size);
+  height: var(--fdoc-icon-size);
+  color: inherit;
+  background-color: currentColor;
+  -webkit-mask: var(--fdoc-icon-mask) center / contain no-repeat;
+  mask: var(--fdoc-icon-mask) center / contain no-repeat;
+  pointer-events: none;
+}
+
+.fdoc-icon--color {
+  background: transparent;
+  object-fit: contain;
+}
