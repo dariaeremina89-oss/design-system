@@ -90,6 +90,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     }
     inputProps.onChange?.(event);
   };
+  const handleClear = () => {
+    if (!isControlled) {
+      setInternalValue('');
+    }
+    onClear?.();
+  };
 
   if (skeleton) {
     return (
@@ -168,7 +174,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             type="button"
             className="fdoc-input__clear"
             aria-label="Очистить поле"
-            onClick={onClear}
+            onClick={handleClear}
           >
             ×
           </button>
