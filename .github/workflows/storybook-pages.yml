@@ -3,6 +3,7 @@ name: Publish Storybook
 on:
   push:
     branches:
+      - main
       - feat/input-component
   workflow_dispatch:
 
