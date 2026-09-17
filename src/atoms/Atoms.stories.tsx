@@ -1,6 +1,20 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Icon, iconNames, type IconName } from '../components/Icon/Icon';
+import { Icon, iconNames } from '../components/Icon/Icon';
 import { Skeleton as SkeletonBlock } from '../components/Skeleton/Skeleton';
+import {
+  borderTokens,
+  colorTokens,
+  depthTokens,
+  effectTokens,
+  elementTokens,
+  primitiveColorTokens,
+  radiusTokens,
+  responsiveTokens,
+  semanticColorTokens,
+  spacingTokens,
+  typographyPrimitiveTokens,
+  typographyTokens,
+} from '../styles/token-catalog';
 import './atoms.css';
 
 const meta = {
@@ -12,62 +26,46 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const colorTokens = [
-  '--background-base-default',
-  '--background-base-secondary',
-  '--background-base-tertiary',
-  '--background-base-skeleton',
-  '--background-primary-default',
-  '--background-accent-default',
-  '--background-success-default',
-  '--background-warning-default',
-  '--background-error-default',
-  '--border-base-secondary',
-  '--border-primary-default',
-  '--border-error-default',
-  '--text-base-default',
-  '--text-base-secondary',
-  '--text-primary-default',
-  '--text-error-secondary',
-  '--icon-base-default',
-  '--icon-accent-default',
-] as const;
+const cssVar = (token: string) => `var(${token})`;
 
-const spacingTokens = ['--space-0', '--space-4', '--space-8', '--space-12', '--space-16'] as const;
-const sizeTokens = [
-  '--elements-16',
-  '--elements-24',
-  '--elements-32',
-  '--size-input-small',
-  '--size-input-medium',
-  '--radius-small',
-  '--radius-middle',
-  '--radius-large',
-  '--radius-full',
-] as const;
-const iconSamples: IconName[] = [
-  'magnifying-glass',
-  'cross',
-  'caret',
-  'eye',
-  'eye-closed',
-  'info_circle',
-  'check',
-  'currency/ruble-sign_regular',
-  'multicolor/visa',
-];
+const TokenList = ({ tokens }: { tokens: readonly { token: string; value: string | number }[] }) => (
+  <div className="fdoc-atoms__tokens">
+    {tokens.map((item) => (
+      <div key={item.token} className="fdoc-atoms__token">
+        <span className="fdoc-atoms__label">{item.token}</span>
+        <code>{String(item.value)}</code>
+      </div>
+    ))}
+  </div>
+);
+
+const ColorGrid = ({ tokens }: { tokens: readonly { token: string; value: string }[] }) => (
+  <div className="fdoc-atoms__swatches">
+    {tokens.map((item) => (
+      <div
+        key={item.token}
+        className={`fdoc-atoms__swatch${item.token.startsWith('--transparent-') ? ' fdoc-atoms__swatch--transparent' : ''}`}
+        style={{ backgroundColor: cssVar(item.token) }}
+      >
+        <span>{item.token}</span>
+        <code>{item.value}</code>
+      </div>
+    ))}
+  </div>
+);
 
 export const Colors: Story = {
   render: () => (
     <div className="fdoc-atoms">
       <h1>Colors</h1>
-      <div className="fdoc-atoms__swatches">
-        {colorTokens.map((token) => (
-          <div key={token} className="fdoc-atoms__swatch" style={{ background: `var(${token})` }}>
-            <span>{token}</span>
-          </div>
-        ))}
-      </div>
+      <section className="fdoc-atoms__section">
+        <h2>Primitive</h2>
+        <ColorGrid tokens={primitiveColorTokens} />
+      </section>
+      <section className="fdoc-atoms__section">
+        <h2>Semantic</h2>
+        <ColorGrid tokens={semanticColorTokens} />
+      </section>
     </div>
   ),
 };
@@ -77,18 +75,29 @@ export const Typography: Story = {
     <div className="fdoc-atoms">
       <h1>Typography</h1>
       <section className="fdoc-atoms__section">
-        <div style={{ fontFamily: 'var(--font-family-base)', fontSize: 'var(--subtitle-size)', lineHeight: 'var(--subtitle-line-height)' }}>
-          Subtitle · 16/24
-          <span className="fdoc-atoms__label">--subtitle-size · --subtitle-line-height</span>
-        </div>
-        <div style={{ fontFamily: 'var(--font-family-base)', fontSize: 'var(--body-size)', lineHeight: 'var(--body-line-height)' }}>
-          Body · 15/22
-          <span className="fdoc-atoms__label">--body-size · --body-line-height</span>
-        </div>
-        <div style={{ fontFamily: 'var(--font-family-base)', fontSize: 'var(--caption-size)', lineHeight: 'var(--caption-line-height)' }}>
-          Caption · 12/16
-          <span className="fdoc-atoms__label">--caption-size · --caption-line-height</span>
-        </div>
+        {typographyTokens.map((item) => (
+          <div key={item.name} className="fdoc-atoms__type-row">
+            <div
+              className="fdoc-atoms__type-sample"
+              style={{
+                fontFamily: item.family,
+                fontSize: item.size,
+                lineHeight: `${item.lineHeight}px`,
+                fontWeight: item.weight,
+              }}
+            >
+              Aa — {item.name}
+            </div>
+            <div className="fdoc-atoms__type-meta">
+              <span>{item.token}</span>
+              <span>Desktop {item.size}/{item.lineHeight} · Mobile {item.mobileSize}/{item.mobileLineHeight}</span>
+            </div>
+          </div>
+        ))}
+      </section>
+      <section className="fdoc-atoms__section">
+        <h2>Primitive type tokens</h2>
+        <TokenList tokens={typographyPrimitiveTokens} />
       </section>
     </div>
   ),
@@ -98,14 +107,7 @@ export const Spacing: Story = {
   render: () => (
     <div className="fdoc-atoms">
       <h1>Spacing</h1>
-      <div className="fdoc-atoms__tokens">
-        {spacingTokens.map((token) => (
-          <div key={token} className="fdoc-atoms__token">
-            <div style={{ width: `var(${token})`, height: 24, background: 'var(--background-primary-default)' }} />
-            <span className="fdoc-atoms__label">{token}</span>
-          </div>
-        ))}
-      </div>
+      <TokenList tokens={spacingTokens} />
     </div>
   ),
 };
@@ -113,15 +115,27 @@ export const Spacing: Story = {
 export const SizesAndRadii: Story = {
   render: () => (
     <div className="fdoc-atoms">
-      <h1>Sizes and radii</h1>
-      <div className="fdoc-atoms__tokens">
-        {sizeTokens.map((token) => (
-          <div key={token} className="fdoc-atoms__token">
-            <div style={{ width: `min(var(${token}), 160px)`, height: `min(var(${token}), 64px)`, background: 'var(--background-accent-default)', borderRadius: `var(${token})` }} />
-            <span className="fdoc-atoms__label">{token}</span>
-          </div>
-        ))}
-      </div>
+      <h1>Sizes, radii, depth and borders</h1>
+      <section className="fdoc-atoms__section">
+        <h2>Element sizes</h2>
+        <TokenList tokens={elementTokens} />
+      </section>
+      <section className="fdoc-atoms__section">
+        <h2>Radii</h2>
+        <TokenList tokens={radiusTokens} />
+      </section>
+      <section className="fdoc-atoms__section">
+        <h2>Depth</h2>
+        <TokenList tokens={depthTokens} />
+      </section>
+      <section className="fdoc-atoms__section">
+        <h2>Borders</h2>
+        <TokenList tokens={borderTokens} />
+      </section>
+      <section className="fdoc-atoms__section">
+        <h2>Responsive</h2>
+        <TokenList tokens={responsiveTokens} />
+      </section>
     </div>
   ),
 };
@@ -130,10 +144,13 @@ export const Shadows: Story = {
   render: () => (
     <div className="fdoc-atoms">
       <h1>Shadows</h1>
-      <div className="fdoc-atoms__tokens">
-        <div className="fdoc-atoms__token" style={{ boxShadow: 'var(--shadow-s)' }}>
-          <span>--shadow-s</span>
-        </div>
+      <div className="fdoc-atoms__shadow-grid">
+        {effectTokens.map((item) => (
+          <div key={item.token} className="fdoc-atoms__shadow-card" style={{ boxShadow: cssVar(item.token) }}>
+            <span>{item.token}</span>
+            <code>{item.value}</code>
+          </div>
+        ))}
       </div>
     </div>
   ),
@@ -151,7 +168,7 @@ export const Icons: Story = {
     <div className="fdoc-atoms">
       <h1>Icons</h1>
       <div className="fdoc-atoms__icons">
-        {iconSamples.map((name) => (
+        {iconNames.slice(0, 24).map((name) => (
           <div key={name} className="fdoc-atoms__icon">
             <Icon name={name} />
             <span className="fdoc-atoms__label">{name}</span>
@@ -160,7 +177,7 @@ export const Icons: Story = {
       </div>
       <div className="fdoc-atoms__icon">
         <Icon {...args} />
-        <span className="fdoc-atoms__label">Selected from library</span>
+        <span className="fdoc-atoms__label">Selected from icon library ({iconNames.length} icons)</span>
       </div>
     </div>
   ),
