@@ -1,0 +1,55 @@
+:root {
+  --font-family-base: Inter, Arial, sans-serif;
+
+  --background-base-default: #ffffff;
+  --background-base-default-disabled: #ffffff;
+  --background-base-skeleton: rgb(85 89 99 / 16%);
+
+  --text-base-default: #18191c;
+  --text-base-secondary: #70747c;
+  --text-base-secondary-disabled: #cfd1d3;
+  --text-base-default-disabled: #70747c;
+  --text-error-secondary: #e0004d;
+  --text-error-secondary-disabled: #f18fb1;
+
+  --border-small: 1px;
+  --border-middle: 2px;
+  --border-base-secondary: #cfd1d3;
+  --border-base-secondary-hover: #555963;
+  --border-base-secondary-disabled: #cfd1d3;
+  --border-error-default: #e0004d;
+  --border-error-hover: #630022;
+  --border-error-disabled: #f18fb1;
+  --border-primary-default: #ffdc00;
+
+  --radius-middle: 8px;
+  --radius-large: 16px;
+  --radius-full: 9999px;
+
+  --space-0: 0px;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+
+  --caption-size: 12px;
+  --caption-line-height: 16px;
+  --caption-weight-base: 400;
+  --subtitle-size: 16px;
+  --subtitle-line-height: 24px;
+  --subtitle-weight-base: 400;
+  --body-size: 14px;
+  --body-line-height: 20px;
+  --body-weight-base: 400;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family-base);
+  color: var(--text-base-default);
+  background: var(--background-base-default);
+}
