@@ -113,7 +113,7 @@
 
 .fdoc-atoms__layer-grid {
   display: grid;
-  grid-template-columns: minmax(160px, 1fr) auto minmax(160px, 1fr) auto minmax(160px, 1fr);
+  grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr);
   align-items: stretch;
   gap: 12px;
 }
