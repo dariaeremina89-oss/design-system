@@ -712,18 +712,18 @@ export const responsiveTokens = [
 ] as const;
 
 export const typographyPrimitiveTokens = [
-  { token: "--font-family-family-title", value: "TT Commons Pro Expanded" },
-  { token: "--font-family-family-sans", value: "Inter" },
-  { token: "--font-family-family-mono", value: "Roboto Mono" },
-  { token: "--font-weight-400", value: "400" },
-  { token: "--font-style-400-regular-italic", value: "Italic" },
-  { token: "--font-style-600-semi-bold-italic", value: "Semi Bold Italic" },
-  { token: "--font-style-600-demibold-italic", value: "DemiBold Italic" },
-  { token: "--font-style-800-extrabold-italic", value: "ExtraBold Italic" },
-  { token: "--font-weight-600", value: "600" },
-  { token: "--font-weight-700", value: "700" },
+  { token: "--font-family-title", value: "TT Commons Pro Expanded" },
+  { token: "--font-family-sans", value: "Inter" },
+  { token: "--font-family-mono", value: "Roboto Mono" },
+  { token: "--font-weight-regular", value: "400" },
+  { token: "--font-style-regular-italic", value: "Italic" },
+  { token: "--font-style-semibold-italic", value: "Semi Bold Italic" },
+  { token: "--font-style-demibold-italic", value: "DemiBold Italic" },
+  { token: "--font-style-extrabold-italic", value: "ExtraBold Italic" },
+  { token: "--font-weight-semibold", value: "600" },
+  { token: "--font-weight-bold", value: "700" },
   { token: "--font-size-9", value: 9 },
-  { token: "--font-weight-800", value: "800" },
+  { token: "--font-weight-extrabold", value: "800" },
   { token: "--font-size-10", value: 10 },
   { token: "--font-size-12", value: 12 },
   { token: "--font-size-14", value: 14 },
@@ -748,7 +748,7 @@ export const typographyPrimitiveTokens = [
 
 export const typographyTokens = [
   {
-    "name": "H0",
+    "name": "H0 Heading",
     "token": "--h0-heading",
     "family": "TT Commons Pro Expanded",
     "weight": 800,
@@ -757,8 +757,8 @@ export const typographyTokens = [
     "mobileSize": 32,
     "mobileLineHeight": 40,
     "references": {
-      "family": "var(--font-family-family-title)",
-      "weight": "var(--font-weight-800)",
+      "family": "var(--font-family-title)",
+      "weight": "var(--font-weight-extrabold)",
       "size": "var(--font-size-40)",
       "lineHeight": "var(--line-height-48)",
       "mobileSize": "var(--font-size-32)",
@@ -767,7 +767,7 @@ export const typographyTokens = [
     }
   },
   {
-    "name": "H1",
+    "name": "H1 Heading",
     "token": "--h1-heading",
     "family": "TT Commons Pro Expanded",
     "weight": 800,
@@ -776,8 +776,8 @@ export const typographyTokens = [
     "mobileSize": 24,
     "mobileLineHeight": 32,
     "references": {
-      "family": "var(--font-family-family-title)",
-      "weight": "var(--font-weight-800)",
+      "family": "var(--font-family-title)",
+      "weight": "var(--font-weight-extrabold)",
       "size": "var(--font-size-32)",
       "lineHeight": "var(--line-height-40)",
       "mobileSize": "var(--font-size-24)",
@@ -786,7 +786,7 @@ export const typographyTokens = [
     }
   },
   {
-    "name": "H2",
+    "name": "H2 Heading",
     "token": "--h2-heading",
     "family": "TT Commons Pro Expanded",
     "weight": 800,
@@ -795,8 +795,8 @@ export const typographyTokens = [
     "mobileSize": 20,
     "mobileLineHeight": 28,
     "references": {
-      "family": "var(--font-family-family-title)",
-      "weight": "var(--font-weight-800)",
+      "family": "var(--font-family-title)",
+      "weight": "var(--font-weight-extrabold)",
       "size": "var(--font-size-24)",
       "lineHeight": "var(--line-height-32)",
       "mobileSize": "var(--font-size-20)",
@@ -805,7 +805,7 @@ export const typographyTokens = [
     }
   },
   {
-    "name": "H3",
+    "name": "H3 Heading",
     "token": "--h3-heading",
     "family": "TT Commons Pro Expanded",
     "weight": 800,
@@ -814,8 +814,8 @@ export const typographyTokens = [
     "mobileSize": 16,
     "mobileLineHeight": 24,
     "references": {
-      "family": "var(--font-family-family-title)",
-      "weight": "var(--font-weight-800)",
+      "family": "var(--font-family-title)",
+      "weight": "var(--font-weight-extrabold)",
       "size": "var(--font-size-20)",
       "lineHeight": "var(--line-height-28)",
       "mobileSize": "var(--font-size-16)",
@@ -824,7 +824,7 @@ export const typographyTokens = [
     }
   },
   {
-    "name": "SUBTITLE",
+    "name": "Subtitle,
     "token": "--subtitle",
     "family": "Inter",
     "weight": 400,
@@ -833,8 +833,8 @@ export const typographyTokens = [
     "mobileSize": 14,
     "mobileLineHeight": 20,
     "references": {
-      "family": "var(--font-family-family-sans)",
-      "weight": "var(--font-weight-400)",
+      "family": "var(--font-family-sans)",
+      "weight": "var(--font-weight-regular)",
       "size": "var(--font-size-16)",
       "lineHeight": "var(--line-height-24)",
       "mobileSize": "var(--font-size-14)",
@@ -843,7 +843,7 @@ export const typographyTokens = [
     }
   },
   {
-    "name": "BODY",
+    "name": "Body,
     "token": "--body",
     "family": "Inter",
     "weight": 400,
@@ -852,17 +852,17 @@ export const typographyTokens = [
     "mobileSize": 12,
     "mobileLineHeight": 16,
     "references": {
-      "family": "var(--font-family-family-sans)",
-      "weight": "var(--font-weight-400)",
+      "family": "var(--font-family-sans)",
+      "weight": "var(--font-weight-regular)",
       "size": "var(--font-size-14)",
       "lineHeight": "var(--line-height-20)",
       "mobileSize": "var(--font-size-12)",
       "mobileLineHeight": "var(--line-height-16)",
-      "style": "var(--font-style-400-regular-italic)"
+      "style": "var(--font-style-regular-italic)"
     }
   },
   {
-    "name": "CAPTION",
+    "name": "Caption,
     "token": "--caption",
     "family": "Inter",
     "weight": 400,
@@ -871,8 +871,8 @@ export const typographyTokens = [
     "mobileSize": 10,
     "mobileLineHeight": 14,
     "references": {
-      "family": "var(--font-family-family-sans)",
-      "weight": "var(--font-weight-400)",
+      "family": "var(--font-family-sans)",
+      "weight": "var(--font-weight-regular)",
       "size": "var(--font-size-12)",
       "lineHeight": "var(--line-height-16)",
       "mobileSize": "var(--font-size-10)",
@@ -881,7 +881,7 @@ export const typographyTokens = [
     }
   },
   {
-    "name": "OVERLINE",
+    "name": "Overline,
     "token": "--overline",
     "family": "Inter",
     "weight": 400,
@@ -890,8 +890,8 @@ export const typographyTokens = [
     "mobileSize": 9,
     "mobileLineHeight": 12,
     "references": {
-      "family": "var(--font-family-family-sans)",
-      "weight": "var(--font-weight-400)",
+      "family": "var(--font-family-sans)",
+      "weight": "var(--font-weight-regular)",
       "size": "var(--font-size-10)",
       "lineHeight": "var(--line-height-14)",
       "mobileSize": "var(--font-size-9)",
@@ -900,7 +900,7 @@ export const typographyTokens = [
     }
   },
   {
-    "name": "CODE",
+    "name": "Code,
     "token": "--code",
     "family": "Roboto Mono",
     "weight": 400,
@@ -909,8 +909,8 @@ export const typographyTokens = [
     "mobileSize": 12,
     "mobileLineHeight": 16,
     "references": {
-      "family": "var(--font-family-family-mono)",
-      "weight": "var(--font-weight-400)",
+      "family": "var(--font-family-mono)",
+      "weight": "var(--font-weight-regular)",
       "size": "var(--font-size-14)",
       "lineHeight": "var(--line-height-20)",
       "mobileSize": "var(--font-size-12)",

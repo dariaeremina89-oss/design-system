@@ -27,7 +27,13 @@ export const Styles: Story = {
           <div key={item.name} className="fdoc-atoms__type-row">
             <div
               className="fdoc-atoms__type-sample"
-              style={{ fontFamily: item.family, fontSize: item.size, lineHeight: `${item.lineHeight}px`, fontWeight: item.weight }}
+              style={{
+                fontFamily: item.references.family,
+                fontSize: item.references.size,
+                lineHeight: item.references.lineHeight,
+                fontWeight: item.references.weight,
+                ...(item.references.style ? { fontStyle: item.references.style } : {}),
+              }}
             >
               Aa — {item.name}
             </div>
