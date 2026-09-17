@@ -60,11 +60,18 @@
 }
 
 .fdoc-atoms__token code,
-.fdoc-atoms__swatch code,
 .fdoc-atoms__shadow-card code {
   color: var(--text-base-secondary);
   font-family: var(--font-family-code);
   font-size: var(--caption-size);
+  overflow-wrap: anywhere;
+}
+
+.fdoc-atoms__swatch code {
+  color: inherit;
+  font-family: var(--font-family-code);
+  font-size: var(--caption-size);
+  opacity: 0.72;
   overflow-wrap: anywhere;
 }
 
