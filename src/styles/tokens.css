@@ -500,7 +500,12 @@
   --space-12: 12px;
   --space-16: 16px;
 
+  /* Component dimensions */
+  --size-input-medium: 56px;
+  --size-input-small: 48px;
+
   /* Element sizes */
+  --elements-16: 16px;
   --elements-24: 24px;
   --elements-32: 32px;
 
