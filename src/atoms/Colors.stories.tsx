@@ -4,7 +4,15 @@ import { ColorGrid, Page, groupName } from './atoms-helpers';
 
 const meta = {
   title: 'Atoms/Colors',
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component:
+          'Цветовой foundation-слой плейбука. Primitive colors содержат исходные значения, а Semantic colors ссылаются на primitives и используются компонентами. Отдельного уровня component tokens здесь нет.',
+      },
+    },
+  },
   tags: ['autodocs'],
 } satisfies Meta;
 
