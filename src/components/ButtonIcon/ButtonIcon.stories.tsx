@@ -39,7 +39,7 @@ const meta = {
 
 Поддерживаются цвета \`Primary\`, \`Secondary\`, \`Tertiary\`, \`Neutral\`, \`Base\`, \`Inverse\`, \`Inverse Primary\`, \`Inverse light\` и состояния \`Default\`, \`Hover\`, \`Focused\`, \`Pressed\`, \`Disabled\`, \`Skeleton\`.
 
-\`Tertiary\` и \`Neutral\` не имеют фона в Default, Focused и Disabled; фон появляется только в Hover и Pressed. \`Skeleton\` использует общую анимацию Skeleton и не является интерактивной кнопкой.
+\`Tertiary\` и \`Neutral\` не имеют фона в Default, Focused и Disabled; фон появляется только в Hover и Pressed. В Skeleton для этих цветов фон кнопки остается прозрачным, а внутри показывается \`skeleton_icon\`; остальные цвета используют заполненный skeleton-круг. Skeleton использует общую анимацию и не является интерактивной кнопкой.
 
 ### Доступность
 
