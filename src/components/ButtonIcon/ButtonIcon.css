@@ -1,0 +1,149 @@
+.fdoc-button-icon {
+  --fdoc-button-icon-background: var(--background-primary-default);
+  --fdoc-button-icon-background-hover: var(--background-primary-default-hover);
+  --fdoc-button-icon-background-pressed: var(--background-primary-default-pressed);
+  --fdoc-button-icon-background-disabled: var(--background-primary-default-disabled);
+  --fdoc-button-icon-icon: var(--icon-primary-default-light);
+  --fdoc-button-icon-icon-hover: var(--icon-primary-default-light);
+  --fdoc-button-icon-icon-pressed: var(--icon-primary-default-light);
+  --fdoc-button-icon-icon-disabled: var(--icon-primary-default-light-hover);
+  --fdoc-button-icon-focus-border: var(--border-primary-focused);
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  width: var(--fdoc-button-icon-size);
+  height: var(--fdoc-button-icon-size);
+  flex: 0 0 var(--fdoc-button-icon-size);
+  padding: var(--fdoc-button-icon-padding);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--fdoc-button-icon-background);
+  color: var(--fdoc-button-icon-icon);
+  cursor: pointer;
+  transition: background-color 120ms ease, box-shadow 120ms ease;
+}
+
+.fdoc-button-icon:hover:not(:disabled),
+.fdoc-button-icon--hover:not(:disabled) {
+  background: var(--fdoc-button-icon-background-hover);
+  color: var(--fdoc-button-icon-icon-hover);
+}
+
+.fdoc-button-icon:active:not(:disabled),
+.fdoc-button-icon--pressed:not(:disabled) {
+  background: var(--fdoc-button-icon-background-pressed);
+  color: var(--fdoc-button-icon-icon-pressed);
+}
+
+.fdoc-button-icon:focus-visible,
+.fdoc-button-icon--focused:not(:disabled) {
+  outline: 0;
+  box-shadow: inset 0 0 0 var(--border-large) var(--fdoc-button-icon-focus-border);
+}
+
+.fdoc-button-icon:disabled,
+.fdoc-button-icon--disabled {
+  background: var(--fdoc-button-icon-background-disabled);
+  color: var(--fdoc-button-icon-icon-disabled);
+  cursor: not-allowed;
+}
+
+.fdoc-button-icon .fdoc-icon {
+  width: var(--fdoc-button-icon-glyph-size);
+  height: var(--fdoc-button-icon-glyph-size);
+}
+
+.fdoc-button-icon--secondary {
+  --fdoc-button-icon-background: var(--background-base-secondary);
+  --fdoc-button-icon-background-hover: var(--background-base-secondary-hover);
+  --fdoc-button-icon-background-pressed: var(--background-base-secondary-pressed);
+  --fdoc-button-icon-background-disabled: var(--background-base-secondary-disabled);
+  --fdoc-button-icon-icon: var(--icon-base-default);
+  --fdoc-button-icon-icon-hover: var(--icon-base-default-hover);
+  --fdoc-button-icon-icon-pressed: var(--icon-base-default-pressed);
+  --fdoc-button-icon-icon-disabled: var(--icon-base-default-disabled);
+  --fdoc-button-icon-focus-border: var(--border-base-secondary-focused);
+}
+
+.fdoc-button-icon--tertiary,
+.fdoc-button-icon--base {
+  --fdoc-button-icon-background: var(--background-base-default);
+  --fdoc-button-icon-background-hover: var(--background-base-default-hover);
+  --fdoc-button-icon-background-pressed: var(--background-base-default-pressed);
+  --fdoc-button-icon-background-disabled: var(--background-base-default-disabled);
+  --fdoc-button-icon-icon: var(--icon-base-default);
+  --fdoc-button-icon-icon-hover: var(--icon-base-default-hover);
+  --fdoc-button-icon-icon-pressed: var(--icon-base-default-pressed);
+  --fdoc-button-icon-icon-disabled: var(--icon-base-default-disabled);
+  --fdoc-button-icon-focus-border: var(--border-base-secondary-focused);
+}
+
+.fdoc-button-icon--neutral {
+  --fdoc-button-icon-background: var(--background-base-default);
+  --fdoc-button-icon-background-hover: var(--background-base-default-hover);
+  --fdoc-button-icon-background-pressed: var(--background-base-default-pressed);
+  --fdoc-button-icon-background-disabled: var(--background-base-default-disabled);
+  --fdoc-button-icon-icon: var(--icon-base-secondary);
+  --fdoc-button-icon-icon-hover: var(--icon-base-secondary-hover);
+  --fdoc-button-icon-icon-pressed: var(--icon-base-secondary-pressed);
+  --fdoc-button-icon-icon-disabled: var(--icon-base-secondary-pressed);
+  --fdoc-button-icon-focus-border: var(--border-base-secondary-focused);
+}
+
+.fdoc-button-icon--inverse {
+  --fdoc-button-icon-background: var(--background-base-inverse);
+  --fdoc-button-icon-background-hover: var(--background-base-inverse-hover);
+  --fdoc-button-icon-background-pressed: var(--background-base-inverse-pressed);
+  --fdoc-button-icon-background-disabled: var(--background-base-inverse-disabled);
+  --fdoc-button-icon-icon: var(--icon-base-inverse);
+  --fdoc-button-icon-icon-hover: var(--icon-base-inverse-hover);
+  --fdoc-button-icon-icon-pressed: var(--icon-base-inverse-pressed);
+  --fdoc-button-icon-icon-disabled: var(--icon-base-inverse-disabled);
+  --fdoc-button-icon-focus-border: var(--border-base-inverse-focused);
+}
+
+.fdoc-button-icon--inverse-primary {
+  --fdoc-button-icon-background: var(--background-base-inverse);
+  --fdoc-button-icon-background-hover: var(--background-base-inverse-hover);
+  --fdoc-button-icon-background-pressed: var(--background-base-inverse-pressed);
+  --fdoc-button-icon-background-disabled: var(--background-base-inverse-disabled);
+  --fdoc-button-icon-icon: var(--icon-primary-inverse-light);
+  --fdoc-button-icon-icon-hover: var(--icon-primary-inverse-light-hover);
+  --fdoc-button-icon-icon-pressed: var(--icon-primary-inverse-light-pressed);
+  --fdoc-button-icon-icon-disabled: var(--icon-base-inverse-disabled);
+  --fdoc-button-icon-focus-border: var(--border-base-inverse-focused);
+}
+
+.fdoc-button-icon--inverse-light {
+  --fdoc-button-icon-background: var(--background-base-inverse-light);
+  --fdoc-button-icon-background-hover: var(--background-base-inverse-hover);
+  --fdoc-button-icon-background-pressed: var(--background-base-inverse-pressed);
+  --fdoc-button-icon-background-disabled: var(--background-base-inverse-disabled);
+  --fdoc-button-icon-icon: var(--icon-base-inverse);
+  --fdoc-button-icon-icon-hover: var(--icon-base-inverse-hover);
+  --fdoc-button-icon-icon-pressed: var(--icon-base-inverse-pressed);
+  --fdoc-button-icon-icon-disabled: var(--icon-base-inverse-disabled);
+  --fdoc-button-icon-focus-border: var(--border-base-inverse-focused);
+}
+
+.fdoc-button-icon__skeleton {
+  box-sizing: border-box;
+  padding: 0;
+  min-width: 0;
+  min-height: 0;
+  width: var(--fdoc-button-icon-size);
+  height: var(--fdoc-button-icon-size);
+  border-radius: var(--radius-full);
+}
+
+.fdoc-button-icon__skeleton::before,
+.fdoc-button-icon__skeleton::after {
+  inset: 0;
+  border-radius: var(--radius-full);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fdoc-button-icon { transition: none; }
+}
+
