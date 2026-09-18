@@ -4,7 +4,15 @@ import { cssVar, Page } from './atoms-helpers';
 
 const meta = {
   title: 'Atoms/Effects',
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component:
+          'Foundation-слой эффектов: тени и другие визуальные эффекты, вынесенные в семантические frontend-токены. Значения показываются вместе с CSS-переменными, чтобы их можно было сверять с Figma.',
+      },
+    },
+  },
   tags: ['autodocs'],
 } satisfies Meta;
 
