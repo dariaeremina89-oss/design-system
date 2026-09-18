@@ -62,6 +62,37 @@ describe('Input', () => {
     expect(document.querySelector('[data-icon="magnifying-glass"]')).toBeInTheDocument();
   });
 
+  it('preserves the input anatomy in skeleton state', () => {
+    const { container } = render(
+      <Input
+        skeleton
+        label="Название"
+        required
+        description="Описание"
+        error="Ошибка"
+        counter
+        maxLength={100}
+        leadingIcon="magnifying-glass"
+        trailingIcon="eye"
+        sum="100"
+        sumIcon="currency/ruble-sign_regular"
+        caret
+        clearable
+        defaultValue="Значение"
+      />,
+    );
+
+    expect(container.querySelector('.fdoc-input__label')).toBeInTheDocument();
+    expect(container.querySelector('.fdoc-input__skeleton--required')).toBeInTheDocument();
+    expect(container.querySelector('.fdoc-input__skeleton--description')).toBeInTheDocument();
+    expect(container.querySelector('.fdoc-input__skeleton--helper')).toBeInTheDocument();
+    expect(container.querySelector('.fdoc-input__skeleton--counter')).toBeInTheDocument();
+    expect(container.querySelectorAll('.fdoc-input__slot')).toHaveLength(2);
+    expect(container.querySelector('.fdoc-input__sum-icon')).toBeInTheDocument();
+    expect(container.querySelector('.fdoc-input__caret')).toBeInTheDocument();
+    expect(container.querySelector('.fdoc-input__clear')).toBeInTheDocument();
+  });
+
   it('has no accessibility violations in the default state', async () => {
     const { container } = render(<Input label="Имя" placeholder="Введите имя" />);
     const violations = await axe(container);
