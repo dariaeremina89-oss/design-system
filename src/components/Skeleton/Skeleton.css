@@ -1,27 +1,41 @@
 .fdoc-skeleton {
   display: block;
+  position: relative;
+  overflow: hidden;
   min-width: var(--elements-16);
   min-height: var(--elements-16);
   border-radius: var(--radius-large);
-  background:
-    linear-gradient(
-      100deg,
-      var(--background-base-skeleton) 20%,
-      var(--neutral-25) 48%,
-      var(--background-base-skeleton) 76%
-    );
-  background-size: 220% 100%;
-  animation: fdoc-skeleton-wave 1.6s linear 0.5s infinite;
+  background: var(--background-base-skeleton);
+  pointer-events: none;
+  user-select: none;
 }
 
-.fdoc-skeleton--text { border-radius: var(--radius-small); }
+.fdoc-skeleton::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--white-500-48),
+    transparent
+  );
+  animation: fdoc-skeleton-wave 1.6s linear 0.5s infinite;
+  content: "";
+  transform: translateX(-100%);
+}
+
+.fdoc-skeleton--text {
+  min-height: 0;
+  border-radius: var(--radius-small);
+}
+
 .fdoc-skeleton--circle { border-radius: var(--radius-full); }
 
 @keyframes fdoc-skeleton-wave {
-  0% { background-position: 100% 0; }
-  100% { background-position: -120% 0; }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fdoc-skeleton { animation: none; }
+  .fdoc-skeleton::after { animation: none; }
 }
