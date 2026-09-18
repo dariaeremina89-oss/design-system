@@ -1,27 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Badge } from '../Badge/Badge';
 import { iconNames } from '../Icon/Icon';
 import { Button, type ButtonColor, type ButtonSize, type ButtonState } from './Button';
-
-function DemoBadge({ children = '3', disabled = false }: { children?: string; disabled?: boolean }) {
-  return (
-    <span
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minWidth: '100%',
-        height: '100%',
-        padding: '1px 4px',
-        borderRadius: 'var(--radius-small)',
-        background: disabled ? 'var(--background-base-inverse-disabled)' : 'var(--background-base-inverse)',
-        color: disabled ? 'var(--text-base-inverse-disabled)' : 'var(--text-base-inverse)',
-        font: 'var(--page-caption-weight-strong) var(--page-caption-size)/var(--page-caption-line-height) var(--page-caption-family)',
-      }}
-    >
-      {children}
-    </span>
-  );
-}
 
 const meta = {
   title: 'Components/Buttons/Button',
@@ -43,6 +23,7 @@ const meta = {
 - \`state\`: \`default\` / \`hover\` / \`pressed\` / \`focused\` / \`disabled\` / \`skeleton\`;
 - \`iconLeft\` и \`iconRight\` выбирают иконки из локальной Figma-библиотеки; \`iconLeftView\` и \`iconRightView\` позволяют передать собственный слот;
 - \`badgeLeft\` и \`badgeRight\` принимают готовый Badge. Размер и токены Badge принадлежат компоненту Badge, Button только предоставляет слот;
+- \`isLoading\` заменяет левую иконку на Circular Progress Indicator и переводит кнопку в нативное disabled-состояние;
 - \`fullWidth\` растягивает кнопку на ширину родителя;
 - \`skeletonWidth\` задает ширину Skeleton, если ее нужно зафиксировать под состав конкретного контента.
 
@@ -59,7 +40,7 @@ const meta = {
 
 ### Поведение
 
-Hover и Pressed меняют только фон. Focused добавляет цветную рамку. Disabled использует disabled-токены и нативный \`disabled\`; подсказки о причине недоступности остаются на уровне продукта. Loading и Select/Filter Button пока не входят в компонент и описаны как будущие сценарии.
+Hover и Pressed меняют только фон. Focused добавляет цветную рамку. Disabled использует disabled-токены и нативный \`disabled\`; подсказки о причине недоступности остаются на уровне продукта. Loading использует Circular Progress Indicator и не допускает повторного действия.
 
 Для кнопки только с иконкой обязательно задавать \`aria-label\`. Используется нативный \`button\`, поэтому Enter, Space и Tab работают без дополнительной имитации.
         `,
@@ -90,6 +71,7 @@ Hover и Pressed меняют только фон. Focused добавляет ц
     iconRightView: { control: false },
     badgeLeft: { control: false },
     badgeRight: { control: false },
+    isLoading: { control: 'boolean' },
     fullWidth: { control: 'boolean' },
     skeletonWidth: { control: 'text' },
     onClick: { action: 'click' },
@@ -137,10 +119,14 @@ export const WithIcons: Story = {
 
 export const WithBadges: Story = {
   args: {
-    badgeLeft: <DemoBadge>2</DemoBadge>,
-    badgeRight: <DemoBadge>9</DemoBadge>,
+    badgeLeft: <Badge size="small" color="inverse">2</Badge>,
+    badgeRight: <Badge size="small" color="inverse">9</Badge>,
     iconLeft: 'check',
   },
+};
+
+export const Loading: Story = {
+  args: { text: 'Saving', iconLeft: 'check', isLoading: true },
 };
 
 export const LongText: Story = {

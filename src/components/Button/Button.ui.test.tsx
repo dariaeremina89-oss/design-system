@@ -14,8 +14,9 @@ describe('Button visual contract', () => {
     expect(css).toContain('line-height: var(--page-caption-line-height)');
   });
 
-  it('keeps focus as an inner border and does not use shadow', () => {
-    expect(css).toContain('border-width: var(--border-large)');
+  it('reserves the focus border without changing the button box', () => {
+    expect(css).toContain('border: var(--border-large) solid transparent');
+    expect(css).toContain('padding: calc(var(--fdoc-button-padding-y) - var(--border-large))');
     expect(css).toContain('border-color: var(--fdoc-button-focus-border)');
     expect(css).not.toContain('box-shadow');
   });
@@ -31,5 +32,11 @@ describe('Button visual contract', () => {
     expect(css).toContain('background: var(--background-base-skeleton)');
     expect(css).toContain('border-radius: var(--radius-middle)');
     expect(css).toContain('.fdoc-button__skeleton::after');
+  });
+
+  it('keeps the loading slot inside the normal icon geometry', () => {
+    expect(css).toContain('.fdoc-button__loading .fdoc-progress');
+    expect(css).toContain('width: 100%');
+    expect(css).toContain('height: 100%');
   });
 });

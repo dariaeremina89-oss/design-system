@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { Badge } from '../Badge/Badge';
 import { Button } from './Button';
 
 describe('Button', () => {
@@ -37,8 +38,8 @@ describe('Button', () => {
         text="Action"
         iconLeftView={<span data-testid="custom-left" />}
         iconRight="arrow-right"
-        badgeLeft={<span data-testid="badge-left" />}
-        badgeRight={<span data-testid="badge-right" />}
+        badgeLeft={<Badge size="small" color="inverse" text="2" data-testid="badge-left" />}
+        badgeRight={<Badge size="small" color="inverse" text="9" data-testid="badge-right" />}
       />,
     );
 
@@ -54,6 +55,19 @@ describe('Button', () => {
     const button = screen.getByRole('button', { name: 'Disabled' });
 
     expect(button).toBeDisabled();
+    fireEvent.click(button);
+    expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it('replaces the left icon with Progress Indicator while loading', () => {
+    const onClick = vi.fn();
+    render(<Button text="Save" iconLeft="check" isLoading onClick={onClick} />);
+    const button = screen.getByRole('button', { name: 'Save' });
+
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute('aria-busy', 'true');
+    expect(screen.getByTestId('button-loading')).toBeInTheDocument();
+    expect(button.querySelector('[data-icon="check"]')).not.toBeInTheDocument();
     fireEvent.click(button);
     expect(onClick).not.toHaveBeenCalled();
   });

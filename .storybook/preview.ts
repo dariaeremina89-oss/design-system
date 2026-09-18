@@ -15,8 +15,10 @@ const preview: Preview = {
           'Atoms/Size',
           'Atoms/Icons',
           'Atoms/Skeleton',
-          'Components/Inputs',
           'Components/Buttons',
+          'Components/Inputs',
+          'Components/Badges',
+          'Components/Progress Indicators',
         ];
         const rank = (title) => {
           const index = sidebarOrder.findIndex(

@@ -58,6 +58,16 @@ test('Button disabled state is native and non-interactive', async ({ page }) => 
   await expect(disabled).toHaveCSS('cursor', 'default');
 });
 
+test('Button loading replaces the left icon with Progress Indicator', async ({ page }) => {
+  const root = await openStory(page, 'components-buttons-button--loading');
+  const button = root.getByRole('button');
+
+  await expect(button).toBeDisabled();
+  await expect(button).toHaveAttribute('aria-busy', 'true');
+  await expect(root.getByTestId('button-loading')).toHaveCount(1);
+  await expect(root.locator('[data-icon="check"]')).toHaveCount(0);
+});
+
 test('Button skeleton uses the shared animated atom and Figma radius', async ({ page }) => {
   const root = await openStory(page, 'components-buttons-button--skeleton-with-slots');
   const skeleton = root.locator('.fdoc-button__skeleton');
@@ -65,6 +75,5 @@ test('Button skeleton uses the shared animated atom and Figma radius', async ({ 
   await expect(skeleton).toHaveCount(4);
   await expect(skeleton.first()).toHaveClass(/fdoc-skeleton/);
   await expect(skeleton.first()).toHaveCSS('border-radius', '8px');
-  await expect(skeleton.first()).toHaveCSS('background-color', 'rgba(0, 0, 0, 0.16)');
+  await expect(skeleton.first()).toHaveCSS('background-color', 'rgba(85, 89, 99, 0.16)');
 });
-

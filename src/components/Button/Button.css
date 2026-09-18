@@ -17,9 +17,9 @@
   max-width: 100%;
   height: var(--fdoc-button-height);
   min-height: var(--fdoc-button-height);
-  padding: var(--fdoc-button-padding-y) var(--fdoc-button-padding-x);
+  padding: calc(var(--fdoc-button-padding-y) - var(--border-large)) calc(var(--fdoc-button-padding-x) - var(--border-large));
   gap: var(--fdoc-button-gap);
-  border: 0 solid transparent;
+  border: var(--border-large) solid transparent;
   border-radius: var(--radius-middle);
   background: var(--fdoc-button-background);
   color: var(--fdoc-button-text);
@@ -47,7 +47,6 @@
 .fdoc-button:focus-visible,
 .fdoc-button--focused:not(:disabled) {
   outline: 0;
-  border-width: var(--border-large);
   border-color: var(--fdoc-button-focus-border);
 }
 
@@ -70,6 +69,15 @@
 
 .fdoc-button__icon > * {
   flex: 0 0 auto;
+  width: 100%;
+  height: 100%;
+}
+
+.fdoc-button__loading {
+  pointer-events: none;
+}
+
+.fdoc-button__loading .fdoc-progress {
   width: 100%;
   height: 100%;
 }

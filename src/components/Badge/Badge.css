@@ -1,0 +1,131 @@
+.fdoc-badge,
+.fdoc-badge__skeleton {
+  --fdoc-badge-background: var(--background-primary-default);
+  --fdoc-badge-text: var(--text-primary-default);
+  display: inline-flex;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.fdoc-badge {
+  color: var(--fdoc-badge-text);
+}
+
+.fdoc-badge--smallest {
+  width: var(--elements-16);
+  height: var(--elements-16);
+  padding: var(--space-4);
+  border-radius: var(--radius-full);
+  background: transparent;
+}
+
+.fdoc-badge__dot {
+  width: var(--elements-8);
+  height: var(--elements-8);
+  flex: 0 0 var(--elements-8);
+  border-radius: var(--radius-full);
+  background: var(--fdoc-badge-background);
+}
+
+.fdoc-badge--small {
+  height: var(--elements-16);
+  padding: var(--space-1) var(--space-4);
+  border-radius: var(--radius-small);
+  background: var(--fdoc-badge-background);
+  font-family: var(--page-overline-family);
+  font-size: var(--page-overline-size);
+  font-weight: var(--page-overline-weight-strong);
+  line-height: var(--page-overline-line-height);
+}
+
+.fdoc-badge--medium {
+  height: var(--elements-20);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-small);
+  background: var(--fdoc-badge-background);
+  font-family: var(--page-caption-family);
+  font-size: var(--page-caption-size);
+  font-weight: var(--page-caption-weight-base);
+  line-height: var(--page-caption-line-height);
+}
+
+.fdoc-badge--large {
+  height: var(--elements-24);
+  padding: var(--space-2) var(--space-8);
+  border-radius: var(--radius-small);
+  background: var(--fdoc-badge-background);
+  font-family: var(--page-body-family);
+  font-size: var(--page-body-size);
+  font-weight: var(--page-body-weight-base);
+  line-height: var(--page-body-line-height);
+}
+
+.fdoc-badge--giant {
+  height: var(--elements-28);
+  padding: var(--space-2) var(--space-8);
+  border-radius: var(--radius-small);
+  background: var(--fdoc-badge-background);
+  font-family: var(--page-subtitle-family);
+  font-size: var(--page-subtitle-size);
+  font-weight: var(--page-subtitle-weight-base);
+  line-height: var(--page-subtitle-line-height);
+}
+
+.fdoc-badge--secondary {
+  --fdoc-badge-background: var(--background-base-secondary);
+  --fdoc-badge-text: var(--text-base-default);
+}
+
+.fdoc-badge--inverse {
+  --fdoc-badge-background: var(--background-base-inverse);
+  --fdoc-badge-text: var(--text-base-inverse);
+}
+
+.fdoc-badge--disabled {
+  --fdoc-badge-background: var(--background-primary-default-disabled);
+  --fdoc-badge-text: var(--text-primary-default-disabled);
+}
+
+.fdoc-badge--secondary.fdoc-badge--disabled {
+  --fdoc-badge-background: var(--background-base-secondary-disabled);
+  --fdoc-badge-text: var(--text-base-default-disabled);
+}
+
+.fdoc-badge--inverse.fdoc-badge--disabled {
+  --fdoc-badge-background: var(--background-base-inverse-disabled);
+  --fdoc-badge-text: var(--text-base-inverse-disabled);
+}
+
+.fdoc-badge__skeleton {
+  min-width: 0;
+  min-height: 0;
+  border-radius: var(--radius-small);
+  background: var(--background-base-skeleton);
+}
+
+.fdoc-badge__skeleton::before,
+.fdoc-badge__skeleton::after {
+  border-radius: var(--radius-small);
+}
+
+.fdoc-badge__skeleton-dot {
+  min-width: 0;
+  min-height: 0;
+}
+
+.fdoc-badge--skeleton .fdoc-skeleton::before,
+.fdoc-badge--skeleton .fdoc-skeleton::after {
+  border-radius: var(--radius-full);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fdoc-badge__skeleton::after,
+  .fdoc-badge--skeleton .fdoc-skeleton::after {
+    animation: none;
+  }
+}

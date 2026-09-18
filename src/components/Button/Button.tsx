@@ -1,5 +1,6 @@
 import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from 'react';
 import { Icon, type IconName } from '../Icon/Icon';
+import { ProgressIndicator, type ProgressIndicatorColor } from '../ProgressIndicator/ProgressIndicator';
 import { Skeleton } from '../Skeleton/Skeleton';
 import './Button.css';
 
@@ -36,6 +37,8 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   badgeLeft?: ReactNode;
   /** Вложенный Badge в правом слоте. Токены принадлежат Badge. */
   badgeRight?: ReactNode;
+  /** Показывает Circular Progress Indicator слева и блокирует повторную отправку. */
+  isLoading?: boolean;
   /** Растянуть кнопку на ширину родителя. */
   fullWidth?: boolean;
   /** Ширина скелетона. По умолчанию соответствует Figma-примеру Button. */
@@ -60,6 +63,12 @@ function renderIcon(icon: IconName | undefined, iconView: ReactNode, size: numbe
   return iconView ?? (icon ? <Icon name={icon} size={size} /> : null);
 }
 
+function getLoadingColor(color: ButtonColor): ProgressIndicatorColor {
+  if (color === 'primary') return 'primary';
+  if (color === 'inverse' || color === 'inverse-primary') return 'tertiary';
+  return 'secondary';
+}
+
 export function Button({
   children,
   text,
@@ -72,17 +81,19 @@ export function Button({
   iconRightView,
   badgeLeft,
   badgeRight,
+  isLoading = false,
   fullWidth = false,
   skeletonWidth,
   className,
   style,
   disabled,
+  'aria-busy': ariaBusy,
   type = 'button',
   'data-testid': testId,
   ...props
 }: ButtonProps) {
   const dimensions = sizeMap[size];
-  const isDisabled = Boolean(disabled || state === 'disabled');
+  const isDisabled = Boolean(disabled || state === 'disabled' || isLoading);
   const content = children ?? text;
   const hasText = content !== undefined && content !== null;
   const isSkeleton = state === 'skeleton';
@@ -127,18 +138,29 @@ export function Button({
       className={classes}
       style={buttonStyle}
       disabled={isDisabled}
+      aria-busy={isLoading || ariaBusy}
       data-testid={testId ?? 'button'}
       data-button-state={state}
       data-button-size={dimensions.button}
+      data-button-loading={isLoading}
     >
       {badgeLeft !== undefined && (
         <span className="fdoc-button__badge fdoc-button__badge--left" data-testid="button-badge-left">
           {badgeLeft}
         </span>
       )}
-      {renderIcon(iconLeft, iconLeftView, dimensions.icon) !== null && (
-        <span className="fdoc-button__icon fdoc-button__icon--left" data-testid="button-icon-left">
-          {renderIcon(iconLeft, iconLeftView, dimensions.icon)}
+      {(isLoading || renderIcon(iconLeft, iconLeftView, dimensions.icon) !== null) && (
+        <span className="fdoc-button__icon fdoc-button__icon--left" data-testid={isLoading ? 'button-loading' : 'button-icon-left'}>
+          {isLoading ? (
+            <ProgressIndicator
+              type="circular"
+              mode="indeterminate"
+              color={getLoadingColor(color)}
+              aria-label="Загрузка"
+            />
+          ) : (
+            renderIcon(iconLeft, iconLeftView, dimensions.icon)
+          )}
         </span>
       )}
       {hasText && (

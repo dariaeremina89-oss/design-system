@@ -1,0 +1,104 @@
+.fdoc-progress {
+  --fdoc-progress-track: var(--background-base-secondary);
+  --fdoc-progress-indicator: var(--background-primary-default);
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  pointer-events: none;
+}
+
+.fdoc-progress--linear {
+  display: block;
+  width: 100%;
+  height: var(--space-4);
+  overflow: hidden;
+  border-radius: var(--radius-middle);
+}
+
+.fdoc-progress--linear .fdoc-progress__track {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: var(--space-4);
+  overflow: hidden;
+  border-radius: var(--radius-middle);
+  background: var(--fdoc-progress-track);
+}
+
+.fdoc-progress--linear .fdoc-progress__indicator {
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--fdoc-progress-value);
+  border-radius: var(--radius-middle);
+  background: var(--fdoc-progress-indicator);
+}
+
+.fdoc-progress--linear.fdoc-progress--indeterminate .fdoc-progress__indicator {
+  left: 7.08%;
+  width: 60%;
+  transform: translateX(-172.22%);
+  animation: fdoc-progress-linear-indeterminate 2s linear infinite;
+}
+
+.fdoc-progress--circular {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.fdoc-progress__circular-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.fdoc-progress--circular .fdoc-progress__track,
+.fdoc-progress--circular .fdoc-progress__indicator {
+  fill: none;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.fdoc-progress--circular .fdoc-progress__track {
+  stroke: var(--fdoc-progress-track);
+}
+
+.fdoc-progress--circular .fdoc-progress__indicator {
+  stroke: var(--fdoc-progress-indicator);
+  stroke-linecap: round;
+  transform-origin: center;
+}
+
+.fdoc-progress--circular.fdoc-progress--indeterminate .fdoc-progress__indicator {
+  animation: fdoc-progress-circular-indeterminate 2s linear infinite;
+}
+
+.fdoc-progress--secondary {
+  --fdoc-progress-indicator: var(--background-base-default);
+}
+
+.fdoc-progress--tertiary {
+  --fdoc-progress-track: var(--background-base-inverse-light);
+  --fdoc-progress-indicator: var(--background-base-inverse);
+}
+
+@keyframes fdoc-progress-linear-indeterminate {
+  0% { transform: translateX(-172.22%); }
+  4.7% { transform: translateX(-172.22%); }
+  99.99% { transform: translateX(162.65%); }
+  100% { transform: translateX(179.17%); }
+}
+
+@keyframes fdoc-progress-circular-indeterminate {
+  from { transform: rotate(-360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fdoc-progress--indeterminate .fdoc-progress__indicator {
+    animation: none;
+  }
+}
