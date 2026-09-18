@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from 'react';
 import { Icon, type IconName } from '../Icon/Icon';
-import { Skeleton } from '../Skeleton/Skeleton';
+import { InputSkeleton } from './InputSkeleton';
 import './Input.css';
 
 export type InputSize = 'medium' | 'small';
@@ -118,24 +118,25 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 
   if (skeleton) {
     return (
-      <div
-        className={joinClassNames('fdoc-input', `fdoc-input--${size}`, wrapperClassName)}
-        aria-hidden="true"
-      >
-        {label !== false && label !== undefined && (
-          <div className="fdoc-input__label">
-            <Skeleton className="fdoc-input__skeleton--label" width="64px" height="8px" />
-          </div>
-        )}
-        <div className="fdoc-input__field fdoc-input__field--skeleton">
-          <Skeleton className="fdoc-input__skeleton--text" width="64px" height="11px" />
-        </div>
-        {(caption !== undefined || hasCounter) && (
-          <div className="fdoc-input__helper">
-            <Skeleton className="fdoc-input__skeleton--caption" width="64px" height="8px" />
-          </div>
-        )}
-      </div>
+      <InputSkeleton
+        size={size}
+        label={label}
+        description={description}
+        error={error}
+        caption={caption}
+        counter={counter}
+        leadingIcon={leadingIcon}
+        trailingIcon={trailingIcon}
+        sum={sum}
+        sumIcon={sumIcon}
+        caret={caret}
+        clearable={clearable}
+        value={value}
+        defaultValue={defaultValue}
+        placeholder={placeholder}
+        maxLength={maxLength}
+        wrapperClassName={wrapperClassName}
+      />
     );
   }
 
