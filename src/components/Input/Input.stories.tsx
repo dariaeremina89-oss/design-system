@@ -56,6 +56,24 @@ export const WithSlots: Story = {
 export const Clearable: Story = { args: { defaultValue: 'Input text', clearable: true } };
 export const Disabled: Story = { args: { defaultValue: 'Input text', disabled: true, leadingIcon: 'magnifying-glass' } };
 export const Skeleton: Story = { args: { skeleton: true } };
+export const SkeletonWithAllContent: Story = {
+  args: {
+    skeleton: true,
+    label: 'Название поля',
+    required: true,
+    description: 'Описание внутри поля',
+    error: 'Текст ошибки',
+    counter: true,
+    maxLength: 100,
+    leadingIcon: 'magnifying-glass',
+    trailingIcon: 'eye',
+    sum: '100',
+    sumIcon: 'currency/ruble-sign_regular',
+    caret: true,
+    clearable: true,
+    defaultValue: 'Значение',
+  },
+};
 export const Small: Story = { args: { size: 'small' } };
 export const Focused: Story = { args: { autoFocus: true } };
 export const LongText: Story = {
