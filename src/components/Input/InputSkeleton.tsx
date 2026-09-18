@@ -94,7 +94,6 @@ export function InputSkeleton({
   const hasCounter = counter !== undefined
     && counter !== null
     && counter !== false
-    && counter !== true
     && counter !== '';
   const hasSum = hasRenderableContent(sum);
   const providedValue = value !== undefined && value !== null ? value : defaultValue;
