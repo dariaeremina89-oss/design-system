@@ -133,7 +133,7 @@ export function InputSkeleton({
           <Skeleton
             className="fdoc-input__skeleton--input-text"
             width={skeletonWidth(inputText, 64, 32, 280)}
-            height="var(--font-size-16)"
+            height="var(--line-height-24)"
             shape="text"
           />
           {description !== undefined && (
