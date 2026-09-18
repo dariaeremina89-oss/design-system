@@ -6,7 +6,30 @@ const meta = {
   title: 'Components/Input',
   component: Input,
   tags: ['autodocs'],
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component: `
+**Input** — нативное текстовое поле F.Doc с опциональными Label, Description, Helper, Caption/Error, Counter и слотами иконок.
+
+### API и анатомия
+
+- Размеры: \`medium\` (56 px) и \`small\` (48 px).
+- \`leadingIcon\`, \`trailingIcon\`, \`sumIcon\` и \`clearIcon\` выбираются из библиотеки \`Icon\`.
+- \`clearable\` использует \`ButtonIcon\` размера 24, цвета \`Neutral\`, с иконкой \`filled/cross_circle_filled\` по умолчанию.
+- \`counter={true}\` показывает длину значения и учитывает \`maxLength\`.
+- \`error\` заменяет \`caption\`, но не меняет цвет Value, Placeholder, Description, Counter и иконок.
+
+### Состояния и доступность
+
+Поддерживаются Default, Hover, Focused, Disabled, Error и Skeleton. Focus не меняет внешний размер поля. Компонент использует нативный \`input\`, связывает Label через \`htmlFor\`, а Description, Error и Counter через \`aria-describedby\`; для ошибки устанавливает \`aria-invalid\`.
+
+Это компонент тестовой дизайн-системы и личного плейбука, а не официальный production-пакет F.Doc.
+        `,
+      },
+    },
+  },
   args: {
     label: 'Label text',
     placeholder: 'Placeholder',
