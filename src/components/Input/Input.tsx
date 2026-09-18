@@ -104,7 +104,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const hasCounter = counter !== undefined
     && counter !== null
     && counter !== false
-    && counter !== true
     && counter !== '';
   const descriptionId = hasDescription ? `${inputId}-description` : undefined;
   const errorId = hasError ? `${inputId}-error` : undefined;
