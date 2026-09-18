@@ -121,6 +121,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       <InputSkeleton
         size={size}
         label={label}
+        required={required}
         description={description}
         error={error}
         caption={caption}
