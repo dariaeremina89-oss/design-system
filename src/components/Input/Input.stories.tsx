@@ -3,7 +3,7 @@ import { iconNames } from '../Icon/Icon';
 import { Input } from './Input';
 
 const meta = {
-  title: 'Components/Input',
+  title: 'Components/Inputs/Input',
   component: Input,
   tags: ['autodocs'],
   parameters: {
