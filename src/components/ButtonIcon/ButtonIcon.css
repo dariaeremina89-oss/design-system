@@ -96,8 +96,8 @@
   --fdoc-button-icon-background-pressed: var(--background-base-default-pressed);
   --fdoc-button-icon-background-disabled: transparent;
   --fdoc-button-icon-icon: var(--icon-base-secondary);
-  --fdoc-button-icon-icon-hover: var(--icon-base-secondary-hover);
-  --fdoc-button-icon-icon-pressed: var(--icon-base-secondary-pressed);
+  --fdoc-button-icon-icon-hover: var(--icon-base-secondary);
+  --fdoc-button-icon-icon-pressed: var(--icon-base-secondary);
   --fdoc-button-icon-icon-disabled: var(--icon-base-default-light-disabled);
   --fdoc-button-icon-focus-border: var(--border-base-default-focused);
 }
