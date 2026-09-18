@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { ArgTypes, Meta, StoryObj } from '@storybook/react-vite';
 import { Icon, type IconName, type IconProps, iconNames } from '../components/Icon/Icon';
 import { Page } from './atoms-helpers';
 
@@ -6,12 +6,12 @@ const meta = {
   title: 'Atoms/Icons',
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
-} satisfies Meta;
+} satisfies Meta<IconProps>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<IconProps>;
 
-const iconArgTypes = {
+const iconArgTypes: ArgTypes<IconProps> = {
   name: { control: 'select', options: iconNames },
   size: { control: { type: 'number', min: 12, max: 64, step: 1 } },
   color: { control: 'color' },
