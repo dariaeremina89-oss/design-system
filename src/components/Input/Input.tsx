@@ -153,14 +153,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           )}
           htmlFor={inputId}
         >
-          {label}
-          {required && <span className="fdoc-input__required" aria-hidden="true">*</span>}
+          <span className="fdoc-input__label-text">
+            {label}
+            {required && <span className="fdoc-input__required" aria-hidden="true">*</span>}
+          </span>
         </label>
       )}
 
       <div
         className={joinClassNames(
           'fdoc-input__field',
+          leadingIcon !== undefined && 'fdoc-input__field--has-leading',
           isError && 'fdoc-input__field--error',
           disabled && 'fdoc-input__field--disabled',
         )}
@@ -234,19 +237,27 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 
       {(caption !== undefined || hasCounter || error !== undefined) && (
         <div className="fdoc-input__helper">
-          <span
-            id={errorId ?? captionId}
-            className={joinClassNames(
-              'fdoc-input__caption',
+          {(error !== undefined || caption !== undefined) && (
+            <span
+              id={errorId ?? captionId}
+              className={joinClassNames(
+                'fdoc-input__caption',
               isError && 'fdoc-input__caption--error',
               disabled && 'fdoc-input__caption--disabled',
-              isError && disabled && 'fdoc-input__caption--error-disabled',
-            )}
-          >
-            {error ?? caption}
-          </span>
+                isError && disabled && 'fdoc-input__caption--error-disabled',
+              )}
+            >
+              {error ?? caption}
+            </span>
+          )}
           {hasCounter && (
-            <span id={counterId} className="fdoc-input__counter">
+            <span
+              id={counterId}
+              className={joinClassNames(
+                'fdoc-input__counter',
+                disabled && 'fdoc-input__counter--disabled',
+              )}
+            >
               {resolvedCounter}
             </span>
           )}
