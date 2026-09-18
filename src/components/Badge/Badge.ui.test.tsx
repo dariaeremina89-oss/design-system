@@ -15,6 +15,14 @@ describe('Badge visual contract', () => {
     expect(css).toContain('font-family: var(--page-caption-family)');
     expect(css).toContain('font-family: var(--page-body-family)');
     expect(css).toContain('font-family: var(--page-subtitle-family)');
+    expect(css).toContain('font-size: var(--font-size-10)');
+    expect(css).toContain('font-size: var(--font-size-12)');
+    expect(css).toContain('font-size: var(--font-size-14)');
+    expect(css).toContain('font-size: var(--font-size-16)');
+    expect(css).not.toContain('font-size: var(--page-overline-size)');
+    expect(css).not.toContain('font-size: var(--page-caption-size)');
+    expect(css).not.toContain('font-size: var(--page-body-size)');
+    expect(css).not.toContain('font-size: var(--page-subtitle-size)');
   });
 
   it('uses the shared Skeleton token and animation', () => {

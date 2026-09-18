@@ -53,9 +53,15 @@ export function Badge({
   'data-testid': testId,
   ...props
 }: BadgeProps) {
-  const content = children ?? text;
+  // Storybook can pass an empty children control. Keep the public text control live.
+  const content = children === undefined || children === null || children === '' ? text : children;
   const isSmallest = size === 'smallest';
   const isSkeleton = state === 'skeleton';
+  const defaultSmallestLabel = isSmallest
+    && props['aria-label'] === undefined
+    && props['aria-hidden'] === undefined
+    ? 'Есть новые уведомления'
+    : undefined;
 
   if (isSkeleton) {
     if (isSmallest) {
@@ -100,6 +106,7 @@ export function Badge({
   return (
     <span
       {...props}
+      aria-label={defaultSmallestLabel ?? props['aria-label']}
       className={joinClassNames(
         'fdoc-badge',
         `fdoc-badge--${size}`,

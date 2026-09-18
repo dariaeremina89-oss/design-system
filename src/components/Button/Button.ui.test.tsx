@@ -10,8 +10,10 @@ describe('Button visual contract', () => {
     expect(css).toContain('border-radius: var(--radius-middle)');
     expect(css).toContain('font-family: var(--page-caption-family)');
     expect(css).toContain('font-weight: var(--page-caption-weight-strong)');
-    expect(css).toContain('font-size: var(--page-caption-size)');
-    expect(css).toContain('line-height: var(--page-caption-line-height)');
+    expect(css).toContain('font-size: var(--font-size-12)');
+    expect(css).toContain('line-height: var(--line-height-16)');
+    expect(css).not.toContain('font-size: var(--page-caption-size)');
+    expect(css).not.toContain('line-height: var(--page-caption-line-height)');
   });
 
   it('reserves the focus border without changing the button box', () => {

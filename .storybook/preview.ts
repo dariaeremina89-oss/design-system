@@ -17,7 +17,7 @@ const preview: Preview = {
           'Atoms/Skeleton',
           'Components/Buttons',
           'Components/Inputs',
-          'Components/Badges',
+          'Components/Badge',
           'Components/Progress Indicators',
         ];
         const rank = (title) => {

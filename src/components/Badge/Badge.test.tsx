@@ -20,11 +20,32 @@ describe('Badge', () => {
     expect(dot).toHaveClass('fdoc-badge__dot');
   });
 
+  it('gives a standalone Smallest badge a useful accessible name', () => {
+    render(<Badge size="smallest" />);
+
+    expect(screen.getByTestId('badge')).toHaveAccessibleName('Есть новые уведомления');
+  });
+
+  it('allows a decorative Smallest badge to be hidden from assistive technology', () => {
+    render(<Badge size="smallest" aria-hidden="true" />);
+
+    expect(screen.getByTestId('badge')).toHaveAttribute('aria-hidden', 'true');
+    expect(screen.getByTestId('badge')).not.toHaveAttribute('aria-label');
+  });
+
   it('does not add interactive semantics', () => {
     render(<Badge text="New" />);
 
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
     expect(screen.getByTestId('badge').tagName).toBe('SPAN');
+  });
+
+  it('updates the visible text when the text prop changes', () => {
+    const { rerender } = render(<Badge text="New" />);
+
+    expect(screen.getByTestId('badge')).toHaveTextContent('New');
+    rerender(<Badge text="Updated" />);
+    expect(screen.getByTestId('badge')).toHaveTextContent('Updated');
   });
 
   it('maps disabled color tokens by scheme', () => {

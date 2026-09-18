@@ -85,4 +85,36 @@ describe('ButtonIcon', () => {
     expect(styles.getPropertyValue('--fdoc-button-icon-icon-hover').trim()).toBe('var(--icon-base-secondary)');
     expect(styles.getPropertyValue('--fdoc-button-icon-icon-pressed').trim()).toBe('var(--icon-base-secondary)');
   });
+
+  it.each(['base', 'secondary', 'inverse', 'inverse-primary', 'inverse-light'] as const)(
+    'keeps the %s icon token stable across interactive states',
+    (color) => {
+      render(<ButtonIcon icon="cross" color={color} aria-label={color} />);
+      const button = screen.getByRole('button', { name: color });
+      const styles = getComputedStyle(button);
+
+      expect(styles.getPropertyValue('--fdoc-button-icon-icon-hover').trim()).toBe(
+        styles.getPropertyValue('--fdoc-button-icon-icon').trim(),
+      );
+      expect(styles.getPropertyValue('--fdoc-button-icon-icon-pressed').trim()).toBe(
+        styles.getPropertyValue('--fdoc-button-icon-icon').trim(),
+      );
+    },
+  );
+
+  it('uses the Inverse light background tokens for hover and pressed states', () => {
+    render(<ButtonIcon icon="cross" color="inverse-light" aria-label="Inverse light" />);
+    const button = screen.getByRole('button', { name: 'Inverse light' });
+    const styles = getComputedStyle(button);
+
+    expect(styles.getPropertyValue('--fdoc-button-icon-background-hover').trim()).toBe(
+      'var(--background-base-inverse-light-hover)',
+    );
+    expect(styles.getPropertyValue('--fdoc-button-icon-background-pressed').trim()).toBe(
+      'var(--background-base-inverse-light-pressed)',
+    );
+    expect(styles.getPropertyValue('--fdoc-button-icon-background-disabled').trim()).toBe(
+      'var(--background-base-inverse-light-disabled)',
+    );
+  });
 });

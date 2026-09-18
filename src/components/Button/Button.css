@@ -25,9 +25,9 @@
   color: var(--fdoc-button-text);
   cursor: pointer;
   font-family: var(--page-caption-family);
-  font-size: var(--page-caption-size);
+  font-size: var(--font-size-12);
   font-weight: var(--page-caption-weight-strong);
-  line-height: var(--page-caption-line-height);
+  line-height: var(--line-height-16);
   overflow: hidden;
   transition: background-color 120ms ease, border-color 120ms ease;
 }

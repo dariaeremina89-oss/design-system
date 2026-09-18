@@ -38,9 +38,9 @@
   border-radius: var(--radius-small);
   background: var(--fdoc-badge-background);
   font-family: var(--page-overline-family);
-  font-size: var(--page-overline-size);
+  font-size: var(--font-size-10);
   font-weight: var(--page-overline-weight-strong);
-  line-height: var(--page-overline-line-height);
+  line-height: var(--line-height-14);
 }
 
 .fdoc-badge--medium {
@@ -49,9 +49,9 @@
   border-radius: var(--radius-small);
   background: var(--fdoc-badge-background);
   font-family: var(--page-caption-family);
-  font-size: var(--page-caption-size);
+  font-size: var(--font-size-12);
   font-weight: var(--page-caption-weight-base);
-  line-height: var(--page-caption-line-height);
+  line-height: var(--line-height-16);
 }
 
 .fdoc-badge--large {
@@ -60,9 +60,9 @@
   border-radius: var(--radius-small);
   background: var(--fdoc-badge-background);
   font-family: var(--page-body-family);
-  font-size: var(--page-body-size);
+  font-size: var(--font-size-14);
   font-weight: var(--page-body-weight-base);
-  line-height: var(--page-body-line-height);
+  line-height: var(--line-height-20);
 }
 
 .fdoc-badge--giant {
@@ -71,9 +71,9 @@
   border-radius: var(--radius-small);
   background: var(--fdoc-badge-background);
   font-family: var(--page-subtitle-family);
-  font-size: var(--page-subtitle-size);
+  font-size: var(--font-size-16);
   font-weight: var(--page-subtitle-weight-base);
-  line-height: var(--page-subtitle-line-height);
+  line-height: var(--line-height-24);
 }
 
 .fdoc-badge--secondary {

@@ -60,8 +60,8 @@
   --fdoc-button-icon-background-pressed: var(--background-base-secondary-pressed);
   --fdoc-button-icon-background-disabled: var(--background-base-secondary-disabled);
   --fdoc-button-icon-icon: var(--icon-base-default);
-  --fdoc-button-icon-icon-hover: var(--icon-base-default-hover);
-  --fdoc-button-icon-icon-pressed: var(--icon-base-default-pressed);
+  --fdoc-button-icon-icon-hover: var(--icon-base-default);
+  --fdoc-button-icon-icon-pressed: var(--icon-base-default);
   --fdoc-button-icon-icon-disabled: var(--icon-base-default-disabled);
   --fdoc-button-icon-focus-border: var(--border-base-default-focused);
 }
@@ -84,8 +84,8 @@
   --fdoc-button-icon-background-pressed: var(--background-base-default-pressed);
   --fdoc-button-icon-background-disabled: var(--background-base-default-disabled);
   --fdoc-button-icon-icon: var(--icon-base-default);
-  --fdoc-button-icon-icon-hover: var(--icon-base-default-hover);
-  --fdoc-button-icon-icon-pressed: var(--icon-base-default-pressed);
+  --fdoc-button-icon-icon-hover: var(--icon-base-default);
+  --fdoc-button-icon-icon-pressed: var(--icon-base-default);
   --fdoc-button-icon-icon-disabled: var(--icon-base-default-disabled);
   --fdoc-button-icon-focus-border: var(--border-base-default-focused);
 }
@@ -108,8 +108,8 @@
   --fdoc-button-icon-background-pressed: var(--background-base-inverse-pressed);
   --fdoc-button-icon-background-disabled: var(--background-base-inverse-disabled);
   --fdoc-button-icon-icon: var(--icon-base-inverse);
-  --fdoc-button-icon-icon-hover: var(--icon-base-inverse-hover);
-  --fdoc-button-icon-icon-pressed: var(--icon-base-inverse-pressed);
+  --fdoc-button-icon-icon-hover: var(--icon-base-inverse);
+  --fdoc-button-icon-icon-pressed: var(--icon-base-inverse);
   --fdoc-button-icon-icon-disabled: var(--icon-base-inverse-disabled);
   --fdoc-button-icon-focus-border: var(--border-base-inverse-focused);
 }
@@ -120,20 +120,20 @@
   --fdoc-button-icon-background-pressed: var(--background-base-inverse-pressed);
   --fdoc-button-icon-background-disabled: var(--background-base-inverse-disabled);
   --fdoc-button-icon-icon: var(--icon-primary-inverse-light);
-  --fdoc-button-icon-icon-hover: var(--icon-primary-inverse-light-hover);
-  --fdoc-button-icon-icon-pressed: var(--icon-primary-inverse-light-pressed);
+  --fdoc-button-icon-icon-hover: var(--icon-primary-inverse-light);
+  --fdoc-button-icon-icon-pressed: var(--icon-primary-inverse-light);
   --fdoc-button-icon-icon-disabled: var(--icon-base-inverse-disabled);
   --fdoc-button-icon-focus-border: var(--border-base-inverse-focused);
 }
 
 .fdoc-button-icon--inverse-light {
   --fdoc-button-icon-background: var(--background-base-inverse-light);
-  --fdoc-button-icon-background-hover: var(--background-base-inverse-hover);
-  --fdoc-button-icon-background-pressed: var(--background-base-inverse-pressed);
-  --fdoc-button-icon-background-disabled: var(--background-base-inverse-disabled);
+  --fdoc-button-icon-background-hover: var(--background-base-inverse-light-hover);
+  --fdoc-button-icon-background-pressed: var(--background-base-inverse-light-pressed);
+  --fdoc-button-icon-background-disabled: var(--background-base-inverse-light-disabled);
   --fdoc-button-icon-icon: var(--icon-base-inverse);
-  --fdoc-button-icon-icon-hover: var(--icon-base-inverse-hover);
-  --fdoc-button-icon-icon-pressed: var(--icon-base-inverse-pressed);
+  --fdoc-button-icon-icon-hover: var(--icon-base-inverse);
+  --fdoc-button-icon-icon-pressed: var(--icon-base-inverse);
   --fdoc-button-icon-icon-disabled: var(--icon-base-inverse-disabled);
   --fdoc-button-icon-focus-border: var(--border-base-inverse-focused);
 }

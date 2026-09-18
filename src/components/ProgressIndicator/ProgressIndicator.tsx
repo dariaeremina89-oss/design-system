@@ -16,7 +16,8 @@ export interface ProgressIndicatorProps extends Omit<HTMLAttributes<HTMLDivEleme
   color?: ProgressIndicatorColor;
 }
 
-const CIRCUMFERENCE = 2 * Math.PI * 10;
+// r=11 with a 2px stroke keeps the full stroke inside the 24px viewBox.
+const CIRCUMFERENCE = 2 * Math.PI * 11;
 
 function joinClassNames(...classes: Array<string | false | undefined>) {
   return classes.filter(Boolean).join(' ');
@@ -38,12 +39,13 @@ export function ProgressIndicator({
 }: ProgressIndicatorProps) {
   const normalizedValue = clampValue(value);
   const isDeterminate = mode === 'determinate';
+  const effectiveColor = type === 'circular' ? color : 'primary';
   const label = ariaLabel ?? (isDeterminate ? `Прогресс: ${normalizedValue}%` : 'Загрузка');
   const classes = joinClassNames(
     'fdoc-progress',
     `fdoc-progress--${type}`,
     `fdoc-progress--${mode}`,
-    `fdoc-progress--${color}`,
+    `fdoc-progress--${effectiveColor}`,
     className,
   );
   const progressStyle = {
@@ -65,16 +67,16 @@ export function ProgressIndicator({
         aria-valuenow={isDeterminate ? normalizedValue : undefined}
         data-progress-type={type}
         data-progress-mode={mode}
-        data-progress-color={color}
+        data-progress-color={effectiveColor}
         style={progressStyle}
       >
         <svg className="fdoc-progress__circular-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <circle className="fdoc-progress__track" cx="12" cy="12" r="10" pathLength="1" />
+          <circle className="fdoc-progress__track" cx="12" cy="12" r="11" pathLength="1" />
           <circle
             className="fdoc-progress__indicator"
             cx="12"
             cy="12"
-            r="10"
+            r="11"
             pathLength="1"
             strokeDasharray={isDeterminate ? '1' : '0.25 1'}
             strokeDashoffset={isDeterminate ? `${dashOffset / CIRCUMFERENCE}` : undefined}
@@ -95,7 +97,7 @@ export function ProgressIndicator({
       aria-valuenow={isDeterminate ? normalizedValue : undefined}
       data-progress-type={type}
       data-progress-mode={mode}
-      data-progress-color={color}
+      data-progress-color={effectiveColor}
       style={progressStyle}
     >
       <span className="fdoc-progress__track" aria-hidden="true">

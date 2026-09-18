@@ -16,7 +16,7 @@ const openStory = async (page: Page, storyId: string) => {
 };
 
 test('Badge follows the Figma height matrix and Smallest dot anatomy', async ({ page }) => {
-  const root = await openStory(page, 'components-badges-badge--all-sizes');
+  const root = await openStory(page, 'components-badge--all-sizes');
   const badges = root.locator('[data-testid^="badge-"]');
 
   await expect(badges).toHaveCount(5);
@@ -27,7 +27,7 @@ test('Badge follows the Figma height matrix and Smallest dot anatomy', async ({ 
 });
 
 test('Badge skeleton keeps the shared background and Figma radius', async ({ page }) => {
-  const root = await openStory(page, 'components-badges-badge--skeleton-all-sizes');
+  const root = await openStory(page, 'components-badge--skeleton-all-sizes');
   const skeletons = root.locator('.fdoc-badge__skeleton');
 
   await expect(skeletons).toHaveCount(4);

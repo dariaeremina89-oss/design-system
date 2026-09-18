@@ -32,6 +32,14 @@ describe('Button', () => {
     expect(screen.getByTestId('button-text')).toHaveTextContent('Save');
   });
 
+  it('updates the visible text when the text prop changes', () => {
+    const { rerender } = render(<Button text="First" />);
+
+    expect(screen.getByTestId('button-text')).toHaveTextContent('First');
+    rerender(<Button text="Second" />);
+    expect(screen.getByTestId('button-text')).toHaveTextContent('Second');
+  });
+
   it('supports both icon slots, custom slots and Badge slots', () => {
     render(
       <Button

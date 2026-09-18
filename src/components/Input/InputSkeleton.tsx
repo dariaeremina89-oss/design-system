@@ -55,12 +55,6 @@ function textLength(node: ReactNode): number {
   return length;
 }
 
-function valueText(value: unknown, defaultValue: unknown, placeholder?: string): ReactNode {
-  if (value !== undefined && value !== null) return String(value);
-  if (defaultValue !== undefined && defaultValue !== null) return String(defaultValue);
-  return placeholder;
-}
-
 export function InputSkeleton({
   size = 'medium',
   label,
@@ -76,8 +70,6 @@ export function InputSkeleton({
   clearable = false,
   value,
   defaultValue,
-  placeholder,
-  maxLength,
   testId,
   wrapperClassName,
 }: InputSkeletonProps) {
@@ -94,11 +86,6 @@ export function InputSkeleton({
   const providedValue = value !== undefined && value !== null ? value : defaultValue;
   const hasValue = textLength(providedValue as ReactNode) > 0;
   const helperText = hasError ? error : caption;
-  const inputText = valueText(value, defaultValue, placeholder);
-  const valueLength = textLength(providedValue as ReactNode);
-  const counterText = counter === true
-    ? `${valueLength} / ${maxLength ?? 0}`
-    : counter;
 
   return (
     <div

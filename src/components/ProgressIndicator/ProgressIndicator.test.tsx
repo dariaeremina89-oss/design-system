@@ -37,6 +37,14 @@ describe('ProgressIndicator', () => {
     expect(progress).toHaveAttribute('data-progress-color', color);
   });
 
+  it('uses the Figma Primary scheme for Linear regardless of the ignored color prop', () => {
+    render(<ProgressIndicator type="linear" mode="determinate" color="tertiary" value={40} />);
+
+    const progress = screen.getByRole('progressbar');
+    expect(progress).toHaveAttribute('data-progress-color', 'primary');
+    expect(progress).toHaveClass('fdoc-progress--primary');
+  });
+
   it('is not focusable through the tab order', () => {
     render(<ProgressIndicator type="linear" mode="indeterminate" />);
     expect(screen.getByRole('progressbar')).not.toHaveAttribute('tabindex');
@@ -45,5 +53,11 @@ describe('ProgressIndicator', () => {
   it('keeps size in the external container and forwards style overrides', () => {
     render(<ProgressIndicator type="circular" mode="indeterminate" style={{ width: 32, height: 32 }} />);
     expect(screen.getByRole('progressbar')).toHaveStyle({ width: '32px', height: '32px' });
+  });
+
+  it('keeps the circular stroke inside the 24px viewBox', () => {
+    render(<ProgressIndicator type="circular" mode="determinate" value={50} />);
+
+    expect(screen.getByRole('progressbar').querySelector('.fdoc-progress__indicator')).toHaveAttribute('r', '11');
   });
 });

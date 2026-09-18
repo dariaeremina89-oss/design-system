@@ -94,7 +94,8 @@ export function Button({
 }: ButtonProps) {
   const dimensions = sizeMap[size];
   const isDisabled = Boolean(disabled || state === 'disabled' || isLoading);
-  const content = children ?? text;
+  // Storybook can pass an empty children control. Keep the public text control live.
+  const content = children === undefined || children === null || children === '' ? text : children;
   const hasText = content !== undefined && content !== null;
   const isSkeleton = state === 'skeleton';
   const buttonStyle = {
