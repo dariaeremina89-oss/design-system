@@ -6,6 +6,7 @@ import type { InputSize } from './Input';
 export interface InputSkeletonProps {
   size?: InputSize;
   label?: ReactNode;
+  required?: boolean;
   description?: ReactNode;
   error?: ReactNode;
   caption?: ReactNode;
@@ -60,6 +61,7 @@ function valueText(value: unknown, defaultValue: unknown, placeholder?: string):
 export function InputSkeleton({
   size = 'medium',
   label,
+  required = false,
   description,
   error,
   caption,
@@ -79,11 +81,13 @@ export function InputSkeleton({
   const hasLabel = label !== undefined && label !== false;
   const hasHelperText = error !== undefined || caption !== undefined;
   const hasCounter = counter !== undefined && counter !== false;
-  const hasValue = textLength(valueText(value, defaultValue)) > 0;
+  const providedValue = value !== undefined && value !== null ? value : defaultValue;
+  const hasValue = textLength(providedValue as ReactNode) > 0;
   const helperText = error ?? caption;
   const inputText = valueText(value, defaultValue, placeholder);
+  const valueLength = textLength(providedValue as ReactNode);
   const counterText = counter === true
-    ? `0 / ${maxLength ?? 0}`
+    ? `${valueLength} / ${maxLength ?? 0}`
     : counter;
 
   return (
@@ -100,6 +104,14 @@ export function InputSkeleton({
               height="var(--font-size-12)"
               shape="text"
             />
+            {required && (
+              <Skeleton
+                className="fdoc-input__skeleton--required"
+                width="var(--font-size-12)"
+                height="var(--font-size-12)"
+                shape="text"
+              />
+            )}
           </span>
         </div>
       )}
