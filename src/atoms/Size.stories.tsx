@@ -4,7 +4,15 @@ import { Page, TokenList } from './atoms-helpers';
 
 const meta = {
   title: 'Atoms/Size',
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component:
+          'Foundation-слой размеров и геометрии. Здесь собраны Space, Radius, Depth, Elements, Border и Responsive токены. Компоненты должны ссылаться на эти значения, а не дублировать пиксели в локальных стилях.',
+      },
+    },
+  },
   tags: ['autodocs'],
 } satisfies Meta;
 
