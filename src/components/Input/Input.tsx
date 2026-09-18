@@ -6,6 +6,7 @@ import {
   type InputHTMLAttributes,
   type ReactNode,
 } from 'react';
+import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { Icon, type IconName } from '../Icon/Icon';
 import { InputSkeleton } from './InputSkeleton';
 import './Input.css';
@@ -240,15 +241,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         )}
 
         {showClear && (
-          <button
-            type="button"
+          <ButtonIcon
             className="fdoc-input__clear"
+            icon={clearIcon}
+            iconSize={24}
+            size="xsmall"
+            color="neutral"
             aria-label="Очистить поле"
             data-testid="input-clear"
             onClick={handleClear}
-          >
-            <Icon name={clearIcon} size={24} />
-          </button>
+          />
         )}
 
         {trailingIcon !== undefined && (
