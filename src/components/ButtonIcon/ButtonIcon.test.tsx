@@ -49,6 +49,15 @@ describe('ButtonIcon', () => {
     expect(skeleton).not.toHaveClass('fdoc-button-icon--primary');
   });
 
+  it.each(['tertiary', 'neutral'] as const)('uses the icon skeleton treatment for %s', (color) => {
+    render(<ButtonIcon icon="cross" color={color} state="skeleton" aria-label="Loading" />);
+    const skeleton = screen.getByTestId('button-icon-skeleton');
+
+    expect(skeleton).toHaveClass('fdoc-button-icon__skeleton--icon');
+    expect(skeleton).toHaveStyle({ background: 'transparent' });
+    expect(screen.getByTestId('button-icon-skeleton-icon')).toHaveClass('fdoc-skeleton--icon');
+  });
+
   it('renders a custom icon slot', () => {
     render(
       <ButtonIcon iconView={<span data-testid="custom-icon" />} aria-label="Custom" />,
