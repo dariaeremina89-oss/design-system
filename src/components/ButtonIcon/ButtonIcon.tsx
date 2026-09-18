@@ -80,6 +80,31 @@ export function ButtonIcon({
   );
 
   if (isSkeleton) {
+    const skeletonTestId = testId ?? 'button-icon-skeleton';
+
+    if (color === 'tertiary' || color === 'neutral') {
+      return (
+        <span
+          className={joinClassNames(
+            'fdoc-button-icon__skeleton',
+            'fdoc-button-icon__skeleton--icon',
+            className,
+          )}
+          style={buttonStyle}
+          data-button-icon-state="skeleton"
+          data-testid={skeletonTestId}
+          aria-hidden="true"
+        >
+          <Skeleton
+            width={iconSize ?? dimensions.icon}
+            height={iconSize ?? dimensions.icon}
+            shape="icon"
+            data-testid={`${skeletonTestId}-icon`}
+          />
+        </span>
+      );
+    }
+
     return (
       <Skeleton
         className={joinClassNames('fdoc-button-icon__skeleton', className)}
@@ -87,7 +112,7 @@ export function ButtonIcon({
         width={dimensions.button}
         height={dimensions.button}
         data-button-icon-state="skeleton"
-        data-testid={testId ?? 'button-icon-skeleton'}
+        data-testid={skeletonTestId}
       />
     );
   }
