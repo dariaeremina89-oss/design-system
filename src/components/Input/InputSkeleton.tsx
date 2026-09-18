@@ -28,6 +28,14 @@ function joinClassNames(...classes: Array<string | false | undefined>) {
   return classes.filter(Boolean).join(' ');
 }
 
+function hasRenderableContent(value: ReactNode | undefined) {
+  return value !== undefined
+    && value !== null
+    && value !== false
+    && value !== true
+    && value !== '';
+}
+
 function textLength(node: ReactNode): number {
   let length = 0;
 
@@ -78,12 +86,20 @@ export function InputSkeleton({
   maxLength,
   wrapperClassName,
 }: InputSkeletonProps) {
-  const hasLabel = label !== undefined && label !== false;
-  const hasHelperText = error !== undefined || caption !== undefined;
-  const hasCounter = counter !== undefined && counter !== false;
+  const hasLabel = hasRenderableContent(label);
+  const hasDescription = hasRenderableContent(description);
+  const hasError = hasRenderableContent(error);
+  const hasCaption = hasRenderableContent(caption);
+  const hasHelperText = hasError || hasCaption;
+  const hasCounter = counter !== undefined
+    && counter !== null
+    && counter !== false
+    && counter !== true
+    && counter !== '';
+  const hasSum = hasRenderableContent(sum);
   const providedValue = value !== undefined && value !== null ? value : defaultValue;
   const hasValue = textLength(providedValue as ReactNode) > 0;
-  const helperText = error ?? caption;
+  const helperText = hasError ? error : caption;
   const inputText = valueText(value, defaultValue, placeholder);
   const valueLength = textLength(providedValue as ReactNode);
   const counterText = counter === true
@@ -136,7 +152,7 @@ export function InputSkeleton({
             height="var(--line-height-24)"
             shape="text"
           />
-          {description !== undefined && (
+          {hasDescription && (
             <Skeleton
               className="fdoc-input__skeleton--description"
               width={skeletonWidth(description, 96, 48, 280)}
@@ -146,7 +162,7 @@ export function InputSkeleton({
           )}
         </span>
 
-        {sum !== undefined && (
+        {hasSum && (
           <span className="fdoc-input__sum">
             <Skeleton
               className="fdoc-input__skeleton--sum"
