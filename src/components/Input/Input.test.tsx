@@ -5,6 +5,33 @@ import { describe, expect, it, vi } from 'vitest';
 import { Input } from './Input';
 
 describe('Input', () => {
+  it('exposes stable test ids for the component anatomy', () => {
+    render(
+      <Input
+        label="Поле"
+        description="Описание"
+        caption="Подсказка"
+        counter
+        maxLength={10}
+        leadingIcon="magnifying-glass"
+        trailingIcon="eye"
+        caret
+      />,
+    );
+
+    expect(screen.getByTestId('input')).toBeInTheDocument();
+    expect(screen.getByTestId('input-label')).toBeInTheDocument();
+    expect(screen.getByTestId('input-field')).toBeInTheDocument();
+    expect(screen.getByTestId('input-control')).toBeInTheDocument();
+    expect(screen.getByTestId('input-description')).toBeInTheDocument();
+    expect(screen.getByTestId('input-helper')).toBeInTheDocument();
+    expect(screen.getByTestId('input-caption')).toBeInTheDocument();
+    expect(screen.getByTestId('input-counter')).toBeInTheDocument();
+    expect(screen.getByTestId('input-leading-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('input-trailing-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('input-caret')).toBeInTheDocument();
+  });
+
   it('renders a label connected to the input', () => {
     render(<Input label="Телефон" placeholder="Введите номер" />);
     expect(screen.getByLabelText('Телефон')).toHaveAttribute('placeholder', 'Введите номер');
