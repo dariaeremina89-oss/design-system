@@ -43,6 +43,18 @@ describe('Input', () => {
     expect(screen.getByLabelText('Комментарий')).toHaveAttribute('aria-describedby', expect.stringContaining('description'));
   });
 
+  it('removes an empty description instead of keeping its layout gap', () => {
+    const { container, rerender } = render(
+      <Input label="Поле" description="Описание" />,
+    );
+
+    expect(container.querySelector('.fdoc-input__description')).toBeInTheDocument();
+
+    rerender(<Input label="Поле" description="" />);
+
+    expect(container.querySelector('.fdoc-input__description')).not.toBeInTheDocument();
+  });
+
   it('clears an uncontrolled value when clear button is pressed', async () => {
     const user = userEvent.setup();
     const onClear = vi.fn();
