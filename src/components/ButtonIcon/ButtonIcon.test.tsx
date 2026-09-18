@@ -75,4 +75,14 @@ describe('ButtonIcon', () => {
     const button = screen.getByRole('button', { name: color });
     expect(getComputedStyle(button).getPropertyValue('--fdoc-button-icon-background').trim()).toBe(background);
   });
+
+  it('keeps the Neutral icon color stable in hover and pressed states', () => {
+    render(<ButtonIcon icon="cross" color="neutral" aria-label="Neutral" />);
+    const button = screen.getByRole('button', { name: 'Neutral' });
+    const styles = getComputedStyle(button);
+
+    expect(styles.getPropertyValue('--fdoc-button-icon-icon').trim()).toBe('var(--icon-base-secondary)');
+    expect(styles.getPropertyValue('--fdoc-button-icon-icon-hover').trim()).toBe('var(--icon-base-secondary)');
+    expect(styles.getPropertyValue('--fdoc-button-icon-icon-pressed').trim()).toBe('var(--icon-base-secondary)');
+  });
 });
