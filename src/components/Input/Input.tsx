@@ -92,13 +92,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const descriptionId = description !== undefined ? `${inputId}-description` : undefined;
   const errorId = error !== undefined ? `${inputId}-error` : undefined;
   const captionId = !error && caption !== undefined ? `${inputId}-caption` : undefined;
-  const counterId = hasCounter ? `${inputId}-counter` : undefined;
-  const helperId = [descriptionId, errorId, captionId, counterId].filter(Boolean).join(' ') || undefined;
   const hasValue = String(currentValue ?? '').length > 0;
   const hasCounter = counter !== undefined && counter !== false;
   const resolvedCounter = counter === true
     ? `${String(currentValue ?? '').length}${maxLength !== undefined ? ` / ${maxLength}` : ''}`
     : counter;
+  const counterId = hasCounter ? `${inputId}-counter` : undefined;
+  const helperId = [descriptionId, errorId, captionId, counterId].filter(Boolean).join(' ') || undefined;
   const showClear = clearable && hasValue && !disabled && !skeleton;
   const isError = Boolean(error);
 
