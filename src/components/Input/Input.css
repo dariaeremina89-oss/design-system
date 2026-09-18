@@ -51,6 +51,9 @@
 .fdoc-input__skeleton--required {
   display: inline-block;
   flex: 0 0 auto;
+}
+
+.fdoc-input__skeleton--required {
   margin-left: var(--space-4);
 }
 
