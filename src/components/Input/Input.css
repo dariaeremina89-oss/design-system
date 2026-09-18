@@ -189,20 +189,12 @@
 }
 
 .fdoc-input__clear {
-  display: inline-flex;
   flex: 0 0 var(--elements-24);
-  align-items: center;
-  justify-content: center;
-  width: var(--elements-24);
-  height: var(--elements-24);
-  padding: 0;
-  border: 0;
-  color: var(--icon-base-secondary);
-  background: transparent;
-  cursor: pointer;
 }
 
-.fdoc-input__clear:hover { color: var(--icon-base-default); }
+.fdoc-input__clear.fdoc-button-icon {
+  padding: 0;
+}
 
 .fdoc-input__field--disabled .fdoc-input__slot,
 .fdoc-input__field--disabled .fdoc-input__caret {
