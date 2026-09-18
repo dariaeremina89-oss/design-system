@@ -17,6 +17,8 @@ export type ButtonIconState = 'default' | 'hover' | 'focused' | 'pressed' | 'dis
 
 export interface ButtonIconProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
+  /** Стабильный идентификатор корневого элемента для UI-тестов. */
+  'data-testid'?: string;
   /** Обязательное доступное имя действия кнопки. */
   'aria-label': string;
   /** Иконка из экспортированной библиотеки Figma. */
@@ -57,6 +59,7 @@ export function ButtonIcon({
   style,
   disabled,
   type = 'button',
+  'data-testid': testId,
   ...props
 }: ButtonIconProps) {
   const dimensions = sizeMap[size];
@@ -84,6 +87,7 @@ export function ButtonIcon({
         width={dimensions.button}
         height={dimensions.button}
         data-button-icon-state="skeleton"
+        data-testid={testId ?? 'button-icon-skeleton'}
       />
     );
   }
@@ -95,6 +99,7 @@ export function ButtonIcon({
       className={classes}
       style={buttonStyle}
       disabled={isDisabled}
+      data-testid={testId ?? 'button-icon'}
       data-button-icon-state={state}
       data-button-icon-size={dimensions.button}
     >
