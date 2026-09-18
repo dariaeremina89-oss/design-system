@@ -27,6 +27,7 @@
 
 .fdoc-input__required {
   flex: 0 0 auto;
+  margin-left: var(--space-4);
   color: var(--text-error-secondary);
   white-space: nowrap;
 }
@@ -51,7 +52,7 @@
   padding-bottom: var(--space-8);
 }
 
-.fdoc-input__field:hover:not(.fdoc-input__field--disabled):not(.fdoc-input__field--error) {
+.fdoc-input__field:hover:not(.fdoc-input__field--disabled):not(.fdoc-input__field--error):not(:focus-within) {
   border-color: var(--border-base-secondary-hover);
 }
 
@@ -74,7 +75,7 @@
 }
 
 .fdoc-input__field--error { border-color: var(--border-error-default); }
-.fdoc-input__field--error:hover:not(.fdoc-input__field--disabled) { border-color: var(--border-error-hover); }
+.fdoc-input__field--error:hover:not(.fdoc-input__field--disabled):not(:focus-within) { border-color: var(--border-error-hover); }
 .fdoc-input__field--error:focus-within { border-color: var(--border-error-default); }
 .fdoc-input__field--error.fdoc-input__field--disabled { border-color: var(--border-error-disabled); }
 
