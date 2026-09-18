@@ -6,7 +6,7 @@
   --fdoc-button-icon-icon: var(--icon-primary-default-light);
   --fdoc-button-icon-icon-hover: var(--icon-primary-default-light);
   --fdoc-button-icon-icon-pressed: var(--icon-primary-default-light);
-  --fdoc-button-icon-icon-disabled: var(--icon-primary-default-light-hover);
+  --fdoc-button-icon-icon-disabled: var(--icon-primary-default-light-disabled);
   --fdoc-button-icon-focus-border: var(--border-primary-focused);
   display: inline-flex;
   box-sizing: border-box;
@@ -46,7 +46,7 @@
 .fdoc-button-icon--disabled {
   background: var(--fdoc-button-icon-background-disabled);
   color: var(--fdoc-button-icon-icon-disabled);
-  cursor: not-allowed;
+  cursor: default;
 }
 
 .fdoc-button-icon .fdoc-icon {
@@ -63,10 +63,21 @@
   --fdoc-button-icon-icon-hover: var(--icon-base-default-hover);
   --fdoc-button-icon-icon-pressed: var(--icon-base-default-pressed);
   --fdoc-button-icon-icon-disabled: var(--icon-base-default-disabled);
-  --fdoc-button-icon-focus-border: var(--border-base-secondary-focused);
+  --fdoc-button-icon-focus-border: var(--border-base-default-focused);
 }
 
-.fdoc-button-icon--tertiary,
+.fdoc-button-icon--tertiary {
+  --fdoc-button-icon-background: transparent;
+  --fdoc-button-icon-background-hover: var(--background-base-default-hover);
+  --fdoc-button-icon-background-pressed: var(--background-base-default-pressed);
+  --fdoc-button-icon-background-disabled: transparent;
+  --fdoc-button-icon-icon: var(--icon-base-default);
+  --fdoc-button-icon-icon-hover: var(--icon-base-default);
+  --fdoc-button-icon-icon-pressed: var(--icon-base-default);
+  --fdoc-button-icon-icon-disabled: var(--icon-base-default-disabled);
+  --fdoc-button-icon-focus-border: var(--border-base-default-focused);
+}
+
 .fdoc-button-icon--base {
   --fdoc-button-icon-background: var(--background-base-default);
   --fdoc-button-icon-background-hover: var(--background-base-default-hover);
@@ -76,19 +87,19 @@
   --fdoc-button-icon-icon-hover: var(--icon-base-default-hover);
   --fdoc-button-icon-icon-pressed: var(--icon-base-default-pressed);
   --fdoc-button-icon-icon-disabled: var(--icon-base-default-disabled);
-  --fdoc-button-icon-focus-border: var(--border-base-secondary-focused);
+  --fdoc-button-icon-focus-border: var(--border-base-default-focused);
 }
 
 .fdoc-button-icon--neutral {
-  --fdoc-button-icon-background: var(--background-base-default);
+  --fdoc-button-icon-background: transparent;
   --fdoc-button-icon-background-hover: var(--background-base-default-hover);
   --fdoc-button-icon-background-pressed: var(--background-base-default-pressed);
-  --fdoc-button-icon-background-disabled: var(--background-base-default-disabled);
+  --fdoc-button-icon-background-disabled: transparent;
   --fdoc-button-icon-icon: var(--icon-base-secondary);
   --fdoc-button-icon-icon-hover: var(--icon-base-secondary-hover);
   --fdoc-button-icon-icon-pressed: var(--icon-base-secondary-pressed);
-  --fdoc-button-icon-icon-disabled: var(--icon-base-secondary-pressed);
-  --fdoc-button-icon-focus-border: var(--border-base-secondary-focused);
+  --fdoc-button-icon-icon-disabled: var(--icon-base-default-light-disabled);
+  --fdoc-button-icon-focus-border: var(--border-base-default-focused);
 }
 
 .fdoc-button-icon--inverse {
@@ -132,9 +143,8 @@
   padding: 0;
   min-width: 0;
   min-height: 0;
-  width: var(--fdoc-button-icon-size);
-  height: var(--fdoc-button-icon-size);
   border-radius: var(--radius-full);
+  background: var(--background-base-skeleton);
 }
 
 .fdoc-button-icon__skeleton::before,
@@ -146,4 +156,3 @@
 @media (prefers-reduced-motion: reduce) {
   .fdoc-button-icon { transition: none; }
 }
-
