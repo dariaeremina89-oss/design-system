@@ -6,13 +6,27 @@ const preview: Preview = {
   parameters: {
     layout: 'centered',
     options: {
-      storySort: {
-        order: [
-          'Atoms',
-          ['Docs', 'Colors', 'Typography', 'Effects', 'Size', 'Icons', 'Skeleton'],
-          'Components',
-          ['Inputs', 'Buttons'],
-        ],
+      storySort: (a, b) => {
+        const sidebarOrder = [
+          'Atoms/Docs',
+          'Atoms/Colors',
+          'Atoms/Typography',
+          'Atoms/Effects',
+          'Atoms/Size',
+          'Atoms/Icons',
+          'Atoms/Skeleton',
+          'Components/Inputs',
+          'Components/Buttons',
+        ];
+        const rank = (title) => {
+          const index = sidebarOrder.findIndex(
+            (item) => title === item || title.startsWith(`${item}/`),
+          );
+          return index === -1 ? sidebarOrder.length : index;
+        };
+
+        const rankDifference = rank(a.title) - rank(b.title);
+        return rankDifference || a.title.localeCompare(b.title);
       },
     },
     controls: {
