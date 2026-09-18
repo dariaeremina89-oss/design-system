@@ -12,3 +12,10 @@ export type {
   ButtonIconSize,
   ButtonIconState,
 } from './components/ButtonIcon/ButtonIcon';
+export { Button } from './components/Button/Button';
+export type {
+  ButtonColor,
+  ButtonProps,
+  ButtonSize,
+  ButtonState,
+} from './components/Button/Button';

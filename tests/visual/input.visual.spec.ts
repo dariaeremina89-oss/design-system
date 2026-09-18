@@ -73,5 +73,5 @@ test('Input skeleton reflects all nested content', async ({ page }) => {
   await expect(root.getByTestId('input-skeleton-description')).toHaveCount(1);
   await expect(root.getByTestId('input-skeleton-helper-shape')).toHaveCount(1);
   await expect(root.getByTestId('input-skeleton-counter-shape')).toHaveCount(1);
-  await expect(root.locator('.fdoc-skeleton--icon')).toHaveCount(5);
+  await expect(root.locator('.fdoc-skeleton--icon')).toHaveCount(4);
 });

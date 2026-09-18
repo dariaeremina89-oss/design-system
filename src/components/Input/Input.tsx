@@ -39,8 +39,6 @@ export interface InputProps
   sum?: ReactNode;
   /** Имя иконки из библиотеки рядом со значением sum. */
   sumIcon?: IconName;
-  /** Показывает caret из библиотеки в правом слоте. */
-  caret?: boolean;
   /** Показывает кнопку очистки при непустом значении. */
   clearable?: boolean;
   /** Обработчик очистки значения. */
@@ -81,7 +79,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     trailingIcon,
     sum,
     sumIcon,
-    caret = false,
     clearable = false,
     onClear,
     clearIcon = 'filled/cross_circle_filled',
@@ -149,7 +146,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         trailingIcon={trailingIcon}
         sum={sum}
         sumIcon={sumIcon}
-        caret={caret}
         clearable={clearable}
         value={value}
         defaultValue={defaultValue}
@@ -259,11 +255,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           </span>
         )}
 
-        {caret && (
-          <span className="fdoc-input__caret" aria-hidden="true" data-testid="input-caret">
-            <Icon name="caret" size={24} />
-          </span>
-        )}
       </div>
 
       {(hasCaption || hasCounter || hasError) && (

@@ -16,7 +16,6 @@ export interface InputSkeletonProps {
   trailingIcon?: IconName;
   sum?: ReactNode;
   sumIcon?: IconName;
-  caret?: boolean;
   clearable?: boolean;
   value?: unknown;
   defaultValue?: unknown;
@@ -56,12 +55,6 @@ function textLength(node: ReactNode): number {
   return length;
 }
 
-function skeletonWidth(node: ReactNode, fallback: number, min: number, max: number) {
-  const length = textLength(node);
-  const estimated = length > 0 ? length * 7 + 4 : fallback;
-  return `${Math.min(max, Math.max(min, estimated))}px`;
-}
-
 function valueText(value: unknown, defaultValue: unknown, placeholder?: string): ReactNode {
   if (value !== undefined && value !== null) return String(value);
   if (defaultValue !== undefined && defaultValue !== null) return String(defaultValue);
@@ -80,7 +73,6 @@ export function InputSkeleton({
   trailingIcon,
   sum,
   sumIcon,
-  caret = false,
   clearable = false,
   value,
   defaultValue,
@@ -120,7 +112,7 @@ export function InputSkeleton({
             <Skeleton
               className="fdoc-input__skeleton--label"
               data-testid="input-skeleton-label-text"
-              width={skeletonWidth(label, 64, 32, 280)}
+              width="64px"
               textSize="caption"
               shape="text"
             />
@@ -155,7 +147,7 @@ export function InputSkeleton({
           <Skeleton
             className="fdoc-input__skeleton--input-text"
             data-testid="input-skeleton-text"
-            width={skeletonWidth(inputText, 64, 32, 280)}
+            width="80px"
             textSize="subtitle"
             shape="text"
           />
@@ -163,7 +155,7 @@ export function InputSkeleton({
             <Skeleton
               className="fdoc-input__skeleton--description"
               data-testid="input-skeleton-description"
-              width={skeletonWidth(description, 96, 48, 280)}
+              width="88px"
               textSize="caption"
               shape="text"
             />
@@ -175,7 +167,7 @@ export function InputSkeleton({
             <Skeleton
               className="fdoc-input__skeleton--sum"
               data-testid="input-skeleton-sum-text"
-              width={skeletonWidth(sum, 32, 24, 96)}
+              width="40px"
               textSize="body"
               shape="text"
             />
@@ -204,11 +196,6 @@ export function InputSkeleton({
           </span>
         )}
 
-        {caret && (
-          <span className="fdoc-input__caret" data-testid="input-skeleton-caret">
-            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" data-testid="input-skeleton-caret-shape" />
-          </span>
-        )}
       </div>
 
       {(hasHelperText || hasCounter) && (
@@ -218,7 +205,7 @@ export function InputSkeleton({
               <Skeleton
                 className="fdoc-input__skeleton--helper"
                 data-testid="input-skeleton-helper-shape"
-                width={skeletonWidth(helperText, 96, 48, 360)}
+                width="64px"
                 textSize="caption"
                 shape="text"
               />
@@ -229,7 +216,7 @@ export function InputSkeleton({
               <Skeleton
                 className="fdoc-input__skeleton--counter"
                 data-testid="input-skeleton-counter-shape"
-                width={skeletonWidth(counterText, 48, 32, 96)}
+                width="40px"
                 textSize="caption"
                 shape="text"
               />

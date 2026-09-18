@@ -46,6 +46,9 @@ describe('Input visual contract', () => {
     expectRuleValue('.fdoc-input__control', 'color', 'var(--text-base-default)');
     expectRuleValue('.fdoc-input__helper', 'gap', 'var(--space-16)');
     expectRuleValue('.fdoc-input__helper', 'padding', '0 var(--space-12)');
+    expectRuleValue('.fdoc-input__sum-icon', 'width', 'var(--elements-24)');
+    expectRuleValue('.fdoc-input__sum-icon', 'height', 'var(--elements-24)');
+    expectRuleValue('.fdoc-input__sum-icon', 'padding', 'var(--space-4)');
   });
 
   it('keeps Small dimensions and padding on the size token', () => {

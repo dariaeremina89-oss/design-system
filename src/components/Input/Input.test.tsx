@@ -15,7 +15,6 @@ describe('Input', () => {
         maxLength={10}
         leadingIcon="magnifying-glass"
         trailingIcon="eye"
-        caret
       />,
     );
 
@@ -29,7 +28,7 @@ describe('Input', () => {
     expect(screen.getByTestId('input-counter')).toBeInTheDocument();
     expect(screen.getByTestId('input-leading-icon')).toBeInTheDocument();
     expect(screen.getByTestId('input-trailing-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('input-caret')).toBeInTheDocument();
+    expect(screen.queryByTestId('input-caret')).not.toBeInTheDocument();
   });
 
   it('renders a label connected to the input', () => {
@@ -119,7 +118,6 @@ describe('Input', () => {
         trailingIcon="eye"
         sum="100"
         sumIcon="currency/ruble-sign_regular"
-        caret
         clearable
         defaultValue="Значение"
       />,
@@ -132,7 +130,7 @@ describe('Input', () => {
     expect(container.querySelector('.fdoc-input__skeleton--counter')).toBeInTheDocument();
     expect(container.querySelectorAll('.fdoc-input__slot')).toHaveLength(2);
     expect(container.querySelector('.fdoc-input__sum-icon')).toBeInTheDocument();
-    expect(container.querySelector('.fdoc-input__caret')).toBeInTheDocument();
+    expect(container.querySelector('.fdoc-input__caret')).not.toBeInTheDocument();
     expect(container.querySelector('.fdoc-input__clear')).toBeInTheDocument();
   });
 

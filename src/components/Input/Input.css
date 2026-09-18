@@ -156,15 +156,14 @@
 
 .fdoc-input__description--disabled { color: var(--text-base-secondary-disabled); }
 
-.fdoc-input__slot,
-.fdoc-input__caret {
+.fdoc-input__slot {
   display: inline-flex;
   flex: 0 0 var(--elements-24);
   align-items: center;
   justify-content: center;
   width: var(--elements-24);
   height: var(--elements-24);
-  color: currentColor;
+  color: var(--icon-base-default);
 }
 
 .fdoc-input__sum {
@@ -180,12 +179,14 @@
 .fdoc-input__sum--disabled { color: var(--text-base-default-disabled); }
 
 .fdoc-input__sum-icon {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--elements-16);
-  height: var(--elements-16);
-  margin-left: var(--space-4);
+  width: var(--elements-24);
+  height: var(--elements-24);
+  padding: var(--space-4);
+  color: var(--icon-base-default);
 }
 
 .fdoc-input__clear {
@@ -197,7 +198,7 @@
 }
 
 .fdoc-input__field--disabled .fdoc-input__slot,
-.fdoc-input__field--disabled .fdoc-input__caret {
+.fdoc-input__field--disabled .fdoc-input__sum-icon {
   color: var(--icon-base-default-disabled);
 }
 

@@ -21,6 +21,8 @@ const meta = {
 - \`counter={true}\` показывает длину значения и учитывает \`maxLength\`.
 - \`error\` заменяет \`caption\`, но не меняет цвет Value, Placeholder, Description, Counter и иконок.
 
+Caret не является пропсом: текстовый курсор остается нативным поведением HTML input и не добавляется как отдельная иконка.
+
 ### Состояния и доступность
 
 Поддерживаются Default, Hover, Focused, Disabled, Error и Skeleton. Focus не меняет внешний размер поля. Компонент использует нативный \`input\`, связывает Label через \`htmlFor\`, а Description, Error и Counter через \`aria-describedby\`; для ошибки устанавливает \`aria-invalid\`.
@@ -50,7 +52,6 @@ const meta = {
     sum: { control: 'text' },
     sumIcon: { control: 'select', options: iconNames },
     clearIcon: { control: 'select', options: iconNames },
-    caret: { control: 'boolean' },
     onChange: { action: 'change' },
     onFocus: { action: 'focus' },
     onBlur: { action: 'blur' },
@@ -77,7 +78,6 @@ export const WithSlots: Story = {
     trailingIcon: 'eye',
     sum: '00,00',
     sumIcon: 'currency/ruble-sign_regular',
-    caret: true,
   },
 };
 export const Clearable: Story = { args: { defaultValue: 'Input text', clearable: true } };
@@ -96,7 +96,6 @@ export const SkeletonWithAllContent: Story = {
     trailingIcon: 'eye',
     sum: '100',
     sumIcon: 'currency/ruble-sign_regular',
-    caret: true,
     clearable: true,
     defaultValue: 'Значение',
   },
