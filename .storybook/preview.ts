@@ -9,7 +9,7 @@ const preview: Preview = {
       storySort: {
         order: [
           ['Atoms', ['Docs', 'Colors', 'Typography', 'Effects', 'Size', 'Icons', 'Skeleton']],
-          ['Components', ['Inputs', '*'], 'ButtonIcon'],
+          ['Components', ['Inputs', 'Buttons']],
         ],
       },
     },
