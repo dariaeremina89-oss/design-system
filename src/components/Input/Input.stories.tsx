@@ -73,3 +73,10 @@ export const LongUnbrokenText: Story = {
     counter: true,
   },
 };
+
+export const LongRequiredLabel: Story = {
+  args: {
+    label: 'Очень длинный label без пробелов, который должен переноситься вместе с required marker',
+    required: true,
+  },
+};
