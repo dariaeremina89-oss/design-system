@@ -24,9 +24,114 @@
   transform: translateX(-100%);
 }
 
-.fdoc-skeleton--text {
+.fdoc-skeleton--text[data-text-size] {
+  min-width: 0;
   min-height: 0;
-  border-radius: var(--radius-small);
+  height: var(--skeleton-text-line-height);
+  border-radius: 0;
+  background: transparent;
+}
+
+.fdoc-skeleton--text[data-text-size]::before,
+.fdoc-skeleton--text[data-text-size]::after {
+  right: 0;
+  left: 0;
+  height: var(--skeleton-text-bar-height);
+  border-radius: var(--radius-large);
+}
+
+.fdoc-skeleton--text[data-text-size]::before {
+  position: absolute;
+  top: var(--skeleton-text-bar-top);
+  background: var(--background-base-skeleton);
+  content: "";
+}
+
+.fdoc-skeleton--text[data-text-size]::after {
+  inset: auto 0 auto;
+  top: var(--skeleton-text-bar-top);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--white-500-48),
+    transparent
+  );
+}
+
+.fdoc-skeleton--text-h0-heading {
+  --skeleton-text-line-height: var(--line-height-48);
+  --skeleton-text-bar-height: var(--line-height-28);
+  --skeleton-text-bar-top: calc(var(--space-12) - var(--space-1));
+}
+
+.fdoc-skeleton--text-h1-heading {
+  --skeleton-text-line-height: var(--line-height-40);
+  --skeleton-text-bar-height: calc(var(--line-height-24) - var(--space-2));
+  --skeleton-text-bar-top: var(--font-size-10);
+}
+
+.fdoc-skeleton--text-h2-heading {
+  --skeleton-text-line-height: var(--line-height-32);
+  --skeleton-text-bar-height: calc(var(--line-height-16) + var(--space-1));
+  --skeleton-text-bar-top: var(--space-8);
+}
+
+.fdoc-skeleton--text-h3-heading {
+  --skeleton-text-line-height: var(--line-height-28);
+  --skeleton-text-bar-height: var(--line-height-14);
+  --skeleton-text-bar-top: var(--space-8);
+}
+
+.fdoc-skeleton--text-subtitle {
+  --skeleton-text-line-height: var(--line-height-24);
+  --skeleton-text-bar-height: calc(var(--line-height-12) - var(--space-1));
+  --skeleton-text-bar-top: calc(var(--space-8) - var(--space-1));
+}
+
+.fdoc-skeleton--text-body {
+  --skeleton-text-line-height: var(--line-height-20);
+  --skeleton-text-bar-height: var(--font-size-10);
+  --skeleton-text-bar-top: calc(var(--space-4) + var(--space-1));
+}
+
+.fdoc-skeleton--text-caption {
+  --skeleton-text-line-height: var(--line-height-16);
+  --skeleton-text-bar-height: var(--elements-8);
+  --skeleton-text-bar-top: var(--space-4);
+}
+
+.fdoc-skeleton--text-overline {
+  --skeleton-text-line-height: var(--line-height-14);
+  --skeleton-text-bar-height: calc(var(--space-8) - var(--space-1));
+  --skeleton-text-bar-top: var(--space-4);
+}
+
+.fdoc-skeleton--icon {
+  min-width: 0;
+  min-height: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.fdoc-skeleton--icon::before,
+.fdoc-skeleton--icon::after {
+  position: absolute;
+  inset: 8.33%;
+  border-radius: var(--radius-full);
+}
+
+.fdoc-skeleton--icon::before {
+  background: var(--background-base-skeleton);
+  content: "";
+}
+
+.fdoc-skeleton--icon::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--white-500-48),
+    transparent
+  );
 }
 
 .fdoc-skeleton--circle { border-radius: var(--radius-full); }
