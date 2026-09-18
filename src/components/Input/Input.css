@@ -47,6 +47,7 @@
   color: var(--text-error-secondary-disabled);
 }
 
+.fdoc-input__skeleton--label,
 .fdoc-input__skeleton--required {
   display: inline-block;
   flex: 0 0 auto;
