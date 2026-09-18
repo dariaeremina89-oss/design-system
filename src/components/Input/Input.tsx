@@ -26,8 +26,8 @@ export interface InputProps
   required?: boolean;
   /** Подсказка под полем. */
   caption?: ReactNode;
-  /** Счетчик справа в строке подсказки. */
-  counter?: ReactNode;
+  /** Счетчик символов справа в строке подсказки. Передайте true для автоматического подсчета или ReactNode для своего значения. */
+  counter?: ReactNode | boolean;
   /** Имя иконки из библиотеки слева. */
   leadingIcon?: IconName;
   /** Имя иконки из библиотеки справа. */
@@ -92,9 +92,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const descriptionId = description !== undefined ? `${inputId}-description` : undefined;
   const errorId = error !== undefined ? `${inputId}-error` : undefined;
   const captionId = !error && caption !== undefined ? `${inputId}-caption` : undefined;
-  const counterId = counter !== undefined ? `${inputId}-counter` : undefined;
+  const counterId = hasCounter ? `${inputId}-counter` : undefined;
   const helperId = [descriptionId, errorId, captionId, counterId].filter(Boolean).join(' ') || undefined;
   const hasValue = String(currentValue ?? '').length > 0;
+  const hasCounter = counter !== undefined && counter !== false;
+  const resolvedCounter = counter === true
+    ? `${String(currentValue ?? '').length}${maxLength !== undefined ? ` / ${maxLength}` : ''}`
+    : counter;
   const showClear = clearable && hasValue && !disabled && !skeleton;
   const isError = Boolean(error);
 
@@ -126,7 +130,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         <div className="fdoc-input__field fdoc-input__field--skeleton">
           <Skeleton className="fdoc-input__skeleton--text" width="64px" height="11px" />
         </div>
-        {(caption !== undefined || counter !== undefined) && (
+        {(caption !== undefined || hasCounter) && (
           <div className="fdoc-input__helper">
             <Skeleton className="fdoc-input__skeleton--caption" width="64px" height="8px" />
           </div>
@@ -228,7 +232,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         )}
       </div>
 
-      {(caption !== undefined || counter !== undefined || error !== undefined) && (
+      {(caption !== undefined || hasCounter || error !== undefined) && (
         <div className="fdoc-input__helper">
           <span
             id={errorId ?? captionId}
@@ -241,9 +245,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           >
             {error ?? caption}
           </span>
-          {counter !== undefined && (
+          {hasCounter && (
             <span id={counterId} className="fdoc-input__counter">
-              {counter}
+              {resolvedCounter}
             </span>
           )}
         </div>
