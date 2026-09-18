@@ -117,14 +117,14 @@ export function InputSkeleton({
             <Skeleton
               className="fdoc-input__skeleton--label"
               width={skeletonWidth(label, 64, 32, 280)}
-              height="var(--line-height-16)"
+              textSize="caption"
               shape="text"
             />
             {required && (
               <Skeleton
                 className="fdoc-input__skeleton--required"
                 width="var(--font-size-12)"
-                height="var(--line-height-16)"
+                textSize="caption"
                 shape="text"
               />
             )}
@@ -141,7 +141,7 @@ export function InputSkeleton({
       >
         {leadingIcon !== undefined && (
           <span className="fdoc-input__slot fdoc-input__slot--leading">
-            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="circle" />
+            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" />
           </span>
         )}
 
@@ -149,14 +149,14 @@ export function InputSkeleton({
           <Skeleton
             className="fdoc-input__skeleton--input-text"
             width={skeletonWidth(inputText, 64, 32, 280)}
-            height="var(--line-height-24)"
+            textSize="subtitle"
             shape="text"
           />
           {hasDescription && (
             <Skeleton
               className="fdoc-input__skeleton--description"
               width={skeletonWidth(description, 96, 48, 280)}
-              height="var(--line-height-16)"
+              textSize="caption"
               shape="text"
             />
           )}
@@ -167,12 +167,12 @@ export function InputSkeleton({
             <Skeleton
               className="fdoc-input__skeleton--sum"
               width={skeletonWidth(sum, 32, 24, 96)}
-              height="var(--font-size-14)"
+              textSize="body"
               shape="text"
             />
             {sumIcon !== undefined && (
               <span className="fdoc-input__sum-icon">
-                <Skeleton width="var(--elements-16)" height="var(--elements-16)" shape="circle" />
+                <Skeleton width="var(--elements-16)" height="var(--elements-16)" shape="icon" />
               </span>
             )}
           </span>
@@ -180,19 +180,19 @@ export function InputSkeleton({
 
         {clearable && hasValue && (
           <span className="fdoc-input__clear">
-            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="circle" />
+            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" />
           </span>
         )}
 
         {trailingIcon !== undefined && (
           <span className="fdoc-input__slot fdoc-input__slot--trailing">
-            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="circle" />
+            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" />
           </span>
         )}
 
         {caret && (
           <span className="fdoc-input__caret">
-            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="circle" />
+            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" />
           </span>
         )}
       </div>
@@ -204,7 +204,7 @@ export function InputSkeleton({
               <Skeleton
                 className="fdoc-input__skeleton--helper"
                 width={skeletonWidth(helperText, 96, 48, 360)}
-                height="var(--line-height-16)"
+                textSize="caption"
                 shape="text"
               />
             </span>
@@ -214,7 +214,7 @@ export function InputSkeleton({
               <Skeleton
                 className="fdoc-input__skeleton--counter"
                 width={skeletonWidth(counterText, 48, 32, 96)}
-                height="var(--line-height-16)"
+                textSize="caption"
                 shape="text"
               />
             </span>
