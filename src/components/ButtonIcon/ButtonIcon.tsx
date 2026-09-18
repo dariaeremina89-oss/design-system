@@ -17,6 +17,8 @@ export type ButtonIconState = 'default' | 'hover' | 'focused' | 'pressed' | 'dis
 
 export interface ButtonIconProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
+  /** Обязательное доступное имя действия кнопки. */
+  'aria-label': string;
   /** Иконка из экспортированной библиотеки Figma. */
   icon?: IconName;
   /** Произвольный слот иконки, если нужна не библиотечная иконка. */
@@ -36,8 +38,8 @@ const sizeMap: Record<ButtonIconSize, { button: number; icon: number; padding: n
   xsmall: { button: 24, icon: 16, padding: 4 },
   small: { button: 32, icon: 16, padding: 8 },
   medium: { button: 40, icon: 24, padding: 8 },
-  large: { button: 48, icon: 24, padding: 8 },
-  giant: { button: 56, icon: 32, padding: 8 },
+  large: { button: 48, icon: 32, padding: 8 },
+  giant: { button: 56, icon: 40, padding: 8 },
 };
 
 function joinClassNames(...classes: Array<string | false | undefined>) {
@@ -77,7 +79,7 @@ export function ButtonIcon({
   if (isSkeleton) {
     return (
       <Skeleton
-        className={joinClassNames(classes, 'fdoc-button-icon__skeleton')}
+        className={joinClassNames('fdoc-button-icon__skeleton', className)}
         shape="circle"
         width={dimensions.button}
         height={dimensions.button}
@@ -100,4 +102,3 @@ export function ButtonIcon({
     </button>
   );
 }
-
