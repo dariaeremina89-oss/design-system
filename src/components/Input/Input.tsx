@@ -14,6 +14,8 @@ export type InputSize = 'medium' | 'small';
 
 export interface InputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
+  /** Стабильный идентификатор нативного input для UI-тестов. */
+  'data-testid'?: string;
   /** Размер поля: 56 или 48 px по высоте. */
   size?: InputSize;
   /** Подпись над полем. Передача false скрывает подпись. */
@@ -92,6 +94,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   },
   ref,
 ) {
+  const { 'data-testid': inputTestId, ...inputPropsWithoutTestId } = inputProps;
   const generatedId = useId();
   const inputId = providedId ?? generatedId;
   const [internalValue, setInternalValue] = useState(() => String(defaultValue ?? ''));
@@ -151,6 +154,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         defaultValue={defaultValue}
         placeholder={placeholder}
         maxLength={maxLength}
+        testId={inputTestId}
         wrapperClassName={wrapperClassName}
       />
     );
@@ -159,7 +163,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const resolvedPlaceholder = hasValue ? undefined : placeholder;
 
   return (
-    <div className={joinClassNames('fdoc-input', `fdoc-input--${size}`, wrapperClassName)}>
+    <div
+      className={joinClassNames('fdoc-input', `fdoc-input--${size}`, wrapperClassName)}
+      data-testid={inputTestId ? `${inputTestId}-root` : 'input'}
+    >
       {hasLabel && (
         <label
           className={joinClassNames(
@@ -169,6 +176,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             isError && disabled && 'fdoc-input__label--error-disabled',
           )}
           htmlFor={inputId}
+          data-testid="input-label"
         >
           <span className="fdoc-input__label-text">
             {label}
@@ -184,19 +192,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           isError && 'fdoc-input__field--error',
           disabled && 'fdoc-input__field--disabled',
         )}
+        data-testid="input-field"
       >
         {leadingIcon !== undefined && (
-          <span className="fdoc-input__slot fdoc-input__slot--leading" aria-hidden="true">
+          <span className="fdoc-input__slot fdoc-input__slot--leading" aria-hidden="true" data-testid="input-leading-icon">
             <Icon name={leadingIcon} size={24} />
           </span>
         )}
 
-        <span className="fdoc-input__content">
+        <span className="fdoc-input__content" data-testid="input-content">
           <input
-            {...inputProps}
+            {...inputPropsWithoutTestId}
             ref={ref}
             id={inputId}
             className={joinClassNames('fdoc-input__control', className)}
+            data-testid={inputTestId ?? 'input-control'}
             disabled={disabled}
             value={isControlled ? value : internalValue}
             placeholder={resolvedPlaceholder}
@@ -211,6 +221,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             <span
               id={descriptionId}
               className={joinClassNames('fdoc-input__description', disabled && 'fdoc-input__description--disabled')}
+              data-testid="input-description"
             >
               {description}
             </span>
@@ -218,10 +229,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         </span>
 
         {sum !== undefined && (
-          <span className={joinClassNames('fdoc-input__sum', disabled && 'fdoc-input__sum--disabled')}>
+          <span className={joinClassNames('fdoc-input__sum', disabled && 'fdoc-input__sum--disabled')} data-testid="input-sum">
             {sum}
             {sumIcon !== undefined && (
-              <span className="fdoc-input__sum-icon" aria-hidden="true">
+              <span className="fdoc-input__sum-icon" aria-hidden="true" data-testid="input-sum-icon">
                 <Icon name={sumIcon} size={16} />
               </span>
             )}
@@ -233,6 +244,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             type="button"
             className="fdoc-input__clear"
             aria-label="Очистить поле"
+            data-testid="input-clear"
             onClick={handleClear}
           >
             <Icon name={clearIcon} size={24} />
@@ -240,20 +252,20 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         )}
 
         {trailingIcon !== undefined && (
-          <span className="fdoc-input__slot fdoc-input__slot--trailing" aria-hidden="true">
+          <span className="fdoc-input__slot fdoc-input__slot--trailing" aria-hidden="true" data-testid="input-trailing-icon">
             <Icon name={trailingIcon} size={24} />
           </span>
         )}
 
         {caret && (
-          <span className="fdoc-input__caret" aria-hidden="true">
+          <span className="fdoc-input__caret" aria-hidden="true" data-testid="input-caret">
             <Icon name="caret" size={24} />
           </span>
         )}
       </div>
 
       {(hasCaption || hasCounter || hasError) && (
-        <div className="fdoc-input__helper">
+        <div className="fdoc-input__helper" data-testid="input-helper">
           {(hasError || hasCaption) && (
             <span
               id={errorId ?? captionId}
@@ -263,6 +275,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
               disabled && 'fdoc-input__caption--disabled',
                 isError && disabled && 'fdoc-input__caption--error-disabled',
               )}
+              data-testid={isError ? 'input-error' : 'input-caption'}
             >
               {hasError ? error : caption}
             </span>
@@ -274,6 +287,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
                 'fdoc-input__counter',
                 disabled && 'fdoc-input__counter--disabled',
               )}
+              data-testid="input-counter"
             >
               {resolvedCounter}
             </span>
