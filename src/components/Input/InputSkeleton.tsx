@@ -101,14 +101,14 @@ export function InputSkeleton({
             <Skeleton
               className="fdoc-input__skeleton--label"
               width={skeletonWidth(label, 64, 32, 280)}
-              height="var(--font-size-12)"
+              height="var(--line-height-16)"
               shape="text"
             />
             {required && (
               <Skeleton
                 className="fdoc-input__skeleton--required"
                 width="var(--font-size-12)"
-                height="var(--font-size-12)"
+                height="var(--line-height-16)"
                 shape="text"
               />
             )}
@@ -140,7 +140,7 @@ export function InputSkeleton({
             <Skeleton
               className="fdoc-input__skeleton--description"
               width={skeletonWidth(description, 96, 48, 280)}
-              height="var(--font-size-12)"
+              height="var(--line-height-16)"
               shape="text"
             />
           )}
@@ -188,7 +188,7 @@ export function InputSkeleton({
               <Skeleton
                 className="fdoc-input__skeleton--helper"
                 width={skeletonWidth(helperText, 96, 48, 360)}
-                height="var(--font-size-12)"
+                height="var(--line-height-16)"
                 shape="text"
               />
             </span>
@@ -198,7 +198,7 @@ export function InputSkeleton({
               <Skeleton
                 className="fdoc-input__skeleton--counter"
                 width={skeletonWidth(counterText, 48, 32, 96)}
-                height="var(--font-size-12)"
+                height="var(--line-height-16)"
                 shape="text"
               />
             </span>
