@@ -23,13 +23,23 @@ describe('Input', () => {
     expect(screen.getByText('*')).toBeInTheDocument();
   });
 
-  it('renders description and counter together', () => {
+  it('renders description and a live character counter together', async () => {
+    const user = userEvent.setup();
     render(
-      <Input label="Комментарий" description="Описание поля" caption="Подсказка" counter="20 / 100" />,
+      <Input
+        label="Комментарий"
+        description="Описание поля"
+        caption="Подсказка"
+        defaultValue="Input"
+        maxLength={100}
+        counter
+      />,
     );
+    expect(screen.getByText('5 / 100')).toBeInTheDocument();
+    await user.type(screen.getByLabelText('Комментарий'), '!');
+    expect(screen.getByText('6 / 100')).toBeInTheDocument();
     expect(screen.getByText('Описание поля')).toBeInTheDocument();
     expect(screen.getByText('Подсказка')).toBeInTheDocument();
-    expect(screen.getByText('20 / 100')).toBeInTheDocument();
     expect(screen.getByLabelText('Комментарий')).toHaveAttribute('aria-describedby', expect.stringContaining('description'));
   });
 
