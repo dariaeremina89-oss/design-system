@@ -21,7 +21,7 @@ const meta = {
     description: { control: 'text' },
     error: { control: 'text' },
     caption: { control: 'text' },
-    counter: { control: 'text' },
+    counter: { control: 'boolean' },
     leadingIcon: { control: 'select', options: iconNames },
     trailingIcon: { control: 'select', options: iconNames },
     sum: { control: 'text' },
@@ -41,7 +41,7 @@ export const Error: Story = { args: { error: 'Error text', caption: undefined } 
 export const FocusedError: Story = { args: { autoFocus: true, error: 'Error text', caption: undefined } };
 export const Required: Story = { args: { required: true } };
 export const WithDescriptionAndCounter: Story = {
-  args: { defaultValue: 'Input text', description: 'Description text', caption: 'Caption text', counter: '100 / 100' },
+  args: { defaultValue: 'Input text', description: 'Description text', caption: 'Caption text', maxLength: 100, counter: true },
 };
 export const WithSlots: Story = {
   args: {
@@ -69,6 +69,7 @@ export const LongUnbrokenText: Story = {
   args: {
     label: 'https://example.com/very-long-unbroken-label-value-that-must-not-break-the-layout',
     caption: 'https://example.com/very-long-unbroken-caption-value-that-must-not-break-the-layout',
-    counter: '100 / 100',
+    maxLength: 100,
+    counter: true,
   },
 };
