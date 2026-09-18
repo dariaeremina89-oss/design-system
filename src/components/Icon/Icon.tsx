@@ -17,7 +17,9 @@ export interface IconProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'color'
   color?: string;
 }
 
-const colorAssetPrefixes = ['multicolor/', 'flag_chevron/'];
+// These SVGs contain intentional multiple fills (for example, the white
+// center of the cursor). CSS masks keep only alpha and would flatten them.
+const colorAssetPrefixes = ['multicolor/', 'flag_chevron/', 'cursors/'];
 
 function isColorAsset(name: IconName) {
   return colorAssetPrefixes.some((prefix) => name.startsWith(prefix));
