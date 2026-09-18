@@ -21,6 +21,7 @@ export interface InputSkeletonProps {
   defaultValue?: unknown;
   placeholder?: string;
   maxLength?: number;
+  testId?: string;
   wrapperClassName?: string;
 }
 
@@ -84,6 +85,7 @@ export function InputSkeleton({
   defaultValue,
   placeholder,
   maxLength,
+  testId,
   wrapperClassName,
 }: InputSkeletonProps) {
   const hasLabel = hasRenderableContent(label);
@@ -109,12 +111,14 @@ export function InputSkeleton({
     <div
       className={joinClassNames('fdoc-input', `fdoc-input--${size}`, wrapperClassName)}
       aria-hidden="true"
+      data-testid={testId ?? 'input-skeleton'}
     >
       {hasLabel && (
-        <div className="fdoc-input__label">
+        <div className="fdoc-input__label" data-testid="input-skeleton-label">
           <span className="fdoc-input__label-text">
             <Skeleton
               className="fdoc-input__skeleton--label"
+              data-testid="input-skeleton-label-text"
               width={skeletonWidth(label, 64, 32, 280)}
               textSize="caption"
               shape="text"
@@ -122,6 +126,7 @@ export function InputSkeleton({
             {required && (
               <Skeleton
                 className="fdoc-input__skeleton--required"
+                data-testid="input-skeleton-required"
                 width="var(--font-size-12)"
                 textSize="caption"
                 shape="text"
@@ -137,16 +142,18 @@ export function InputSkeleton({
           leadingIcon !== undefined && 'fdoc-input__field--has-leading',
           'fdoc-input__field--skeleton',
         )}
+        data-testid="input-skeleton-field"
       >
         {leadingIcon !== undefined && (
-          <span className="fdoc-input__slot fdoc-input__slot--leading">
-            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" />
+          <span className="fdoc-input__slot fdoc-input__slot--leading" data-testid="input-skeleton-leading-icon">
+            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" data-testid="input-skeleton-leading-icon-shape" />
           </span>
         )}
 
-        <span className="fdoc-input__content">
+        <span className="fdoc-input__content" data-testid="input-skeleton-content">
           <Skeleton
             className="fdoc-input__skeleton--input-text"
+            data-testid="input-skeleton-text"
             width={skeletonWidth(inputText, 64, 32, 280)}
             textSize="subtitle"
             shape="text"
@@ -154,6 +161,7 @@ export function InputSkeleton({
           {hasDescription && (
             <Skeleton
               className="fdoc-input__skeleton--description"
+              data-testid="input-skeleton-description"
               width={skeletonWidth(description, 96, 48, 280)}
               textSize="caption"
               shape="text"
@@ -162,46 +170,48 @@ export function InputSkeleton({
         </span>
 
         {hasSum && (
-          <span className="fdoc-input__sum">
+          <span className="fdoc-input__sum" data-testid="input-skeleton-sum">
             <Skeleton
               className="fdoc-input__skeleton--sum"
+              data-testid="input-skeleton-sum-text"
               width={skeletonWidth(sum, 32, 24, 96)}
               textSize="body"
               shape="text"
             />
             {sumIcon !== undefined && (
-              <span className="fdoc-input__sum-icon">
-                <Skeleton width="var(--elements-16)" height="var(--elements-16)" shape="icon" />
+              <span className="fdoc-input__sum-icon" data-testid="input-skeleton-sum-icon">
+                <Skeleton width="var(--elements-16)" height="var(--elements-16)" shape="icon" data-testid="input-skeleton-sum-icon-shape" />
               </span>
             )}
           </span>
         )}
 
         {clearable && hasValue && (
-          <span className="fdoc-input__clear">
-            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" />
+          <span className="fdoc-input__clear" data-testid="input-skeleton-clear">
+            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" data-testid="input-skeleton-clear-shape" />
           </span>
         )}
 
         {trailingIcon !== undefined && (
-          <span className="fdoc-input__slot fdoc-input__slot--trailing">
-            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" />
+          <span className="fdoc-input__slot fdoc-input__slot--trailing" data-testid="input-skeleton-trailing-icon">
+            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" data-testid="input-skeleton-trailing-icon-shape" />
           </span>
         )}
 
         {caret && (
-          <span className="fdoc-input__caret">
-            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" />
+          <span className="fdoc-input__caret" data-testid="input-skeleton-caret">
+            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" data-testid="input-skeleton-caret-shape" />
           </span>
         )}
       </div>
 
       {(hasHelperText || hasCounter) && (
-        <div className="fdoc-input__helper">
+        <div className="fdoc-input__helper" data-testid="input-skeleton-helper">
           {hasHelperText && (
-            <span className="fdoc-input__caption">
+            <span className="fdoc-input__caption" data-testid="input-skeleton-helper-text">
               <Skeleton
                 className="fdoc-input__skeleton--helper"
+                data-testid="input-skeleton-helper-shape"
                 width={skeletonWidth(helperText, 96, 48, 360)}
                 textSize="caption"
                 shape="text"
@@ -209,9 +219,10 @@ export function InputSkeleton({
             </span>
           )}
           {hasCounter && (
-            <span className="fdoc-input__counter">
+            <span className="fdoc-input__counter" data-testid="input-skeleton-counter">
               <Skeleton
                 className="fdoc-input__skeleton--counter"
+                data-testid="input-skeleton-counter-shape"
                 width={skeletonWidth(counterText, 48, 32, 96)}
                 textSize="caption"
                 shape="text"
