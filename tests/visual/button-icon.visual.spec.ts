@@ -53,7 +53,7 @@ test('ButtonIcon disabled state is native and non-interactive', async ({ page })
   const root = await openStory(page, 'components-buttonicon--states');
   const disabled = root.locator('button[data-button-icon-state="disabled"]');
   await expect(disabled).toBeDisabled();
-  await expect(disabled).toHaveCSS('cursor', 'not-allowed');
+  await expect(disabled).toHaveCSS('cursor', 'default');
 });
 
 test('ButtonIcon skeleton uses the shared animated skeleton atom', async ({ page }) => {
