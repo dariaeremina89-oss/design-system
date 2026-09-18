@@ -4,7 +4,15 @@ import { Page } from './atoms-helpers';
 
 const meta = {
   title: 'Atoms/Skeleton',
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component:
+          'Общий атом загрузочного состояния. Skeleton поддерживает текстовые строки по типографическим стилям, блоки, круги и иконки; анимация и базовый цвет задаются централизованно. Используется только там, где интерфейс действительно ждет данные, и не является интерактивным элементом.',
+      },
+    },
+  },
   tags: ['autodocs'],
 } satisfies Meta;
 
