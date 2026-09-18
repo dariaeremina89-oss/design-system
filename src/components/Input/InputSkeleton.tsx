@@ -1,4 +1,5 @@
 import { Children, isValidElement, type ReactNode } from 'react';
+import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import type { IconName } from '../Icon/Icon';
 import { Skeleton } from '../Skeleton/Skeleton';
 import type { InputSize } from './Input';
@@ -187,9 +188,13 @@ export function InputSkeleton({
         )}
 
         {clearable && hasValue && (
-          <span className="fdoc-input__clear" data-testid="input-skeleton-clear">
-            <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" data-testid="input-skeleton-clear-shape" />
-          </span>
+          <ButtonIcon
+            className="fdoc-input__clear"
+            size="xsmall"
+            state="skeleton"
+            aria-label="Очистка поля"
+            data-testid="input-skeleton-clear"
+          />
         )}
 
         {trailingIcon !== undefined && (
