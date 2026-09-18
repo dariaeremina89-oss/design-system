@@ -8,8 +8,10 @@ const preview: Preview = {
     options: {
       storySort: {
         order: [
-          ['Atoms', ['Docs', 'Colors', 'Typography', 'Effects', 'Size', 'Icons', 'Skeleton']],
-          ['Components', ['Inputs', 'Buttons']],
+          'Atoms',
+          ['Docs', 'Colors', 'Typography', 'Effects', 'Size', 'Icons', 'Skeleton'],
+          'Components',
+          ['Inputs', 'Buttons'],
         ],
       },
     },
