@@ -9,8 +9,7 @@
 }
 
 .fdoc-input__label {
-  display: flex;
-  align-items: center;
+  display: block;
   min-height: var(--line-height-16);
   padding: 0 var(--space-12);
   color: var(--text-base-secondary);
@@ -21,15 +20,31 @@
   word-break: normal;
 }
 
+.fdoc-input__label-text {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
 .fdoc-input__label--error { color: var(--text-error-secondary); }
 .fdoc-input__label--disabled { color: var(--text-base-secondary-disabled); }
 .fdoc-input__label--error-disabled { color: var(--text-error-secondary-disabled); }
 
 .fdoc-input__required {
-  flex: 0 0 auto;
-  margin-left: var(--space-4);
+  display: inline-block;
+  padding-left: var(--space-4);
   color: var(--text-error-secondary);
+  vertical-align: baseline;
   white-space: nowrap;
+}
+
+.fdoc-input__label--disabled .fdoc-input__required {
+  color: var(--text-base-secondary-disabled);
+}
+
+.fdoc-input__label--error-disabled .fdoc-input__required {
+  color: var(--text-error-secondary-disabled);
 }
 
 .fdoc-input__field {
@@ -50,6 +65,10 @@
   min-height: var(--size-input-small);
   padding-top: var(--space-8);
   padding-bottom: var(--space-8);
+}
+
+.fdoc-input__field--has-leading {
+  column-gap: var(--space-8);
 }
 
 .fdoc-input__field:hover:not(.fdoc-input__field--disabled):not(.fdoc-input__field--error):not(:focus-within) {
@@ -97,6 +116,10 @@
   outline: 0;
   color: var(--text-base-default);
   background: transparent;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font: inherit;
   font-size: var(--font-size-16);
   font-weight: var(--font-weight-regular);
@@ -199,6 +222,10 @@
   flex: 0 0 auto;
   text-align: right;
   white-space: nowrap;
+}
+
+.fdoc-input__counter--disabled {
+  color: var(--text-base-secondary-disabled);
 }
 
 @media (prefers-reduced-motion: reduce) {
