@@ -86,8 +86,11 @@ describe('Input', () => {
     const user = userEvent.setup();
     const onClear = vi.fn();
     render(<Input label="Поиск" defaultValue="Запрос" clearable onClear={onClear} />);
-    expect(document.querySelector('[data-icon="filled/cross_circle_filled"]')).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Очистить поле' }));
+    const clearButton = screen.getByRole('button', { name: 'Очистить поле' });
+    expect(clearButton).toHaveAttribute('data-button-icon-size', '24');
+    expect(clearButton).toHaveClass('fdoc-button-icon--neutral');
+    expect(clearButton.querySelector('[data-icon="filled/cross_circle_filled"]')).toBeInTheDocument();
+    await user.click(clearButton);
     expect(onClear).toHaveBeenCalledOnce();
     expect(screen.getByLabelText('Поиск')).toHaveValue('');
   });
