@@ -5,6 +5,14 @@ import '../src/styles/storybook.css';
 const preview: Preview = {
   parameters: {
     layout: 'centered',
+    options: {
+      storySort: {
+        order: [
+          ['Atoms', ['Docs', '*']],
+          ['Components', '*'],
+        ],
+      },
+    },
     controls: {
       expanded: true,
     },
