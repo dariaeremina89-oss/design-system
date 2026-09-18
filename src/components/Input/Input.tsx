@@ -81,7 +81,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     caret = false,
     clearable = false,
     onClear,
-    clearIcon = 'cross',
+    clearIcon = 'filled/cross_circle_filled',
     skeleton = false,
     disabled = false,
     value,
