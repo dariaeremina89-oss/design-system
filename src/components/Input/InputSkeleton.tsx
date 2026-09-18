@@ -191,6 +191,7 @@ export function InputSkeleton({
           <ButtonIcon
             className="fdoc-input__clear"
             size="xsmall"
+            color="neutral"
             state="skeleton"
             aria-label="Очистка поля"
             data-testid="input-skeleton-clear"
