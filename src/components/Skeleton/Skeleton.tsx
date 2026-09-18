@@ -13,6 +13,8 @@ export type SkeletonTextSize =
   | 'overline';
 
 export interface SkeletonProps extends HTMLAttributes<HTMLSpanElement> {
+  /** Стабильный идентификатор элемента для UI-тестов. */
+  'data-testid'?: string;
   /** Ширина блока. */
   width?: CSSProperties['width'];
   /** Высота блока. */
@@ -34,6 +36,7 @@ export function Skeleton({
   textSize,
   className,
   style,
+  'data-testid': testId,
   ...props
 }: SkeletonProps) {
   const skeletonStyle = {
@@ -52,6 +55,7 @@ export function Skeleton({
         className,
       )}
       data-text-size={textSize}
+      data-testid={testId ?? 'skeleton'}
       style={skeletonStyle}
       aria-hidden={props['aria-hidden'] ?? true}
     />
