@@ -28,6 +28,10 @@ const meta = {
     sumIcon: { control: 'select', options: iconNames },
     clearIcon: { control: 'select', options: iconNames },
     caret: { control: 'boolean' },
+    onChange: { action: 'change' },
+    onFocus: { action: 'focus' },
+    onBlur: { action: 'blur' },
+    onKeyDown: { action: 'keydown' },
     onClear: { action: 'clear' },
   },
 } satisfies Meta<typeof Input>;
