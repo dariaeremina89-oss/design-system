@@ -4,7 +4,15 @@ import { Page } from './atoms-helpers';
 
 const meta = {
   title: 'Atoms/Icons',
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component:
+          'Единая библиотека SVG-иконок, импортированная из Figma. Иконки сгруппированы по разделам, выбираются через prop name, масштабируются через size и поддерживают color для монохромных вариантов. Для самостоятельной иконки доступное имя задается через title.',
+      },
+    },
+  },
   tags: ['autodocs'],
 } satisfies Meta<IconProps>;
 
