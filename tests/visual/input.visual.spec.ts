@@ -22,7 +22,7 @@ const openStory = async (page: Page, storyId: string) => {
 
 test('Input default state keeps its intended geometry', async ({ page }) => {
   const root = await openStory(page, 'components-input--default');
-  const field = root.locator('.fdoc-input__field');
+  const field = root.getByTestId('input-field');
   const box = await field.boundingBox();
   const styles = await field.evaluate((element) => {
     const computed = getComputedStyle(element);
@@ -36,15 +36,15 @@ test('Input default state keeps its intended geometry', async ({ page }) => {
 
 test('Input error state keeps error content and border', async ({ page }) => {
   const root = await openStory(page, 'components-input--error');
-  await expect(root.locator('.fdoc-input__caption')).toContainText('Error text');
-  const borderColor = await root.locator('.fdoc-input__field').evaluate((element) => getComputedStyle(element).borderColor);
+  await expect(root.getByTestId('input-error')).toContainText('Error text');
+  const borderColor = await root.getByTestId('input-field').evaluate((element) => getComputedStyle(element).borderColor);
   expect(borderColor).not.toBe('');
 });
 
 test('Input focused state keeps its border stable', async ({ page }) => {
   const root = await openStory(page, 'components-input--default');
-  const field = root.locator('.fdoc-input__field');
-  const input = page.locator('input.fdoc-input__control');
+  const field = root.getByTestId('input-field');
+  const input = root.getByTestId('input-control');
   const before = await field.boundingBox();
 
   await input.focus();
@@ -68,10 +68,10 @@ test('Input long content stays inside the component', async ({ page }) => {
 
 test('Input skeleton reflects all nested content', async ({ page }) => {
   const root = await openStory(page, 'components-input--skeleton-with-all-content');
-  await expect(root.locator('.fdoc-input__skeleton--label')).toHaveCount(1);
-  await expect(root.locator('.fdoc-input__skeleton--input-text')).toHaveCount(1);
-  await expect(root.locator('.fdoc-input__skeleton--description')).toHaveCount(1);
-  await expect(root.locator('.fdoc-input__skeleton--helper')).toHaveCount(1);
-  await expect(root.locator('.fdoc-input__skeleton--counter')).toHaveCount(1);
+  await expect(root.getByTestId('input-skeleton-label-text')).toHaveCount(1);
+  await expect(root.getByTestId('input-skeleton-text')).toHaveCount(1);
+  await expect(root.getByTestId('input-skeleton-description')).toHaveCount(1);
+  await expect(root.getByTestId('input-skeleton-helper-shape')).toHaveCount(1);
+  await expect(root.getByTestId('input-skeleton-counter-shape')).toHaveCount(1);
   await expect(root.locator('.fdoc-skeleton--icon')).toHaveCount(5);
 });
