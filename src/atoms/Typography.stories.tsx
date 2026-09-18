@@ -4,7 +4,15 @@ import { Page, TokenList } from './atoms-helpers';
 
 const meta = {
   title: 'Atoms/Typography',
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component:
+          'Типографический foundation-слой с двумя уровнями: primitive values для семейств, начертаний, размеров и line-height; page styles как именованные semantic-сборки, которые применяются к тексту. На мобильных основной интерфейсный текст не уменьшается ниже системного минимума.',
+      },
+    },
+  },
   tags: ['autodocs'],
 } satisfies Meta;
 
