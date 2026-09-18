@@ -10,8 +10,43 @@ const meta = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Базовая кнопка только с иконкой из тестового плейбука. Компонент сверяется с Button Icon из Figma и предназначен для дальнейших производных Input. Это не официальная библиотека F.Doc.',
+        component: `
+**ButtonIcon** — кнопка с одним действием, представленным иконкой без текста. Она используется для компактных вспомогательных действий, когда смысл понятен из контекста или дополнительно раскрывается через Tooltip.
+
+Это базовый компонент тестовой дизайн-системы и личного плейбука. Источник визуальной истины — компонент **Button Icon** в Figma; frontend-реализация использует локальную библиотеку \`Icon\` и семантические токены проекта.
+
+### Ограничения
+
+- ButtonIcon содержит одну иконку и не поддерживает текст.
+- Для неочевидных действий рекомендуется Tooltip.
+- \`aria-label\` обязателен и не заменяется Tooltip.
+- \`iconSize\` можно переопределить отдельно от размера кнопки.
+
+### Размеры
+
+| Size | Кнопка | Иконка | Padding |
+| --- | ---: | ---: | ---: |
+| \`xxsmall\` / 16 Xxsmall | \`--elements-16\` | \`--elements-16\` | \`--space-0\` |
+| \`xsmall\` / 24 Xsmall | \`--elements-24\` | \`--elements-16\` | \`--space-4\` |
+| \`small\` / 32 Small | \`--elements-32\` | \`--elements-16\` | \`--space-8\` |
+| \`medium\` / 40 Medium | \`--elements-40\` | \`--elements-24\` | \`--space-8\` |
+| \`large\` / 48 Large | \`--elements-48\` | \`--elements-32\` | \`--space-8\` |
+| \`giant\` / 56 Giant | \`--elements-56\` | \`--elements-40\` | \`--space-8\` |
+
+Кнопка круглая: \`--radius-full\`. Focus-обводка использует \`--border-large\` и не меняет размер layout-бокса.
+
+### Цвета и состояния
+
+Поддерживаются цвета \`Primary\`, \`Secondary\`, \`Tertiary\`, \`Neutral\`, \`Base\`, \`Inverse\`, \`Inverse Primary\`, \`Inverse light\` и состояния \`Default\`, \`Hover\`, \`Focused\`, \`Pressed\`, \`Disabled\`, \`Skeleton\`.
+
+\`Tertiary\` и \`Neutral\` не имеют фона в Default, Focused и Disabled; фон появляется только в Hover и Pressed. \`Skeleton\` использует общую анимацию Skeleton и не является интерактивной кнопкой.
+
+### Доступность
+
+Используется нативный \`button\`: он доступен через Tab, активируется клавишами Enter и Space, а в Disabled исключается из tab-навигации через нативный \`disabled\`.
+
+Это не официальная библиотека F.Doc и не production-компонент.
+        `,
       },
     },
   },
