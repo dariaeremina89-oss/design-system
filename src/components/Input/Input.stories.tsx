@@ -38,6 +38,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 export const Filled: Story = { args: { defaultValue: 'Input text' } };
 export const Error: Story = { args: { error: 'Error text', caption: undefined } };
+export const FocusedError: Story = { args: { autoFocus: true, error: 'Error text', caption: undefined } };
 export const Required: Story = { args: { required: true } };
 export const WithDescriptionAndCounter: Story = {
   args: { defaultValue: 'Input text', description: 'Description text', caption: 'Caption text', counter: '100 / 100' },
@@ -62,5 +63,12 @@ export const LongText: Story = {
     label: 'Очень длинный label, который должен переноситься внутри доступной ширины',
     placeholder: 'Очень длинный placeholder без выхода за границы компонента',
     caption: 'Очень длинный текст подсказки тоже должен переноситься внутри доступной ширины',
+  },
+};
+export const LongUnbrokenText: Story = {
+  args: {
+    label: 'https://example.com/very-long-unbroken-label-value-that-must-not-break-the-layout',
+    caption: 'https://example.com/very-long-unbroken-caption-value-that-must-not-break-the-layout',
+    counter: '100 / 100',
   },
 };
