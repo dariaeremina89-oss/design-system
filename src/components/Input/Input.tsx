@@ -54,6 +54,14 @@ function joinClassNames(...classes: Array<string | false | undefined>) {
   return classes.filter(Boolean).join(' ');
 }
 
+function hasRenderableContent(value: ReactNode | undefined) {
+  return value !== undefined
+    && value !== null
+    && value !== false
+    && value !== true
+    && value !== '';
+}
+
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     id: providedId,
@@ -89,18 +97,26 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const [internalValue, setInternalValue] = useState(() => String(defaultValue ?? ''));
   const isControlled = value !== undefined;
   const currentValue = isControlled ? value : internalValue;
-  const descriptionId = description !== undefined ? `${inputId}-description` : undefined;
-  const errorId = error !== undefined ? `${inputId}-error` : undefined;
-  const captionId = !error && caption !== undefined ? `${inputId}-caption` : undefined;
+  const hasLabel = hasRenderableContent(label);
+  const hasDescription = hasRenderableContent(description);
+  const hasError = hasRenderableContent(error);
+  const hasCaption = hasRenderableContent(caption);
+  const hasCounter = counter !== undefined
+    && counter !== null
+    && counter !== false
+    && counter !== true
+    && counter !== '';
+  const descriptionId = hasDescription ? `${inputId}-description` : undefined;
+  const errorId = hasError ? `${inputId}-error` : undefined;
+  const captionId = !hasError && hasCaption ? `${inputId}-caption` : undefined;
   const hasValue = String(currentValue ?? '').length > 0;
-  const hasCounter = counter !== undefined && counter !== false;
   const resolvedCounter = counter === true
     ? `${String(currentValue ?? '').length}${maxLength !== undefined ? ` / ${maxLength}` : ''}`
     : counter;
   const counterId = hasCounter ? `${inputId}-counter` : undefined;
   const helperId = [descriptionId, errorId, captionId, counterId].filter(Boolean).join(' ') || undefined;
   const showClear = clearable && hasValue && !disabled && !skeleton;
-  const isError = Boolean(error);
+  const isError = hasError;
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!isControlled) {
@@ -145,7 +161,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 
   return (
     <div className={joinClassNames('fdoc-input', `fdoc-input--${size}`, wrapperClassName)}>
-      {label !== false && label !== undefined && (
+      {hasLabel && (
         <label
           className={joinClassNames(
             'fdoc-input__label',
@@ -192,7 +208,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             aria-describedby={helperId}
             onChange={handleChange}
           />
-          {description !== undefined && (
+          {hasDescription && (
             <span
               id={descriptionId}
               className={joinClassNames('fdoc-input__description', disabled && 'fdoc-input__description--disabled')}
@@ -237,9 +253,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         )}
       </div>
 
-      {(caption !== undefined || hasCounter || error !== undefined) && (
+      {(hasCaption || hasCounter || hasError) && (
         <div className="fdoc-input__helper">
-          {(error !== undefined || caption !== undefined) && (
+          {(hasError || hasCaption) && (
             <span
               id={errorId ?? captionId}
               className={joinClassNames(
@@ -249,7 +265,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
                 isError && disabled && 'fdoc-input__caption--error-disabled',
               )}
             >
-              {error ?? caption}
+              {hasError ? error : caption}
             </span>
           )}
           {hasCounter && (
