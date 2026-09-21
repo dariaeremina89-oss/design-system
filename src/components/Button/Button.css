@@ -24,10 +24,10 @@
   background: var(--fdoc-button-background);
   color: var(--fdoc-button-text);
   cursor: pointer;
-  font-family: var(--page-caption-family);
-  font-size: var(--font-size-12);
-  font-weight: var(--page-caption-weight-strong);
-  line-height: var(--line-height-16);
+  font-family: var(--page-body-family);
+  font-size: var(--font-size-14);
+  font-weight: var(--page-body-weight-strong);
+  line-height: var(--line-height-20);
   overflow: hidden;
   transition: background-color 120ms ease, border-color 120ms ease;
 }
