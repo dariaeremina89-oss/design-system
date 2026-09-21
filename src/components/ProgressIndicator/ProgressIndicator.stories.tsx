@@ -25,10 +25,10 @@ const meta = {
 - type: linear / circular;
 - mode: determinate / indeterminate;
 - Linear: value и max (по умолчанию 0 и 100);
-- Circular: size (40), strokeWidth (2), variant (primary / secondary / tertiary), duration (1500) и animation;
+- Circular: size (24), strokeWidth (2), variant (primary / secondary / tertiary), duration (1500) и animation;
 - color остаётся совместимым алиасом variant. Linear использует Primary-схему Figma.
 
-Linear занимает доступную ширину и имеет высоту 4 px, Circular получает размер через \`size\` (по умолчанию 40 px). Внутренняя логика анимации общая и отключается при prefers-reduced-motion.
+Linear занимает доступную ширину и имеет высоту 4 px, Circular получает размер через \`size\` (по умолчанию 24 px). Внутренняя логика анимации общая и отключается при prefers-reduced-motion.
 
 Компонент не кликабелен и не получает фокус. Determinate публикует aria-valuemin, aria-valuemax и aria-valuenow, Indeterminate — только роль и доступную подпись.
         `,
@@ -40,7 +40,7 @@ Linear занимает доступную ширину и имеет высот
     mode: 'determinate',
     value: 60,
     max: 100,
-    size: 40,
+    size: 24,
     strokeWidth: 2,
     variant: 'primary',
     duration: 1500,
@@ -78,7 +78,7 @@ export const CircularProps: Story = {
   args: {
     type: 'circular',
     mode: 'indeterminate',
-    size: 40,
+    size: 24,
     strokeWidth: 2,
     variant: 'primary',
     duration: 1500,

@@ -62,7 +62,6 @@
 .fdoc-progress--circular .fdoc-progress__indicator {
   fill: none;
   stroke-width: var(--fdoc-progress-stroke-width);
-  vector-effect: non-scaling-stroke;
 }
 
 .fdoc-progress--circular .fdoc-progress__track {
@@ -79,15 +78,15 @@
   animation: fdoc-progress-circular-indeterminate var(--fdoc-progress-duration) var(--fdoc-progress-animation) infinite;
 }
 
-/* Figma Circular: track background/base/secondary, scale background/primary/default. */
+/* Figma Secondary: light track and dark indicator. */
 .fdoc-progress--secondary {
   --fdoc-progress-track: var(--background-base-secondary);
-  --fdoc-progress-indicator: var(--background-base-default);
+  --fdoc-progress-indicator: var(--background-base-inverse);
 }
 
 .fdoc-progress--tertiary {
   --fdoc-progress-track: var(--background-base-inverse-light);
-  --fdoc-progress-indicator: var(--background-base-inverse);
+  --fdoc-progress-indicator: var(--background-base-default);
 }
 
 @keyframes fdoc-progress-linear-indeterminate {

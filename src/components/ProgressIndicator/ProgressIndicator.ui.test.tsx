@@ -13,14 +13,14 @@ describe('ProgressIndicator visual contract', () => {
 
   it('keeps Circular stroke and color scheme tokens', () => {
     expect(css).toContain('stroke-width: var(--fdoc-progress-stroke-width)');
-    expect(css).toMatch(/\.fdoc-progress--secondary\s*\{[^}]*--fdoc-progress-indicator: var\(--background-base-default\)/s);
+    expect(css).toMatch(/\.fdoc-progress--secondary\s*\{[^}]*--fdoc-progress-indicator: var\(--background-base-inverse\)/s);
     expect(css).toMatch(/\.fdoc-progress--tertiary\s*\{[^}]*--fdoc-progress-track: var\(--background-base-inverse-light\)/s);
-    expect(css).toMatch(/\.fdoc-progress--tertiary\s*\{[^}]*--fdoc-progress-indicator: var\(--background-base-inverse\)/s);
+    expect(css).toMatch(/\.fdoc-progress--tertiary\s*\{[^}]*--fdoc-progress-indicator: var\(--background-base-default\)/s);
   });
 
   it('keeps the Figma secondary Circular track and indicator paired', () => {
     expect(css).toMatch(
-      /\.fdoc-progress--secondary\s*\{\s*--fdoc-progress-track: var\(--background-base-secondary\);\s*--fdoc-progress-indicator: var\(--background-base-default\);\s*\}/s,
+      /\.fdoc-progress--secondary\s*\{\s*--fdoc-progress-track: var\(--background-base-secondary\);\s*--fdoc-progress-indicator: var\(--background-base-inverse\);\s*\}/s,
     );
   });
 

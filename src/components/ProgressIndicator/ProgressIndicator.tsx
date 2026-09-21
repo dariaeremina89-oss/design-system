@@ -17,7 +17,7 @@ export interface ProgressIndicatorProps extends Omit<HTMLAttributes<HTMLDivEleme
   value?: number;
   /** Максимальное значение Linear для determinate. По умолчанию 100. */
   max?: number;
-  /** Размер Circular в пикселях. По умолчанию 40. */
+  /** Размер Circular в пикселях. По умолчанию 24, как в Figma. */
   size?: number;
   /** Толщина линии Circular в пикселях. По умолчанию 2. */
   strokeWidth?: number;
@@ -31,8 +31,7 @@ export interface ProgressIndicatorProps extends Omit<HTMLAttributes<HTMLDivEleme
   animation?: ProgressIndicatorAnimation;
 }
 
-const CIRCULAR_VIEWBOX_SIZE = 24;
-const DEFAULT_SIZE = 40;
+const DEFAULT_SIZE = 24;
 const DEFAULT_STROKE_WIDTH = 2;
 const DEFAULT_DURATION = 1500;
 const DEFAULT_MAX = 100;
@@ -68,9 +67,10 @@ export function ProgressIndicator({
   const normalizedMax = normalizePositiveNumber(max, DEFAULT_MAX);
   const normalizedValue = clampValue(value, normalizedMax);
   const normalizedSize = normalizePositiveNumber(size, DEFAULT_SIZE);
-  const normalizedStrokeWidth = Math.min(8, normalizePositiveNumber(strokeWidth, DEFAULT_STROKE_WIDTH));
+  const normalizedStrokeWidth = Math.min(normalizedSize / 2, 8, normalizePositiveNumber(strokeWidth, DEFAULT_STROKE_WIDTH));
   const normalizedDuration = normalizePositiveNumber(duration, DEFAULT_DURATION);
-  const circularRadius = (CIRCULAR_VIEWBOX_SIZE - normalizedStrokeWidth) / 2;
+  const circularRadius = (normalizedSize - normalizedStrokeWidth) / 2;
+  const circumference = 2 * Math.PI * circularRadius;
   const isDeterminate = mode === 'determinate';
   const effectiveColor = type === 'circular' ? (variant ?? color ?? 'primary') : 'primary';
   const normalizedPercent = (normalizedValue / normalizedMax) * 100;
@@ -95,7 +95,7 @@ export function ProgressIndicator({
   } as CSSProperties;
 
   if (type === 'circular') {
-    const dashOffset = 1 - normalizedValue / normalizedMax;
+    const dashOffset = circumference * (1 - normalizedValue / normalizedMax);
 
     return (
       <div
@@ -112,23 +112,21 @@ export function ProgressIndicator({
         data-progress-variant={effectiveColor}
         style={progressStyle}
       >
-        <svg className="fdoc-progress__circular-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <svg className="fdoc-progress__circular-svg" viewBox={`0 0 ${normalizedSize} ${normalizedSize}`} aria-hidden="true" focusable="false">
           <circle
             className="fdoc-progress__track"
-            cx="12"
-            cy="12"
+            cx={normalizedSize / 2}
+            cy={normalizedSize / 2}
             r={circularRadius}
-            pathLength="1"
             strokeWidth={normalizedStrokeWidth}
           />
           <circle
             className="fdoc-progress__indicator"
-            cx="12"
-            cy="12"
+            cx={normalizedSize / 2}
+            cy={normalizedSize / 2}
             r={circularRadius}
-            pathLength="1"
             strokeWidth={normalizedStrokeWidth}
-            strokeDasharray={isDeterminate ? '1' : '0.25 1'}
+            strokeDasharray={isDeterminate ? `${circumference}` : `${circumference / 4} ${circumference}`}
             strokeDashoffset={isDeterminate ? dashOffset : undefined}
           />
         </svg>

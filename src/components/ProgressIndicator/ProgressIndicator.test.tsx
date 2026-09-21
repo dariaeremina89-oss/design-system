@@ -57,7 +57,7 @@ describe('ProgressIndicator', () => {
     const styles = getComputedStyle(screen.getByRole('progressbar'));
 
     expect(styles.getPropertyValue('--fdoc-progress-track').trim()).toBe('var(--background-base-secondary)');
-    expect(styles.getPropertyValue('--fdoc-progress-indicator').trim()).toBe('var(--background-base-default)');
+    expect(styles.getPropertyValue('--fdoc-progress-indicator').trim()).toBe('var(--background-base-inverse)');
   });
 
   it('uses the Figma Primary scheme for Linear regardless of the ignored color prop', () => {
@@ -106,6 +106,6 @@ describe('ProgressIndicator', () => {
       '--fdoc-progress-stroke-width': '4',
     });
     expect(indicator).toHaveAttribute('stroke-width', '4');
-    expect(indicator).toHaveAttribute('r', '10');
+    expect(indicator).toHaveAttribute('r', '26');
   });
 });
