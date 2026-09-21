@@ -4,8 +4,8 @@ test('Typography platform previews keep their own sizes at both viewport widths'
   await page.goto('/iframe.html?id=atoms-typography--styles&viewMode=story');
   for (const width of [1280, 375]) {
     await page.setViewportSize({ width, height: 900 });
-    const desktop = page.getByRole('region', { name: 'Desktop', exact: true }).locator('.fdoc-atoms__type-sample').first();
-    const mobile = page.getByRole('region', { name: 'Mobile', exact: true }).locator('.fdoc-atoms__type-sample').first();
+    const desktop = page.getByRole('table', { name: 'Стили типографики' }).locator('[data-platform=desktop] .fdoc-atoms__type-sample').first();
+    const mobile = page.getByRole('table', { name: 'Стили типографики' }).locator('[data-platform=mobile] .fdoc-atoms__type-sample').first();
     await expect(desktop).toHaveCSS('font-size', '40px');
     await expect(desktop).toHaveCSS('line-height', '48px');
     await expect(mobile).toHaveCSS('font-size', '32px');

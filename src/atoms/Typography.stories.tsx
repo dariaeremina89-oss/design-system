@@ -97,46 +97,68 @@ export const Primitive: Story = {
 
 export const Styles: Story = {
   render: () => (
-    <Page title="Page typography styles → primitives">
-      {(['desktop', 'mobile'] as const).map((platform) => (
-      <section key={platform} className="fdoc-atoms__subsection" aria-labelledby={`typography-${platform}`}>
-        <h2 id={`typography-${platform}`}>{platform === 'desktop' ? 'Desktop' : 'Mobile'}</h2>
-        {typographyTokens.map((item) => {
-          const base = pageStyleReferences[item.token];
-          const mobile = platform === 'mobile';
-          // Pin both previews to their platform so resizing the viewport does not change Desktop into Mobile.
-          const style = mobile ? {
-            family: base.family.replace(')', '-mobile)'),
-            weight: base.weight.replace(')', '-mobile)'),
-            size: base.size.replace(')', '-mobile)'),
-            lineHeight: base.lineHeight.replace(')', '-mobile)'),
-          } : { ...base, size: item.references.size, lineHeight: item.references.lineHeight };
+    <Page title="Typography styles">
+      <div className="fdoc-atoms__type-scroll" role="region" aria-label="Сравнение типографики Desktop и Mobile" tabIndex={0}>
+        <table className="fdoc-atoms__type-table" aria-label="Стили типографики">
+          <thead>
+            <tr>
+              <th scope="col">Стиль</th>
+              <th scope="col">Desktop</th>
+              <th scope="col">Mobile</th>
+            </tr>
+          </thead>
+          <tbody>
+            {typographyTokens.map((item) => (
+              <tr key={item.token}>
+                <th scope="row">
+                  <span>{item.name}</span>
+                  <code className="fdoc-atoms__label">{item.token}-*</code>
+                </th>
+                {(['desktop', 'mobile'] as const).map((platform) => {
+                  const base = pageStyleReferences[item.token];
+                  const mobile = platform === 'mobile';
+                  // Keep each column tied to its platform at every viewport width.
+                  const style = mobile ? {
+                    family: base.family.replace(')', '-mobile)'),
+                    weight: base.weight.replace(')', '-mobile)'),
+                    size: base.size.replace(')', '-mobile)'),
+                    lineHeight: base.lineHeight.replace(')', '-mobile)'),
+                  } : { ...base, size: item.references.size, lineHeight: item.references.lineHeight };
 
-          return (
-            <div key={item.name} className="fdoc-atoms__type-row">
-              <div
-                className="fdoc-atoms__type-sample"
-                style={{
-                  fontFamily: style.family,
-                  fontSize: style.size,
-                  lineHeight: style.lineHeight,
-                  fontWeight: style.weight,
-                  ...(item.references.style ? { fontStyle: item.references.style } : {}),
-                }}
-              >
-                Aa — {item.name}
-              </div>
-              <div className="fdoc-atoms__type-meta">
-                <span>{item.token}-*</span>
-                <span>{mobile ? item.mobileSize : item.size}/{mobile ? item.mobileLineHeight : item.lineHeight} px</span>
-                <code>page style → {style.family} · weight → {style.weight}</code>
-                <code>size → {style.size} · line-height → {style.lineHeight}</code>
-              </div>
-            </div>
-          );
-        })}
-      </section>
-      ))}
+                  return (
+                    <td key={platform} data-platform={platform}>
+                      <div className="fdoc-atoms__type-cell">
+                        <div
+                          className="fdoc-atoms__type-sample"
+                          style={{
+                            fontFamily: style.family,
+                            fontSize: style.size,
+                            lineHeight: style.lineHeight,
+                            fontWeight: style.weight,
+                            ...(item.references.style ? { fontStyle: item.references.style } : {}),
+                          }}
+                        >
+                          Aa — Аа
+                        </div>
+                        <div className="fdoc-atoms__type-meta">
+                          <span>{mobile ? item.mobileSize : item.size}/{mobile ? item.mobileLineHeight : item.lineHeight} px</span>
+                          <details>
+                            <summary>Токены</summary>
+                            <code>family → {style.family}</code>
+                            <code>weight → {style.weight}</code>
+                            <code>size → {style.size}</code>
+                            <code>line-height → {style.lineHeight}</code>
+                          </details>
+                        </div>
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </Page>
   ),
 };
