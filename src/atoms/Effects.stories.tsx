@@ -3,7 +3,8 @@ import { effectTokens } from '../styles/token-catalog';
 import { cssVar, Page } from './atoms-helpers';
 
 const meta = {
-  title: 'Atoms/Effects',
+  title: 'General/Variables/Shadows',
+  id: 'atoms-effects',
   parameters: {
     layout: 'padded',
     docs: {

@@ -1,15 +1,16 @@
+import { testingDocs } from '../docs/testing';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Skeleton as SkeletonBlock } from '../components/Skeleton/Skeleton';
 import { Page } from './atoms-helpers';
 
 const meta = {
-  title: 'Atoms/Skeleton',
+  title: 'Components/Elements/Skeleton',
+  id: 'atoms-skeleton',
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Общий атом загрузочного состояния. Skeleton поддерживает текстовые строки по типографическим стилям, блоки, круги и иконки; анимация и базовый цвет задаются централизованно. Используется только там, где интерфейс действительно ждет данные, и не является интерактивным элементом.',
+        component: 'Общий атом загрузочного состояния. Skeleton поддерживает текстовые строки по типографическим стилям, блоки, круги и иконки; анимация и базовый цвет задаются централизованно. Используется только там, где интерфейс действительно ждет данные, и не является интерактивным элементом.' + testingDocs('Skeleton'),
       },
     },
   },

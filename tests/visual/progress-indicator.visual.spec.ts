@@ -8,7 +8,7 @@ const openStory = async (page: Page, storyId: string) => {
 };
 
 test('Linear determinate keeps Figma geometry and ARIA value', async ({ page }) => {
-  const root = await openStory(page, 'components-progress-indicators-progressindicator--linear-modes');
+  const root = await openStory(page, 'components-indicators-linearprogress--linear-modes');
   const linear = root.locator('[data-progress-type="linear"]').first();
 
   await expect(linear).toHaveCSS('height', '4px');

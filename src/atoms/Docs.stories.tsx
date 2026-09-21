@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Page } from './atoms-helpers';
 
 const meta = {
-  title: 'Atoms/Docs',
+  title: 'General/Overview',
+  id: 'atoms-docs',
   parameters: {
     layout: 'padded',
     docs: {

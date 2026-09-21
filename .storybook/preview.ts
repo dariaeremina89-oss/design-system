@@ -6,30 +6,7 @@ const preview: Preview = {
   parameters: {
     layout: 'centered',
     options: {
-      storySort: (a, b) => {
-        const sidebarOrder = [
-          'Atoms/Docs',
-          'Atoms/Colors',
-          'Atoms/Typography',
-          'Atoms/Effects',
-          'Atoms/Size',
-          'Atoms/Icons',
-          'Atoms/Skeleton',
-          'Components/Buttons',
-          'Components/Inputs',
-          'Components/Badge',
-          'Components/Progress Indicators',
-        ];
-        const rank = (title) => {
-          const index = sidebarOrder.findIndex(
-            (item) => title === item || title.startsWith(`${item}/`),
-          );
-          return index === -1 ? sidebarOrder.length : index;
-        };
-
-        const rankDifference = rank(a.title) - rank(b.title);
-        return rankDifference || a.title.localeCompare(b.title);
-      },
+      storySort: { order: ["General",["Overview","Variables",["Colors",["Background colors","Border colors","Color primitives","Icon colors","Text colors"],"Shadows","Sizes"],"Typography","Icons","Layers","Custom Branding","Changelog"],"Components",["Actions",["Button","ButtonFAB","ButtonIcon","ButtonLink","ButtonToggle","Link"],"Inputs",["CodeInput","Input","PhoneInput","PriceInput","Search","SingleFileInput","Textarea"],"Selection",["AsyncAutocomplete","Autocomplete","Checkbox","CheckboxGroup","Chips","ChipsGroup","Dropdown","Multiselect","Radio","RadioGroup","Select","Switch","SwitchGroup"],"Navigation",["Accordion","AccordionGroup","Breadcrumbs","Pagination","Tabs"],"DateTime",["Calendar","DatePicker","RangeCalendar"],"Overlays",["BottomSheet","Dialog","Tooltip"],"Indicators",["Badge","CircularProgress","LinearProgress"],"Elements",["Skeleton"]]], },
     },
     controls: {
       expanded: true,

@@ -1,8 +1,10 @@
+import { testingDocs } from '../../docs/testing';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Badge, type BadgeColor, type BadgeSize, type BadgeState } from './Badge';
 
 const meta = {
-  title: 'Components/Badge',
+  title: 'Components/Indicators/Badge',
+  id: 'components-badge',
   component: Badge,
   tags: ['autodocs'],
   parameters: {
@@ -27,7 +29,7 @@ const meta = {
 Smallest имеет внешний размер 16 и внутреннюю точку 8. Остальные размеры имеют фиксированную высоту 16, 20, 24 и 28, а ширина зависит от контента и горизонтальных padding. Skeleton использует общую wave-анимацию атома Skeleton и радиус --radius-small.
 
 Badge не кликабелен, не получает фокус и не содержит иконок или вложенных интерактивных элементов. Для декоративного Badge можно передать aria-hidden, для самостоятельного текстового значения — aria-label.
-        `,
+        ` + testingDocs('Badge'),
       },
     },
   },

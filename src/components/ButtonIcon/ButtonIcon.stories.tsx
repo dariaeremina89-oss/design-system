@@ -1,9 +1,11 @@
+import { testingDocs } from '../../docs/testing';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { iconNames } from '../Icon/Icon';
 import { ButtonIcon } from './ButtonIcon';
 
 const meta = {
-  title: 'Components/Buttons/ButtonIcon',
+  title: 'Components/Actions/ButtonIcon',
+  id: 'components-buttons-buttonicon',
   component: ButtonIcon,
   tags: ['autodocs'],
   parameters: {
@@ -46,7 +48,7 @@ const meta = {
 Используется нативный \`button\`: он доступен через Tab, активируется клавишами Enter и Space, а в Disabled исключается из tab-навигации через нативный \`disabled\`.
 
 Это не официальная библиотека F.Doc и не production-компонент.
-        `,
+        ` + testingDocs('ButtonIcon'),
       },
     },
   },

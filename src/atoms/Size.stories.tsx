@@ -3,7 +3,8 @@ import { borderTokens, depthTokens, elementTokens, radiusTokens, responsiveToken
 import { Page, TokenList } from './atoms-helpers';
 
 const meta = {
-  title: 'Atoms/Size',
+  title: 'General/Variables/Sizes',
+  id: 'atoms-size',
   parameters: {
     layout: 'padded',
     docs: {

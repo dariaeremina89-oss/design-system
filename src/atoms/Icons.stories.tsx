@@ -1,15 +1,16 @@
+import { testingDocs } from '../docs/testing';
 import type { ArgTypes, Meta, StoryObj } from '@storybook/react-vite';
 import { Icon, type IconName, type IconProps, iconNames } from '../components/Icon/Icon';
 import { Page } from './atoms-helpers';
 
 const meta = {
-  title: 'Atoms/Icons',
+  title: 'General/Icons',
+  id: 'atoms-icons',
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Единая библиотека SVG-иконок, импортированная из Figma. Иконки сгруппированы по разделам, выбираются через prop name, масштабируются через size и поддерживают color для монохромных вариантов. Для самостоятельной иконки доступное имя задается через title.',
+        component: 'Единая библиотека SVG-иконок, импортированная из Figma. Иконки сгруппированы по разделам, выбираются через prop name, масштабируются через size и поддерживают color для монохромных вариантов. Для самостоятельной иконки доступное имя задается через title.' + testingDocs('Icon'),
       },
     },
   },

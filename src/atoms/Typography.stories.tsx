@@ -3,7 +3,8 @@ import { typographyPrimitiveTokens, typographyTokens } from '../styles/token-cat
 import { Page, TokenList } from './atoms-helpers';
 
 const meta = {
-  title: 'Atoms/Typography',
+  title: 'General/Typography',
+  id: 'atoms-typography',
   parameters: {
     layout: 'padded',
     docs: {
