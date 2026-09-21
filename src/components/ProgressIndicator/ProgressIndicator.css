@@ -1,6 +1,9 @@
 .fdoc-progress {
   --fdoc-progress-track: var(--background-base-secondary);
   --fdoc-progress-indicator: var(--background-primary-default);
+  --fdoc-progress-duration: 1500ms;
+  --fdoc-progress-animation: linear;
+  --fdoc-progress-stroke-width: 2;
   box-sizing: border-box;
   flex: 0 0 auto;
   pointer-events: none;
@@ -39,7 +42,7 @@
   left: 7.08%;
   width: 60%;
   transform: translateX(-172.22%);
-  animation: fdoc-progress-linear-indeterminate 2s linear infinite;
+  animation: fdoc-progress-linear-indeterminate var(--fdoc-progress-duration) var(--fdoc-progress-animation) infinite;
 }
 
 .fdoc-progress--circular {
@@ -58,7 +61,7 @@
 .fdoc-progress--circular .fdoc-progress__track,
 .fdoc-progress--circular .fdoc-progress__indicator {
   fill: none;
-  stroke-width: 2;
+  stroke-width: var(--fdoc-progress-stroke-width);
   vector-effect: non-scaling-stroke;
 }
 
@@ -73,10 +76,12 @@
 }
 
 .fdoc-progress--circular.fdoc-progress--indeterminate .fdoc-progress__indicator {
-  animation: fdoc-progress-circular-indeterminate 2s linear infinite;
+  animation: fdoc-progress-circular-indeterminate var(--fdoc-progress-duration) var(--fdoc-progress-animation) infinite;
 }
 
+/* Figma Circular: track background/base/secondary, scale background/primary/default. */
 .fdoc-progress--secondary {
+  --fdoc-progress-track: var(--background-base-secondary);
   --fdoc-progress-indicator: var(--background-base-default);
 }
 

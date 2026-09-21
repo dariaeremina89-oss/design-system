@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
   ProgressIndicator,
+  type ProgressIndicatorAnimation,
   type ProgressIndicatorColor,
   type ProgressIndicatorMode,
   type ProgressIndicatorType,
@@ -23,10 +24,11 @@ const meta = {
 
 - type: linear / circular;
 - mode: determinate / indeterminate;
-- value: число от 0 до 100 только для determinate;
-- color: primary / secondary / tertiary для Circular. Linear использует Primary-схему Figma.
+- Linear: value и max (по умолчанию 0 и 100);
+- Circular: size (40), strokeWidth (2), variant (primary / secondary / tertiary), duration (1500) и animation;
+- color остаётся совместимым алиасом variant. Linear использует Primary-схему Figma.
 
-Размеры задаются внешним контейнером: Linear занимает доступную ширину и имеет высоту 4 px, Circular занимает ширину и высоту внешнего контейнера. Внутренняя логика анимации общая и отключается при prefers-reduced-motion.
+Linear занимает доступную ширину и имеет высоту 4 px, Circular получает размер через \`size\` (по умолчанию 40 px). Внутренняя логика анимации общая и отключается при prefers-reduced-motion.
 
 Компонент не кликабелен и не получает фокус. Determinate публикует aria-valuemin, aria-valuemax и aria-valuenow, Indeterminate — только роль и доступную подпись.
         `,
@@ -37,13 +39,27 @@ const meta = {
     type: 'linear',
     mode: 'determinate',
     value: 60,
-    color: 'primary',
+    max: 100,
+    size: 40,
+    strokeWidth: 2,
+    variant: 'primary',
+    duration: 1500,
+    animation: 'linear',
   },
   argTypes: {
     type: { control: 'radio', options: ['linear', 'circular'] },
     mode: { control: 'radio', options: ['determinate', 'indeterminate'] },
     value: { control: { type: 'range', min: 0, max: 100, step: 1 } },
-    color: { control: 'select', options: ['primary', 'secondary', 'tertiary'] },
+    max: { control: { type: 'number', min: 1, step: 1 } },
+    size: { control: { type: 'number', min: 1, step: 1 } },
+    strokeWidth: { control: { type: 'range', min: 1, max: 8, step: 0.5 } },
+    variant: { control: 'select', options: ['primary', 'secondary', 'tertiary'] },
+    color: { control: false, description: 'Deprecated alias for variant.' },
+    duration: { control: { type: 'range', min: 500, max: 4000, step: 100 } },
+    animation: {
+      control: 'select',
+      options: ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out'] satisfies ProgressIndicatorAnimation[],
+    },
   },
 } satisfies Meta<typeof ProgressIndicator>;
 
@@ -53,6 +69,33 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => (
     <div style={{ width: 240 }}>
+      <ProgressIndicator {...args} />
+    </div>
+  ),
+};
+
+export const CircularProps: Story = {
+  args: {
+    type: 'circular',
+    mode: 'indeterminate',
+    size: 40,
+    strokeWidth: 2,
+    variant: 'primary',
+    duration: 1500,
+    animation: 'linear',
+  },
+  render: (args) => <ProgressIndicator {...args} />,
+};
+
+export const LinearProps: Story = {
+  args: {
+    type: 'linear',
+    mode: 'indeterminate',
+    value: 0,
+    max: 100,
+  },
+  render: (args) => (
+    <div style={{ width: 320 }}>
       <ProgressIndicator {...args} />
     </div>
   ),
@@ -70,8 +113,8 @@ export const LinearModes: Story = {
 export const CircularModes: Story = {
   render: () => (
     <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-      <div style={{ width: 24, height: 24 }}><ProgressIndicator type="circular" mode="determinate" value={60} /></div>
-      <div style={{ width: 24, height: 24 }}><ProgressIndicator type="circular" mode="indeterminate" /></div>
+      <ProgressIndicator type="circular" mode="determinate" value={60} />
+      <ProgressIndicator type="circular" mode="indeterminate" />
     </div>
   ),
 };
@@ -79,10 +122,14 @@ export const CircularModes: Story = {
 export const CircularColors: Story = {
   render: () => (
     <div style={{ display: 'flex', alignItems: 'center', gap: 24, padding: 16, background: 'var(--neutral-900)' }}>
-      {(['primary', 'secondary', 'tertiary'] as ProgressIndicatorColor[]).map((color) => (
-        <div key={color} style={{ width: 24, height: 24 }}>
-          <ProgressIndicator type="circular" mode="indeterminate" color={color} aria-label={`${color} loading`} />
-        </div>
+      {(['primary', 'secondary', 'tertiary'] as ProgressIndicatorColor[]).map((variant) => (
+        <ProgressIndicator
+          key={variant}
+          type="circular"
+          mode="indeterminate"
+          variant={variant}
+          aria-label={`${variant} loading`}
+        />
       ))}
     </div>
   ),
@@ -96,9 +143,9 @@ export const Matrix: Story = {
           <div key={`${type}-${mode}`} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <span style={{ width: 120 }}>{type} / {mode}</span>
             {type === 'linear' ? (
-              <div style={{ flex: 1 }}><ProgressIndicator type={type} mode={mode} value={60} /></div>
+              <div style={{ flex: 1 }}><ProgressIndicator type={type} mode={mode} value={60} max={100} /></div>
             ) : (
-              <div style={{ width: 24, height: 24 }}><ProgressIndicator type={type} mode={mode} value={60} /></div>
+              <ProgressIndicator type={type} mode={mode} value={60} />
             )}
           </div>
         )),

@@ -7,10 +7,12 @@ export { Badge } from './components/Badge/Badge';
 export type { BadgeColor, BadgeProps, BadgeSize, BadgeState } from './components/Badge/Badge';
 export { ProgressIndicator } from './components/ProgressIndicator/ProgressIndicator';
 export type {
+  ProgressIndicatorAnimation,
   ProgressIndicatorColor,
   ProgressIndicatorMode,
   ProgressIndicatorProps,
   ProgressIndicatorType,
+  ProgressIndicatorVariant,
 } from './components/ProgressIndicator/ProgressIndicator';
 export { Input } from './components/Input/Input';
 export type { InputProps, InputSize } from './components/Input/Input';

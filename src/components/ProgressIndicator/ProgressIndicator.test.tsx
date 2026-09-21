@@ -23,6 +23,15 @@ describe('ProgressIndicator', () => {
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '0');
   });
 
+  it('supports a custom max for Linear determinate progress', () => {
+    render(<ProgressIndicator type="linear" mode="determinate" value={40} max={200} />);
+    const progress = screen.getByRole('progressbar');
+
+    expect(progress).toHaveAttribute('aria-valuemax', '200');
+    expect(progress).toHaveAttribute('aria-valuenow', '40');
+    expect(progress).toHaveStyle({ '--fdoc-progress-value': '20%' });
+  });
+
   it('does not expose aria-valuenow for Indeterminate', () => {
     render(<ProgressIndicator type="circular" mode="indeterminate" />);
     const progress = screen.getByRole('progressbar');
@@ -32,9 +41,23 @@ describe('ProgressIndicator', () => {
   });
 
   it.each(['primary', 'secondary', 'tertiary'] as const)('maps Circular %s to semantic tokens', (color) => {
-    render(<ProgressIndicator type="circular" mode="determinate" color={color} value={40} />);
+    render(<ProgressIndicator type="circular" mode="determinate" variant={color} value={40} />);
     const progress = screen.getByRole('progressbar');
     expect(progress).toHaveAttribute('data-progress-color', color);
+    expect(progress).toHaveAttribute('data-progress-variant', color);
+  });
+
+  it('keeps color as a backwards-compatible alias for variant', () => {
+    render(<ProgressIndicator type="circular" mode="determinate" color="secondary" value={40} />);
+    expect(screen.getByRole('progressbar')).toHaveAttribute('data-progress-variant', 'secondary');
+  });
+
+  it('uses the Figma secondary track and indicator tokens together', () => {
+    render(<ProgressIndicator type="circular" mode="indeterminate" variant="secondary" />);
+    const styles = getComputedStyle(screen.getByRole('progressbar'));
+
+    expect(styles.getPropertyValue('--fdoc-progress-track').trim()).toBe('var(--background-base-secondary)');
+    expect(styles.getPropertyValue('--fdoc-progress-indicator').trim()).toBe('var(--background-base-default)');
   });
 
   it('uses the Figma Primary scheme for Linear regardless of the ignored color prop', () => {
@@ -59,5 +82,30 @@ describe('ProgressIndicator', () => {
     render(<ProgressIndicator type="circular" mode="determinate" value={50} />);
 
     expect(screen.getByRole('progressbar').querySelector('.fdoc-progress__indicator')).toHaveAttribute('r', '11');
+  });
+
+  it('applies Circular size, stroke width, duration and animation props', () => {
+    render(
+      <ProgressIndicator
+        type="circular"
+        mode="indeterminate"
+        size={56}
+        strokeWidth={4}
+        duration={2400}
+        animation="ease-in-out"
+      />,
+    );
+    const progress = screen.getByRole('progressbar');
+    const indicator = progress.querySelector('.fdoc-progress__indicator');
+
+    expect(progress).toHaveStyle({
+      width: '56px',
+      height: '56px',
+      '--fdoc-progress-duration': '2400ms',
+      '--fdoc-progress-animation': 'ease-in-out',
+      '--fdoc-progress-stroke-width': '4',
+    });
+    expect(indicator).toHaveAttribute('stroke-width', '4');
+    expect(indicator).toHaveAttribute('r', '10');
   });
 });

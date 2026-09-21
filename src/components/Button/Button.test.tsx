@@ -5,11 +5,11 @@ import { Button } from './Button';
 
 describe('Button', () => {
   it.each([
-    ['small', '32', '16', '8px', '12px', '2px'],
-    ['medium', '40', '20', '8px', '16px', '2px'],
-    ['large', '48', '24', '8px', '16px', '4px'],
-    ['giant', '56', '28', '12px', '20px', '4px'],
-  ] as const)('matches the Figma geometry for %s', (size, height, icon, paddingY, paddingX, gap) => {
+    ['small', '32', '16', '8px', '12px', '2px', '12px', '16px'],
+    ['medium', '40', '20', '8px', '16px', '2px', '14px', '20px'],
+    ['large', '48', '24', '8px', '16px', '4px', '16px', '24px'],
+    ['giant', '56', '28', '12px', '20px', '4px', '16px', '24px'],
+  ] as const)('matches the Figma geometry and typography for %s', (size, height, icon, paddingY, paddingX, gap, fontSize, lineHeight) => {
     render(<Button text={size} size={size} iconLeft="check" />);
     const button = screen.getByRole('button', { name: size });
 
@@ -21,6 +21,7 @@ describe('Button', () => {
       '--fdoc-button-padding-x': paddingX,
       '--fdoc-button-gap': gap,
     });
+    expect(screen.getByTestId('button-text')).toHaveStyle({ fontSize: `${fontSize}px`, lineHeight: `${lineHeight}px` });
   });
 
   it('uses a native button and the local icon library', () => {
@@ -57,6 +58,56 @@ describe('Button', () => {
     expect(screen.getByTestId('badge-right')).toBeInTheDocument();
   });
 
+  it('keeps the Figma slot order: icon, badge, text, badge, icon', () => {
+    render(
+      <Button
+        text="Action"
+        iconLeft="check"
+        badgeLeft={<Badge size="small" color="inverse">2</Badge>}
+        badgeRight={<Badge size="small" color="inverse">9</Badge>}
+        iconRight="arrow-right"
+      />,
+    );
+
+    expect(Array.from(screen.getByRole('button').children).map((child) => child.getAttribute('data-testid'))).toEqual([
+      'button-icon-left',
+      'button-badge-left',
+      'button-text',
+      'button-badge-right',
+      'button-icon-right',
+    ]);
+  });
+
+  it('allows every icon and Badge slot to be explicitly shown or hidden', () => {
+    const slots = {
+      iconLeft: 'check' as const,
+      iconRight: 'arrow-right' as const,
+      badgeLeft: <Badge size="small" color="inverse">2</Badge>,
+      badgeRight: <Badge size="small" color="inverse">9</Badge>,
+    };
+    const { rerender } = render(
+      <Button
+        {...slots}
+        text="Action"
+        showIconLeft={false}
+        showBadgeLeft={false}
+        showBadgeRight={false}
+        showIconRight={false}
+      />,
+    );
+
+    expect(screen.queryByTestId('button-icon-left')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('button-badge-left')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('button-badge-right')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('button-icon-right')).not.toBeInTheDocument();
+
+    rerender(<Button {...slots} text="Action" showIconLeft showBadgeLeft showBadgeRight showIconRight />);
+    expect(screen.getByTestId('button-icon-left')).toBeInTheDocument();
+    expect(screen.getByTestId('button-badge-left')).toBeInTheDocument();
+    expect(screen.getByTestId('button-badge-right')).toBeInTheDocument();
+    expect(screen.getByTestId('button-icon-right')).toBeInTheDocument();
+  });
+
   it('uses native disabled behavior for the disabled state', () => {
     const onClick = vi.fn();
     render(<Button text="Disabled" state="disabled" onClick={onClick} />);
@@ -80,7 +131,7 @@ describe('Button', () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it('keeps focus state inside the fixed outer size', () => {
+  it('uses the external focus stroke without changing the layout size', () => {
     render(<Button text="Focused" size="large" state="focused" />);
     const button = screen.getByRole('button', { name: 'Focused' });
 
@@ -89,6 +140,43 @@ describe('Button', () => {
       '--fdoc-button-height': '48px',
     });
     expect(button).toHaveClass('fdoc-button--focused');
+  });
+
+  it('does not impose a fixed width on Badge slots', () => {
+    render(
+      <Button
+        text="Action"
+        size="large"
+        badgeLeft={<Badge size="large" color="inverse" text="2" data-testid="badge-left" />}
+        badgeRight={<Badge size="large" color="inverse" text="999+" data-testid="badge-right" />}
+      />,
+    );
+    expect(screen.getByTestId('button-badge-left')).toHaveStyle({ minWidth: '0', height: 'auto' });
+    expect(screen.getByTestId('button-badge-right')).toHaveStyle({ minWidth: '0', height: 'auto' });
+  });
+
+  it.each([
+    ['primary', 'inverse', 'default'],
+    ['base', 'inverse', 'default'],
+    ['secondary', 'inverse', 'default'],
+    ['tertiary', 'inverse', 'default'],
+    ['inverse', 'primary', 'default'],
+    ['inverse-primary', 'primary', 'default'],
+    ['primary', 'inverse', 'disabled'],
+    ['inverse', 'primary', 'disabled'],
+  ] as const)('synchronizes nested Badge for %s/%s', (buttonColor, badgeColor, badgeState) => {
+    render(
+      <Button
+        text="Action"
+        color={buttonColor}
+        state={badgeState === 'disabled' ? 'disabled' : 'default'}
+        badgeLeft={<Badge color="primary" state="default" text="2" data-testid="nested-badge" />}
+      />,
+    );
+
+    const badge = screen.getByTestId('nested-badge');
+    expect(badge).toHaveAttribute('data-badge-color', badgeColor);
+    expect(badge).toHaveAttribute('data-badge-state', badgeState);
   });
 
   it.each([

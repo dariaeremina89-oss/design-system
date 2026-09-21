@@ -10,17 +10,32 @@ describe('Button visual contract', () => {
     expect(css).toContain('border-radius: var(--radius-middle)');
     expect(css).toContain('font-family: var(--page-caption-family)');
     expect(css).toContain('font-weight: var(--page-caption-weight-strong)');
-    expect(css).toContain('font-size: var(--font-size-12)');
-    expect(css).toContain('line-height: var(--line-height-16)');
-    expect(css).not.toContain('font-size: var(--page-caption-size)');
-    expect(css).not.toContain('line-height: var(--page-caption-line-height)');
+    expect(css).toContain('font-size: var(--page-caption-size)');
+    expect(css).toContain('line-height: var(--page-caption-line-height)');
+    expect(css).toContain('.fdoc-button__text {');
+    expect(css).toContain('.fdoc-button--medium .fdoc-button__text');
+    expect(css).toContain('.fdoc-button--large .fdoc-button__text');
+    expect(css).toContain('font-family: var(--page-body-family)');
+    expect(css).toContain('font-weight: var(--page-body-weight-strong)');
+    expect(css).toContain('font-family: var(--page-subtitle-family)');
+    expect(css).toContain('font-weight: var(--page-subtitle-weight-strong)');
+    expect(css).toContain('padding-top: var(--space-2)');
+    expect(css).toContain('padding-top: var(--space-4)');
   });
 
-  it('reserves the focus border without changing the button box', () => {
-    expect(css).toContain('border: var(--border-large) solid transparent');
-    expect(css).toContain('padding: calc(var(--fdoc-button-padding-y) - var(--border-large))');
-    expect(css).toContain('border-color: var(--fdoc-button-focus-border)');
+  it('uses the external Figma focus stroke without changing the button box', () => {
+    expect(css).toContain('border: 0');
+    expect(css).toContain('outline: var(--border-large) solid var(--fdoc-button-focus-border)');
+    expect(css).not.toContain('padding: calc(var(--fdoc-button-padding-y)');
     expect(css).not.toContain('box-shadow');
+  });
+
+  it('lets Badge slots hug their content and uses size-specific slot padding', () => {
+    expect(css).toContain('flex: 0 0 auto');
+    expect(css).toContain('height: auto');
+    expect(css).toContain('.fdoc-button--large .fdoc-button__badge--left');
+    expect(css).toContain('padding-left: var(--space-8)');
+    expect(css).toContain('padding-right: var(--space-8)');
   });
 
   it('keeps hover and pressed scoped to background only', () => {

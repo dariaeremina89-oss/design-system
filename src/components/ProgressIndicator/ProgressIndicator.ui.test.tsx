@@ -12,10 +12,16 @@ describe('ProgressIndicator visual contract', () => {
   });
 
   it('keeps Circular stroke and color scheme tokens', () => {
-    expect(css).toContain('stroke-width: 2');
-    expect(css).toContain('--fdoc-progress-indicator: var(--background-base-default)');
-    expect(css).toContain('--fdoc-progress-track: var(--background-base-inverse-light)');
-    expect(css).toContain('--fdoc-progress-indicator: var(--background-base-inverse)');
+    expect(css).toContain('stroke-width: var(--fdoc-progress-stroke-width)');
+    expect(css).toMatch(/\.fdoc-progress--secondary\s*\{[^}]*--fdoc-progress-indicator: var\(--background-base-default\)/s);
+    expect(css).toMatch(/\.fdoc-progress--tertiary\s*\{[^}]*--fdoc-progress-track: var\(--background-base-inverse-light\)/s);
+    expect(css).toMatch(/\.fdoc-progress--tertiary\s*\{[^}]*--fdoc-progress-indicator: var\(--background-base-inverse\)/s);
+  });
+
+  it('keeps the Figma secondary Circular track and indicator paired', () => {
+    expect(css).toMatch(
+      /\.fdoc-progress--secondary\s*\{\s*--fdoc-progress-track: var\(--background-base-secondary\);\s*--fdoc-progress-indicator: var\(--background-base-default\);\s*\}/s,
+    );
   });
 
   it('centralizes the two Figma motion loops and reduced-motion fallback', () => {

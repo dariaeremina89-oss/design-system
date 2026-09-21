@@ -26,6 +26,27 @@ test('Button follows the fixed Figma height matrix', async ({ page }) => {
   }
 });
 
+test('Button all sizes expose both icons and both Badges at matching sizes', async ({ page }) => {
+  const root = await openStory(page, 'components-buttons-button--all-sizes-with-elements');
+  const buttons = root.locator('button');
+  const expected = [
+    ['small', 16, 'small', '12px'],
+    ['medium', 20, 'medium', '14px'],
+    ['large', 24, 'large', '16px'],
+    ['giant', 28, 'giant', '16px'],
+  ] as const;
+
+  await expect(buttons).toHaveCount(expected.length);
+  for (const [index, [, elementSize, badgeSize, fontSize]] of expected.entries()) {
+    const button = buttons.nth(index);
+    await expect(button.getByTestId('button-icon-left')).toHaveCSS('width', `${elementSize}px`);
+    await expect(button.getByTestId('button-icon-right')).toHaveCSS('width', `${elementSize}px`);
+    await expect(button.getByTestId('button-badge-left').locator('[data-badge-size]')).toHaveAttribute('data-badge-size', badgeSize);
+    await expect(button.getByTestId('button-badge-right').locator('[data-badge-size]')).toHaveAttribute('data-badge-size', badgeSize);
+    await expect(button.getByTestId('button-text')).toHaveCSS('font-size', fontSize);
+  }
+});
+
 test('Button focus border does not change outer dimensions', async ({ page }) => {
   const root = await openStory(page, 'components-buttons-button--default');
   const button = root.getByRole('button');
@@ -33,7 +54,8 @@ test('Button focus border does not change outer dimensions', async ({ page }) =>
 
   await button.focus();
   const after = await button.boundingBox();
-  await expect(button).toHaveCSS('border-width', '4px');
+  await expect(button).toHaveCSS('outline-width', '4px');
+  await expect(button).toHaveCSS('border-width', '0px');
 
   expect(after?.width).toBe(before?.width);
   expect(after?.height).toBe(before?.height);

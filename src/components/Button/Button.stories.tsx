@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Badge } from '../Badge/Badge';
+import { Badge, type BadgeSize } from '../Badge/Badge';
 import { iconNames } from '../Icon/Icon';
 import { Button, type ButtonColor, type ButtonSize, type ButtonState } from './Button';
 
@@ -22,7 +22,7 @@ const meta = {
 - \`color\`: \`primary\` / \`base\` / \`secondary\` / \`tertiary\` / \`inverse\` / \`inverse-primary\`;
 - \`state\`: \`default\` / \`hover\` / \`pressed\` / \`focused\` / \`disabled\` / \`skeleton\`;
 - \`iconLeft\` и \`iconRight\` выбирают иконки из локальной Figma-библиотеки; \`iconLeftView\` и \`iconRightView\` позволяют передать собственный слот;
-- \`badgeLeft\` и \`badgeRight\` принимают готовый Badge. Размер и токены Badge принадлежат компоненту Badge, Button только предоставляет слот;
+- \`badgeLeft\` и \`badgeRight\` принимают готовый Badge. Размер и контент Badge принадлежат Badge, а Button автоматически синхронизирует его цвет и disabled-состояние со своей цветовой схемой и состоянием;
 - \`isLoading\` заменяет левую иконку на Circular Progress Indicator и переводит кнопку в нативное disabled-состояние;
 - \`fullWidth\` растягивает кнопку на ширину родителя;
 - \`skeletonWidth\` задает ширину Skeleton, если ее нужно зафиксировать под состав конкретного контента.
@@ -36,11 +36,11 @@ const meta = {
 | \`large\` | 48 | 8 / 16 | 4 | 24 |
 | \`giant\` | 56 | 12 / 20 | 4 | 28 |
 
-Радиус — \`--radius-middle\`. Focus использует внутреннюю рамку \`--border-large\`, поэтому внешний размер не меняется. Текст однострочный и обрезается многоточием.
+Радиус — \`--radius-middle\`. Типографика текста: Small — Caption Strong (12/16), Medium — Body Strong (14/20), Large и Giant — Subtitle Strong (16/24). Badge-слоты используют собственный размер Badge и hug contents; Button добавляет только направленные отступы слота. Focus использует внешнюю рамку \`--border-large\`, поэтому layout-размер кнопки не меняется. Текст однострочный и обрезается многоточием.
 
 ### Поведение
 
-Hover и Pressed меняют только фон. Focused добавляет цветную рамку. Disabled использует disabled-токены и нативный \`disabled\`; подсказки о причине недоступности остаются на уровне продукта. Loading использует Circular Progress Indicator и не допускает повторного действия.
+Hover и Pressed меняют только фон. Focused добавляет внешнюю рамку. Disabled использует disabled-токены и нативный \`disabled\`; подсказки о причине недоступности остаются на уровне продукта. Loading использует Circular Progress Indicator и не допускает повторного действия.
 
 Для кнопки только с иконкой обязательно задавать \`aria-label\`. Используется нативный \`button\`, поэтому Enter, Space и Tab работают без дополнительной имитации.
         `,
@@ -71,6 +71,10 @@ Hover и Pressed меняют только фон. Focused добавляет ц
     iconRightView: { control: false },
     badgeLeft: { control: false },
     badgeRight: { control: false },
+    showIconLeft: { control: 'boolean', description: 'Включить левый слот иконки.' },
+    showIconRight: { control: 'boolean', description: 'Включить правый слот иконки.' },
+    showBadgeLeft: { control: 'boolean', description: 'Включить левый слот Badge.' },
+    showBadgeRight: { control: 'boolean', description: 'Включить правый слот Badge.' },
     isLoading: { control: 'boolean' },
     fullWidth: { control: 'boolean' },
     skeletonWidth: { control: 'text' },
@@ -91,6 +95,41 @@ export const AllSizes: Story = {
       ))}
     </div>
   ),
+};
+
+export const AllSizesWithElements: Story = {
+  args: {
+    iconLeft: 'arrow-left',
+    iconRight: 'arrow-right',
+    showIconLeft: true,
+    showIconRight: true,
+    showBadgeLeft: true,
+    showBadgeRight: true,
+  },
+  render: (args) => {
+    const badgeSize: Record<ButtonSize, BadgeSize> = {
+      small: 'small',
+      medium: 'medium',
+      large: 'large',
+      giant: 'giant',
+    };
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 16 }}>
+        {(['small', 'medium', 'large', 'giant'] as ButtonSize[]).map((size) => (
+          <Button
+            {...args}
+            key={size}
+            size={size}
+            text={size}
+            badgeLeft={<Badge size={badgeSize[size]} color="inverse">2</Badge>}
+            badgeRight={<Badge size={badgeSize[size]} color="inverse">9</Badge>}
+            data-testid={`button-all-elements-${size}`}
+          />
+        ))}
+      </div>
+    );
+  },
 };
 
 export const AllColors: Story = {
@@ -122,6 +161,15 @@ export const WithBadges: Story = {
     badgeLeft: <Badge size="small" color="inverse">2</Badge>,
     badgeRight: <Badge size="small" color="inverse">9</Badge>,
     iconLeft: 'check',
+  },
+};
+
+export const WithDisabledBadges: Story = {
+  args: {
+    color: 'primary',
+    state: 'disabled',
+    badgeLeft: <Badge size="medium" color="primary" state="default">2</Badge>,
+    badgeRight: <Badge size="medium" color="primary" state="default">9</Badge>,
   },
 };
 
