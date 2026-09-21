@@ -18,6 +18,6 @@ test('library contains the expected component hierarchy and QA docs', async ({ r
 test('Button Docs expose test coverage and selectors', async ({ page }) => {
   await page.goto('/iframe.html?id=components-buttons-button--docs&viewMode=docs');
   await expect(page.getByRole('heading', { name: 'Автотесты', exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Селекторы для тестирования', exact: true })).toBeVisible();
+  // Storybook adds an accessible "Copy heading URL" button to headings with anchors.
+  await expect(page.getByRole('heading', { name: /Селекторы для тестирования/ })).toBeVisible();
 });
-

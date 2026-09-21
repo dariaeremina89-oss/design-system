@@ -27,7 +27,7 @@ const docs: Record<string, TestingDocs> = {
     gaps: 'Нет отдельного axe-аудита, тестов клавиатурной активации и полной матрицы цвет × состояние × размер.',
     selectors: [
       ['button-icon / button-icon-skeleton', 'Корень кнопки / Skeleton', 'Заменяются пропсом data-testid.'],
-      ['button-icon-skeleton-icon', 'Вложенный Skeleton иконки', 'Skeleton в tertiary/neutral; при custom data-testid: <custom>-icon.'],
+      ['button-icon-skeleton-icon', 'Вложенный Skeleton иконки', 'Skeleton в tertiary/neutral; при custom data-testid: `<custom>-icon`.'],
       ['data-button-icon-state', 'Принудительное состояние', 'Значение state; не отслеживает фактическое наведение или отдельный disabled.'],
       ['data-button-icon-size', 'Размер кнопки в px', 'На обычной кнопке; отсутствует в Skeleton.'],
       ['data-icon', 'Вложенная библиотечная иконка', 'Значение icon; у произвольного iconView может отсутствовать.'],
@@ -39,7 +39,7 @@ const docs: Record<string, TestingDocs> = {
     gaps: 'Нет полной браузерной матрицы цветов/состояний, тестов переполнения длинного текста и отдельного axe-аудита.',
     selectors: [
       ['badge / badge-skeleton', 'Корень Badge / Skeleton', 'Заменяются пропсом data-testid.'],
-      ['badge-skeleton-dot', 'Точка Skeleton', 'Только smallest + skeleton; при custom data-testid: <custom>-dot.'],
+      ['badge-skeleton-dot', 'Точка Skeleton', 'Только smallest + skeleton; при custom data-testid: `<custom>-dot`.'],
       ['data-badge-size', 'Размер', 'smallest, small, medium, large, giant.'],
       ['data-badge-color', 'Цветовая схема', 'primary, secondary, inverse. В Button может быть переопределена родителем.'],
       ['data-badge-state', 'Состояние', 'default, disabled, skeleton. В Button disabled синхронизируется с кнопкой.'],
