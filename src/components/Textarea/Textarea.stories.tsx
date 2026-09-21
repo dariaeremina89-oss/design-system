@@ -6,7 +6,7 @@ import { testingDocs } from '../../docs/testing';
 const meta = {
   title: 'Components/Inputs/Textarea',
   component: Textarea,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
     docs: { description: { component: `

@@ -1,7 +1,7 @@
 import base, { CircularProps as props, CircularModes as modes, CircularColors as colors } from './progress-examples';
 const meta = {
   ...base,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'ready'],
   title: 'Components/Indicators/CircularProgress',
   id: 'components-progress-indicators-progressindicator',
   args: { ...base.args, type: 'circular' as const, mode: 'indeterminate' as const },

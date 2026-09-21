@@ -6,7 +6,7 @@ const meta = {
   title: 'Components/Indicators/Badge',
   id: 'components-badge',
   component: Badge,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
     docs: {

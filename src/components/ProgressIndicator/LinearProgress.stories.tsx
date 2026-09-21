@@ -1,7 +1,7 @@
 import base, { LinearProps as props, LinearModes as modes } from './progress-examples';
 const meta = {
   ...base,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'ready'],
   title: 'Components/Indicators/LinearProgress',
   args: { ...base.args, type: 'linear' as const },
   argTypes: {

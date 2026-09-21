@@ -7,7 +7,7 @@ const meta = {
   title: 'Components/Actions/ButtonIcon',
   id: 'components-buttons-buttonicon',
   component: ButtonIcon,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
     docs: {

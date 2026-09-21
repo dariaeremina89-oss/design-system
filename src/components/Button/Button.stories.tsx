@@ -8,7 +8,7 @@ const meta = {
   title: 'Components/Actions/Button',
   id: 'components-buttons-button',
   component: Button,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
     docs: {
