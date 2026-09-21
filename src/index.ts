@@ -30,3 +30,6 @@ export type {
   ButtonSize,
   ButtonState,
 } from './components/Button/Button';
+
+export { Textarea } from './components/Textarea/Textarea';
+export type { TextareaProps, TextareaSize } from './components/Textarea/Textarea';

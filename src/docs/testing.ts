@@ -87,6 +87,21 @@ const docs: Record<string, TestingDocs> = {
       ['input-skeleton-counter / input-skeleton-counter-shape', 'Счетчик / полоска', 'Skeleton + counter.'],
     ],
   },
+  Textarea: {
+    unit: 'Связь Label и поля; приоритет Error; внешние ARIA-описания; controlled/uncontrolled; переносы и вставка; счетчик и maxLength; required, disabled, readOnly; ref; Skeleton; axe для обычного поля и ошибки.',
+    browser: 'Габариты Medium/Small; hover/focus/error/disabled и цвета; стабильность текста при focus; переносы на 320 px; вертикальная прокрутка; ручной resize и запрет в disabled; Tab; Skeleton и Docs.',
+    gaps: 'Нет проверки Safari/Firefox, экранного диктора и пиксельных эталонов. Нативный маркер resize зависит от браузера.',
+    selectors: [
+      ['textarea / textarea-control', 'Корень / нативное поле', 'data-testid="custom" задает custom-root и custom.'],
+      ['textarea-label / textarea-helper', 'Подпись / нижняя строка', 'По наличию содержимого.'],
+      ['textarea-caption / textarea-error / textarea-counter', 'Подсказка / ошибка / счетчик', 'Ошибка заменяет caption.'],
+      ['textarea-skeleton', 'Корень Skeleton', 'Заменяется data-testid.'],
+      ['textarea-skeleton-field / textarea-skeleton-text', 'Область / полоска значения', 'Полоска только при непустом value/defaultValue.'],
+      ['textarea-skeleton-label / textarea-skeleton-label-text', 'Подпись Skeleton', 'При непустом label.'],
+      ['textarea-skeleton-helper / textarea-skeleton-helper-text / textarea-skeleton-helper-shape', 'Подсказка Skeleton', 'По наличию caption/error.'],
+      ['textarea-skeleton-counter / textarea-skeleton-counter-shape', 'Счетчик Skeleton', 'При counter.'],
+    ],
+  },
   Skeleton: {
     unit: 'Дефолтный data-testid и переопределение; текстовый вариант с textSize; иконочная форма и размеры.',
     browser: 'Наличие caption, subtitle и icon в истории States. Проверка не сравнивает пиксели и не измеряет все типографические варианты.',

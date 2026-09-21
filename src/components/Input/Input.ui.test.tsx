@@ -30,22 +30,22 @@ describe('Input visual contract', () => {
   it('keeps typography, colors, spacing, radius and border references on tokens', () => {
     render(<Input label="Label" placeholder="Placeholder" caption="Caption" />);
 
-    expectRuleValue('.fdoc-input__label', 'font-size', 'var(--font-size-12)');
-    expectRuleValue('.fdoc-input__label', 'line-height', 'var(--line-height-16)');
-    expectRuleValue('.fdoc-input__label', 'color', 'var(--text-base-secondary)');
-    expectRuleValue('.fdoc-input__label', 'padding', '0 var(--space-12)');
+    expectRuleValue('.fdoc-field__label', 'font-size', 'var(--font-size-12)');
+    expectRuleValue('.fdoc-field__label', 'line-height', 'var(--line-height-16)');
+    expectRuleValue('.fdoc-field__label', 'color', 'var(--text-base-secondary)');
+    expectRuleValue('.fdoc-field__label', 'padding', '0 var(--space-12)');
 
     expectRuleValue('.fdoc-input__field', 'padding', 'var(--space-12)');
-    expectRuleValue('.fdoc-input__field', 'border', 'var(--border-small) solid var(--border-base-secondary)');
-    expectRuleValue('.fdoc-input__field', 'border-radius', 'var(--radius-middle)');
-    expectRuleValue('.fdoc-input__field', 'background', 'var(--background-base-default)');
+    expectRuleValue('.fdoc-field__field', 'border', 'var(--border-small) solid var(--border-base-secondary)');
+    expectRuleValue('.fdoc-field__field', 'border-radius', 'var(--radius-middle)');
+    expectRuleValue('.fdoc-field__field', 'background', 'var(--background-base-default)');
 
     expectRuleValue('.fdoc-input__content', 'gap', 'var(--space-4)');
-    expectRuleValue('.fdoc-input__control', 'font-size', 'var(--font-size-16)');
-    expectRuleValue('.fdoc-input__control', 'line-height', 'var(--line-height-24)');
-    expectRuleValue('.fdoc-input__control', 'color', 'var(--text-base-default)');
-    expectRuleValue('.fdoc-input__helper', 'gap', 'var(--space-16)');
-    expectRuleValue('.fdoc-input__helper', 'padding', '0 var(--space-12)');
+    expectRuleValue('.fdoc-field__control', 'font-size', 'var(--font-size-16)');
+    expectRuleValue('.fdoc-field__control', 'line-height', 'var(--line-height-24)');
+    expectRuleValue('.fdoc-field__control', 'color', 'var(--text-base-default)');
+    expectRuleValue('.fdoc-field__helper', 'gap', 'var(--space-16)');
+    expectRuleValue('.fdoc-field__helper', 'padding', '0 var(--space-12)');
     expectRuleValue('.fdoc-input__sum-icon', 'width', 'var(--elements-24)');
     expectRuleValue('.fdoc-input__sum-icon', 'height', 'var(--elements-24)');
     expectRuleValue('.fdoc-input__sum-icon', 'padding', 'var(--space-4)');
@@ -60,12 +60,12 @@ describe('Input visual contract', () => {
   });
 
   it('keeps Focused and Error border states on the correct tokens', () => {
-    expectRuleValue('.fdoc-input__field:focus-within', 'border-width', 'var(--border-middle)');
-    expectRuleValue('.fdoc-input__field:focus-within', 'border-color', 'var(--border-primary-default)');
-    expectRuleValue('.fdoc-input__field--error', 'border-color', 'var(--border-error-default)');
-    expectRuleValue('.fdoc-input__field--error:focus-within', 'border-color', 'var(--border-error-default)');
-    expectRuleValue('.fdoc-input__field--error.fdoc-input__field--disabled', 'border-color', 'var(--border-error-disabled)');
-    expectRuleValue('.fdoc-input__field--disabled', 'background', 'var(--background-base-default-disabled)');
+    expectRuleValue('.fdoc-field__field:focus-within', 'border-width', 'var(--border-middle)');
+    expectRuleValue('.fdoc-field__field:focus-within', 'border-color', 'var(--border-primary-default)');
+    expectRuleValue('.fdoc-field__field.fdoc-field__field--error', 'border-color', 'var(--border-error-default)');
+    expectRuleValue('.fdoc-field__field.fdoc-field__field--error:focus-within', 'border-color', 'var(--border-error-default)');
+    expectRuleValue('.fdoc-field__field.fdoc-field__field--error.fdoc-field__field--disabled', 'border-color', 'var(--border-error-disabled)');
+    expectRuleValue('.fdoc-field__field.fdoc-field__field--disabled', 'background', 'var(--background-base-default-disabled)');
   });
 
   it('keeps foundation typography and effect tokens available', () => {

@@ -1,7 +1,5 @@
 import {
   forwardRef,
-  useState,
-  useId,
   type ChangeEvent,
   type InputHTMLAttributes,
   type ReactNode,
@@ -9,6 +7,7 @@ import {
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { Icon, type IconName } from '../Icon/Icon';
 import { InputSkeleton } from './InputSkeleton';
+import { FieldLabel, FieldHelper, useTextField, joinClassNames } from '../TextField/TextField';
 import './Input.css';
 
 export type InputSize = 'medium' | 'small';
@@ -51,18 +50,6 @@ export interface InputProps
   wrapperClassName?: string;
 }
 
-function joinClassNames(...classes: Array<string | false | undefined>) {
-  return classes.filter(Boolean).join(' ');
-}
-
-function hasRenderableContent(value: ReactNode | undefined) {
-  return value !== undefined
-    && value !== null
-    && value !== false
-    && value !== true
-    && value !== '';
-}
-
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     id: providedId,
@@ -93,42 +80,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   ref,
 ) {
   const { 'data-testid': inputTestId, ...inputPropsWithoutTestId } = inputProps;
-  const generatedId = useId();
-  const inputId = providedId ?? generatedId;
-  const [internalValue, setInternalValue] = useState(() => String(defaultValue ?? ''));
-  const isControlled = value !== undefined;
-  const currentValue = isControlled ? value : internalValue;
-  const hasLabel = hasRenderableContent(label);
-  const hasDescription = hasRenderableContent(description);
-  const hasError = hasRenderableContent(error);
-  const hasCaption = hasRenderableContent(caption);
-  const hasCounter = counter !== undefined
-    && counter !== null
-    && counter !== false
-    && counter !== '';
-  const descriptionId = hasDescription ? `${inputId}-description` : undefined;
-  const errorId = hasError ? `${inputId}-error` : undefined;
-  const captionId = !hasError && hasCaption ? `${inputId}-caption` : undefined;
-  const hasValue = String(currentValue ?? '').length > 0;
-  const resolvedCounter = counter === true
-    ? `${String(currentValue ?? '').length}${maxLength !== undefined ? ` / ${maxLength}` : ''}`
-    : counter;
-  const counterId = hasCounter ? `${inputId}-counter` : undefined;
-  const helperId = [descriptionId, errorId, captionId, counterId].filter(Boolean).join(' ') || undefined;
+  const { inputId, internalValue, isControlled, hasDescription, hasError, hasCounter,
+    descriptionId, errorId, captionId, counterId, hasValue, resolvedCounter, helperId,
+    updateValue, clearValue } = useTextField<HTMLInputElement>({ id: providedId,
+      value, defaultValue, label, description, error, caption, counter, maxLength,
+      'aria-describedby': inputProps['aria-describedby'] });
   const showClear = clearable && hasValue && !disabled && !skeleton;
   const isError = hasError;
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (!isControlled) {
-      setInternalValue(event.currentTarget.value);
-    }
+    updateValue(event);
     inputProps.onChange?.(event);
   };
 
   const handleClear = () => {
-    if (!isControlled) {
-      setInternalValue('');
-    }
+    clearValue();
     onClear?.();
   };
 
@@ -161,33 +127,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 
   return (
     <div
-      className={joinClassNames('fdoc-input', `fdoc-input--${size}`, wrapperClassName)}
+      className={joinClassNames('fdoc-input fdoc-field', `fdoc-input--${size}`, wrapperClassName)}
       data-testid={inputTestId ? `${inputTestId}-root` : 'input'}
     >
-      {hasLabel && (
-        <label
-          className={joinClassNames(
-            'fdoc-input__label',
-            isError && 'fdoc-input__label--error',
-            disabled && 'fdoc-input__label--disabled',
-            isError && disabled && 'fdoc-input__label--error-disabled',
-          )}
-          htmlFor={inputId}
-          data-testid="input-label"
-        >
-          <span className="fdoc-input__label-text">
-            {label}
-            {required && <span className="fdoc-input__required" aria-hidden="true">*</span>}
-          </span>
-        </label>
-      )}
+      <FieldLabel prefix="input" label={label} inputId={inputId} required={required} disabled={disabled} isError={isError} />
 
       <div
         className={joinClassNames(
-          'fdoc-input__field',
+          'fdoc-input__field fdoc-field__field',
           leadingIcon !== undefined && 'fdoc-input__field--has-leading',
-          isError && 'fdoc-input__field--error',
-          disabled && 'fdoc-input__field--disabled',
+          isError && 'fdoc-input__field--error fdoc-field__field--error',
+          disabled && 'fdoc-input__field--disabled fdoc-field__field--disabled',
         )}
         data-testid="input-field"
       >
@@ -202,7 +152,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             {...inputPropsWithoutTestId}
             ref={ref}
             id={inputId}
-            className={joinClassNames('fdoc-input__control', className)}
+            className={joinClassNames('fdoc-input__control fdoc-field__control', className)}
             data-testid={inputTestId ?? 'input-control'}
             disabled={disabled}
             value={isControlled ? value : internalValue}
@@ -257,36 +207,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 
       </div>
 
-      {(hasCaption || hasCounter || hasError) && (
-        <div className="fdoc-input__helper" data-testid="input-helper">
-          {(hasError || hasCaption) && (
-            <span
-              id={errorId ?? captionId}
-              className={joinClassNames(
-                'fdoc-input__caption',
-              isError && 'fdoc-input__caption--error',
-              disabled && 'fdoc-input__caption--disabled',
-                isError && disabled && 'fdoc-input__caption--error-disabled',
-              )}
-              data-testid={isError ? 'input-error' : 'input-caption'}
-            >
-              {hasError ? error : caption}
-            </span>
-          )}
-          {hasCounter && (
-            <span
-              id={counterId}
-              className={joinClassNames(
-                'fdoc-input__counter',
-                disabled && 'fdoc-input__counter--disabled',
-              )}
-              data-testid="input-counter"
-            >
-              {resolvedCounter}
-            </span>
-          )}
-        </div>
-      )}
+      <FieldHelper prefix="input" error={error} caption={caption} hasCounter={hasCounter}
+        resolvedCounter={resolvedCounter} errorId={errorId} captionId={captionId}
+        counterId={counterId} isError={isError} disabled={disabled} />
     </div>
   );
 });

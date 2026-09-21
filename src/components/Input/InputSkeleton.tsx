@@ -89,13 +89,13 @@ export function InputSkeleton({
 
   return (
     <div
-      className={joinClassNames('fdoc-input', `fdoc-input--${size}`, wrapperClassName)}
+      className={joinClassNames('fdoc-input fdoc-field', `fdoc-input--${size}`, wrapperClassName)}
       aria-hidden="true"
       data-testid={testId ?? 'input-skeleton'}
     >
       {hasLabel && (
-        <div className="fdoc-input__label" data-testid="input-skeleton-label">
-          <span className="fdoc-input__label-text">
+        <div className="fdoc-input__label fdoc-field__label" data-testid="input-skeleton-label">
+          <span className="fdoc-input__label-text fdoc-field__label-text">
             <Skeleton
               className="fdoc-input__skeleton--label"
               data-testid="input-skeleton-label-text"
@@ -118,7 +118,7 @@ export function InputSkeleton({
 
       <div
         className={joinClassNames(
-          'fdoc-input__field',
+          'fdoc-input__field fdoc-field__field',
           leadingIcon !== undefined && 'fdoc-input__field--has-leading',
           'fdoc-input__field--skeleton',
         )}
@@ -186,9 +186,9 @@ export function InputSkeleton({
       </div>
 
       {(hasHelperText || hasCounter) && (
-        <div className="fdoc-input__helper" data-testid="input-skeleton-helper">
+        <div className="fdoc-input__helper fdoc-field__helper" data-testid="input-skeleton-helper">
           {hasHelperText && (
-            <span className="fdoc-input__caption" data-testid="input-skeleton-helper-text">
+            <span className="fdoc-input__caption fdoc-field__caption" data-testid="input-skeleton-helper-text">
               <Skeleton
                 className="fdoc-input__skeleton--helper"
                 data-testid="input-skeleton-helper-shape"
@@ -199,7 +199,7 @@ export function InputSkeleton({
             </span>
           )}
           {hasCounter && (
-            <span className="fdoc-input__counter" data-testid="input-skeleton-counter">
+            <span className="fdoc-input__counter fdoc-field__counter" data-testid="input-skeleton-counter">
               <Skeleton
                 className="fdoc-input__skeleton--counter"
                 data-testid="input-skeleton-counter-shape"

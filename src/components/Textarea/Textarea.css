@@ -1,0 +1,36 @@
+@import '../TextField/TextField.css';
+
+.fdoc-textarea {
+  --textarea-padding-y: var(--space-16);
+  --textarea-height: 112px;
+}
+
+.fdoc-textarea--small {
+  --textarea-padding-y: var(--space-8);
+  --textarea-height: var(--size-input-small);
+}
+
+.fdoc-textarea__control {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: var(--textarea-height);
+  min-height: var(--textarea-height);
+  padding: calc(var(--textarea-padding-y) - var(--border-small)) calc(var(--space-16) - var(--border-small));
+  outline: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  white-space: pre-wrap;
+  scrollbar-color: var(--background-base-tertiary) transparent;
+}
+
+.fdoc-textarea__control:focus {
+  padding: calc(var(--textarea-padding-y) - var(--border-middle)) calc(var(--space-16) - var(--border-middle));
+}
+
+.fdoc-textarea__skeleton {
+  pointer-events: none;
+  overflow: hidden;
+}
