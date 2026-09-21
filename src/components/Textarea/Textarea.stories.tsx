@@ -10,7 +10,7 @@ const meta = {
   parameters: {
     layout: 'padded',
     docs: { description: { component: `
-**Textarea** — нативное многострочное поле F.Doc. [Макет в Figma](https://www.figma.com/design/qfWNJqugbOC6RmiKKEv9Bb/F.Doc-Design-System?node-id=499-9705).
+**Textarea** — нативное многострочное поле F.Doc.
 
 ### API и анатомия
 
