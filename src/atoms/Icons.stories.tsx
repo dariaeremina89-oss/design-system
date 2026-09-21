@@ -14,7 +14,7 @@ const meta = {
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ['autodocs', 'ready'],
 } satisfies Meta<IconProps>;
 
 export default meta;
