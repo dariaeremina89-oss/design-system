@@ -132,3 +132,9 @@ export function ButtonIcon({
     </button>
   );
 }
+
+/** Визуальная часть ButtonIcon внутри другого единого интерактивного элемента. */
+export function ButtonIconDecoration({icon,size='medium',className=''}:{icon:IconName;size?:ButtonIconSize;className?:string}) {
+  const dimensions=sizeMap[size];
+  return <span aria-hidden="true" className={`fdoc-button-icon fdoc-button-icon--neutral ${className}`} style={{'--fdoc-button-icon-size':`${dimensions.button}px`,'--fdoc-button-icon-padding':`${dimensions.padding}px`,'--fdoc-button-icon-glyph-size':`${dimensions.icon}px`,pointerEvents:'none'} as CSSProperties}><Icon name={icon} size={dimensions.icon}/></span>;
+}

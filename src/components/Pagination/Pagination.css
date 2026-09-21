@@ -1,0 +1,10 @@
+.fdoc-button-pagination.fdoc-button { min-width:var(--elements-32); height:var(--elements-32); padding:var(--space-8) var(--space-4); flex-shrink:0; }
+.fdoc-button-pagination .fdoc-button__text { padding:0; }
+.fdoc-pagination { position:relative; width:100%; min-width:0; display:flex; align-items:center; justify-content:space-between; gap:var(--space-24); flex-wrap:wrap; }
+.fdoc-pagination[data-direction=vertical] { align-items:flex-start; flex-direction:column; }
+.fdoc-pagination__pages { display:flex; align-items:center; gap:var(--space-4); max-width:100%; overflow-x:auto; padding:var(--space-4); margin:calc(-1 * var(--space-4)); }
+.fdoc-pagination__counter { color:var(--text-base-secondary); font-family:var(--page-body-family); font-size:var(--page-body-size); line-height:var(--page-body-line-height); white-space:nowrap; }
+.fdoc-pagination[data-color=inverse] .fdoc-pagination__counter,.fdoc-pagination[data-color=inverse] .fdoc-pagination__ellipsis { color:var(--text-base-inverse); }
+.fdoc-pagination__ellipsis { display:flex; justify-content:center; align-items:center; flex:0 0 var(--elements-32); height:var(--elements-32); color:var(--text-base-default); }
+.fdoc-pagination__ellipsis,.fdoc-pagination__measure { font-family:var(--page-caption-family); font-size:var(--page-caption-size); line-height:var(--page-caption-line-height); font-weight:var(--page-caption-weight-strong); }
+.fdoc-pagination__measure { position:absolute; visibility:hidden; pointer-events:none; white-space:nowrap; }

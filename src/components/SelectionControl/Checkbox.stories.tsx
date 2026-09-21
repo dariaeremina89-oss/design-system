@@ -1,0 +1,13 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Checkbox } from './SelectionControl';
+import { componentDocs } from '../../docs/bulk-components';
+const meta={title:'Components/Selection/Checkbox',component:Checkbox,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('Checkbox')}}},args:{label:'Получать уведомления',description:'Сообщения о новых документах'},argTypes:{state:{control:'select',options:['default','hover','focused','pressed','disabled','skeleton']},checked:{control:'boolean'},disabled:{control:'boolean'},error:{control:'boolean'}}} satisfies Meta<typeof Checkbox>;
+export default meta;type Story=StoryObj<typeof meta>;
+export const Default:Story={};
+export const Control:Story={args:{label:undefined,description:undefined,'aria-label':'Выбрать документ'}};
+export const Disabled:Story={args:{disabled:true,defaultChecked:true}};
+export const Error:Story={args:{errorText:'Уточните значение'}};
+export const Skeleton:Story={args:{state:'skeleton'}};
+export const States:Story={name:'Все состояния',render:()=> <div style={{overflowX:'auto',padding:8}}><table style={{borderSpacing:24}}><thead><tr><th>Вариант</th>{(['default','hover','focused','pressed','disabled','skeleton'] as const).map(s=><th key={s}>{s}</th>)}</tr></thead><tbody>{[false,true].flatMap(error=>[false,true].map(checked=><tr key={`${error}-${checked}`}><th>{checked?'Selected':'Unselected'}{error?' / Error':''}</th>{(['default','hover','focused','pressed','disabled','skeleton'] as const).map(state=><td key={state}><Checkbox aria-label={`${checked} ${error} ${state}`} checked={checked} onChange={()=>{}} error={error} state={state} /></td>)}</tr>))}</tbody></table></div>};
+export const LongText:Story={args:{label:'ДлинноеНазваниеДокументаБезПробелов'.repeat(8)},decorators:[Story=><div style={{width:280}}><Story/></div>]};
+export const Indeterminate:Story={args:{indeterminate:true,label:'Выбрать все',description:'Выбрана часть документов'}};

@@ -1,0 +1,11 @@
+.fdoc-button-toggle { display:inline-flex; flex-wrap:nowrap; border-radius:var(--radius-middle); outline:var(--border-small) solid var(--border-primary-default); background:var(--background-base-secondary); max-width:100%; }
+.fdoc-button-toggle[data-color=base] { background:var(--background-base-default); outline-color:var(--border-white-full); }
+.fdoc-button-toggle[data-color=inverse] { outline-color:var(--border-base-inverse); }
+.fdoc-button-toggle__segment { display:flex; position:relative; }
+.fdoc-button-toggle__segment + .fdoc-button-toggle__segment { margin-left:var(--border-small); }
+.fdoc-button-toggle__segment[data-separator=true]::before { content:''; position:absolute; width:var(--border-small); top:0; bottom:0; left:calc(-1 * var(--border-small)); background:var(--background-base-default); }
+.fdoc-button-toggle[data-color=base] .fdoc-button-toggle__segment[data-separator=true]::before { background:var(--background-base-secondary); }
+.fdoc-button-toggle .fdoc-button:focus-visible { position:relative; z-index:1; }
+
+.fdoc-button-toggle[data-color=skeleton] { outline-color:var(--background-base-skeleton); }
+.fdoc-button-toggle[data-color=skeleton] .fdoc-button-toggle__segment[data-separator=true]::before { background:var(--background-base-skeleton); }

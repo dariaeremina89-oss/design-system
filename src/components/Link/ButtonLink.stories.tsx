@@ -1,0 +1,10 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { ButtonLink } from './Link';
+import { componentDocs } from '../../docs/bulk-components';
+const meta={title:'Components/Actions/ButtonLink',component:ButtonLink,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('ButtonLink')}}},args:{text:'Подробнее',iconRight:'arrow-chevron-right'},argTypes:{color:{control:'select',options:['base','primary','accent','neutral','inverse']},size:{control:'select',options:['small','medium','large','giant']},state:{control:'select',options:['default','hover','focused','pressed','disabled','skeleton']},decoration:{control:'select',options:['solid','dashed','dotted',null]}}} satisfies Meta<typeof ButtonLink>;
+export default meta;type Story=StoryObj<typeof meta>;
+export const Default:Story={};
+export const Disabled:Story={args:{disabled:true}};
+export const Skeleton:Story={args:{state:'skeleton'}};
+export const States:Story={name:'Цвета и состояния',render:args=><div style={{overflowX:'auto',padding:8}}><table style={{borderSpacing:24}}><thead><tr><th>Color</th>{(['default','hover','focused','pressed','disabled','skeleton'] as const).map(s=><th key={s}>{s}</th>)}</tr></thead><tbody>{(['base','primary','accent','neutral','inverse'] as const).map(color=><tr key={color} style={{background:color==='inverse'?'var(--background-base-inverse)':undefined}}><th>{color}</th>{(['default','hover','focused','pressed','disabled','skeleton'] as const).map(state=><td key={state}><ButtonLink {...args} color={color} state={state} /></td>)}</tr>)}</tbody></table></div>};
+export const Sizes:Story={render:args=><div style={{display:'flex',gap:24,alignItems:'center'}}>{(['small','medium','large','giant'] as const).map(size=><ButtonLink {...args} key={size} size={size}/>)}</div>};

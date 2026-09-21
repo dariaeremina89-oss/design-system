@@ -1,0 +1,10 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { CheckboxGroup } from './SelectionGroup';
+import { componentDocs } from '../../docs/bulk-components';
+const meta={title:'Components/Selection/CheckboxGroup',component:CheckboxGroup,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('CheckboxGroup')}}},args:{label:'Уведомления',description:'Выберите способ получения',defaultValue:['email'],options:[{value:'email',label:'Электронная почта',description:'На рабочий адрес'},{value:'sms',label:'Сообщения на телефон'},{value:'push',label:'Push-уведомления',disabled:true}]},argTypes:{direction:{control:'radio',options:['column','row']}}} satisfies Meta<typeof CheckboxGroup>;
+export default meta;type Story=StoryObj<typeof meta>;
+export const Default:Story={};
+export const Horizontal:Story={args:{direction:'row'}};
+export const Disabled:Story={args:{disabled:true}};
+export const Error:Story={args:{errorText:'Выберите хотя бы один способ'}};
+export const Skeleton:Story={args:{state:'skeleton'}};

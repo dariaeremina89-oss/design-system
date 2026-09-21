@@ -1,0 +1,12 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Accordion } from './Accordion';
+import { Link } from '../Link/Link';
+import { componentDocs } from '../../docs/bulk-components';
+const meta={title:'Components/Navigation/Accordion',component:Accordion,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('Accordion')}}},args:{title:'Условия подписания',description:'Доступные способы и ограничения',children:<div>Документ можно подписать простой электронной подписью. <Link href='#details'>Подробнее</Link></div>},argTypes:{size:{control:'radio',options:['medium','large']},state:{control:'select',options:['default','hover','focused','pressed','disabled']}}} satisfies Meta<typeof Accordion>;
+export default meta;type Story=StoryObj<typeof meta>;
+export const Default:Story={};
+export const Expanded:Story={args:{defaultExpanded:true,contentDivider:true}};
+export const Disabled:Story={args:{disabled:true}};
+export const Large:Story={args:{size:'large'}};
+export const States:Story={render:args=><div>{(['default','hover','focused','pressed','disabled'] as const).map(state=><Accordion {...args} key={state} state={state} title={state}/>)}</div>};
+export const LongText:Story={args:{title:'ДлинноеНазваниеБезПробелов'.repeat(6)},decorators:[Story=><div style={{width:280}}><Story/></div>]};

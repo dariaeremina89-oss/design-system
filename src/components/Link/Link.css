@@ -1,0 +1,56 @@
+.fdoc-link { display:inline-flex; align-items:center; justify-content:center; gap:var(--space-8); max-width:100%; padding:0; border:0; background:none; color:var(--link-text); cursor:pointer; text-decoration:none; font-family:var(--page-body-family); font-weight:var(--page-body-weight-base); vertical-align:baseline; }
+.fdoc-link--small { font-size:var(--page-caption-size); line-height:var(--page-caption-line-height); }
+.fdoc-link--medium { font-size:var(--page-body-size); line-height:var(--page-body-line-height); }
+.fdoc-link--large { font-size:var(--page-subtitle-size); line-height:var(--page-subtitle-line-height); }
+.fdoc-link--giant { font-size:var(--page-subtitle-size); line-height:var(--page-subtitle-line-height); font-weight:var(--page-subtitle-weight-strong); }
+.fdoc-link__text { min-width:0; overflow-wrap:anywhere; text-decoration-line:underline; text-decoration-style:var(--link-decoration); text-decoration-thickness:var(--border-small); text-underline-offset:var(--space-2); }
+.fdoc-link[data-decoration=none] .fdoc-link__text { text-decoration:none; }
+.fdoc-link > .fdoc-icon { flex-shrink:0; color:var(--link-icon); }
+.fdoc-link:where([data-state=default]):hover,.fdoc-link[data-state=hover] { color:var(--link-text-hover); }
+.fdoc-link:where([data-state=default]):hover > .fdoc-icon,.fdoc-link[data-state=hover] > .fdoc-icon { color:var(--link-icon-hover); }
+.fdoc-link:where([data-state=default]):active,.fdoc-link[data-state=pressed] { color:var(--link-text-pressed); }
+.fdoc-link:where([data-state=default]):active > .fdoc-icon,.fdoc-link[data-state=pressed] > .fdoc-icon { color:var(--link-icon-pressed); }
+.fdoc-link:where([data-state=default]):focus-visible,.fdoc-link[data-state=focused] { outline:var(--border-large) solid var(--link-focus); outline-offset:0; }
+.fdoc-link[data-state=disabled] { color:var(--link-text-disabled); cursor:default; }
+.fdoc-link[data-state=disabled] > .fdoc-icon { color:var(--link-icon-disabled); }
+.fdoc-link-skeleton { display:inline-flex; align-items:center; min-height:1lh; }
+
+.fdoc-link[data-color=base] {
+ --link-text:var(--text-base-default); --link-icon:var(--icon-base-secondary);
+ --link-text-hover:var(--text-base-default-hover); --link-icon-hover:var(--icon-base-secondary-hover);
+ --link-text-pressed:var(--text-base-default-pressed); --link-icon-pressed:var(--icon-base-secondary-pressed);
+ --link-text-disabled:var(--text-base-default-disabled); --link-icon-disabled:var(--icon-base-secondary-disabled);
+ --link-focus:var(--border-base-default-focused);
+}
+
+.fdoc-link[data-color=primary] {
+ --link-text:var(--text-base-default); --link-icon:var(--icon-primary-secondary);
+ --link-text-hover:var(--text-base-default-hover); --link-icon-hover:var(--icon-primary-secondary-hover);
+ --link-text-pressed:var(--text-base-default-pressed); --link-icon-pressed:var(--icon-primary-secondary-pressed);
+ --link-text-disabled:var(--text-base-default-disabled); --link-icon-disabled:var(--icon-primary-secondary-disabled);
+ --link-focus:var(--border-primary-focused);
+}
+
+.fdoc-link[data-color=accent] {
+ --link-text:var(--text-accent-secondary); --link-icon:var(--icon-accent-secondary);
+ --link-text-hover:var(--text-accent-secondary-hover); --link-icon-hover:var(--icon-accent-secondary-hover);
+ --link-text-pressed:var(--text-accent-secondary-pressed); --link-icon-pressed:var(--icon-accent-secondary-pressed);
+ --link-text-disabled:var(--text-accent-secondary-disabled); --link-icon-disabled:var(--icon-accent-secondary-disabled);
+ --link-focus:var(--border-accent-focused);
+}
+
+.fdoc-link[data-color=neutral] {
+ --link-text:var(--text-base-secondary); --link-icon:var(--icon-base-secondary);
+ --link-text-hover:var(--text-base-secondary-hover); --link-icon-hover:var(--icon-base-secondary-hover);
+ --link-text-pressed:var(--text-base-secondary-pressed); --link-icon-pressed:var(--icon-base-secondary-pressed);
+ --link-text-disabled:var(--text-base-secondary-disabled); --link-icon-disabled:var(--icon-base-secondary-disabled);
+ --link-focus:var(--border-base-default-focused);
+}
+
+.fdoc-link[data-color=inverse] {
+ --link-text:var(--text-base-inverse); --link-icon:var(--icon-base-inverse-secondary);
+ --link-text-hover:var(--text-base-inverse-hover); --link-icon-hover:var(--icon-base-inverse-secondary-hover);
+ --link-text-pressed:var(--text-base-inverse-pressed); --link-icon-pressed:var(--icon-base-inverse-secondary-pressed);
+ --link-text-disabled:var(--text-base-inverse-disabled); --link-icon-disabled:var(--icon-base-inverse-secondary-disabled);
+ --link-focus:var(--border-white-focused);
+}
