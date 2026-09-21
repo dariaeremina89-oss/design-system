@@ -16,14 +16,30 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 ## Уровни токенов
 
-| Уровень | Назначение | Пример |
-| --- | --- | --- |
-| Primitive | Исходное значение | `--white-1000` |
-| Semantic | Назначение цвета в интерфейсе | `--background-base-default` |
+<table aria-label="Уровни токенов">
+  <thead>
+    <tr>
+      <th scope="col">Уровень</th>
+      <th scope="col">Назначение</th>
+      <th scope="col">Пример</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Primitive</td>
+      <td>Исходное значение</td>
+      <td><code>--white-1000</code></td>
+    </tr>
+    <tr>
+      <td>Semantic</td>
+      <td>Назначение цвета в интерфейсе</td>
+      <td><code>--background-base-default</code></td>
+    </tr>
+  </tbody>
+</table>
 
 Компоненты используют семантические токены. Отдельного уровня component tokens здесь нет.
 
 ```css
 --background-base-default: var(--white-1000);
 ```
-

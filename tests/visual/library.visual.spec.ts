@@ -1,5 +1,17 @@
 import { expect, test } from '@playwright/test';
 
+test('Overview renders token levels as a table', async ({ page }) => {
+  await page.goto('/iframe.html?id=general-overview--docs&viewMode=docs');
+  const table = page.getByRole('table', { name: 'Уровни токенов' });
+  await expect(table).toBeVisible();
+  await expect(table.getByRole('columnheader')).toHaveText(['Уровень', 'Назначение', 'Пример']);
+  await expect(table.getByRole('row')).toHaveCount(3);
+  await expect(table.getByRole('cell')).toHaveText([
+    'Primitive', 'Исходное значение', '--white-1000',
+    'Semantic', 'Назначение цвета в интерфейсе', '--background-base-default',
+  ]);
+});
+
 test('library contains the expected component hierarchy and QA docs', async ({ request }) => {
   const response = await request.get('/index.json');
   expect(response.ok()).toBeTruthy();
