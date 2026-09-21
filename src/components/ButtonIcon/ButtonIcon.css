@@ -24,22 +24,22 @@
   transition: background-color 120ms ease, box-shadow 120ms ease;
 }
 
-.fdoc-button-icon:hover:not(:disabled),
+.fdoc-button-icon:where([data-button-icon-state="default"]):hover:not(:disabled),
 .fdoc-button-icon--hover:not(:disabled) {
   background: var(--fdoc-button-icon-background-hover);
   color: var(--fdoc-button-icon-icon-hover);
 }
 
-.fdoc-button-icon:active:not(:disabled),
+.fdoc-button-icon:where([data-button-icon-state="default"]):active:not(:disabled),
 .fdoc-button-icon--pressed:not(:disabled) {
   background: var(--fdoc-button-icon-background-pressed);
   color: var(--fdoc-button-icon-icon-pressed);
 }
 
-.fdoc-button-icon:focus-visible,
+.fdoc-button-icon:where([data-button-icon-state="default"]):focus-visible:not(:disabled),
 .fdoc-button-icon--focused:not(:disabled) {
-  outline: 0;
-  box-shadow: inset 0 0 0 var(--border-large) var(--fdoc-button-icon-focus-border);
+  outline: var(--border-large) solid var(--fdoc-button-icon-focus-border);
+  outline-offset: 0;
 }
 
 .fdoc-button-icon:disabled,
@@ -47,6 +47,7 @@
   background: var(--fdoc-button-icon-background-disabled);
   color: var(--fdoc-button-icon-icon-disabled);
   cursor: default;
+  outline: none;
 }
 
 .fdoc-button-icon .fdoc-icon {

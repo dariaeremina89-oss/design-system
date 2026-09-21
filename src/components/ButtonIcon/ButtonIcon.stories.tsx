@@ -35,7 +35,7 @@ const meta = {
 | \`large\` / 48 Large | \`--elements-48\` | \`--elements-32\` | \`--space-8\` |
 | \`giant\` / 56 Giant | \`--elements-56\` | \`--elements-40\` | \`--space-8\` |
 
-Кнопка круглая: \`--radius-full\`. Focus-обводка использует \`--border-large\` и не меняет размер layout-бокса.
+Кнопка круглая: \`--radius-full\`. Внешняя Focus-обводка использует \`--border-large\` и не меняет размер layout-бокса.
 
 ### Цвета и состояния
 
@@ -102,3 +102,19 @@ export const States: Story = {
   ),
 };
 export const ForcedIconSize: Story = { args: { size: 'giant', iconSize: 16 } };
+
+export const StateMatrix: Story = {
+  name: 'Цвета и состояния',
+  render: (args) => (
+    <div style={{ overflowX: 'auto', padding: 8 }}>
+      <table style={{ borderSpacing: 20 }} aria-label="ButtonIcon: цвета и состояния">
+        <thead><tr><th scope="col">Color</th>{['default', 'hover', 'focused', 'pressed', 'disabled', 'skeleton'].map(state => <th key={state} scope="col">{state}</th>)}</tr></thead>
+        <tbody>{(['primary', 'secondary', 'tertiary', 'neutral', 'base', 'inverse', 'inverse-primary', 'inverse-light'] as const).map(color => (
+          <tr key={color}><th scope="row">{color}</th>{(['default', 'hover', 'focused', 'pressed', 'disabled', 'skeleton'] as const).map(state => (
+            <td key={state}><ButtonIcon {...args} color={color} state={state} aria-label={`${color} ${state}`} data-testid={`button-icon-${color}-${state}`} /></td>
+          ))}</tr>
+        ))}</tbody>
+      </table>
+    </div>
+  ),
+};

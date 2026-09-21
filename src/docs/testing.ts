@@ -21,10 +21,21 @@ const docs: Record<string, TestingDocs> = {
       ['data-button-loading', 'Загрузка', 'true / false; отсутствует у Skeleton.'],
     ],
   },
+  ButtonFAB: {
+    unit: 'Нативная кнопка и доступное имя; одна декоративная иконка; ref; блокировка клика в Disabled; защита от случайного submit; portal и его удаление; Inline; неинтерактивный Skeleton; axe.',
+    browser: 'Матрица четырех цветов и пяти состояний; размеры 64/40, padding, радиус и тень; внешний focus; Enter/Space; disabled вне Tab-порядка; Floating при прокрутке и на 375 px; Skeleton.',
+    gaps: 'Нет проверки Safari/Firefox, экранного диктора и физических устройств с safe area; нет пиксельных эталонов.',
+    selectors: [
+      ['button-fab / button-fab-skeleton', 'Корень кнопки / Skeleton', 'Заменяются data-testid.'],
+      ['data-button-fab-state', 'Принудительное состояние', 'default, hover, focused, pressed, disabled, skeleton.'],
+      ['data-button-fab-position', 'Режим размещения', 'floating / inline.'],
+      ['data-icon', 'Библиотечная иконка', 'Значение icon; отсутствует в Skeleton.'],
+    ],
+  },
   ButtonIcon: {
     unit: 'Матрица размеров кнопки и иконки; независимый iconSize; нативная кнопка; disabled без клика; произвольная иконка; токены цветовых схем; Neutral hover/pressed; неинтерактивный Skeleton и его вариант для tertiary/neutral.',
-    browser: 'Размеры и круглая форма; внешний размер при focus; disabled; общий Skeleton.',
-    gaps: 'Нет отдельного axe-аудита, тестов клавиатурной активации и полной матрицы цвет × состояние × размер.',
+    browser: 'Все восемь цветов × пять состояний; реальные Hover/Pressed, сочетание с клавиатурным фокусом; внешняя рамка 4 px и стабильные размеры для всех шести размеров; принудительные состояния; disabled вне Tab-порядка; Enter/Space; все варианты Skeleton.',
+    gaps: 'Нет отдельного axe-аудита, Safari/Firefox и пиксельных эталонов; цветовая матрица проверяется на размере Medium, геометрия фокуса — на всех размерах.',
     selectors: [
       ['button-icon / button-icon-skeleton', 'Корень кнопки / Skeleton', 'Заменяются пропсом data-testid.'],
       ['button-icon-skeleton-icon', 'Вложенный Skeleton иконки', 'Skeleton в tertiary/neutral; при custom data-testid: `<custom>-icon`.'],
@@ -125,7 +136,7 @@ const docs: Record<string, TestingDocs> = {
 export function testingDocs(name: keyof typeof docs): string {
   const item = docs[name];
   const base = 'https://github.com/dariaeremina89-oss/design-system/blob/main/';
-  const visual = name === 'Icon' || name === 'Skeleton' ? 'atoms' : name === 'ProgressIndicator' ? 'progress-indicator' : name === 'ButtonIcon' ? 'button-icon' : name.toLowerCase();
+  const visual = name === 'Icon' || name === 'Skeleton' ? 'atoms' : name === 'ProgressIndicator' ? 'progress-indicator' : name === 'ButtonFAB' ? 'button-fab' : name === 'ButtonIcon' ? 'button-icon' : name.toLowerCase();
   return `
 
 ## Автотесты

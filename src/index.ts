@@ -33,3 +33,6 @@ export type {
 
 export { Textarea } from './components/Textarea/Textarea';
 export type { TextareaProps, TextareaSize } from './components/Textarea/Textarea';
+
+export { ButtonFAB } from './components/ButtonFAB/ButtonFAB';
+export type { ButtonFABProps, ButtonFABColor, ButtonFABState, ButtonFABPosition } from './components/ButtonFAB/ButtonFAB';
