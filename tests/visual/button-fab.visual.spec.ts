@@ -32,6 +32,7 @@ test('ButtonFAB matches all color states, geometry and shadow', async ({ page })
 test('ButtonFAB supports keyboard activation and skips disabled', async ({ page }) => {
   await page.goto('/iframe.html?id=components-actions-buttonfab--keyboard&viewMode=story');
   const button = page.getByRole('button', { name: 'Создать документ' });
+  await expect(button).toBeVisible();
   await page.keyboard.press('Tab');
   await expect(button).toBeFocused();
   await expectColors(button, 'primary', 'focused');
@@ -39,8 +40,8 @@ test('ButtonFAB supports keyboard activation and skips disabled', async ({ page 
   await page.keyboard.press('Space');
   await expect(page.locator('output')).toHaveText('Действий: 2');
   await page.goto('/iframe.html?id=components-actions-buttonfab--disabled&viewMode=story');
-  await page.keyboard.press('Tab');
   await expect(page.getByRole('button')).toBeDisabled();
+  await page.keyboard.press('Tab');
   await expect(page.getByRole('button')).not.toBeFocused();
 });
 
