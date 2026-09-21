@@ -6,9 +6,9 @@
 .fdoc-control__shape { box-sizing:border-box; width:var(--elements-20); height:var(--elements-20); border:var(--border-small) solid var(--control-border); border-radius:var(--radius-small); pointer-events:none; }
 .fdoc-control__mark { display:none; width:100%; height:100%; }
 .fdoc-control__ripple { display:block; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:var(--elements-32); height:var(--elements-32); border-radius:var(--radius-full); pointer-events:none; }
-.fdoc-control:has(input:checked),.fdoc-control:has(input:indeterminate) { --ripple-hover:var(--transparent-background-primary-hover); --ripple-focused:var(--transparent-background-primary-focused); --ripple-pressed:var(--transparent-background-primary-pressed); }
-.fdoc-control input:is(:checked,:indeterminate) + .fdoc-control__shape { background:var(--control-color); border:0; }
-.fdoc-control[data-kind=checkbox] input:is(:checked,:indeterminate) + .fdoc-control__shape .fdoc-control__mark { display:block; mask:url('./assets/check.svg') center/100% 100% no-repeat; background:var(--control-icon); }
+.fdoc-control:has(input:checked),.fdoc-control[data-kind=checkbox]:has(input:indeterminate) { --ripple-hover:var(--transparent-background-primary-hover); --ripple-focused:var(--transparent-background-primary-focused); --ripple-pressed:var(--transparent-background-primary-pressed); }
+.fdoc-control input:is(:checked,[type=checkbox]:indeterminate) + .fdoc-control__shape { background:var(--control-color); border:0; }
+.fdoc-control[data-kind=checkbox] input:is(:checked,[type=checkbox]:indeterminate) + .fdoc-control__shape .fdoc-control__mark { display:block; mask:url('./assets/check.svg') center/100% 100% no-repeat; background:var(--control-icon); }
 .fdoc-control[data-kind=checkbox] input:indeterminate + .fdoc-control__shape .fdoc-control__mark { mask-image:url('./assets/minus.svg'); }
 .fdoc-control[data-kind=radio] .fdoc-control__shape { border-radius:var(--radius-full); }
 .fdoc-control[data-kind=radio] input:checked + .fdoc-control__shape { mask:url('./assets/radio.svg') center/100% 100% no-repeat; }
@@ -16,7 +16,7 @@
 .fdoc-control[data-kind=checkbox][data-error=true] input:not(:checked):not(:indeterminate) + .fdoc-control__shape { background:var(--background-error-secondary); }
 .fdoc-control[data-kind=checkbox] input:disabled + .fdoc-control__shape { background:var(--background-base-secondary-disabled); }
 .fdoc-control input:disabled + .fdoc-control__shape { border-color:var(--control-border-disabled); }
-.fdoc-control input:disabled:is(:checked,:indeterminate) + .fdoc-control__shape { background:var(--control-disabled); }
+.fdoc-control input:disabled:is(:checked,[type=checkbox]:indeterminate) + .fdoc-control__shape { background:var(--control-disabled); }
 .fdoc-control input:disabled + .fdoc-control__shape .fdoc-control__mark { background:var(--control-icon-disabled); }
 .fdoc-control[data-kind=checkbox][data-error=true] input:disabled:not(:checked):not(:indeterminate) + .fdoc-control__shape { background:var(--background-error-secondary-disabled); }
 .fdoc-control-row:where([data-state=default]):hover .fdoc-control input:not(:disabled) ~ .fdoc-control__ripple,.fdoc-control[data-state=hover] .fdoc-control__ripple { background:var(--ripple-hover); }
@@ -39,3 +39,5 @@
 .fdoc-control-row[data-disabled=true] .fdoc-control__description { color:var(--text-base-secondary-disabled); }
 .fdoc-control__description[data-error=true] { color:var(--text-error-secondary); }
 .fdoc-control-row[data-disabled=true] .fdoc-control__description[data-error=true] { color:var(--text-error-secondary-disabled); }
+
+.fdoc-control-row[data-kind=switch]:has(.fdoc-control__text) { display:flex; width:100%; }

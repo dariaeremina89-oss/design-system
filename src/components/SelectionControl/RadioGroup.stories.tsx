@@ -8,3 +8,5 @@ export const Horizontal:Story={args:{direction:'row'}};
 export const Disabled:Story={args:{disabled:true}};
 export const Error:Story={args:{errorText:'Выберите хотя бы один способ'}};
 export const Skeleton:Story={args:{state:'skeleton'}};
+
+export const LabelLeft:Story={args:{position:'left'},decorators:[Story=><div style={{maxWidth:424}}><Story/></div>]};
