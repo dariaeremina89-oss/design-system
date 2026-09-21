@@ -2,7 +2,31 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 <Meta title="General/Layers" />
 
-# Layers
+# Слои
 
-Раздел запланирован. Правила слоев и наложения элементов еще не описаны.
+Токены слоев (`z-index`) задают порядок наложения элементов и помогают поддерживать единый стек интерфейса без случайных значений.
 
+## Правила
+
+- Используем только токены из UI Kit.
+- Каждый слой предназначен для своего типа элементов.
+- Не расширяем диапазон слоев без необходимости.
+- Новый слой не может превышать `--layer-top` по значению.
+- Новый слой не может быть меньше `--layer-hidden` по значению.
+
+## Токены
+
+<table aria-label="Токены слоев">
+  <thead>
+    <tr><th scope="col">Токен</th><th scope="col">Значение</th><th scope="col">Назначение</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>--layer-hidden</code></td><td>-1</td><td>Подложка под контент</td></tr>
+    <tr><td><code>--layer-base</code></td><td>0</td><td>Базовый слой интерфейса</td></tr>
+    <tr><td><code>--layer-raised</code></td><td>100</td><td>Элементы над контентом</td></tr>
+    <tr><td><code>--layer-floating</code></td><td>200</td><td>Временные интерактивные элементы</td></tr>
+    <tr><td><code>--layer-overlay</code></td><td>400</td><td>Блокирующие слои</td></tr>
+    <tr><td><code>--layer-dialog</code></td><td>500</td><td>Диалоги поверх overlay</td></tr>
+    <tr><td><code>--layer-top</code></td><td>1000</td><td>Верхний слой системы</td></tr>
+  </tbody>
+</table>

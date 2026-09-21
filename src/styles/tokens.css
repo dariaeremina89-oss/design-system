@@ -1,4 +1,13 @@
 :root {
+  /* Interface stacking layers */
+  --layer-hidden: -1;
+  --layer-base: 0;
+  --layer-raised: 100;
+  --layer-floating: 200;
+  --layer-overlay: 400;
+  --layer-dialog: 500;
+  --layer-top: 1000;
+
   /* Primitive colors */
   --neutral-25: #f8f8f9;
   --neutral-50: #dddee0;

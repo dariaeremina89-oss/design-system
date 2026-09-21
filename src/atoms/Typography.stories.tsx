@@ -85,7 +85,12 @@ const pageStyleReferences: Record<string, {
 export const Primitive: Story = {
   render: () => (
     <Page title="Typography primitives">
-      <TokenList tokens={typographyPrimitiveTokens} />
+      {['font-family', 'font-weight', 'font-style', 'font-size', 'line-height', 'text-decoration'].map((group) => (
+        <section key={group} className="fdoc-atoms__subsection" aria-labelledby={`typography-${group}`}>
+          <h2 id={`typography-${group}`}>{group}</h2>
+          <TokenList tokens={typographyPrimitiveTokens.filter(({ token }) => token.startsWith(`--${group}-`))} />
+        </section>
+      ))}
     </Page>
   ),
 };
@@ -93,9 +98,19 @@ export const Primitive: Story = {
 export const Styles: Story = {
   render: () => (
     <Page title="Page typography styles → primitives">
-      <section className="fdoc-atoms__section">
+      {(['desktop', 'mobile'] as const).map((platform) => (
+      <section key={platform} className="fdoc-atoms__subsection" aria-labelledby={`typography-${platform}`}>
+        <h2 id={`typography-${platform}`}>{platform === 'desktop' ? 'Desktop' : 'Mobile'}</h2>
         {typographyTokens.map((item) => {
-          const style = pageStyleReferences[item.token];
+          const base = pageStyleReferences[item.token];
+          const mobile = platform === 'mobile';
+          // Pin both previews to their platform so resizing the viewport does not change Desktop into Mobile.
+          const style = mobile ? {
+            family: base.family.replace(')', '-mobile)'),
+            weight: base.weight.replace(')', '-mobile)'),
+            size: base.size.replace(')', '-mobile)'),
+            lineHeight: base.lineHeight.replace(')', '-mobile)'),
+          } : { ...base, size: item.references.size, lineHeight: item.references.lineHeight };
 
           return (
             <div key={item.name} className="fdoc-atoms__type-row">
@@ -113,7 +128,7 @@ export const Styles: Story = {
               </div>
               <div className="fdoc-atoms__type-meta">
                 <span>{item.token}-*</span>
-                <span>Desktop {item.size}/{item.lineHeight} · Mobile {item.mobileSize}/{item.mobileLineHeight}</span>
+                <span>{mobile ? item.mobileSize : item.size}/{mobile ? item.mobileLineHeight : item.lineHeight} px</span>
                 <code>page style → {style.family} · weight → {style.weight}</code>
                 <code>size → {style.size} · line-height → {style.lineHeight}</code>
               </div>
@@ -121,6 +136,7 @@ export const Styles: Story = {
           );
         })}
       </section>
+      ))}
     </Page>
   ),
 };
