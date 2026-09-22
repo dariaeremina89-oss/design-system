@@ -5,7 +5,7 @@
 .fdoc-link--giant { font-size:var(--page-subtitle-size); line-height:var(--page-subtitle-line-height); font-weight:var(--page-subtitle-weight-strong); }
 .fdoc-link__text { min-width:0; overflow-wrap:anywhere; text-decoration-line:underline; text-decoration-style:var(--link-decoration); text-decoration-thickness:var(--border-small); text-underline-offset:var(--space-2); }
 .fdoc-link[data-decoration=none] .fdoc-link__text { text-decoration:none; }
-.fdoc-link > .fdoc-icon { flex-shrink:0; color:var(--link-icon); }
+.fdoc-link > .fdoc-icon { flex-shrink:0; color:var(--link-icon); width:var(--link-icon-size,var(--fdoc-icon-size)); height:var(--link-icon-size,var(--fdoc-icon-size)); }
 .fdoc-link:where([data-state=default]):hover,.fdoc-link[data-state=hover] { color:var(--link-text-hover); }
 .fdoc-link:where([data-state=default]):hover > .fdoc-icon,.fdoc-link[data-state=hover] > .fdoc-icon { color:var(--link-icon-hover); }
 .fdoc-link:where([data-state=default]):active,.fdoc-link[data-state=pressed] { color:var(--link-text-pressed); }
@@ -56,12 +56,12 @@
 }
 
 /* Opt in for links that participate in a paragraph's typography and wrapping. */
-.fdoc-link--inherit { display:inline; font:inherit; letter-spacing:inherit; }
-.fdoc-link--inherit > .fdoc-icon { width:1em; height:1em; vertical-align:-0.125em; }
+.fdoc-link--inherit { --link-icon-size:1em; display:inline; font:inherit; letter-spacing:inherit; }
+.fdoc-link--inherit > .fdoc-icon { font:inherit; vertical-align:-0.125em; }
 .fdoc-link--inherit > .fdoc-icon:first-child { margin-right:0.25em; }
 .fdoc-link--inherit > .fdoc-icon:last-child { margin-left:0.25em; }
 
-.fdoc-link-skeleton.fdoc-link--inherit { display:inline-flex; gap:0.25em; }
+.fdoc-link-skeleton.fdoc-link--inherit { display:inline-flex; gap:0.25em; vertical-align:top; }
 .fdoc-link__skeleton-icon { flex-shrink:0; }
 
 button.fdoc-link--inherit { display:inline-block; }

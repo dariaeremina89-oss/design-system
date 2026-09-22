@@ -30,6 +30,16 @@ for (const name of ['link', 'buttonlink']) {
     for (const [width,line,bar,top] of [[1280,24,11,7],[320,20,10,5]]) {
       await page.setViewportSize({width,height:800});
       await expect.poll(() => metrics(skeleton)).toEqual({line:`${line}px`,bar:`${bar}px`,top:`${top}px`});
+      const paragraph = page.getByTestId('adaptive-paragraph');
+      const height = (await paragraph.boundingBox())!.height;
+      expect(height % line).toBe(0);
+      await expect(paragraph.locator('.fdoc-link-skeleton')).toHaveCSS('vertical-align','top');
+      const iconSkeletons = page.getByTestId('paragraph-icon-link').locator('.fdoc-link__skeleton-icon');
+      await expect(iconSkeletons).toHaveCount(2);
+      for (const icon of await iconSkeletons.all()) {
+        await expect(icon).toHaveCSS('width',width > 767 ? '16px' : '14px');
+        await expect(icon).toHaveCSS('height',width > 767 ? '16px' : '14px');
+      }
     }
   });
 }

@@ -78,7 +78,13 @@ for (const component of ['link', 'buttonlink']) {
       await expect(link).toHaveCSS('font-style', 'italic');
       expect(await typography(link)).toEqual(await typography(page.getByTestId('adaptive-paragraph')));
       await expect(link).toHaveCSS('display', component === 'link' ? 'inline' : 'inline-block');
-      await expect(page.getByTestId('paragraph-icon-link').locator('.fdoc-icon')).toHaveCSS('width', size);
+      const icons = page.getByTestId('paragraph-icon-link').locator('.fdoc-icon');
+      await expect(icons).toHaveCount(2);
+      for (const icon of await icons.all()) {
+        await expect(icon).toHaveCSS('width', size);
+        await expect(icon).toHaveCSS('height', size);
+      }
+      await expect(page.getByTestId('fixed-link').locator('.fdoc-icon')).toHaveCSS('width', '24px');
       await expect(page.getByTestId('fixed-link')).toHaveCSS('font-size', '16px');
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }

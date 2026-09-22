@@ -17,9 +17,9 @@ export const InParagraph:Story={
    Перед подписанием прочитайте <ButtonLink {...args} data-testid="paragraph-link">условия обработки документов и персональных данных</ButtonLink> и проверьте информацию.
   </Typography>
   <Typography variant="subtitle" responsive>
-   <ButtonLink {...args} iconRight="arrow-chevron-right" data-testid="paragraph-icon-link">Подробнее</ButtonLink>
+   <ButtonLink {...args} iconLeft="copy" iconRight="arrow-chevron-right" data-testid="paragraph-icon-link">Подробнее</ButtonLink>
   </Typography>
-  <p>Самостоятельная ссылка: <ButtonLink size="large" data-testid="fixed-link">Подробнее</ButtonLink></p>
+  <p>Самостоятельная ссылка: <ButtonLink size="large" iconRight="arrow-chevron-right" data-testid="fixed-link">Подробнее</ButtonLink></p>
  </div>
 };
 

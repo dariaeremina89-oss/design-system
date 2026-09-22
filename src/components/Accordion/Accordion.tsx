@@ -1,4 +1,4 @@
-import { useId,useState,type CSSProperties,type ReactNode } from 'react';
+import { useId,useState,type ReactNode } from 'react';
 import { ButtonIconDecoration } from '../ButtonIcon/ButtonIcon';
 import { Divider } from '../Divider/Divider';
 import './Accordion.css';
@@ -11,8 +11,9 @@ export function Accordion({title,description,headerContent,children,size='medium
  </section>;
 }
 export interface AccordionGroupItem extends Omit<AccordionProps,'expanded'|'defaultExpanded'|'onExpandedChange'> { value:string; }
-export interface AccordionGroupProps { items:AccordionGroupItem[]; multiple?:boolean; value?:string[]; defaultValue?:string[]; onValueChange?:(value:string[])=>void; gap?:0|24; groupDivider?:boolean; }
+export interface AccordionGroupProps { items:AccordionGroupItem[]; multiple?:boolean; value?:string[]; defaultValue?:string[]; onValueChange?:(value:string[])=>void; gap?:number; groupDivider?:boolean; }
 export function AccordionGroup({items,multiple=false,value,defaultValue=[],onValueChange,gap=0,groupDivider=false}:AccordionGroupProps) {
+ const resolvedGap=Number.isFinite(gap)?Math.max(0,gap):0;
  const [local,setLocal]=useState(defaultValue);const active=value??local;const selected=multiple?active:active.slice(0,1);
- return <div className="fdoc-accordion-group" style={{gap:`var(--space-${gap},${gap}px)`} as CSSProperties}>{items.map(({value:key,...props},i)=><div key={key}>{i>0&&groupDivider&&gap===0&&<Divider/>}<Accordion {...props} expanded={selected.includes(key)} onExpandedChange={open=>{const next=open?(multiple?[...selected,key]:[key]):selected.filter(v=>v!==key);if(value===undefined)setLocal(next);onValueChange?.(next);}}/></div>)}</div>;
+ return <div className="fdoc-accordion-group" style={{gap:resolvedGap}}>{items.map(({value:key,...props},i)=><div key={key}>{i>0&&groupDivider&&resolvedGap===0&&<Divider/>}<Accordion {...props} expanded={selected.includes(key)} onExpandedChange={open=>{const next=open?(multiple?[...selected,key]:[key]):selected.filter(v=>v!==key);if(value===undefined)setLocal(next);onValueChange?.(next);}}/></div>)}</div>;
 }

@@ -17,9 +17,9 @@ export const InParagraph:Story={
    Перед подписанием прочитайте <Link {...args} data-testid="paragraph-link">условия обработки документов и персональных данных</Link> и проверьте информацию.
   </Typography>
   <Typography variant="subtitle" responsive>
-   <Link {...args} iconRight="arrow-chevron-right" data-testid="paragraph-icon-link">Подробнее</Link>
+   <Link {...args} iconLeft="copy" iconRight="arrow-chevron-right" data-testid="paragraph-icon-link">Подробнее</Link>
   </Typography>
-  <p>Самостоятельная ссылка: <Link href='#details' size="large" data-testid="fixed-link">Подробнее</Link></p>
+  <p>Самостоятельная ссылка: <Link href='#details' size="large" iconRight="arrow-chevron-right" data-testid="fixed-link">Подробнее</Link></p>
  </div>
 };
 
