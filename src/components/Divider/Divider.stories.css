@@ -1,0 +1,4 @@
+.divider-example { width:100%; max-width:480px; padding:var(--space-24) var(--space-32); background:var(--background-base-secondary); }
+.divider-example p { margin:0; padding:var(--space-16) 0; }
+.divider-example--vertical { display:flex; align-items:stretch; height:200px; gap:var(--space-16); }
+@media(max-width:600px) { .divider-example { padding:var(--space-16); } }

@@ -1,8 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Divider } from './Divider';
 import { componentDocs } from '../../docs/bulk-components';
-const meta={title:'Components/Layout/Divider',component:Divider,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('Divider')}}},argTypes:{orientation:{control:'radio',options:['horizontal','vertical']},inset:{control:'select',options:[0,16,24]}}} satisfies Meta<typeof Divider>;
+import './Divider.stories.css';
+const meta={title:'Components/Layout/Divider',component:Divider,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('Divider')}}},args:{inset:0},argTypes:{orientation:{control:'radio',options:['horizontal','vertical']},inset:{control:{type:'number',min:0,step:1},description:'Дополнительный отступ в px от границ контента родителя. 0 — совпадает с контентом.'}}} satisfies Meta<typeof Divider>;
 export default meta;type Story=StoryObj<typeof meta>;
 export const Default:Story={decorators:[Story=><div style={{display:'flex',height:160,width:'100%'}}><Story/></div>]};
-export const Insets:Story={render:()=> <div style={{display:'grid',gap:32}}>{([0,16,24] as const).map(inset=><Divider key={inset} inset={inset}/>)}</div>};
+export const Insets:Story={name:'Произвольный отступ',args:{inset:32},render:args=><div className="divider-example"><p>Отступ задается числом в Controls</p><Divider {...args}/></div>};
 export const Vertical:Story={args:{orientation:'vertical'},decorators:Default.decorators};
+export const ParentSpacing:Story={name:'Отступы родителя',render:args=><div className="divider-example"><p data-testid="divider-content">Линия выровнена с текстом контейнера</p><Divider {...args}/><p>На мобильном отступы контейнера меняются вместе с линией</p></div>};
+export const VerticalParentSpacing:Story={name:'Вертикальный — отступы родителя',args:{orientation:'vertical'},render:args=><div className="divider-example divider-example--vertical"><span>Слева</span><Divider {...args}/><span>Справа</span></div>};
