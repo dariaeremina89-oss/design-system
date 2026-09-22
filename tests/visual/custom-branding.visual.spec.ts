@@ -40,6 +40,8 @@ test('active buttons, icons and inverse Primary have sufficient actual contrast 
     await page.getByRole('radio',{name:mode,exact:true}).click();
     for(const color of ['#2f26ff','#ffdc00','#ffffff','#000000','#777777']) {
       await page.getByRole('textbox',{name:'Primary 500 HEX'}).fill(color);
+      // Wait for the component's existing background transition before measuring contrast.
+      await expect.poll(async()=>hex(await page.getByTestId('brand-button-default').evaluate(el=>getComputedStyle(el).backgroundColor))).toBe(color);
       for(const state of ['default','hover','pressed','focused']) {
         const button=page.getByTestId(`brand-button-${state}`);
         const colors=await button.evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor,icon:getComputedStyle(el.querySelector('.fdoc-icon')!).color}));
