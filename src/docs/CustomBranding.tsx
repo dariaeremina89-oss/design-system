@@ -38,7 +38,7 @@ export function CustomBranding() {
   });
   function update(next:string) {setDraft(next);const normalized=normalizeHex(next);if(normalized)applyPrimaryTheme(normalized);}
   const title=(text:string)=><Typography as="h2" variant="h3-heading" responsive>{text}</Typography>;
-  return <div className="fdoc-branding">
+  return <div className="fdoc-branding sb-unstyled">
     <Typography as="h1" variant="h1-heading" responsive>Custom Branding</Typography>
     <Typography responsive>Один цвет бренда, две темы. Введите Primary 500 — палитра и компоненты обновятся сразу.</Typography>
     <section className="fdoc-branding__panel" aria-label="Настройки темы">

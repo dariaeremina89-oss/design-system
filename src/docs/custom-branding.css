@@ -17,3 +17,4 @@
 .fdoc-branding__examples { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--space-16); }
 .fdoc-branding__code { overflow:auto; max-height:400px; padding:var(--space-16); background:var(--background-base-secondary); color:var(--text-base-default); font-family:var(--page-code-family); font-size:var(--page-code-size); line-height:var(--page-code-line-height); }
 @media(max-width:767px) { .fdoc-branding__examples { grid-template-columns:minmax(0,1fr); } .fdoc-branding__panel { padding:var(--space-16); } }
+@media(min-width:1024px) { .fdoc-branding__palette { grid-template-columns:repeat(11,minmax(0,1fr)); } .fdoc-branding__swatch { padding:var(--space-12); } }

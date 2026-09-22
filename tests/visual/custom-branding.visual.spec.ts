@@ -13,6 +13,9 @@ test('F.Doc has its own Dark theme without a client HEX; switching preserves pri
   await page.getByRole('radio',{name:'Dark',exact:true}).click();
   await expect(page.locator('html')).toHaveAttribute('data-color-mode','dark');
   await expect(page.locator('body')).toHaveCSS('background-color','rgb(24, 25, 28)');
+  await expect(page.getByRole('heading',{name:'Custom Branding',exact:true})).toHaveCSS('color','rgb(255, 255, 255)');
+  await expect(page.locator('.fdoc-branding > p').first()).toHaveCSS('color','rgb(255, 255, 255)');
+  await expect(page.getByRole('table',{name:'Семантика Light и Dark'}).locator('td').first()).toHaveCSS('color','rgb(255, 255, 255)');
   await expect(page.getByTestId('brand-button-default')).toHaveCSS('background-color','rgb(255, 220, 0)');
   const after=await page.evaluate(()=>{const css=getComputedStyle(document.documentElement);return ['--yellow-500','--green-500','--red-500','--neutral-900'].map(token=>css.getPropertyValue(token).trim());});
   expect(after).toEqual(before);

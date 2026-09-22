@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Divider } from './Divider';
 import { componentDocs } from '../../docs/bulk-components';
 import './Divider.stories.css';
-const meta={title:'Components/Layout/Divider',component:Divider,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('Divider')}}},args:{inset:0},argTypes:{orientation:{control:'radio',options:['horizontal','vertical']},inset:{control:{type:'number',min:0,step:1},description:'Дополнительный отступ в px от границ контента родителя. 0 — совпадает с контентом.'}}} satisfies Meta<typeof Divider>;
+const meta={title:'Components/Elements/Divider',id:'components-layout-divider',component:Divider,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('Divider')}}},args:{inset:0},argTypes:{orientation:{control:'radio',options:['horizontal','vertical']},inset:{control:{type:'number',min:0,step:1},description:'Дополнительный отступ в px от границ контента родителя. 0 — совпадает с контентом.'}}} satisfies Meta<typeof Divider>;
 export default meta;type Story=StoryObj<typeof meta>;
 export const Default:Story={decorators:[Story=><div style={{display:'flex',height:160,width:'100%'}}><Story/></div>]};
 export const Insets:Story={args:{inset:32},render:args=><div className="divider-example"><p>Отступ задается числом в Controls</p><Divider {...args}/></div>};
