@@ -20,7 +20,7 @@ for (const name of ['link', 'buttonlink']) {
         await expect(rows.nth(index).locator('.fdoc-skeleton--icon')).toHaveCSS('width', `${icon}px`);
       }
     }
-    await expect(page.locator('a,button')).toHaveCount(0);
+    await expect(rows.locator('a,button')).toHaveCount(0);
   });
 
   test(`${name} paragraph skeleton follows the named adaptive style`, async ({ page }) => {

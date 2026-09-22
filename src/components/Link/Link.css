@@ -63,3 +63,5 @@
 
 .fdoc-link-skeleton.fdoc-link--inherit { display:inline-flex; gap:0.25em; }
 .fdoc-link__skeleton-icon { flex-shrink:0; }
+
+button.fdoc-link--inherit { display:inline-block; }
