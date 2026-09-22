@@ -46,8 +46,11 @@ test('Chips exposes every palette state with matching tokens and fixed focus geo
     await expect(chip).toHaveCSS('color',expected.text);
     for(const node of await chip.locator('.fdoc-icon').all())await expect(node).toHaveCSS('color',expected.icon);
     await expect(chip).toHaveCSS('height','32px');
-    await expect(chip).toHaveCSS('outline-width',state==='focused'?'4px':'0px');
-    if(state==='focused')await expect(chip).toHaveCSS('outline-color',expected.focus);
+    await expect(chip).toHaveCSS('outline-style',state==='focused'?'solid':'none');
+    if(state==='focused'){
+      await expect(chip).toHaveCSS('outline-width','4px');
+      await expect(chip).toHaveCSS('outline-color',expected.focus);
+    }
     if(state==='disabled')await expect(chip.getByRole('button')).toBeDisabled();
   }
 });
@@ -67,8 +70,9 @@ test('Chips skeleton uses both Figma shapes and sizes; long text truncates',asyn
   for(const [i,height,radius] of [[0,24,9999],[1,24,4],[2,32,9999],[3,32,4]]){
     await expect(skeletons.nth(i)).toHaveCSS('height',`${height}px`);await expect(skeletons.nth(i)).toHaveCSS('border-radius',`${radius}px`);
   }
-  await expect(page.locator('button')).toHaveCount(0);
+  await expect(page.locator('#storybook-root button')).toHaveCount(0);
   await page.goto('/iframe.html?id=components-selection-chips--long-text&viewMode=story');
+  await expect(page.locator('.fdoc-chips__text')).toHaveCount(2);
   for(const text of await page.locator('.fdoc-chips__text').all()){
     await expect(text).toHaveCSS('text-overflow','ellipsis');expect(await text.evaluate(el=>el.scrollWidth>el.clientWidth)).toBe(true);
   }
