@@ -61,9 +61,9 @@ export function Menu({ items, id: providedId, role = 'menu', selectedId, activeI
       else { const item = autoFocus === 'last' ? enabled.at(-1) : enabled.find(item => item.id === selectedId) ?? enabled[0]; if (item) activate(item.id, true); }
     });
     return () => cancelAnimationFrame(frame);
-    // Focus only on mount; changes to data must not steal focus from the user.
+    // Refocus only on an explicit entry request, e.g. ArrowDown after hover opening.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [autoFocus]);
   useEffect(() => { if (controlledActive) document.getElementById(menuOptionId(id, controlledActive))?.scrollIntoView?.({ block: 'nearest' }); }, [controlledActive, id]);
   const typeahead = useRef({ text: '', time: 0 });
   function navigate(event: React.KeyboardEvent) {

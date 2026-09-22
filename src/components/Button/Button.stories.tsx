@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Badge, type BadgeSize } from '../Badge/Badge';
 import { iconNames } from '../Icon/Icon';
 import { Button, type ButtonColor, type ButtonSize, type ButtonState } from './Button';
+import { HoverActionExample } from '../Menu/dropdown-examples';
 
 const meta = {
   title: 'Components/Actions/Button',
@@ -160,6 +161,11 @@ export const States: Story = {
 
 export const WithIcons: Story = {
   args: { iconLeft: 'arrow-left', iconRight: 'arrow-right' },
+};
+
+export const WithDropdown: Story = {
+  parameters: { docs: { description: { story: 'Кнопка с шевроном и Dropdown: наведение показывает меню, клик запускает основное действие. В адаптиве тап раскрывает меню, основное действие находится в первом пункте.' } } },
+  render: () => <HoverActionExample />,
 };
 
 export const WithBadges: Story = {

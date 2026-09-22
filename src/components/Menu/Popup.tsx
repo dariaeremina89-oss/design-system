@@ -1,8 +1,8 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type HTMLAttributes, type ReactNode, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import './Menu.css';
 
-export interface PopupProps {
+export interface PopupProps extends Pick<HTMLAttributes<HTMLDivElement>, 'onPointerEnter' | 'onPointerLeave' | 'onFocusCapture'> {
   anchor: RefObject<HTMLElement | null>;
   children: ReactNode;
   onDismiss: (reason: 'outside' | 'escape') => void;
@@ -13,7 +13,7 @@ export interface PopupProps {
 }
 
 /** Общий слой позиционирования: портал, flip, ограничения экрана и внешние взаимодействия. */
-export function Popup({ anchor, children, onDismiss, placement = 'auto', matchWidth = false, gap = 0, maxHeight = 304 }: PopupProps) {
+export function Popup({ anchor, children, onDismiss, placement = 'auto', matchWidth = false, gap = 0, maxHeight = 304, ...events }: PopupProps) {
   const popup = useRef<HTMLDivElement>(null);
   const dismiss = useRef(onDismiss);
   useLayoutEffect(() => { dismiss.current = onDismiss; });
@@ -55,6 +55,6 @@ export function Popup({ anchor, children, onDismiss, placement = 'auto', matchWi
     document.addEventListener('pointerdown', outside); document.addEventListener('focusin', outside); document.addEventListener('keydown', key);
     return () => { document.removeEventListener('pointerdown', outside); document.removeEventListener('focusin', outside); document.removeEventListener('keydown', key); };
   }, [anchor]);
-  return createPortal(<div className="fdoc-popup" ref={popup} data-placement={position.side}
+  return createPortal(<div {...events} className="fdoc-popup" ref={popup} data-placement={position.side}
     style={{ left: position.left, top: position.top, width: position.width, maxHeight: position.maxHeight, visibility: position.ready ? 'visible' : 'hidden' }}>{children}</div>, document.body);
 }
