@@ -58,10 +58,18 @@ test('active buttons, icons and inverse Primary have sufficient actual contrast 
 });
 
 test('Dark status chips and portal menus use their own surface mappings and do not depend on brand',async({page})=>{
-  await page.goto(branding);await page.getByRole('radio',{name:'Dark',exact:true}).click();
+  await page.goto(branding);
+  const highlight=page.getByTestId('brand-highlight').locator('mark');
+  const lightHighlight=await highlight.evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
+  await page.getByRole('radio',{name:'Dark',exact:true}).click();
+  const darkHighlight=await highlight.evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
+  expect(darkHighlight.text).not.toBe(lightHighlight.text);
+  expect(darkHighlight.bg).not.toBe(lightHighlight.bg);
+  expect(contrast(darkHighlight.text,darkHighlight.bg)).toBeGreaterThanOrEqual(4.5);
   const status=page.getByTestId('brand-status-success');
   const before=await status.evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
   await page.getByRole('textbox',{name:'Primary 500 HEX'}).fill('#8b1245');
+  expect(await highlight.evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}))).toEqual(darkHighlight);
   expect(await status.evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}))).toEqual(before);
   for(const color of ['success','error','warning','accent']) {
     const colors=await page.getByTestId(`brand-status-${color}`).evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
@@ -78,4 +86,14 @@ test('mobile customization preserves component typography and contains wide comp
   await expect(page.getByTestId('brand-button-default').locator('.fdoc-button__text')).toHaveCSS('font-size','14px');
   expect(await page.locator('.fdoc-branding').evaluate(el=>el.getBoundingClientRect().right<=innerWidth)).toBe(true);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+
+test('color mode also switches the Storybook manager and documentation shell',async({page})=>{
+  await page.goto('/?path=/docs/general-custom-branding--docs');
+  const preview=page.frameLocator('#storybook-preview-iframe');
+  await preview.getByRole('radio',{name:'Dark',exact:true}).click();
+  await expect(page.locator('html')).toHaveAttribute('data-color-mode','dark');
+  await expect(preview.locator('.fdoc-branding h1')).toHaveCSS('color','rgb(255, 255, 255)');
+  await preview.getByRole('radio',{name:'Light',exact:true}).click();
+  await expect(page.locator('html')).toHaveAttribute('data-color-mode','light');
 });

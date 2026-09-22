@@ -1,0 +1,7 @@
+.fdoc-highlight {
+  background-color: var(--background-accent-secondary);
+  color: var(--text-accent-secondary);
+  font: inherit;
+  letter-spacing: inherit;
+  padding: 0;
+}

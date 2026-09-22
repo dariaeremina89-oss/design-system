@@ -1,4 +1,5 @@
 import { semanticColorTokens } from './token-catalog';
+import { PRIMARY_CONTRAST_POLICY as policy, selectContrastStep } from './contrast-policy';
 
 export const DEFAULT_PRIMARY = '#ffdc00';
 export const primarySteps = [25,50,100,200,300,400,500,600,700,800,900] as const;
@@ -47,34 +48,30 @@ export function createPrimaryTheme(input:string,mode:ColorMode='light'):PrimaryT
     if(variables[reference]) { references[item.token]=reference; variables[item.token]=variables[reference]; }
   }
   const value=(step:number)=>variables[`--primary-${step}`];
-  const pick=(backgrounds:string[],minimum:number,preferred:number[])=>{
-    const chosen=preferred.find(step=>backgrounds.every(bg=>contrastRatio(value(step),bg)>=minimum));
-    if(chosen===undefined) throw new Error('No shared contrasting foreground');
-    return chosen;
-  };
+  const allSteps:Record<number,string>={0:'#ffffff',...palette,1000:'#000000'};
+  const pick=(backgrounds:string[],minimum:number,preferred:number,accept?:(color:string)=>boolean)=>selectContrastStep(allSteps,preferred,backgrounds.map(color=>({color,minimum})),contrastRatio,accept);
   const assign=(token:string,step:number)=>{references[token]=`--primary-${step}`;variables[token]=value(step);};
   // A stable foreground across Default/Hover/Pressed avoids color flicker.
-  const main=pick([seed],4.5,[900,0,1000]);
+  const main=pick([seed],policy.text,policy.onFill);
   const lightForeground=relativeLuminance(value(main))>relativeLuminance(seed);
   const hover=lightForeground?600:400,pressed=lightForeground?700:300;
   assign('--background-primary-default-hover',hover); assign('--background-primary-default-pressed',pressed);
   const activeBackgrounds=[seed,palette[hover],palette[pressed]];
-  const mainIcon=pick(activeBackgrounds,3,[lightForeground?25:700,main]);
-  // Very pale seeds can make 700 too light for inverse text. Keep its safe 800 step.
-  const inverseDefault=mode==='dark'?50:900,inverseHover=mode==='dark'?100:800;
-  const inverseText=pick([palette[inverseDefault],palette[inverseHover]],4.5,mode==='dark'?[900,1000]:[50,25,0,1000]);
-  const inversePressed=mode==='dark'?200:contrastRatio(value(inverseText),palette[700])>=4.5?700:800;
+  const mainIcon=pick(activeBackgrounds,policy.icon,policy.onFillIcon,color=>(relativeLuminance(color)>relativeLuminance(seed))===lightForeground);
+  const [inverseDefault,inverseHover,nominalInversePressed]=policy.inverseBackground[mode];
+  const inverseText=pick([palette[inverseDefault],palette[inverseHover]],policy.text,policy.inverseContent[mode]);
+  const inversePressed=pick([value(inverseText)],policy.text,nominalInversePressed);
   assign('--background-primary-inverse',inverseDefault);
   assign('--background-primary-inverse-hover',inverseHover);
   assign('--background-primary-inverse-pressed',inversePressed);
-  const lightSurfaces=mode==='dark'?['#18191c','#25272c','#3a3d43',palette[900],palette[800]]:['#ffffff','#f8f8f9','#cfd1d3',palette[100]];
+  const lightSurfaces=mode==='dark'?['#18191c','#25272c','#3a3d43',palette[900],palette[800]]:['#ffffff','#f8f8f9','#cfd1d3',palette[100],palette[200]];
   const darkSurfaces=mode==='dark'?['#ffffff','#dddee0','#cfd1d3']:['#25272c','#3a3d43','#474b53'];
   for(const kind of ['text','icon']) {
-    const minimum=kind==='text'?4.5:3;
-    const onLight=pick(lightSurfaces,minimum,mode==='dark'?[500,400,300,200,100,50,25,0]:[500,600,700,800,900,1000]);
-    const onDark=pick(darkSurfaces,minimum,mode==='dark'?[500,600,700,800,900,1000]:[200,100,50,25,0]);
-    const onInverse=pick([palette[inverseDefault],palette[inverseHover],palette[inversePressed]],minimum,mode==='dark'?[900,1000]:[50,25,0,1000]);
-    const disabled=pick([palette[100]],3,[600,700,800,900,1000]);
+    const minimum=policy[kind as 'text'|'icon'];
+    const onLight=pick(lightSurfaces,minimum,policy.onSurface);
+    const onDark=pick(darkSurfaces,minimum,policy.onInverseSurface);
+    const onInverse=pick([palette[inverseDefault],palette[inverseHover],value(inversePressed)],minimum,policy.inverseContent[mode]);
+    const disabled=pick([palette[100]],policy.disabled,policy.disabledContent);
     for(const state of ['', '-hover','-pressed']) {
       assign(`--${kind}-primary-default${state}`,main);
       assign(`--${kind}-primary-default-light${state}`,kind==='text'?main:mainIcon);
@@ -84,16 +81,16 @@ export function createPrimaryTheme(input:string,mode:ColorMode='light'):PrimaryT
     }
     assign(`--${kind}-primary-default-disabled`,disabled);
     assign(`--${kind}-primary-default-light-disabled`,disabled);
-    assign(`--${kind}-primary-secondary-disabled`,pick(lightSurfaces,2,mode==='dark'?[500,400,300,200,100,50,25,0]:[400,500,600,700,800,900,1000]));
-    assign(`--${kind}-primary-inverse-disabled`,main);
-    assign(`--${kind}-primary-inverse-light-disabled`,pick([mode==='dark'?'#b4b6ba':'#70747c'],3,mode==='dark'?[600,700,800,900,1000]:[200,100,50,25,0,1000]));
+    assign(`--${kind}-primary-secondary-disabled`,pick(lightSurfaces,policy.disabled,policy.disabledContent));
+    assign(`--${kind}-primary-inverse-disabled`,pick([seed],policy.disabled,policy.disabledContent));
+    assign(`--${kind}-primary-inverse-light-disabled`,pick([mode==='dark'?'#b4b6ba':'#70747c'],policy.disabled,policy.disabledContent));
   }
   if(mode==='dark') {
-    const safePressed=contrastRatio(variables['--text-primary-secondary'],palette[700])>=4.5&&contrastRatio(variables['--icon-primary-secondary'],palette[700])>=3?700:800;
+    const safePressed=selectContrastStep(allSteps,policy.secondaryBackground.dark[2],[{color:variables['--text-primary-secondary'],minimum:policy.text},{color:variables['--icon-primary-secondary'],minimum:policy.icon}],contrastRatio);
     for(const [state,step] of Object.entries({'':900,'-hover':800,'-pressed':safePressed,'-disabled':900})) assign(`--background-primary-secondary${state}`,step);
     for(const [state,step] of Object.entries({'':800,'-hover':900,'-pressed':800,'-disabled':900})) assign(`--background-primary-tertiary${state}`,step);
   }
-  assign('--border-primary-focused',pick(lightSurfaces,3,mode==='dark'?[500,400,300,200,100,50,25,0]:[500,600,700,800,900,1000]));
+  assign('--border-primary-focused',pick(lightSurfaces,policy.icon,policy.onSurface));
   // Interaction overlays must be visible on the current surface even for white/black seeds.
   for(const [state,opacity] of Object.entries({hover:8,focused:16,pressed:24})) {
     const reference=`--primary-interaction-transparent-${String(opacity).padStart(2,'0')}`;

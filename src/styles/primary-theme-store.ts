@@ -1,8 +1,8 @@
 import { createColorTheme } from './color-theme';
 import { DEFAULT_PRIMARY, normalizeHex, type PrimaryTheme, type ColorMode } from './primary-theme';
+import { PRIMARY_STORAGE_KEY, MODE_STORAGE_KEY } from './theme-preference';
+export { PRIMARY_STORAGE_KEY, MODE_STORAGE_KEY } from './theme-preference';
 
-export const PRIMARY_STORAGE_KEY='fdoc-primary-color-v1';
-export const MODE_STORAGE_KEY='fdoc-color-mode-v1';
 const changed='fdoc-primary-theme-change';
 let current:PrimaryTheme|null=null;
 let seed:string|null=null;

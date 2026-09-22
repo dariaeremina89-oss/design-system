@@ -32,6 +32,10 @@ describe('Primary color theme',()=>{
         expect(contrastRatio(v['--text-primary-default'],v[`--background-primary-default${state}`])).toBeGreaterThanOrEqual(4.5);
         expect(contrastRatio(v['--icon-primary-default-light'],v[`--background-primary-default${state}`])).toBeGreaterThanOrEqual(3);
         expect(contrastRatio(v[`--text-primary-inverse${state}`],v[`--background-primary-inverse${state}`])).toBeGreaterThanOrEqual(4.5);
+        for(const role of ['secondary','tertiary']) {
+          expect(contrastRatio(v[`--text-primary-secondary${state}`],v[`--background-primary-${role}${state}`])).toBeGreaterThanOrEqual(4.5);
+          expect(contrastRatio(v[`--icon-primary-secondary${state}`],v[`--background-primary-${role}${state}`])).toBeGreaterThanOrEqual(3);
+        }
         const base=v[`--background-base-default${state}`]??original[`--background-base-default${state}`];
         expect(contrastRatio(v[`--text-primary-secondary${state}`],base)).toBeGreaterThanOrEqual(4.5);
         const inverse=v[`--background-base-inverse${state}`]??original[`--background-base-inverse${state}`];

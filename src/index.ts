@@ -79,3 +79,6 @@ export type { ChipsGroupProps, ChipsOption } from './components/Chips/ChipsGroup
 export { createPrimaryTheme, primaryThemeCss, normalizeHex, contrastRatio } from './styles/primary-theme';
 export type { PrimaryTheme, PrimaryStep, ColorMode } from './styles/primary-theme';
 export { createColorTheme } from './styles/color-theme';
+
+export { Highlight } from './components/Highlight/Highlight';
+export type { HighlightProps } from './components/Highlight/Highlight';

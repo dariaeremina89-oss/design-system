@@ -1,5 +1,6 @@
 import { primitiveColorTokens, semanticColorTokens } from './token-catalog';
 import { contrastRatio, createPrimaryTheme, DEFAULT_PRIMARY, type ColorMode } from './primary-theme';
+import { PRIMARY_CONTRAST_POLICY as policy, selectContrastStep } from './contrast-policy';
 
 /** Dark remaps semantic aliases to existing primitives; it never regenerates a status palette. */
 export function createColorTheme(seed:string=DEFAULT_PRIMARY,mode:ColorMode='light') {
@@ -37,9 +38,9 @@ export function createColorTheme(seed:string=DEFAULT_PRIMARY,mode:ColorMode='lig
   for(const [role,palette] of Object.entries({success:'green',error:'red',warning:'orange',accent:'purple'})) {
     const color=(step:number)=>primitives[`--${palette}-${step}`];
     const surfaces=['#18191c','#25272c','#3a3d43',color(900),color(800)];
-    const foreground=[300,200,100,50,25].find(step=>surfaces.every(bg=>contrastRatio(color(step),bg)>=4.5))??25;
-    // Chips use one foreground across their states. Clamp the pressed surface when needed.
-    const pressed=contrastRatio(color(foreground),color(700))>=4.5?700:800;
+    const steps=Object.fromEntries([25,50,100,200,300,400,500,600,700,800,900].map(step=>[step,color(step)]));
+    const foreground=selectContrastStep(steps,policy.onSurface,surfaces.map(background=>({color:background,minimum:policy.text})),contrastRatio);
+    const pressed=selectContrastStep(steps,policy.secondaryBackground.dark[2],[{color:color(foreground),minimum:policy.text}],contrastRatio);
     for(const [state,step] of Object.entries({'':900,'-hover':800,'-pressed':pressed,'-disabled':900})) {
       set(`--background-${role}-secondary${state}`,`--${palette}-${step}`);
       set(`--background-${role}-tertiary${state}`,`--${palette}-${step}`);

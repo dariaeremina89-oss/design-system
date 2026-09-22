@@ -9,6 +9,7 @@ import { ChipsGroup } from '../components/Chips/ChipsGroup';
 import { Checkbox, Radio, Switch } from '../components/SelectionControl/SelectionControl';
 import { ProgressIndicator } from '../components/ProgressIndicator/ProgressIndicator';
 import { Typography } from '../components/Typography/Typography';
+import { Highlight } from '../components/Highlight/Highlight';
 import { Select } from '../components/Select/Select';
 import { ButtonLink } from '../components/Link/Link';
 import { HoverActionExample } from '../components/Menu/dropdown-examples';
@@ -40,7 +41,7 @@ export function CustomBranding() {
   const title=(text:string)=><Typography as="h2" variant="h3-heading" responsive>{text}</Typography>;
   return <div className="fdoc-branding sb-unstyled">
     <Typography as="h1" variant="h1-heading" responsive>Custom Branding</Typography>
-    <Typography responsive>Один цвет бренда, две темы. Введите Primary 500 — палитра и компоненты обновятся сразу.</Typography>
+    <Typography responsive>Кастомизация меняет только Primary. Light / Dark переключает всю систему: фоны, тексты, иконки, обводки, статусы и документацию. Обе темы доступны с исходным желтым F.Doc и с клиентским цветом.</Typography>
     <section className="fdoc-branding__panel" aria-label="Настройки темы">
       <div className="fdoc-branding__controls">
         <Input label="Primary 500 · HEX" aria-label="Primary 500 HEX" value={draft} onChange={event=>update(event.target.value)} error={invalid?'Введите HEX из 3 или 6 символов, например #2F26FF':undefined} spellCheck={false} autoComplete="off"/>
@@ -52,6 +53,8 @@ export function CustomBranding() {
       </div>
       <Typography variant="caption" responsive role="status">{seed?`Primary 500: ${seed.toUpperCase()}`:'Исходная палитра F.Doc'} · {mode==='dark'?'Dark':'Light'}. Тема применяется ко всем стори и сохраняется в этом браузере.</Typography>
     </section>
+
+    <Typography responsive data-testid="brand-highlight"><Highlight highlight="договор">Найденный договор подсвечен цветом Accent.</Highlight></Typography>
 
     <section>{title('Палитра Primary')}
       <div className="fdoc-branding__palette">{primarySteps.map(step=>{const color=value(`--primary-${step}`);const foreground=contrastRatio(color,'#000000')>=contrastRatio(color,'#ffffff')?'#000000':'#ffffff';return <div key={step} className="fdoc-branding__swatch" style={{background:color,color:foreground}} data-primary-step={step}><Typography as="span" variant="body" strong>{step}</Typography><Typography as="span" variant="caption">{color.toUpperCase()}</Typography></div>;})}</div>
@@ -105,6 +108,19 @@ export function CustomBranding() {
 
     <section>{title('Как устроен расчет')}
       <Typography responsive>Для каждого RGB-канала: светлый оттенок = round(C500 + (255 − C500) × k), темный = round(C500 × (1 − k)). Коэффициенты для 25, 50, 100, 200, 300, 400: 96%, 80%, 72%, 56%, 32%, 16%; для 600, 700, 800, 900: 16%, 32%, 56%, 72%.</Typography>
+      <Typography responsive>Для семантики действует одно правило: берем номинальную ступень роли, проверяем все ее пары с фонами и выбираем ближайшую ступень, которая проходит порог контраста. Близость — минимальная разница номеров ступеней; при равенстве выбирается меньший номер. Белый 0 и черный 1000 служат крайними точками. Отдельных поправок под Button, Chips или другие компоненты нет.</Typography>
+      <div className="fdoc-branding__scroll"><table className="fdoc-branding__table" aria-label="Единые правила цветовых ролей">
+        <thead><tr><th scope="col">Роль</th><th scope="col">Номинальная ступень</th><th scope="col">Проверка</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Содержимое на заливке Primary</th><td>Текст и основная иконка 900; облегченная иконка 700</td><td>Default, Hover и Pressed вместе; текст 4.5:1, облегченная иконка 3:1</td></tr>
+          <tr><th scope="row">Primary на фоне страницы</th><td>500</td><td>Фоны текущей темы, включая подложки и их состояния</td></tr>
+          <tr><th scope="row">Содержимое на Primary Inverse</th><td>Light: 25 · Dark: 900</td><td>Light-фоны 900 / 800 / 700; Dark-фоны 50 / 100 / 200</td></tr>
+          <tr><th scope="row">Primary на инверсном Base</th><td>500</td><td>Инверсные фоны текущей темы и их состояния</td></tr>
+          <tr><th scope="row">Обводка фокуса</th><td>500</td><td>3:1 на фоновых поверхностях текущей темы</td></tr>
+          <tr><th scope="row">Disabled</th><td>600</td><td>Отдельный общий порог 3:1 для содержимого</td></tr>
+        </tbody>
+      </table></div>
+      <Typography responsive>Заливка Default всегда остается 500. При светлом содержимом Hover / Pressed идут к 600 / 700, при темном — к 400 / 300. Так цвет текста не скачет между состояниями. Если номинальный фон другого варианта нарушает контраст, к нему применяется то же правило ближайшей допустимой ступени.</Typography>
       <Typography responsive>Семантические названия сохраняются. Текст на Primary и его активных состояниях подбирается с контрастом не ниже 4.5:1, иконки — 3:1. Считается фактический контраст конечных HEX, без округления порога. Disabled проверяется отдельно от активных состояний. Это проверка заданных пар цветов, а не всех возможных наложений компонентов.</Typography>
       <Typography responsive>Light и Dark используют один Primary 500. В Dark меняются семантические соответствия фонов, текста, иконок и обводок; исходные Neutral, Success, Error, Warning и Accent не пересчитываются.</Typography>
       <Button color="secondary" onClick={()=>setExported(!exported)}>{exported?'Скрыть CSS':'Показать CSS темы'}</Button>
