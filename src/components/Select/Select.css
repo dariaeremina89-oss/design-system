@@ -1,0 +1,8 @@
+.fdoc-select { width:100%;min-width:0; }
+.fdoc-select__field .fdoc-input__control { font-family:var(--page-subtitle-family);font-size:var(--page-subtitle-size);line-height:var(--page-subtitle-line-height);font-weight:var(--page-subtitle-weight-base); }
+.fdoc-select__field input[readonly] { cursor:pointer; }
+.fdoc-select__field input:disabled { cursor:not-allowed; }
+.fdoc-select__field .fdoc-input__field--has-leading { column-gap:var(--space-12); }
+.fdoc-select__chevron { flex:0 0 var(--elements-24);display:inline-flex;color:var(--icon-base-secondary); }
+.fdoc-select__field .fdoc-input__field--disabled .fdoc-select__chevron { color:var(--icon-base-secondary-disabled); }
+.fdoc-select__clear { flex-shrink:0; }

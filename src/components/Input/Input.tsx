@@ -3,6 +3,7 @@ import {
   type ChangeEvent,
   type InputHTMLAttributes,
   type ReactNode,
+  type Ref,
 } from 'react';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { Icon, type IconName } from '../Icon/Icon';
@@ -34,6 +35,12 @@ export interface InputProps
   leadingIcon?: IconName;
   /** Имя иконки из библиотеки справа. */
   trailingIcon?: IconName;
+  /** Дополнительное действие справа внутри поля. */
+  trailingContent?: ReactNode;
+  /** Ссылка на рамку поля для позиционирования раскрывающегося списка. */
+  fieldRef?: Ref<HTMLDivElement>;
+  /** Замена дополнительного действия при загрузке. */
+  trailingSkeleton?: ReactNode;
   /** Значение иконки/суффикса справа от поля. */
   sum?: ReactNode;
   /** Имя иконки из библиотеки рядом со значением sum. */
@@ -64,6 +71,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     counter,
     leadingIcon,
     trailingIcon,
+    trailingContent,
+    fieldRef,
+    trailingSkeleton,
     sum,
     sumIcon,
     clearable = false,
@@ -110,6 +120,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         counter={counter}
         leadingIcon={leadingIcon}
         trailingIcon={trailingIcon}
+        trailingContent={trailingSkeleton}
         sum={sum}
         sumIcon={sumIcon}
         clearable={clearable}
@@ -139,6 +150,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           isError && 'fdoc-input__field--error fdoc-field__field--error',
           disabled && 'fdoc-input__field--disabled fdoc-field__field--disabled',
         )}
+        ref={fieldRef}
         data-testid="input-field"
       >
         {leadingIcon !== undefined && (
@@ -205,6 +217,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           </span>
         )}
 
+        {trailingContent}
       </div>
 
       <FieldHelper prefix="input" error={error} caption={caption} hasCounter={hasCounter}

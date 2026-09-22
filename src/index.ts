@@ -60,3 +60,14 @@ export type { PaginationProps, ButtonPaginationProps } from './components/Pagina
 
 export { Typography } from './components/Typography/Typography';
 export type { TypographyProps, TypographyVariant } from './components/Typography/Typography';
+
+export { Search } from './components/Search/Search';
+export type { SearchProps } from './components/Search/Search';
+export { ItemRow } from './components/ItemRow/ItemRow';
+export type { ItemRowProps, ItemRowState } from './components/ItemRow/ItemRow';
+export { Menu } from './components/Menu/Menu';
+export type { MenuProps, MenuItem } from './components/Menu/Menu';
+export { Dropdown } from './components/Menu/Dropdown';
+export type { DropdownProps } from './components/Menu/Dropdown';
+export { Select } from './components/Select/Select';
+export type { SelectProps, SelectOption } from './components/Select/Select';

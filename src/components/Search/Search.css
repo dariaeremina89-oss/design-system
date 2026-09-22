@@ -1,0 +1,9 @@
+.fdoc-search .fdoc-input__field { column-gap:var(--space-16); }
+.fdoc-search .fdoc-input__field--has-leading { column-gap:var(--space-12); }
+.fdoc-search .fdoc-input__slot { color:var(--icon-base-secondary); }
+.fdoc-search .fdoc-input__field--disabled .fdoc-input__slot { color:var(--icon-base-secondary-disabled); }
+.fdoc-search .fdoc-input__control { font-family:var(--page-subtitle-family);font-size:var(--page-subtitle-size);line-height:var(--page-subtitle-line-height);font-weight:var(--page-subtitle-weight-base); }
+.fdoc-search__submit { flex-shrink:0; }
+.fdoc-search input::-webkit-search-cancel-button { display:none; }
+.fdoc-search.fdoc-input--small .fdoc-input__field { padding-top:calc(var(--space-8) - var(--border-small));padding-bottom:calc(var(--space-8) - var(--border-small)); }
+.fdoc-search.fdoc-input--small .fdoc-input__field:focus-within { padding-top:calc(var(--space-8) - var(--border-middle));padding-bottom:calc(var(--space-8) - var(--border-middle)); }

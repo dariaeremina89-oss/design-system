@@ -14,6 +14,7 @@ export interface InputSkeletonProps {
   counter?: ReactNode | boolean;
   leadingIcon?: IconName;
   trailingIcon?: IconName;
+  trailingContent?: ReactNode;
   sum?: ReactNode;
   sumIcon?: IconName;
   clearable?: boolean;
@@ -65,6 +66,7 @@ export function InputSkeleton({
   counter,
   leadingIcon,
   trailingIcon,
+  trailingContent,
   sum,
   sumIcon,
   clearable = false,
@@ -183,6 +185,7 @@ export function InputSkeleton({
           </span>
         )}
 
+        {trailingContent}
       </div>
 
       {(hasHelperText || hasCounter) && (
