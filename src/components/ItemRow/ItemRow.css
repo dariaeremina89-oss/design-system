@@ -7,6 +7,7 @@
 .fdoc-item-row__helper { padding:var(--space-2) var(--space-4) var(--space-2) 0;color:var(--text-base-secondary);max-width:40%;overflow-wrap:anywhere;text-align:right; }
 .fdoc-item-row__slot { display:inline-flex;flex-shrink:0;color:var(--icon-base-secondary); }
 .fdoc-item-row__logo { width:var(--elements-32);height:var(--elements-32);object-fit:contain; }
+.fdoc-item-row__checkbox { display:inline-flex; }
 .fdoc-item-row__check { display:inline-flex;color:var(--icon-primary-secondary); }
 .fdoc-item-row__check[data-selected=false] { visibility:hidden; }
 .fdoc-item-row[data-variant=header] .fdoc-item-row__container { padding-top:var(--space-20);min-height:56px; }

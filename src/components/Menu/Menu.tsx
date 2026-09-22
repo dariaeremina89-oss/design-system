@@ -25,7 +25,7 @@ export interface MenuProps {
   footer?: ReactNode;
   maxHeight?: CSSProperties['maxHeight'];
   className?: string;
-  autoFocus?: boolean | 'last';
+  autoFocus?: boolean | 'last' | 'container';
   /** Select сохраняет фокус на combobox и управляет активной строкой. */
   focusItems?: boolean;
   emptyText?: string;
@@ -57,6 +57,7 @@ export function Menu({ items, id: providedId, role = 'menu', selectedId, activeI
     if (!autoFocus || skeleton) return;
     const frame = requestAnimationFrame(() => {
       if (searchable) search.current?.focus();
+      else if (autoFocus === 'container') document.getElementById(id)?.focus();
       else { const item = autoFocus === 'last' ? enabled.at(-1) : enabled.find(item => item.id === selectedId) ?? enabled[0]; if (item) activate(item.id, true); }
     });
     return () => cancelAnimationFrame(frame);
@@ -69,7 +70,7 @@ export function Menu({ items, id: providedId, role = 'menu', selectedId, activeI
     if (event.key === 'Tab' && onTab) {
       const stops = Array.from(root.current?.querySelectorAll<HTMLElement>('*') ?? []).filter(element => element.matches('button:not(:disabled),a[href],input:not(:disabled),[tabindex="0"]') && element.tabIndex >= 0 && !element.closest('[inert]'));
       const target = event.target as HTMLElement;
-      if (event.shiftKey ? target === stops[0] : target === stops.at(-1)) onTab(event);
+      if (!stops.length || (event.shiftKey ? target === stops[0] || target.id === id : target === stops.at(-1))) onTab(event);
       return;
     }
     if (skeleton || !focusItems || (event.target as HTMLElement).closest('.fdoc-menu__footer')) return;
@@ -90,7 +91,7 @@ export function Menu({ items, id: providedId, role = 'menu', selectedId, activeI
   }
   return <div className={`fdoc-menu ${className}`} ref={root} style={{ maxHeight }} onKeyDown={navigate} aria-hidden={skeleton || undefined} inert={skeleton || undefined}>
     {searchable && <div className="fdoc-menu__search"><ItemRow variant="search" state={skeleton ? 'skeleton' : 'default'} searchProps={{ ref: search, 'aria-label': searchLabel, value: query, onChange: e => setQuery(e.target.value), onClear: () => setQuery(''), onSearch: () => { if (enabled[0]) activate(enabled[0].id, true); } }}/></div>}
-    <div className="fdoc-menu__list" id={id} role={skeleton ? undefined : role} aria-label={aria['aria-labelledby'] ? undefined : role === 'menu' ? 'Действия' : 'Варианты выбора'} {...aria}>
+    <div className="fdoc-menu__list" id={id} tabIndex={autoFocus === 'container' && !skeleton ? -1 : undefined} role={skeleton ? undefined : role} aria-label={aria['aria-labelledby'] ? undefined : role === 'menu' ? 'Действия' : 'Варианты выбора'} {...aria}>
       {visible.map(item => {
         const { id: itemId, onAction: itemAction, textValue: _text, ...row } = item;
         const enabledItem = isMenuItemEnabled(item);
@@ -98,8 +99,8 @@ export function Menu({ items, id: providedId, role = 'menu', selectedId, activeI
         const itemRole = role === 'listbox' ? 'option' : item.selection === 'checkbox' ? 'menuitemcheckbox' : 'menuitem';
         const chosen = item.selected ?? (selectedId !== undefined ? itemId === selectedId : false);
         // Links retain their native semantics and their own states inside a presentation row.
-        if (item.variant === 'link') return <div key={itemId} role="none"><ItemRow {...row} id={menuOptionId(id, itemId)} linkProps={{ role: itemRole, tabIndex: focusItems && enabledItem && itemId === tabStop ? 0 : -1 }} state={skeleton ? 'skeleton' : item.state} onClick={select} onFocus={() => activate(itemId)} /></div>;
-        return <ItemRow {...row} key={itemId} id={menuOptionId(id, itemId)} role={item.variant === 'header' ? 'presentation' : itemRole}
+        if (item.variant === 'link') return <div key={itemId} role="none"><ItemRow {...row} id={menuOptionId(id, itemId)} linkProps={{ role: itemRole, tabIndex: focusItems && enabledItem && itemId === tabStop ? 0 : -1 }} state={skeleton ? 'skeleton' : item.state} onClick={select} onFocus={() => { if (enabledItem) activate(itemId); }} /></div>;
+        return <ItemRow {...row} key={itemId} id={menuOptionId(id, itemId)} role={item.variant === 'header' || item.variant === 'search' ? 'presentation' : itemRole}
           tabIndex={focusItems && enabledItem && itemId === tabStop ? 0 : -1}
           selected={chosen} state={skeleton ? 'skeleton' : item.state ?? (!focusItems && itemId === active ? 'focused' : 'default')}
           aria-selected={role === 'listbox' && item.variant !== 'header' ? chosen : undefined}

@@ -49,3 +49,46 @@ test('Search explicit submit and clear retain size and focus at 320px',async({pa
  await page.setViewportSize({width:320,height:700});await page.goto(story('components-inputs-search--default'));const search=page.getByRole('searchbox');await search.fill('Договор');await search.press('Enter');await expect(page.getByRole('status')).toHaveText('Поиск: Договор');
  expect((await page.locator('.fdoc-input__field').boundingBox())!.height).toBe(48);await page.getByRole('button',{name:'Очистить поле'}).click();await expect(search).toHaveValue('');await expect(search).toBeFocused();await expect(page.getByRole('status')).toHaveText('Поиск: Договор');
 });
+
+
+test('Select pointer opening has no forced row focus; selection and clear use the correct icons',async({page})=>{
+ for(const width of [1280,320]){
+  await page.setViewportSize({width,height:800});await page.goto(story('components-selection-select--with-description'));
+  const input=page.getByRole('combobox'), clear=page.getByRole('button',{name:'Очистить выбор'});
+  await expect(clear).toHaveCSS('width','24px');await expect(clear).toHaveCSS('height','24px');await expect(clear).toHaveCSS('padding','0px');
+  await expect(clear.locator('[data-icon="filled/cross_circle_filled"]')).toHaveCSS('width','24px');
+  await input.click();await expect(page.locator('[role=option][data-state=focused]')).toHaveCount(0);await expect(input).not.toHaveAttribute('aria-activedescendant');
+  const selected=page.getByRole('option',{selected:true});await expect(selected.locator('[data-icon="filled/check_circle_filled"]')).toHaveCSS('width','24px');
+  await input.press('ArrowDown');await expect(page.locator('[role=option][data-state=focused]')).toHaveCount(1);await input.press('Escape');
+  await clear.click();await expect(input).toHaveValue('');await expect(input).toBeFocused();await expect(page.getByRole('listbox')).toHaveCount(0);
+ }
+});
+
+test('Menu scroll viewport stays inside its bounds and row padding matches the design',async({page})=>{
+ for(const width of [1280,320]){
+  await page.setViewportSize({width,height:800});await page.goto(story('components-selection-menu--one-item'));
+  const menu=page.locator('.fdoc-menu'), list=page.getByRole('menu'), row=page.getByRole('menuitem');await expect(row).toBeVisible();
+  const m=(await menu.boundingBox())!, l=(await list.boundingBox())!, r=(await row.boundingBox())!;
+  expect(r.y-m.y).toBe(8);expect(m.y+m.height-r.y-r.height).toBe(8);expect(l.x).toBe(m.x);expect(l.width).toBe(m.width);expect(r.height).toBe(48);
+  await expect(row.locator('.fdoc-item-row__container')).toHaveCSS('padding','12px');await expect(row.locator('.fdoc-item-row__text')).toHaveCSS('padding','2px 4px');
+  await page.goto(story('components-selection-menu--search-and-scroll'));await expect(page.getByRole('searchbox')).toBeVisible();
+  const bounds=(await page.locator('.fdoc-menu').boundingBox())!, scroll=(await page.getByRole('menu').boundingBox())!;
+  expect(scroll.x).toBeGreaterThanOrEqual(bounds.x);expect(scroll.x+scroll.width).toBeLessThanOrEqual(bounds.x+bounds.width);
+  expect((await page.locator('.fdoc-menu__footer').boundingBox())!.height).toBe(56);
+ }
+});
+
+test('Select Creatable creates without filtering and Dropdown pointer opening does not focus a row',async({page})=>{
+ await page.goto(story('components-selection-select--creatable'));const input=page.getByRole('combobox');await input.fill('Новая категория');await expect(page.getByRole('option')).toHaveCount(4);await expect(input).toHaveAttribute('aria-autocomplete','none');
+ await input.press('Enter');await expect(input).toHaveValue('Новая категория');await input.click();await expect(page.getByRole('option')).toHaveCount(4);
+ await page.goto(story('components-selection-dropdown--default'));const trigger=page.getByRole('button',{name:'Действия',exact:true});await trigger.click();await expect(page.getByRole('menu')).toBeFocused();await expect(page.getByRole('menuitem',{name:'Редактировать'})).not.toBeFocused();
+ await page.keyboard.press('ArrowDown');await expect(page.getByRole('menuitem',{name:'Редактировать'})).toBeFocused();await page.keyboard.press('Escape');await expect(trigger).toBeFocused();
+});
+
+test('ItemRow selected glyph and checkbox retain 24px geometry and disabled colors',async({page})=>{
+ await page.goto(story('components-selection-itemrow--selected-marks'));const marks=page.locator('.fdoc-item-row__check');await expect(marks).toHaveCount(3);
+ for(const mark of await marks.all()) {await expect(mark.locator('[data-icon="filled/check_circle_filled"]')).toHaveCSS('width','24px');await expect(mark).toHaveCSS('height','24px');}
+ const colors=await marks.evaluateAll(els=>els.map(el=>({actual:getComputedStyle(el).color,token:getComputedStyle(el).getPropertyValue(el.closest('[data-state=disabled]')?'--icon-primary-secondary-disabled':'--icon-primary-secondary').trim()})));
+ expect(colors[0].actual).toBe(colors[1].actual);expect(colors[2].actual).not.toBe(colors[0].actual);
+ await page.goto(story('components-selection-itemrow--selection'));await expect(page.locator('.fdoc-item-row__checkbox')).toHaveCSS('height','24px');expect((await page.locator('.fdoc-item-row').boundingBox())!.height).toBe(48);
+});

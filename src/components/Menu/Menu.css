@@ -1,10 +1,13 @@
 .fdoc-menu { box-sizing:border-box;display:flex;flex-direction:column;min-width:112px;max-width:100%;padding:var(--space-8) 0;border-radius:var(--radius-middle);background:var(--background-base-default);box-shadow:var(--shadow-m); }
-.fdoc-menu__list { min-height:0;overflow:auto;overscroll-behavior:contain;scroll-padding-block:var(--border-large);scrollbar-width:thin;scrollbar-color:var(--background-base-tertiary) transparent; }
+.fdoc-menu__list { min-height:0;overflow:auto;overscroll-behavior:contain;scroll-padding-block:0;scrollbar-width:thin;scrollbar-color:var(--background-base-tertiary) transparent; }
 .fdoc-menu__list::-webkit-scrollbar { width:16px;height:16px; }
 .fdoc-menu__list::-webkit-scrollbar-thumb { background:var(--background-base-tertiary);border:4px solid transparent;background-clip:padding-box;border-radius:var(--radius-middle); }
-.fdoc-menu__list { padding:var(--border-large);margin:calc(-1 * var(--border-large)); }
+.fdoc-menu__list { flex:0 1 auto;outline:none; }
+.fdoc-menu { outline:none; }
+/* Keep the focus indicator inside the scrolling viewport without expanding its width. */
+.fdoc-menu__list > .fdoc-item-row:focus-visible,.fdoc-menu__list > .fdoc-item-row[data-state=focused] { outline-offset:calc(-1 * var(--border-large)); }
 .fdoc-menu__search,.fdoc-menu__footer { flex-shrink:0; }
-.fdoc-menu__buttons { display:flex;flex-wrap:wrap;justify-content:flex-end;gap:var(--space-8);padding:var(--space-12) var(--space-16); }
+.fdoc-menu__buttons { display:flex;flex-wrap:wrap;justify-content:flex-end;gap:var(--space-8);padding:calc(var(--space-12) - var(--border-small)) var(--space-16) var(--space-12); }
 .fdoc-menu__empty { padding:var(--space-12) var(--space-16);font-family:var(--page-body-family);font-size:var(--page-body-size);line-height:var(--page-body-line-height);color:var(--text-base-secondary); }
 .fdoc-popup { position:fixed;z-index:var(--layer-floating);display:flex;flex-direction:column;max-width:calc(100vw - 16px); }
 .fdoc-popup > .fdoc-menu { max-height:inherit!important;min-height:0; }

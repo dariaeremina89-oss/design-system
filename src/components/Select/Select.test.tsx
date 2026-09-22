@@ -11,9 +11,9 @@ describe('Select', () => {
     const input=screen.getByRole('combobox');await user.tab();expect(input).toHaveFocus();expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
     await user.keyboard('{ArrowDown}{ArrowDown}{Enter}');expect(input).toHaveValue('Третий');expect(change).toHaveBeenCalledExactlyOnceWith('three');expect(input).toHaveFocus();
   });
-  it('search text is not a selection and Escape restores selected label', async () => {
-    const user=userEvent.setup(), change=vi.fn();render(<Select label="Статус" options={options} defaultValue="one" searchable onValueChange={change}/>);
-    const input=screen.getByRole('combobox');await user.click(input);await user.clear(input);await user.type(input,'Тре');expect(screen.getAllByRole('option')).toHaveLength(1);
+  it('creatable input never filters options and Escape restores the selected label', async () => {
+    const user=userEvent.setup(), change=vi.fn();render(<Select label="Статус" options={options} defaultValue="one" creatable onValueChange={change}/>);
+    const input=screen.getByRole('combobox');await user.click(input);await user.clear(input);await user.type(input,'Тре');expect(screen.getAllByRole('option')).toHaveLength(3);
     await user.keyboard('{Escape}');expect(input).toHaveValue('Первый');expect(change).not.toHaveBeenCalled();
   });
   it('creates a value without changing options, clears and keeps focus', async () => {
@@ -37,4 +37,22 @@ describe('Select', () => {
     const input=screen.getByRole('combobox');fireEvent.change(input,{target:{value:'日本'}});fireEvent.keyDown(input,{key:'Enter',isComposing:true});expect(change).not.toHaveBeenCalled();
     fireEvent.keyDown(input,{key:'ArrowDown'});fireEvent.keyDown(input,{key:'Enter'});await waitFor(()=>expect(change).toHaveBeenCalledWith('日本'));
   });
+});
+
+it('pointer opening leaves all options unfocused until keyboard navigation', async () => {
+  const user=userEvent.setup();render(<Select options={options} aria-label="Статус" defaultValue="three"/>);
+  const input=screen.getByRole('combobox');await user.click(input);
+  expect(input).not.toHaveAttribute('aria-activedescendant');
+  for(const option of screen.getAllByRole('option')) expect(option).not.toHaveAttribute('data-state','focused');
+  expect(screen.getByRole('option',{name:'Третий'})).toHaveAttribute('aria-selected','true');
+  await user.keyboard('{ArrowDown}');expect(screen.getByRole('option',{name:'Первый'})).toHaveAttribute('data-state','focused');
+});
+it('creatable chooses an existing value by its label and does not select a disabled match', async () => {
+  const user=userEvent.setup(), change=vi.fn();render(<Select options={options} aria-label="Категория" creatable onValueChange={change}/>);
+  const input=screen.getByRole('combobox');await user.type(input,'Первый{Enter}');expect(change).toHaveBeenLastCalledWith('one');
+  await user.clear(input);await user.type(input,'Второй{Enter}');expect(change).toHaveBeenCalledTimes(1);expect(screen.getAllByRole('option')).toHaveLength(3);
+});
+it('normal Select does not accept arbitrary text or filter its options', async () => {
+  const user=userEvent.setup(), change=vi.fn();render(<Select options={options} aria-label="Статус" onValueChange={change}/>);
+  const input=screen.getByRole('combobox');await user.type(input,'Неизвестно');expect(input).toHaveValue('');expect(screen.getAllByRole('option')).toHaveLength(3);expect(change).not.toHaveBeenCalled();
 });

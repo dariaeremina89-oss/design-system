@@ -2,6 +2,7 @@ import { useEffect, useId, useImperativeHandle, useRef, useState, type Ref } fro
 import { Input, type InputProps } from '../Input/Input';
 import { Icon, type IconName } from '../Icon/Icon';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
+import { Skeleton } from '../Skeleton/Skeleton';
 import { Menu, menuOptionId, type MenuItem } from '../Menu/Menu';
 import { Popup, type PopupProps } from '../Menu/Popup';
 import './Select.css';
@@ -20,7 +21,6 @@ export interface SelectProps extends Omit<InputProps, 'value' | 'defaultValue' |
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   onClear?: () => void;
-  searchable?: boolean;
   creatable?: boolean;
   open?: boolean;
   defaultOpen?: boolean;
@@ -32,7 +32,7 @@ export interface SelectProps extends Omit<InputProps, 'value' | 'defaultValue' |
 }
 
 export function Select({ options, value: controlled, defaultValue = '', onValueChange, onClear,
-  searchable = false, creatable = false, clearable = false, disabled = false, skeleton = false,
+  creatable = false, clearable = false, disabled = false, skeleton = false,
   open: controlledOpen, defaultOpen = false, onOpenChange, placement = 'auto', emptyText = 'Ничего не найдено', menuMaxHeight = 304,
   id: providedId, wrapperClassName = '', onKeyDown, onFocus, onBlur, onClick, ref, name, ...props }: SelectProps) {
   const uid = useId(); const id = providedId ?? uid; const menuId = `${id}-menu`;
@@ -44,10 +44,9 @@ export function Select({ options, value: controlled, defaultValue = '', onValueC
   const value = controlled ?? internalValue;
   const selected = options.find(option => option.value === value);
   const label = selected?.label ?? value;
-  const editable = searchable || creatable;
+  const editable = creatable;
   const open = !disabled && !skeleton && (controlledOpen ?? internalOpen);
-  const filtered = options.filter(option => query === null || option.label.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
-  const enabled = filtered.filter(option => !option.disabled);
+  const enabled = options.filter(option => !option.disabled);
   const activeId = enabled.some(option => option.value === active) ? active : undefined;
   const typeahead = useRef({ text: '', time: 0 });
   function changeOpen(next: boolean) {
@@ -55,9 +54,9 @@ export function Select({ options, value: controlled, defaultValue = '', onValueC
     onOpenChange?.(next);
     if (!next) { setQuery(null); setActive(undefined); }
   }
-  function show(last = false) {
+  function show(keyboard = false, last = false) {
     if (disabled || skeleton) return;
-    setActive(last ? enabled.at(-1)?.value : enabled.find(option => option.value === value)?.value ?? enabled[0]?.value);
+    setActive(keyboard ? (last ? enabled.at(-1)?.value : enabled.find(option => option.value === value)?.value ?? enabled[0]?.value) : undefined);
     changeOpen(true);
   }
   function choose(next: string) {
@@ -65,7 +64,7 @@ export function Select({ options, value: controlled, defaultValue = '', onValueC
     onValueChange?.(next); changeOpen(false); input.current?.focus();
   }
   useEffect(() => { if (!open) { setQuery(null); setActive(undefined); } }, [open]);
-  const items: MenuItem[] = filtered.map(option => ({ id: option.value, title: option.label, description: option.description,
+  const items: MenuItem[] = options.map(option => ({ id: option.value, title: option.label, description: option.description,
     helper: option.helper, leadingIcon: option.leadingIcon, disabled: option.disabled, selection: 'check' }));
   function key(event: React.KeyboardEvent<HTMLInputElement>) {
     onKeyDown?.(event);
@@ -74,7 +73,7 @@ export function Select({ options, value: controlled, defaultValue = '', onValueC
     if (event.key === 'Escape') { if (open) { event.preventDefault(); event.stopPropagation(); changeOpen(false); } return; }
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault();
-      if (!open) { show(event.key === 'ArrowUp'); return; }
+      if (!open) { show(true, event.key === 'ArrowUp'); return; }
       const index = enabled.findIndex(option => option.value === activeId);
       const next = event.key === 'ArrowDown' ? (index + 1) % enabled.length : index <= 0 ? enabled.length - 1 : index - 1;
       setActive(enabled[next]?.value); return;
@@ -84,9 +83,13 @@ export function Select({ options, value: controlled, defaultValue = '', onValueC
     }
     if (event.key === 'Enter' || (!editable && event.key === ' ')) {
       event.preventDefault();
-      if (!open) show();
+      if (!open) show(true);
       else if (activeId !== undefined) choose(activeId);
-      else if (creatable && query?.trim()) choose(query.trim());
+      else if (creatable && query?.trim()) {
+        const text = query.trim();
+        const existing = options.find(option => option.label.toLocaleLowerCase() === text.toLocaleLowerCase());
+        if (!existing?.disabled) choose(existing?.value ?? text);
+      }
       return;
     }
     if (!editable && event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
@@ -105,19 +108,19 @@ export function Select({ options, value: controlled, defaultValue = '', onValueC
       wrapperClassName={`fdoc-select__field ${wrapperClassName}`} disabled={disabled} skeleton={skeleton}
       type="text" role="combobox" readOnly={!editable} autoComplete="off" clearable={false}
       aria-haspopup="listbox" aria-expanded={open} aria-controls={open ? menuId : undefined}
-      aria-autocomplete={editable ? 'list' : 'none'} aria-activedescendant={open && activeId !== undefined ? menuOptionId(menuId, activeId) : undefined}
+      aria-autocomplete="none" aria-activedescendant={open && activeId !== undefined ? menuOptionId(menuId, activeId) : undefined}
       onFocus={onFocus} onBlur={onBlur} onClick={onClick} onKeyDown={key}
-      onChange={event => { setQuery(event.target.value); setActive(creatable ? undefined : options.find(option => !option.disabled && option.label.toLocaleLowerCase().includes(event.target.value.toLocaleLowerCase()))?.value); if (!open) changeOpen(true); }}
-      trailingIcon={skeleton ? 'arrow-drop-down' : undefined}
+      onChange={event => { if (!creatable) return; setQuery(event.target.value); setActive(undefined); if (!open) changeOpen(true); }}
+      trailingSkeleton={<>{clearable && value !== '' && !disabled && <ButtonIcon size="xsmall" iconSize={24} color="neutral" state="skeleton" aria-label="Очистить выбор"/>}<Skeleton shape="icon" width={24} height={24}/></>}
       trailingContent={<>
-        {clearable && value !== '' && !disabled && <ButtonIcon className="fdoc-select__clear" size="xsmall" iconSize={16} color="neutral" icon="filled/cross_circle_filled" aria-label="Очистить выбор"
+        {clearable && value !== '' && !disabled && <ButtonIcon className="fdoc-select__clear" size="xsmall" iconSize={24} color="neutral" icon="filled/cross_circle_filled" aria-label="Очистить выбор"
           onMouseDown={event => event.preventDefault()} onClick={() => { choose(''); onClear?.(); }}/>} 
         <span className="fdoc-select__chevron" aria-hidden="true"><Icon name={open ? 'arrow-drop-up' : 'arrow-drop-down'} size={24}/></span>
       </>}/>
     {open && <Popup anchor={anchor} placement={placement} matchWidth maxHeight={menuMaxHeight}
       onDismiss={reason => { changeOpen(false); if (reason === 'escape') input.current?.focus(); }}>
       <Menu id={menuId} items={items} role="listbox" aria-label={typeof props.label === 'string' ? props.label : props['aria-label'] ?? 'Варианты выбора'}
-        selectedId={value} activeId={activeId} onActiveChange={setActive} focusItems={false} maxHeight={menuMaxHeight} emptyText={creatable && query?.trim() ? 'Нажмите Enter, чтобы сохранить значение' : emptyText}
+        selectedId={value} activeId={activeId} onActiveChange={setActive} focusItems={false} maxHeight={menuMaxHeight} emptyText={emptyText}
         onAction={item => choose(item.id)}/>
     </Popup>}
   </div>;

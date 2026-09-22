@@ -10,7 +10,7 @@ const items = [{id:'head',title:'Документ',variant:'header' as const},{i
 describe('Menu and Dropdown',()=>{
   it('opens from a real Button, navigates, activates and restores trigger focus',async()=>{
     const user=userEvent.setup(), action=vi.fn();render(<Dropdown items={items} onAction={action}><Button>Действия</Button></Dropdown>);
-    const trigger=screen.getByRole('button',{name:'Действия'});await user.click(trigger);
+    const trigger=screen.getByRole('button',{name:'Действия'});await user.tab();await user.keyboard('{Enter}');
     await waitFor(()=>expect(screen.getByRole('menuitem',{name:'Редактировать'})).toHaveFocus());
     await user.keyboard('{ArrowDown}');expect(screen.getByRole('menuitem',{name:'Копировать'})).toHaveFocus();await user.keyboard(' ');
     expect(action).toHaveBeenCalledTimes(1);expect(screen.queryByRole('menu')).not.toBeInTheDocument();expect(trigger).toHaveFocus();
@@ -37,4 +37,13 @@ it('Tab can reach search submit and footer controls before closing',async()=>{
  await user.click(screen.getByRole('button',{name:'Действия'}));await waitFor(()=>expect(screen.getByRole('searchbox')).toHaveFocus());
  await user.tab();expect(screen.getByRole('button',{name:'Найти'})).toHaveFocus();expect(screen.getByRole('menu')).toBeInTheDocument();
  await user.tab();expect(screen.getByRole('menuitem',{name:'Редактировать'})).toHaveFocus();await user.tab();expect(screen.getByRole('button',{name:'Применить'})).toHaveFocus();expect(screen.getByRole('menu')).toBeInTheDocument();
+});
+
+it('pointer opening focuses the container, then arrows enter the rows',async()=>{
+ const user=userEvent.setup();render(<Dropdown items={items}><Button>Действия</Button></Dropdown>);
+ await user.click(screen.getByRole('button',{name:'Действия'}));
+ await waitFor(()=>expect(screen.getByRole('menu')).toHaveFocus());
+ expect(screen.getByRole('menuitem',{name:'Редактировать'})).not.toHaveFocus();
+ await user.keyboard('{ArrowDown}');expect(screen.getByRole('menuitem',{name:'Редактировать'})).toHaveFocus();
+ await user.keyboard('{Escape}');expect(screen.getByRole('button',{name:'Действия'})).toHaveFocus();
 });

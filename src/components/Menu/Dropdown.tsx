@@ -15,7 +15,7 @@ export interface DropdownProps extends Omit<MenuProps, 'autoFocus' | 'focusItems
 export function Dropdown({ children, open: controlled, defaultOpen = false, onOpenChange, placement = 'auto', matchWidth = false,
   closeOnSelect = true, disabled = false, onAction, id: providedId, ...menu }: DropdownProps) {
   const uid = useId(); const id = providedId ?? uid; const anchor = useRef<HTMLSpanElement>(null);
-  const [internal, setInternal] = useState(defaultOpen); const [last, setLast] = useState(false);
+  const [internal, setInternal] = useState(defaultOpen); const [entryFocus, setEntryFocus] = useState<true | 'last' | 'container'>('container');
   const inactive = disabled || children.props.disabled || children.props.state === 'disabled';
   const open = !inactive && (controlled ?? internal);
   const wasOpen = useRef(open);
@@ -30,11 +30,11 @@ export function Dropdown({ children, open: controlled, defaultOpen = false, onOp
   }
   return <><span ref={anchor} className="fdoc-dropdown-anchor" onKeyDown={event => {
     if (event.defaultPrevented || inactive) return;
-    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); setLast(event.key === 'ArrowUp'); change(true); }
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); setEntryFocus(event.key === 'ArrowUp' ? 'last' : true); change(true); }
   }}>{cloneElement(children, { disabled: inactive, 'aria-disabled': inactive || undefined, 'aria-haspopup': 'menu', 'aria-expanded': open, 'aria-controls': open ? id : undefined,
-    onClick: event => { children.props.onClick?.(event); if (!event.defaultPrevented && !inactive) { setLast(false); change(!open); } } })}</span>
-    {open && <Popup anchor={anchor} placement={placement} matchWidth={matchWidth} gap={4} onDismiss={reason => change(false, reason === 'escape')}>
-      <Menu {...menu} id={id} role="menu" onTab={event => { change(false, true); if (event.shiftKey) event.preventDefault(); }} autoFocus={last ? 'last' : true} onAction={item => { onAction?.(item); if (closeOnSelect) change(false, true); }}/>
+    onClick: event => { children.props.onClick?.(event); if (!event.defaultPrevented && !inactive) { setEntryFocus(event.detail === 0 ? true : 'container'); change(!open); } } })}</span>
+    {open && <Popup anchor={anchor} placement={placement} matchWidth={matchWidth} gap={4} maxHeight={typeof menu.maxHeight === 'number' ? menu.maxHeight : undefined} onDismiss={reason => change(false, reason === 'escape')}>
+      <Menu {...menu} id={id} role="menu" onTab={event => { change(false, true); if (event.shiftKey) event.preventDefault(); }} autoFocus={entryFocus} onAction={item => { onAction?.(item); if (closeOnSelect) change(false, true); }}/>
     </Popup>}
   </>;
 }

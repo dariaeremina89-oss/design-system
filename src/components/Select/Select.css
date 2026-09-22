@@ -6,3 +6,5 @@
 .fdoc-select__chevron { flex:0 0 var(--elements-24);display:inline-flex;color:var(--icon-base-secondary); }
 .fdoc-select__field .fdoc-input__field--disabled .fdoc-select__chevron { color:var(--icon-base-secondary-disabled); }
 .fdoc-select__clear { flex-shrink:0; }
+
+.fdoc-select__clear.fdoc-button-icon { padding:0; }

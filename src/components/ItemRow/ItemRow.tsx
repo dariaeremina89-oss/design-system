@@ -35,8 +35,8 @@ export function ItemRow({ title, description, helper, variant = 'item', leadingI
   const inactive = disabled || state === 'disabled';
   const interactive = variant === 'item' && (!!onClick || !!role);
   const indicator = selection === 'checkbox'
-    ? <span inert aria-hidden="true"><Checkbox checked={selected} readOnly disabled={inactive} tabIndex={-1} aria-label="Выбор" /></span>
-    : selection === 'check' ? <span className="fdoc-item-row__check" data-selected={selected}><Icon name="check" size={24}/></span> : null;
+    ? <span className="fdoc-item-row__checkbox" inert aria-hidden="true"><Checkbox checked={selected} readOnly disabled={inactive} tabIndex={-1} aria-label="Выбор" /></span>
+    : selection === 'check' ? <span className="fdoc-item-row__check" data-selected={selected}><Icon name="filled/check_circle_filled" size={24}/></span> : null;
   const slot = (side: 'left' | 'right') => {
     const content = selection && selectionPosition === side ? indicator
       : side === 'left' ? logo ? <img src={logo} alt="" className="fdoc-item-row__logo"/> : leadingIcon && <Icon name={leadingIcon} size={24}/>
@@ -45,7 +45,7 @@ export function ItemRow({ title, description, helper, variant = 'item', leadingI
     return <span className="fdoc-item-row__slot" aria-hidden="true">{loading ? <Skeleton shape="icon" width={side === 'left' && logo ? 32 : 24} height={side === 'left' && logo ? 32 : 24}/> : content}</span>;
   };
   return <div {...props} ref={ref} className={`fdoc-item-row ${className}`} data-variant={variant}
-    data-state={inactive ? 'disabled' : state} data-interactive={interactive} aria-hidden={loading || undefined}
+    data-state={inactive ? 'disabled' : state} inert={loading || undefined} data-interactive={interactive} aria-hidden={loading || undefined}
     role={loading ? undefined : role ?? (interactive ? 'button' : undefined)} tabIndex={loading || inactive ? undefined : tabIndex ?? (interactive ? 0 : undefined)}
     aria-disabled={inactive || undefined} onClick={inactive || loading ? undefined : onClick}
     onKeyDown={event => { onKeyDown?.(event); if (!event.defaultPrevented && interactive && !inactive && !loading && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); event.currentTarget.click(); } }}>

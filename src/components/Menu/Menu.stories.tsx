@@ -3,7 +3,7 @@ import { Menu } from './Menu';
 import { Button } from '../Button/Button';
 import { documentActions } from './menu-examples';
 import { selectionDocs } from '../../docs/selection-components';
-const meta={title:'Components/Selection/Menu',component:Menu,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:selectionDocs('Menu')}}},args:{items:documentActions,'aria-label':'Действия с документом'},decorators:[Story=><div style={{width:'100%',maxWidth:456,padding:4,boxSizing:'border-box'}}><Story/></div>],argTypes:{searchable:{control:'boolean'},skeleton:{control:'boolean'},maxHeight:{control:'number'}}} satisfies Meta<typeof Menu>;
+const meta={title:'Components/Selection/Menu',component:Menu,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:selectionDocs('Menu')}}},args:{items:documentActions,'aria-label':'Действия с документом'},decorators:[Story=><div style={{width:'100%',maxWidth:456}}><Story/></div>],argTypes:{searchable:{control:'boolean'},skeleton:{control:'boolean'},maxHeight:{control:'number'}}} satisfies Meta<typeof Menu>;
 export default meta;type Story=StoryObj<typeof meta>;
 export const Default:Story={};
 export const SearchAndScroll:Story={name:'Поиск, скролл и кнопки',args:{searchable:true,items:Array.from({length:30},(_,i)=>({id:String(i),title:`Документ ${i+1}`,description:'Описание документа'})),footer:<><Button size="small" color="tertiary">Отменить</Button><Button size="small">Выбрать</Button></>}};
