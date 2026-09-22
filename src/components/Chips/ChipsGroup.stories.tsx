@@ -1,0 +1,13 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { ChipsGroup } from './ChipsGroup';
+import { chipsGroupDocs } from '../../docs/chips';
+const options=[{value:'all',text:'Все документы'},{value:'waiting',text:'Ожидают подписи'},{value:'signed',text:'Подписанные'},{value:'archive',text:'Архив',disabled:true}];
+const meta={title:'Components/Selection/ChipsGroup',component:ChipsGroup,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:chipsGroupDocs}}},args:{options,defaultValue:['signed'],selectionMode:'multiple','aria-label':'Статусы документов'},argTypes:{selectionMode:{control:'radio',options:['single','multiple']},color:{control:'radio',options:['secondary','base']},size:{control:'radio',options:['small','medium']},shape:{control:'radio',options:['round','square']},onValueChange:{action:'selection changed'}}} satisfies Meta<typeof ChipsGroup>;
+export default meta;type Story=StoryObj<typeof meta>;
+export const Default:Story={};
+export const SingleSelection:Story={args:{selectionMode:'single',defaultValue:['all']}};
+export const MultipleSelection:Story={args:{defaultValue:['waiting','signed']}};
+export const Wrapping:Story={render:args=><div style={{width:260,maxWidth:'100%'}}><ChipsGroup {...args}/></div>};
+export const OnSecondaryBackground:Story={args:{color:'base'},render:args=><div style={{padding:24,background:'var(--background-base-secondary)'}}><ChipsGroup {...args}/></div>};
+export const Disabled:Story={args:{disabled:true}};
+export const Skeleton:Story={args:{isLoading:true}};

@@ -146,10 +146,14 @@ export const AllColors: Story = {
 
 export const States: Story = {
   render: (args) => (
-    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-      {(['default', 'hover', 'pressed', 'focused', 'disabled', 'skeleton'] as ButtonState[]).map((state) => (
-        <Button {...args} key={state} state={state} text={state} data-testid={`button-${state}`} />
-      ))}
+    <div style={{ overflowX: 'auto', padding: 8 }}>
+      <table style={{ borderSpacing: '24px 16px' }}>
+        <thead><tr><th scope="col">Color</th>{(['default', 'hover', 'pressed', 'focused', 'disabled', 'skeleton'] as ButtonState[]).map(state=><th scope="col" key={state}>{state}</th>)}</tr></thead>
+        <tbody>{(['primary', 'base', 'secondary', 'tertiary', 'inverse', 'inverse-primary'] as ButtonColor[]).map(color=><tr key={color}>
+          <th scope="row" style={{textAlign:'left',whiteSpace:'nowrap'}}>{color}</th>
+          {(['default', 'hover', 'pressed', 'focused', 'disabled', 'skeleton'] as ButtonState[]).map(state=><td key={state} style={{padding:12,background:color==='base'||color==='tertiary'?'var(--background-base-secondary)':'var(--background-base-default)'}}><Button {...args} color={color} state={state} text="Button" data-testid={`button-${color}-${state}`}/></td>)}
+        </tr>)}</tbody>
+      </table>
     </div>
   ),
 };

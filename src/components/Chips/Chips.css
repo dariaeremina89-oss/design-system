@@ -1,0 +1,106 @@
+.fdoc-chips {
+  display:inline-flex; align-items:center; box-sizing:border-box; max-width:100%; min-width:0;
+  height:var(--elements-32); padding:var(--space-6) var(--space-8); border:0;
+  border-radius:var(--radius-full); background:var(--chips-bg); color:var(--chips-text);
+  vertical-align:middle; font-family:var(--page-caption-family); font-size:var(--page-caption-size);
+  font-weight:var(--page-caption-weight-base); line-height:var(--page-caption-line-height);
+}
+.fdoc-chips--small { height:var(--elements-24); padding-top:var(--space-4); padding-bottom:var(--space-4); }
+.fdoc-chips--square { border-radius:var(--radius-small); }
+.fdoc-chips__main { display:inline-flex; align-items:center; justify-content:center; min-width:0; max-width:100%; padding:0; border:0; background:none; color:inherit; font:inherit; border-radius:inherit; outline:none; }
+button.fdoc-chips__main { cursor:pointer; }
+.fdoc-chips__main:disabled { cursor:default; }
+.fdoc-chips__text { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:var(--space-2) var(--space-8); }
+.fdoc-chips--small .fdoc-chips__text { padding:0 var(--space-4); }
+.fdoc-chips__main > .fdoc-icon { flex-shrink:0; color:var(--chips-icon); }
+.fdoc-chips[data-interactive=true][data-state=default]:has(.fdoc-chips__main:hover),
+.fdoc-chips[data-interactive=true][data-state=hover] { background:var(--chips-bg-hover); }
+.fdoc-chips[data-interactive=true][data-state=default]:has(.fdoc-chips__main:active),
+.fdoc-chips[data-interactive=true][data-state=pressed] { background:var(--chips-bg-pressed); }
+.fdoc-chips[data-interactive=true]:has(.fdoc-chips__main:focus-visible),
+.fdoc-chips[data-interactive=true][data-state=focused] { outline:var(--border-large) solid var(--chips-focus); outline-offset:0; }
+.fdoc-chips[data-state=disabled] { background:var(--chips-bg-disabled); color:var(--chips-text-disabled); }
+.fdoc-chips[data-state=disabled] .fdoc-icon { color:var(--chips-icon-disabled); }
+.fdoc-chips__remove.fdoc-button-icon { --fdoc-button-icon-icon:var(--chips-icon); --fdoc-button-icon-icon-hover:var(--chips-icon); --fdoc-button-icon-icon-pressed:var(--chips-icon); --fdoc-button-icon-icon-disabled:var(--chips-icon-disabled); --fdoc-button-icon-focus-border:var(--chips-focus); }
+.fdoc-chips--skeleton { background:var(--background-base-skeleton); padding:0; }
+.fdoc-chips-group { display:flex; flex-wrap:wrap; align-items:center; gap:var(--space-8); }
+
+.fdoc-chips[data-color=secondary] {
+  --chips-bg:var(--background-base-secondary);
+  --chips-bg-hover:var(--background-base-secondary-hover);
+  --chips-bg-pressed:var(--background-base-secondary-pressed);
+  --chips-bg-disabled:var(--background-base-secondary-disabled);
+  --chips-text:var(--text-base-default); --chips-text-disabled:var(--text-base-default-disabled);
+  --chips-icon:var(--icon-base-default); --chips-icon-disabled:var(--icon-base-default-disabled);
+  --chips-focus:var(--border-base-default-focused);
+}
+
+.fdoc-chips[data-color=base] {
+  --chips-bg:var(--background-base-default);
+  --chips-bg-hover:var(--background-base-default-hover);
+  --chips-bg-pressed:var(--background-base-default-pressed);
+  --chips-bg-disabled:var(--background-base-default-disabled);
+  --chips-text:var(--text-base-default); --chips-text-disabled:var(--text-base-default-disabled);
+  --chips-icon:var(--icon-base-default); --chips-icon-disabled:var(--icon-base-default-disabled);
+  --chips-focus:var(--border-base-default-focused);
+}
+
+.fdoc-chips[data-color=primary] {
+  --chips-bg:var(--background-primary-default);
+  --chips-bg-hover:var(--background-primary-default-hover);
+  --chips-bg-pressed:var(--background-primary-default-pressed);
+  --chips-bg-disabled:var(--background-primary-default-disabled);
+  --chips-text:var(--text-primary-default); --chips-text-disabled:var(--text-primary-default-disabled);
+  --chips-icon:var(--icon-primary-default); --chips-icon-disabled:var(--icon-primary-default-disabled);
+  --chips-focus:var(--border-primary-focused);
+}
+
+.fdoc-chips[data-color=success] {
+  --chips-bg:var(--background-success-secondary);
+  --chips-bg-hover:var(--background-success-secondary-hover);
+  --chips-bg-pressed:var(--background-success-secondary-pressed);
+  --chips-bg-disabled:var(--background-success-secondary-disabled);
+  --chips-text:var(--text-success-default-light); --chips-text-disabled:var(--text-success-default-light-disabled);
+  --chips-icon:var(--icon-success-secondary); --chips-icon-disabled:var(--icon-success-secondary-disabled);
+  --chips-focus:var(--border-success-focused);
+}
+
+.fdoc-chips[data-color=accent] {
+  --chips-bg:var(--background-accent-secondary);
+  --chips-bg-hover:var(--background-accent-secondary-hover);
+  --chips-bg-pressed:var(--background-accent-secondary-pressed);
+  --chips-bg-disabled:var(--background-accent-secondary-disabled);
+  --chips-text:var(--text-accent-default-light); --chips-text-disabled:var(--text-accent-default-light-disabled);
+  --chips-icon:var(--icon-accent-secondary); --chips-icon-disabled:var(--icon-accent-secondary-disabled);
+  --chips-focus:var(--border-accent-focused);
+}
+
+.fdoc-chips[data-color=warning] {
+  --chips-bg:var(--background-warning-secondary);
+  --chips-bg-hover:var(--background-warning-secondary-hover);
+  --chips-bg-pressed:var(--background-warning-secondary-pressed);
+  --chips-bg-disabled:var(--background-warning-secondary-disabled);
+  --chips-text:var(--text-warning-default-light); --chips-text-disabled:var(--text-warning-default-light-disabled);
+  --chips-icon:var(--icon-warning-secondary); --chips-icon-disabled:var(--icon-warning-secondary-disabled);
+  --chips-focus:var(--border-warning-focused);
+}
+
+.fdoc-chips[data-color=error] {
+  --chips-bg:var(--background-error-secondary);
+  --chips-bg-hover:var(--background-error-secondary-hover);
+  --chips-bg-pressed:var(--background-error-secondary-pressed);
+  --chips-bg-disabled:var(--background-error-secondary-disabled);
+  --chips-text:var(--text-error-default-light); --chips-text-disabled:var(--text-error-default-light-disabled);
+  --chips-icon:var(--icon-error-secondary); --chips-icon-disabled:var(--icon-error-secondary-disabled);
+  --chips-focus:var(--border-error-focused);
+}
+
+.fdoc-chips[data-color=inverse] {
+  --chips-bg:var(--background-base-inverse);
+  --chips-bg-hover:var(--background-base-inverse-hover);
+  --chips-bg-pressed:var(--background-base-inverse);
+  --chips-bg-disabled:var(--background-base-inverse-disabled);
+  --chips-text:var(--text-base-inverse); --chips-text-disabled:var(--text-base-inverse-disabled);
+  --chips-icon:var(--icon-base-inverse); --chips-icon-disabled:var(--icon-base-inverse-disabled);
+  --chips-focus:var(--border-base-inverse-focused);
+}

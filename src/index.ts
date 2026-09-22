@@ -71,3 +71,7 @@ export { Dropdown } from './components/Menu/Dropdown';
 export type { DropdownProps } from './components/Menu/Dropdown';
 export { Select } from './components/Select/Select';
 export type { SelectProps, SelectOption } from './components/Select/Select';
+export { Chips } from './components/Chips/Chips';
+export type { ChipsProps, ChipsColor, ChipsSize, ChipsShape, ChipsState } from './components/Chips/Chips';
+export { ChipsGroup } from './components/Chips/ChipsGroup';
+export type { ChipsGroupProps, ChipsOption } from './components/Chips/ChipsGroup';

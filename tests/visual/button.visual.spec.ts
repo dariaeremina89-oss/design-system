@@ -75,9 +75,11 @@ test('Button has stable one-line content and fixed radius', async ({ page }) => 
 test('Button disabled state is native and non-interactive', async ({ page }) => {
   const root = await openStory(page, 'components-buttons-button--states');
   const disabled = root.locator('button[data-button-state="disabled"]');
-
-  await expect(disabled).toBeDisabled();
-  await expect(disabled).toHaveCSS('cursor', 'default');
+  await expect(disabled).toHaveCount(6);
+  for (const button of await disabled.all()) {
+    await expect(button).toBeDisabled();
+    await expect(button).toHaveCSS('cursor', 'default');
+  }
 });
 
 test('Button loading replaces the left icon with Progress Indicator', async ({ page }) => {
