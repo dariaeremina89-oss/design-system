@@ -2,7 +2,7 @@ import './styles/tokens.css';
 export { Icon, iconNames } from './components/Icon/Icon';
 export type { IconProps, IconName } from './components/Icon/Icon';
 export { Skeleton } from './components/Skeleton/Skeleton';
-export type { SkeletonProps, SkeletonShape } from './components/Skeleton/Skeleton';
+export type { SkeletonProps, SkeletonShape, SkeletonTextSize } from './components/Skeleton/Skeleton';
 export { Badge } from './components/Badge/Badge';
 export type { BadgeColor, BadgeProps, BadgeSize, BadgeState } from './components/Badge/Badge';
 export { ProgressIndicator } from './components/ProgressIndicator/ProgressIndicator';
@@ -57,3 +57,6 @@ export { Tab, Tabs } from './components/Tabs/Tabs';
 export type { TabProps, TabsProps, TabItem } from './components/Tabs/Tabs';
 export { Pagination, ButtonPagination } from './components/Pagination/Pagination';
 export type { PaginationProps, ButtonPaginationProps } from './components/Pagination/Pagination';
+
+export { Typography } from './components/Typography/Typography';
+export type { TypographyProps, TypographyVariant } from './components/Typography/Typography';

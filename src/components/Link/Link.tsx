@@ -10,6 +10,8 @@ interface SharedProps {
   text?: string;
   color?: LinkColor;
   size?: LinkSize;
+  /** fixed: размер компонента; inherit: типографика окружающего абзаца. */
+  typography?: 'fixed' | 'inherit';
   state?: LinkState;
   decoration?: 'solid' | 'dashed' | 'dotted' | null;
   iconLeft?: IconName;
@@ -23,13 +25,13 @@ const sizes = { small: 16, medium: 20, large: 24, giant: 28 };
 function content({children, text, iconLeft, iconRight, size = 'medium'}: SharedProps) {
   return <>{iconLeft && <Icon name={iconLeft} size={sizes[size]} />}<span className="fdoc-link__text">{children ?? text}</span>{iconRight && <Icon name={iconRight} size={sizes[size]} />}</>;
 }
-export function Link({color='base',size='medium',state='default',decoration='solid',disabled=false,className='',style,children,text,iconLeft,iconRight,href,tabIndex,onClick,...props}:LinkProps) {
+export function Link({color='base',size='medium',typography='fixed',state='default',decoration='solid',disabled=false,className='',style,children,text,iconLeft,iconRight,href,tabIndex,onClick,...props}:LinkProps) {
   const inactive=disabled||state==='disabled';
-  if(state==='skeleton')return <span className={`fdoc-link-skeleton fdoc-link--${size}`}><Skeleton width={56} height={10}/></span>;
-  return <a {...props} href={inactive?undefined:href} role={inactive?'link':props.role} aria-disabled={inactive||undefined} tabIndex={inactive?-1:tabIndex} onClick={e=>{if(inactive){e.preventDefault();return;}onClick?.(e);}} data-state={inactive?'disabled':state} data-color={color} data-decoration={decoration??'none'} className={`fdoc-link fdoc-link--${size} ${className}`} style={{'--link-decoration':decoration??'none',...style} as CSSProperties}>{content({children,text,iconLeft,iconRight,size})}</a>;
+  if(state==='skeleton')return <span className={`fdoc-link-skeleton fdoc-link--${size} ${typography==='inherit'?'fdoc-link--inherit':''}`}>{iconLeft&&<Skeleton className="fdoc-link__skeleton-icon" shape="icon" width={typography==='inherit'?'1em':sizes[size]} height={typography==='inherit'?'1em':sizes[size]}/>}<Skeleton width={typography==='inherit'?'3.5em':56} shape="text" textSize={typography==='inherit'?'inherit':size==='small'?'caption':size==='medium'?'body':'subtitle'}/>{iconRight&&<Skeleton className="fdoc-link__skeleton-icon" shape="icon" width={typography==='inherit'?'1em':sizes[size]} height={typography==='inherit'?'1em':sizes[size]}/>}</span>;
+  return <a {...props} href={inactive?undefined:href} role={inactive?'link':props.role} aria-disabled={inactive||undefined} tabIndex={inactive?-1:tabIndex} onClick={e=>{if(inactive){e.preventDefault();return;}onClick?.(e);}} data-state={inactive?'disabled':state} data-color={color} data-decoration={decoration??'none'} className={`fdoc-link fdoc-link--${size} ${typography==='inherit'?'fdoc-link--inherit':''} ${className}`} style={{'--link-decoration':decoration??'none',...style} as CSSProperties}>{content({children,text,iconLeft,iconRight,size})}</a>;
 }
-export function ButtonLink({color='base',size='medium',state='default',decoration='dashed',disabled=false,className='',style,children,text,iconLeft,iconRight,type='button',...props}:ButtonLinkProps) {
+export function ButtonLink({color='base',size='medium',typography='fixed',state='default',decoration='dashed',disabled=false,className='',style,children,text,iconLeft,iconRight,type='button',...props}:ButtonLinkProps) {
   const inactive=disabled||state==='disabled';
-  if(state==='skeleton')return <span className={`fdoc-link-skeleton fdoc-link--${size}`}><Skeleton width={56} height={10}/></span>;
-  return <button {...props} type={type} disabled={inactive} data-state={inactive?'disabled':state} data-color={color} data-decoration={decoration??'none'} className={`fdoc-link fdoc-link--${size} ${className}`} style={{'--link-decoration':decoration??'none',...style} as CSSProperties}>{content({children,text,iconLeft,iconRight,size})}</button>;
+  if(state==='skeleton')return <span className={`fdoc-link-skeleton fdoc-link--${size} ${typography==='inherit'?'fdoc-link--inherit':''}`}>{iconLeft&&<Skeleton className="fdoc-link__skeleton-icon" shape="icon" width={typography==='inherit'?'1em':sizes[size]} height={typography==='inherit'?'1em':sizes[size]}/>}<Skeleton width={typography==='inherit'?'3.5em':56} shape="text" textSize={typography==='inherit'?'inherit':size==='small'?'caption':size==='medium'?'body':'subtitle'}/>{iconRight&&<Skeleton className="fdoc-link__skeleton-icon" shape="icon" width={typography==='inherit'?'1em':sizes[size]} height={typography==='inherit'?'1em':sizes[size]}/>}</span>;
+  return <button {...props} type={type} disabled={inactive} data-state={inactive?'disabled':state} data-color={color} data-decoration={decoration??'none'} className={`fdoc-link fdoc-link--${size} ${typography==='inherit'?'fdoc-link--inherit':''} ${className}`} style={{'--link-decoration':decoration??'none',...style} as CSSProperties}>{content({children,text,iconLeft,iconRight,size})}</button>;
 }

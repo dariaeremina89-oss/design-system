@@ -1,5 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { typographyPrimitiveTokens, typographyTokens } from '../styles/token-catalog';
+import { Typography, type TypographyVariant } from '../components/Typography/Typography';
+import { Skeleton } from '../components/Skeleton/Skeleton';
+import { Button } from '../components/Button/Button';
+import { Link } from '../components/Link/Link';
 import { Page, TokenList } from './atoms-helpers';
 
 const meta = {
@@ -10,7 +14,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Типографический foundation-слой с двумя уровнями: primitive values для семейств, начертаний, размеров и line-height; page styles как именованные semantic-сборки, которые применяются к тексту. На мобильных основной интерфейсный текст не уменьшается ниже системного минимума.',
+          'Типографический foundation-слой с двумя уровнями: primitive values для семейств, начертаний, размеров и line-height; page styles как именованные semantic-сборки для текста страницы. Только текст страницы использует мобильные размеры. В компонентах используются те же именованные стили с постоянными размерами. Typography с responsive включает существующий Mobile-вариант только для текста страницы.',
       },
     },
   },
@@ -161,4 +165,25 @@ export const Styles: Story = {
       </div>
     </Page>
   ),
+};
+
+export const Application: Story = {
+  name: 'Применение и адаптив',
+  render: () => <Page title="Применение типографики">
+    <p>Именованные стили едины. Только текст страницы с responsive переключается на Mobile. Размер текста в компонентах постоянный; ссылка с typography="inherit" следует за абзацем.</p>
+    {typographyTokens.map(item => <section key={item.token}>
+      <h2>{item.name}</h2>
+      <Typography variant={item.token.slice(2) as TypographyVariant} data-testid={`fixed-${item.token.slice(2)}`}>
+        Постоянный стиль — текст компонента
+      </Typography>
+      <Typography variant={item.token.slice(2) as TypographyVariant} responsive data-testid={`responsive-${item.token.slice(2)}`}>
+        Текст страницы и <Link href="#details" typography="inherit">ссылка внутри абзаца</Link>{' '}<Skeleton shape="text" textSize="inherit" width="3em"/>
+      </Typography>
+    </section>)}
+    <Typography as="div" variant="subtitle" responsive data-testid="responsive-container">
+      <p>Адаптивный текст вокруг компонентов</p>
+      <Button size="large">Действие</Button>{' '}
+      <Link href="#details" size="large">Самостоятельная ссылка</Link>
+    </Typography>
+  </Page>,
 };

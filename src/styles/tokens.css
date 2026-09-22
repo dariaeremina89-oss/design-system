@@ -853,28 +853,8 @@
   --shadow-l-hover: var(--drop-shadow-shadow-l-hover);
 }
 
-@media (max-width: 767px) {
-  :root {
-    --page-h0-heading-size: var(--page-h0-heading-size-mobile);
-    --page-h0-heading-line-height: var(--page-h0-heading-line-height-mobile);
-    --page-h1-heading-size: var(--page-h1-heading-size-mobile);
-    --page-h1-heading-line-height: var(--page-h1-heading-line-height-mobile);
-    --page-h2-heading-size: var(--page-h2-heading-size-mobile);
-    --page-h2-heading-line-height: var(--page-h2-heading-line-height-mobile);
-    --page-h3-heading-size: var(--page-h3-heading-size-mobile);
-    --page-h3-heading-line-height: var(--page-h3-heading-line-height-mobile);
-    --page-subtitle-size: var(--page-subtitle-size-mobile);
-    --page-subtitle-line-height: var(--page-subtitle-line-height-mobile);
-    --page-body-size: var(--page-body-size-mobile);
-    --page-body-line-height: var(--page-body-line-height-mobile);
-    --page-caption-size: var(--page-caption-size-mobile);
-    --page-caption-line-height: var(--page-caption-line-height-mobile);
-    --page-overline-size: var(--page-overline-size-mobile);
-    --page-overline-line-height: var(--page-overline-line-height-mobile);
-    --page-code-size: var(--page-code-size-mobile);
-    --page-code-line-height: var(--page-code-line-height-mobile);
-  }
-}
+/* Named styles stay constant. Only Typography[responsive] selects the existing
+   mobile variants; never replace these tokens globally or on a parent container. */
 
 * {
   box-sizing: border-box;

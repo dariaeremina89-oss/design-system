@@ -1,5 +1,6 @@
 import { useId, useState, type ReactNode } from 'react';
 import { Checkbox, Radio, Switch, type SelectionControlProps } from './SelectionControl';
+import { Skeleton } from '../Skeleton/Skeleton';
 import './SelectionGroup.css';
 export interface SelectionOption { value:string; label:ReactNode; description?:ReactNode; errorText?:ReactNode; disabled?:boolean; }
 interface BaseProps { label:ReactNode; description?:ReactNode; errorText?:ReactNode; options:SelectionOption[]; name?:string; disabled?:boolean; direction?:'column'|'row'; position?:'up'|'left'; state?:SelectionControlProps['state']; className?:string; }
@@ -8,10 +9,10 @@ export interface RadioGroupProps extends BaseProps { value?:string; defaultValue
 export type SwitchGroupProps=CheckboxGroupProps;
 function SelectionGroup({kind,label,description,errorText,options,name,disabled=false,direction='column',position='up',state='default',className='',value,defaultValue,onValueChange}:BaseProps&{kind:'checkbox'|'radio'|'switch';value?:string[];defaultValue?:string[];onValueChange?:(value:string[])=>void}) {
  const id=useId();const [local,setLocal]=useState(defaultValue??[]);const selected=value??local;const Control=kind==='radio'?Radio:kind==='switch'?Switch:Checkbox;
- return <fieldset disabled={disabled||state==='disabled'} className={`fdoc-selection-group ${className}`} data-position={position} aria-labelledby={`${id}-label`} role={kind==='radio'?'radiogroup':undefined} aria-describedby={[description?`${id}-description`:null,errorText?`${id}-error`:null].filter(Boolean).join(' ')||undefined} aria-invalid={!!errorText||undefined}>
- <div className="fdoc-selection-group__layout"><div className="fdoc-selection-group__header"><div className="fdoc-selection-group__label" id={`${id}-label`}>{label}</div>{description&&<div className="fdoc-selection-group__description" id={`${id}-description`}>{description}</div>}</div><div className="fdoc-selection-group__body">
+ return <fieldset disabled={disabled||state==='disabled'} className={`fdoc-selection-group ${className}`} data-position={position} aria-hidden={state==='skeleton'||undefined} aria-labelledby={`${id}-label`} role={kind==='radio'?'radiogroup':undefined} aria-describedby={[description?`${id}-description`:null,errorText?`${id}-error`:null].filter(Boolean).join(' ')||undefined} aria-invalid={!!errorText||undefined}>
+ <div className="fdoc-selection-group__layout"><div className="fdoc-selection-group__header"><div className="fdoc-selection-group__label" id={`${id}-label`}>{state==='skeleton'?<Skeleton width={116} shape="text" textSize="subtitle"/>:label}</div>{description&&<div className="fdoc-selection-group__description" id={`${id}-description`}>{state==='skeleton'?<Skeleton width={116} shape="text" textSize="caption"/>:description}</div>}</div><div className="fdoc-selection-group__body">
  <div className="fdoc-selection-group__options" data-direction={direction}>{options.map(o=><Control key={o.value} name={name??id} value={o.value} checked={selected.includes(o.value)} label={o.label} description={o.description} errorText={o.errorText} disabled={disabled||o.disabled} state={state} onChange={e=>{const next=kind==='radio'?[o.value]:e.target.checked?[...selected,o.value]:selected.filter(v=>v!==o.value);if(value===undefined)setLocal(next);onValueChange?.(next);}}/>)}</div>
- {errorText&&<div className="fdoc-selection-group__error" id={`${id}-error`}>{errorText}</div>}
+ {errorText&&<div className="fdoc-selection-group__error" id={`${id}-error`}>{state==='skeleton'?<Skeleton width={160} shape="text" textSize="body"/>:errorText}</div>}
  </div></div></fieldset>;
 }
 export function CheckboxGroup(props:CheckboxGroupProps){return <SelectionGroup {...props} kind="checkbox"/>;}

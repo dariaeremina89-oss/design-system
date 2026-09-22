@@ -7,3 +7,5 @@ export const Default:Story={};
 export const Overflow:Story={args:{items:Array.from({length:12},(_,i)=>({value:String(i),label:`Раздел ${i+1}`,content:`Содержимое ${i+1}`}))},decorators:[Story=><div style={{maxWidth:480}}><Story/></div>]};
 export const Skeleton:Story={args:{isLoading:true}};
 export const States:Story={render:()=> <div>{[false,true].map(selected=><div role="tablist" aria-label={selected?'Выбранные':'Невыбранные'} key={String(selected)} style={{display:'flex'}}>{(['default','hover','focused','pressed','disabled','skeleton'] as const).map(state=><Tab key={state} selected={selected} state={state}>{state}</Tab>)}</div>)}</div>};
+
+export const SkeletonWithElements:Story={args:{isLoading:true,items:[{value:"info",label:"Документы",icon:"doc-paper",badge:12,content:""},{value:"settings",icon:"gear",ariaLabel:"Настройки",content:""}]}};

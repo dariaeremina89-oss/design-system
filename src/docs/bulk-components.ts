@@ -19,7 +19,7 @@ Control — элемент без текста. Option — тот же конт�
 | Radio | --radius-full; внутренний круг --elements-12 |
 | Switch | Track 36 × 20; Handle Off 12, On 16; radius-full |
 | Контрол → текст | --space-16 |
-| Подпись | --page-subtitle-size / line-height, базовый вес |
+| Подпись | Subtitle: --page-subtitle-size / --page-subtitle-line-height, базовый вес |
 | Описание | Caption Base; отступ --space-4 |
 | Заголовок группы | Subtitle Strong |
 | Заголовок → опции, между строками, до ошибки | --space-16 |
@@ -56,7 +56,7 @@ Checkbox: Tab и Space; Enter не переключает. Radio: Tab входи
 
 ### Уточнения по актуальному макету
 
-Подпись опции — Subtitle: desktop 16/24, mobile 14/20, без верхнего отступа; иконка Checkbox — 20 × 20. Эти параметры заменяют Body 14, отступ 2 и иконку 24 из текстовой спецификации.
+Подпись опции — Subtitle 16/24 на всех ширинах экрана, без верхнего отступа; иконка Checkbox — 20 × 20. Эти параметры заменяют Body 14, отступ 2 и иконку 24 из текстовой спецификации.
 `;
 const links = `Текстовая ссылка для перехода на страницу или якорь; ButtonLink — локальное действие: раскрытие деталей, фильтров, дополнительной информации. Для основного действия используйте Button.
 
@@ -66,6 +66,8 @@ const links = `Текстовая ссылка для перехода на ст
 | Medium | Body Base | 20 |
 | Large | Subtitle Base | 24 |
 | Giant | Subtitle Strong | 28 |
+
+Typography: fixed (по умолчанию) сохраняет размер из size на всех ширинах. Для ссылки внутри текста задайте typography="inherit": шрифт, начертание, размер и межстрочный интервал наследуются от абзаца, включая его мобильные стили; size при этом не задает размер текста. Такая ссылка переносится вместе с абзацем, иконки масштабируются до 1em. Режим доступен у Link и ButtonLink.
 
 Gap — space-8. Иконки слева и справа необязательны. Decoration: solid, dashed, dotted или null. Подчеркивание применяется только к тексту через text-decoration, толщина border-small, отступ space-2; цвет совпадает с текстом.
 
@@ -156,7 +158,7 @@ trigger: hover, focus или hover+focus (по умолчанию). delayShow=20
 | Gap Title → Description | 4 | 8 |
 | ButtonIcon / иконка | 40 / 24 | 40 / 24 |
 
-На мобильном Large переходит в Medium. Высота растет по контенту; слова переносятся через overflow-wrap:anywhere. Компонент заполняет ширину и не задает внешнюю рамку или тень. Content Divider использует Divider Full, border-small и border-base-tertiary и показывается только внутри открытой панели.
+На мобильном у Large уменьшаются отступы до Medium; заголовок сохраняет H3 20/28. Размер шрифта и межстрочный интервал внутри компонентов не зависят от ширины экрана. Высота растет по контенту; слова переносятся через overflow-wrap:anywhere. Компонент заполняет ширину и не задает внешнюю рамку или тень. Content Divider использует Divider Full, border-small и border-base-tertiary и показывается только внутри открытой панели.
 
 Header: Default прозрачный; Hover background-base-default-hover; Focused transparent-background-base-focused; Pressed background-base-default-pressed; Disabled background-base-default-disabled. Title text-base-default, Description text-base-secondary; Disabled использует соответствующие -disabled. Chevron icon-base-secondary, Disabled icon-base-default-disabled по актуальному макету.
 

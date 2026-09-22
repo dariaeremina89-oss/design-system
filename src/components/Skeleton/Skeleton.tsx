@@ -10,7 +10,9 @@ export type SkeletonTextSize =
   | 'subtitle'
   | 'body'
   | 'caption'
-  | 'overline';
+  | 'overline'
+  | 'code'
+  | 'inherit';
 
 export interface SkeletonProps extends HTMLAttributes<HTMLSpanElement> {
   /** Стабильный идентификатор элемента для UI-тестов. */

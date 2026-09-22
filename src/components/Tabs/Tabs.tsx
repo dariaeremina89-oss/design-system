@@ -6,7 +6,7 @@ import './Tabs.css';
 export interface TabProps extends ButtonHTMLAttributes<HTMLButtonElement> { selected?:boolean; icon?:IconName; badge?:ReactNode; state?:'default'|'hover'|'focused'|'pressed'|'disabled'|'skeleton'; }
 export function Tab({selected=false,icon,badge,state='default',disabled=false,children,className='',...props}:TabProps) {
  const inactive=disabled||state==='disabled';const content=<>{icon&&<span className="fdoc-tab__icon"><Icon name={icon} size={24}/></span>}{children!=null&&<span className="fdoc-tab__label">{children}</span>}{badge!=null&&<span className="fdoc-tab__badge"><Badge size="small" state={inactive?'disabled':'default'}>{badge}</Badge></span>}</>;
- if(state==='skeleton')return <span className="fdoc-tab" aria-hidden="true"><Skeleton width={icon?24:56} height={icon?24:10}/></span>;
+ if(state==='skeleton')return <span className={`fdoc-tab ${className}`} data-icon-only={children==null} aria-hidden="true">{icon&&<span className="fdoc-tab__icon"><Skeleton width={24} height={24} shape="icon"/></span>}{children!=null&&<span className="fdoc-tab__label"><Skeleton width={56} shape="text" textSize="body"/></span>}{badge!=null&&<span className="fdoc-tab__badge"><Badge size="small" state="skeleton"/></span>}</span>;
  return <button {...props} type="button" role="tab" aria-selected={selected} disabled={inactive} data-icon-only={children==null} data-state={inactive?'disabled':state} className={`fdoc-tab ${className}`}>{content}</button>;
 }
 export interface TabItem { value:string; label?:ReactNode; ariaLabel?:string; icon?:IconName; badge?:ReactNode; disabled?:boolean; content:ReactNode; }

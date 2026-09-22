@@ -13,7 +13,7 @@
 .fdoc-link:where([data-state=default]):focus-visible,.fdoc-link[data-state=focused] { outline:var(--border-large) solid var(--link-focus); outline-offset:0; }
 .fdoc-link[data-state=disabled] { color:var(--link-text-disabled); cursor:default; }
 .fdoc-link[data-state=disabled] > .fdoc-icon { color:var(--link-icon-disabled); }
-.fdoc-link-skeleton { display:inline-flex; align-items:center; min-height:1lh; }
+.fdoc-link-skeleton { display:inline-flex; align-items:center; min-height:1lh; gap:var(--space-8); }
 
 .fdoc-link[data-color=base] {
  --link-text:var(--text-base-default); --link-icon:var(--icon-base-secondary);
@@ -54,3 +54,12 @@
  --link-text-disabled:var(--text-base-inverse-disabled); --link-icon-disabled:var(--icon-base-inverse-secondary-disabled);
  --link-focus:var(--border-white-focused);
 }
+
+/* Opt in for links that participate in a paragraph's typography and wrapping. */
+.fdoc-link--inherit { display:inline; font:inherit; letter-spacing:inherit; }
+.fdoc-link--inherit > .fdoc-icon { width:1em; height:1em; vertical-align:-0.125em; }
+.fdoc-link--inherit > .fdoc-icon:first-child { margin-right:0.25em; }
+.fdoc-link--inherit > .fdoc-icon:last-child { margin-left:0.25em; }
+
+.fdoc-link-skeleton.fdoc-link--inherit { display:inline-flex; gap:0.25em; }
+.fdoc-link__skeleton-icon { flex-shrink:0; }

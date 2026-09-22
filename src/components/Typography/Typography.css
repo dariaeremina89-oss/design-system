@@ -1,0 +1,16 @@
+@import "../../styles/typography-skeleton.css";
+
+.fdoc-typography {
+  font-family: var(--typography-family);
+  font-weight: var(--typography-weight);
+  font-size: var(--typography-size);
+  line-height: var(--typography-line-height);
+}
+
+/* Change only this text element's font, never the shared style tokens. */
+@media (max-width: 767px) {
+  .fdoc-typography[data-responsive=true] {
+    font-size: var(--typography-size-mobile);
+    line-height: var(--typography-line-height-mobile);
+  }
+}

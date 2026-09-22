@@ -1,0 +1,102 @@
+/* Existing Skeleton geometry for each named Typography style. */
+.fdoc-skeleton--text-h0-heading, .fdoc-typography[data-typography="h0-heading"] {
+  --skeleton-text-line-height: var(--page-h0-heading-line-height);
+  --skeleton-text-bar-height: var(--line-height-28);
+  --skeleton-text-bar-top: calc(var(--space-12) - var(--space-1));
+}
+
+.fdoc-skeleton--text-h1-heading, .fdoc-typography[data-typography="h1-heading"] {
+  --skeleton-text-line-height: var(--page-h1-heading-line-height);
+  --skeleton-text-bar-height: calc(var(--line-height-24) - var(--space-2));
+  --skeleton-text-bar-top: var(--font-size-10);
+}
+
+.fdoc-skeleton--text-h2-heading, .fdoc-typography[data-typography="h2-heading"] {
+  --skeleton-text-line-height: var(--page-h2-heading-line-height);
+  --skeleton-text-bar-height: calc(var(--line-height-16) + var(--space-1));
+  --skeleton-text-bar-top: var(--space-8);
+}
+
+.fdoc-skeleton--text-h3-heading, .fdoc-typography[data-typography="h3-heading"] {
+  --skeleton-text-line-height: var(--page-h3-heading-line-height);
+  --skeleton-text-bar-height: var(--line-height-14);
+  --skeleton-text-bar-top: var(--space-8);
+}
+
+.fdoc-skeleton--text-subtitle, .fdoc-typography[data-typography="subtitle"] {
+  --skeleton-text-line-height: var(--page-subtitle-line-height);
+  --skeleton-text-bar-height: calc(var(--line-height-12) - var(--space-1));
+  --skeleton-text-bar-top: calc(var(--space-8) - var(--space-1));
+}
+
+.fdoc-skeleton--text-body, .fdoc-typography[data-typography="body"] {
+  --skeleton-text-line-height: var(--page-body-line-height);
+  --skeleton-text-bar-height: var(--font-size-10);
+  --skeleton-text-bar-top: calc(var(--space-4) + var(--space-1));
+}
+
+.fdoc-skeleton--text-caption, .fdoc-typography[data-typography="caption"] {
+  --skeleton-text-line-height: var(--page-caption-line-height);
+  --skeleton-text-bar-height: var(--elements-8);
+  --skeleton-text-bar-top: var(--space-4);
+}
+
+.fdoc-skeleton--text-overline, .fdoc-typography[data-typography="overline"] {
+  --skeleton-text-line-height: var(--page-overline-line-height);
+  --skeleton-text-bar-height: calc(var(--space-8) - var(--space-1));
+  --skeleton-text-bar-top: var(--space-4);
+}
+
+.fdoc-skeleton--text-code, .fdoc-typography[data-typography="code"] {
+  --skeleton-text-line-height: var(--page-code-line-height);
+  --skeleton-text-bar-height: var(--font-size-10);
+  --skeleton-text-bar-top: calc(var(--space-4) + var(--space-1));
+}
+
+@media (max-width: 767px) {
+  .fdoc-typography[data-responsive=true][data-typography="h0-heading"] {
+  --skeleton-text-line-height: var(--page-h0-heading-line-height-mobile);
+  --skeleton-text-bar-height: calc(var(--line-height-24) - var(--space-2));
+  --skeleton-text-bar-top: var(--font-size-10);
+}
+  .fdoc-typography[data-responsive=true][data-typography="h1-heading"] {
+  --skeleton-text-line-height: var(--page-h1-heading-line-height-mobile);
+  --skeleton-text-bar-height: calc(var(--line-height-16) + var(--space-1));
+  --skeleton-text-bar-top: var(--space-8);
+}
+  .fdoc-typography[data-responsive=true][data-typography="h2-heading"] {
+  --skeleton-text-line-height: var(--page-h2-heading-line-height-mobile);
+  --skeleton-text-bar-height: var(--line-height-14);
+  --skeleton-text-bar-top: var(--space-8);
+}
+  .fdoc-typography[data-responsive=true][data-typography="h3-heading"] {
+  --skeleton-text-line-height: var(--page-h3-heading-line-height-mobile);
+  --skeleton-text-bar-height: calc(var(--line-height-12) - var(--space-1));
+  --skeleton-text-bar-top: calc(var(--space-8) - var(--space-1));
+}
+  .fdoc-typography[data-responsive=true][data-typography="subtitle"] {
+  --skeleton-text-line-height: var(--page-subtitle-line-height-mobile);
+  --skeleton-text-bar-height: var(--font-size-10);
+  --skeleton-text-bar-top: calc(var(--space-4) + var(--space-1));
+}
+  .fdoc-typography[data-responsive=true][data-typography="body"] {
+  --skeleton-text-line-height: var(--page-body-line-height-mobile);
+  --skeleton-text-bar-height: var(--elements-8);
+  --skeleton-text-bar-top: var(--space-4);
+}
+  .fdoc-typography[data-responsive=true][data-typography="caption"] {
+  --skeleton-text-line-height: var(--page-caption-line-height-mobile);
+  --skeleton-text-bar-height: calc(var(--space-8) - var(--space-1));
+  --skeleton-text-bar-top: var(--space-4);
+}
+  .fdoc-typography[data-responsive=true][data-typography="overline"] {
+  --skeleton-text-line-height: var(--page-overline-line-height-mobile);
+  --skeleton-text-bar-height: var(--space-6);
+  --skeleton-text-bar-top: var(--space-3);
+}
+  .fdoc-typography[data-responsive=true][data-typography="code"] {
+  --skeleton-text-line-height: var(--page-code-line-height-mobile);
+  --skeleton-text-bar-height: var(--elements-8);
+  --skeleton-text-bar-top: var(--space-4);
+}
+}
