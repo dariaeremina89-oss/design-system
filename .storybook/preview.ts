@@ -1,6 +1,8 @@
 import type { Preview } from '@storybook/react-vite';
 import '../src/styles/tokens.css';
 import '../src/styles/storybook.css';
+import { initializePrimaryTheme } from '../src/styles/primary-theme-store';
+initializePrimaryTheme();
 
 const preview: Preview = {
   parameters: {

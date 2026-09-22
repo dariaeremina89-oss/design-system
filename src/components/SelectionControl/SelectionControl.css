@@ -29,6 +29,8 @@
 .fdoc-control[data-kind=switch] .fdoc-control__shape { position:relative; width:100%; height:100%; border:0; border-radius:var(--radius-full); background:var(--background-base-tertiary); }
 .fdoc-control[data-kind=switch] .fdoc-control__mark { display:block; position:absolute; left:4px; top:4px; width:var(--elements-12); height:var(--elements-12); border-radius:var(--radius-full); background:var(--background-base-default); }
 .fdoc-control[data-kind=switch] input:checked + .fdoc-control__shape .fdoc-control__mark { left:18px; top:2px; width:var(--elements-16); height:var(--elements-16); }
+/* Brand themes must keep the thumb visible even on a near-white Primary. */
+:root[data-custom-theme] .fdoc-control[data-kind=switch] input:checked:not(:disabled) + .fdoc-control__shape .fdoc-control__mark { background:var(--icon-primary-default); }
 .fdoc-control[data-kind=switch] .fdoc-control__ripple { left:10px; }
 .fdoc-control[data-kind=switch] input:checked ~ .fdoc-control__ripple { left:26px; }
 .fdoc-control[data-kind=switch] input:disabled:not(:checked) + .fdoc-control__shape { background:var(--background-base-tertiary-disabled); }

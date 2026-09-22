@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 import './atoms.css';
+import { useColorMode, usePrimarySeed } from '../styles/use-primary-theme';
+import { getPrimaryTheme } from '../styles/primary-theme-store';
 
 export const cssVar = (token: string) => `var(${token})`;
 export const groupName = (token: string, depth: number) => token.slice(2).split('-').slice(0, depth).join('-');
@@ -36,12 +38,12 @@ export const readableTextToken = (backgroundValue: string) => {
     g: background.g * background.a + (1 - background.a),
     b: background.b * background.a + (1 - background.a),
   };
-  const dark = { r: 24 / 255, g: 25 / 255, b: 28 / 255 };
+  const dark = { r: 0, g: 0, b: 0 };
   const light = { r: 1, g: 1, b: 1 };
 
   return contrastRatio(composited, light) > contrastRatio(composited, dark)
-    ? '--text-base-white'
-    : '--text-base-default';
+    ? '--white-1000'
+    : '--black-1000';
 };
 
 export const TokenList = ({ tokens }: { tokens: readonly { token: string; value: string | number; reference?: string }[] }) => (
@@ -55,21 +57,26 @@ export const TokenList = ({ tokens }: { tokens: readonly { token: string; value:
   </div>
 );
 
-export const ColorGrid = ({ tokens }: { tokens: readonly { token: string; value: string; reference?: string }[] }) => (
+export const ColorGrid = ({ tokens }: { tokens: readonly { token: string; value: string; reference?: string }[] }) => {
+  usePrimarySeed(); useColorMode();
+  const theme=getPrimaryTheme();
+  const resolved=tokens.map(item=>({...item,value:theme?.variables[item.token]??item.value,reference:theme?.references[item.token]??item.reference}));
+  return (
   <div className="fdoc-atoms__swatches">
-    {tokens.map((item) => (
+    {resolved.map((item) => (
       <div
         key={item.token}
         className={`fdoc-atoms__swatch${item.token.startsWith('--transparent-') ? ' fdoc-atoms__swatch--transparent' : ''}`}
-        style={{ backgroundColor: cssVar(item.token), color: cssVar(readableTextToken(item.value)) }}
+        style={{ backgroundColor: '#ffffff', backgroundImage: `linear-gradient(${cssVar(item.token)}, ${cssVar(item.token)})`, color: cssVar(readableTextToken(item.value)) }}
       >
         <span>{item.token}</span>
-        <code>{item.reference ? `alias → ${item.reference}` : `value · ${item.value}`}</code>
+        <code>{item.reference ? `${item.value} · ${item.reference}` : `value · ${item.value}`}</code>
         <code>text → {readableTextToken(item.value)}</code>
       </div>
     ))}
   </div>
 );
+};
 
 export const Page = ({ title, children }: { title: string; children: ReactNode }) => (
   <div className="fdoc-atoms">

@@ -2,3 +2,11 @@
   width: 456px;
   max-width: 100%;
 }
+
+html[data-color-mode=dark] body,
+html[data-color-mode=dark] .sbdocs-wrapper {
+  background:var(--background-base-default);
+  color:var(--text-base-default);
+}
+html[data-color-mode=dark] .sbdocs-wrapper :is(.sbdocs-p,.sbdocs-h1,.sbdocs-h2,.sbdocs-h3,.sbdocs-h4,.sbdocs-li) { color:var(--text-base-default); }
+html[data-color-mode=dark] .sbdocs-wrapper :is(.sbdocs-table,.sbdocs-pre,.sbdocs-blockquote) { background:var(--background-base-secondary); color:var(--text-base-default); }

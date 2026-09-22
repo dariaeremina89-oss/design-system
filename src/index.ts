@@ -75,3 +75,7 @@ export { Chips } from './components/Chips/Chips';
 export type { ChipsProps, ChipsColor, ChipsSize, ChipsShape, ChipsState } from './components/Chips/Chips';
 export { ChipsGroup } from './components/Chips/ChipsGroup';
 export type { ChipsGroupProps, ChipsOption } from './components/Chips/ChipsGroup';
+
+export { createPrimaryTheme, primaryThemeCss, normalizeHex, contrastRatio } from './styles/primary-theme';
+export type { PrimaryTheme, PrimaryStep, ColorMode } from './styles/primary-theme';
+export { createColorTheme } from './styles/color-theme';
