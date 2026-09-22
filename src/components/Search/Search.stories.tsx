@@ -10,7 +10,7 @@ const meta = { title:'Components/Inputs/Search', component:Search, tags:['autodo
 } satisfies Meta<typeof Search>;
 export default meta;type Story=StoryObj<typeof meta>;
 export const Default:Story={render:function Demo(args){const [result,setResult]=useState('');return <><Search {...args} onSearch={setResult}/><p role="status">{result&&`Поиск: ${result}`}</p></>;}};
-export const States:Story={name:'Состояния',render:args=><div style={{display:'grid',gap:24}}><Search {...args}/><Search {...args} defaultValue="Договор"/><Search {...args} error="Введите не менее трех символов"/><Search {...args} disabled defaultValue="Договор"/><Search {...args} disabled error="Поиск недоступен"/><Search {...args} skeleton/></div>};
+export const States:Story={render:args=><div style={{display:'grid',gap:24}}><Search {...args}/><Search {...args} defaultValue="Договор"/><Search {...args} error="Введите не менее трех символов"/><Search {...args} disabled defaultValue="Договор"/><Search {...args} disabled error="Поиск недоступен"/><Search {...args} skeleton/></div>};
 export const WithDescription:Story={args:{description:'По всем доступным документам',counter:true,maxLength:100,required:true}};
-export const Focused:Story={name:'Фокус с клавиатуры',args:{autoFocus:true}};
+export const Focused:Story={args:{autoFocus:true}};
 export const Skeleton:Story={args:{skeleton:true,description:'Описание',counter:'0 / 100'}};

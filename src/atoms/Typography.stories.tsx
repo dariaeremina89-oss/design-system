@@ -168,7 +168,6 @@ export const Styles: Story = {
 };
 
 export const Application: Story = {
-  name: 'Применение и адаптив',
   render: () => <Page title="Применение типографики">
     <p>Именованные стили едины. Только текст страницы с responsive переключается на Mobile. Размер текста в компонентах постоянный; ссылка с typography="inherit" следует за абзацем.</p>
     {typographyTokens.map(item => <section key={item.token}>

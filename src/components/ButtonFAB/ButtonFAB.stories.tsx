@@ -73,7 +73,6 @@ export const Focused: Story = { args: { state: 'focused' } };
 export const Disabled: Story = { args: { disabled: true } };
 export const Skeleton: Story = { args: { state: 'skeleton' } };
 export const States: Story = {
-  name: 'Цвета и состояния',
   render: (args) => (
     <div style={{ overflowX: 'auto', padding: 8 }}>
       <table aria-label="ButtonFAB: цвета и состояния" style={{ borderSpacing: 24 }}>

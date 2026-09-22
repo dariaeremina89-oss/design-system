@@ -104,7 +104,6 @@ export const States: Story = {
 export const ForcedIconSize: Story = { args: { size: 'giant', iconSize: 16 } };
 
 export const StateMatrix: Story = {
-  name: 'Цвета и состояния',
   render: (args) => (
     <div style={{ overflowX: 'auto', padding: 8 }}>
       <table style={{ borderSpacing: 20 }} aria-label="ButtonIcon: цвета и состояния">
