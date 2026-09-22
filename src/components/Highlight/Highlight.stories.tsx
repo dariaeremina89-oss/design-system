@@ -14,7 +14,7 @@ const meta = {
     matchWholeWord: { control: 'boolean', table: { defaultValue: { summary: 'false' } } },
     isCaseInsensitive: { control: 'boolean', table: { defaultValue: { summary: 'true' } } },
   },
-  decorators: [Story => <Typography responsive><Story /></Typography>],
+  render: args => <Typography responsive><Highlight {...args} /></Typography>,
 } satisfies Meta<typeof Highlight>;
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -24,7 +24,6 @@ export const WholeWords: Story = { args: { ...AllMatches.args, matchWholeWord: t
 export const CaseSensitive: Story = { args: { ...AllMatches.args, isCaseInsensitive: false } };
 export const LiteralSearch: Story = { args: { children: 'Цена (руб.): 100. Поле (руб.) обязательно.', highlight: '(руб.)' } };
 export const InlineTypography: Story = {
-  decorators: [],
   render: args => <div>
     <Typography as="h2" variant="h2-heading" responsive data-testid="highlight-heading"><Highlight {...args}>Найденный договор</Highlight></Typography>
     <Typography responsive data-testid="highlight-body"><Highlight {...args}>Откройте <strong>договор</strong> и проверьте данные.</Highlight></Typography>
