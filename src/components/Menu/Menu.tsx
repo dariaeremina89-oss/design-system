@@ -1,6 +1,7 @@
-import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { Children, cloneElement, isValidElement, useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { ItemRow, type ItemRowProps } from '../ItemRow/ItemRow';
 import { Divider } from '../Divider/Divider';
+import { Button, type ButtonProps } from '../Button/Button';
 import './Menu.css';
 
 export interface MenuItem extends Omit<ItemRowProps, 'id' | 'role' | 'onClick' | 'onKeyDown' | 'ref' | 'tabIndex'> {
@@ -29,7 +30,7 @@ export interface MenuProps {
   focusItems?: boolean;
   emptyText?: string;
   skeleton?: boolean;
-  onTab?: () => void;
+  onTab?: (event: React.KeyboardEvent) => void;
 }
 export const isMenuItemEnabled = (item: MenuItem) => !item.disabled && item.state !== 'disabled' && item.state !== 'skeleton' && (!item.variant || item.variant === 'item' || item.variant === 'link');
 export const menuOptionId = (menuId: string, itemId: string) => `${menuId}-option-${encodeURIComponent(itemId)}`;
@@ -65,7 +66,12 @@ export function Menu({ items, id: providedId, role = 'menu', selectedId, activeI
   useEffect(() => { if (controlledActive) document.getElementById(menuOptionId(id, controlledActive))?.scrollIntoView?.({ block: 'nearest' }); }, [controlledActive, id]);
   const typeahead = useRef({ text: '', time: 0 });
   function navigate(event: React.KeyboardEvent) {
-    if (event.key === 'Tab' && onTab) { onTab(); return; }
+    if (event.key === 'Tab' && onTab) {
+      const stops = Array.from(root.current?.querySelectorAll<HTMLElement>('*') ?? []).filter(element => element.matches('button:not(:disabled),a[href],input:not(:disabled),[tabindex="0"]') && element.tabIndex >= 0 && !element.closest('[inert]'));
+      const target = event.target as HTMLElement;
+      if (event.shiftKey ? target === stops[0] : target === stops.at(-1)) onTab(event);
+      return;
+    }
     if (skeleton || !focusItems || (event.target as HTMLElement).closest('.fdoc-menu__footer')) return;
     const inSearch = event.target === search.current;
     if (inSearch && event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
@@ -82,7 +88,7 @@ export function Menu({ items, id: providedId, role = 'menu', selectedId, activeI
       if (match) { event.preventDefault(); activate(match.id, true); }
     }
   }
-  return <div className={`fdoc-menu ${className}`} ref={root} style={{ maxHeight }} onKeyDown={navigate} aria-hidden={skeleton || undefined}>
+  return <div className={`fdoc-menu ${className}`} ref={root} style={{ maxHeight }} onKeyDown={navigate} aria-hidden={skeleton || undefined} inert={skeleton || undefined}>
     {searchable && <div className="fdoc-menu__search"><ItemRow variant="search" state={skeleton ? 'skeleton' : 'default'} searchProps={{ ref: search, 'aria-label': searchLabel, value: query, onChange: e => setQuery(e.target.value), onClear: () => setQuery(''), onSearch: () => { if (enabled[0]) activate(enabled[0].id, true); } }}/></div>}
     <div className="fdoc-menu__list" id={id} role={skeleton ? undefined : role} aria-label={aria['aria-labelledby'] ? undefined : role === 'menu' ? 'Действия' : 'Варианты выбора'} {...aria}>
       {visible.map(item => {
@@ -102,6 +108,6 @@ export function Menu({ items, id: providedId, role = 'menu', selectedId, activeI
       })}
       {!visible.length && <div className="fdoc-menu__empty" role="presentation">{emptyText}</div>}
     </div>
-    {footer && <div className="fdoc-menu__footer"><Divider/><div className="fdoc-menu__buttons">{footer}</div></div>}
+    {footer && <div className="fdoc-menu__footer"><Divider/><div className="fdoc-menu__buttons">{skeleton ? Children.map(footer, child => isValidElement<ButtonProps>(child) && child.type === Button ? cloneElement(child, { state: 'skeleton' }) : child) : footer}</div></div>}
   </div>;
 }

@@ -32,3 +32,9 @@ describe('Menu and Dropdown',()=>{
     const user=userEvent.setup();render(<Menu items={[{id:'one',title:'Один'},{id:'help',title:'Справка',variant:'link',href:'#help'}]}/>);await user.tab();await user.keyboard('{End}');expect(screen.getByRole('menuitem',{name:'Справка'})).toHaveFocus();expect(screen.getByRole('menuitem',{name:'Справка'})).toHaveAttribute('href','#help');
   });
 });
+it('Tab can reach search submit and footer controls before closing',async()=>{
+ const user=userEvent.setup();render(<Dropdown items={items} searchable footer={<Button>Применить</Button>}><Button>Действия</Button></Dropdown>);
+ await user.click(screen.getByRole('button',{name:'Действия'}));await waitFor(()=>expect(screen.getByRole('searchbox')).toHaveFocus());
+ await user.tab();expect(screen.getByRole('button',{name:'Найти'})).toHaveFocus();expect(screen.getByRole('menu')).toBeInTheDocument();
+ await user.tab();expect(screen.getByRole('menuitem',{name:'Редактировать'})).toHaveFocus();await user.tab();expect(screen.getByRole('button',{name:'Применить'})).toHaveFocus();expect(screen.getByRole('menu')).toBeInTheDocument();
+});
