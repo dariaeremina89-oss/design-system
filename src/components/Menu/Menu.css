@@ -1,5 +1,8 @@
 .fdoc-menu { box-sizing:border-box;display:flex;flex-direction:column;min-width:112px;max-width:100%;padding:var(--space-8) 0;border-radius:var(--radius-middle);background:var(--background-base-default);box-shadow:var(--shadow-m); }
 .fdoc-menu__list { min-height:0;overflow:auto;overscroll-behavior:contain;scroll-padding-block:0;scrollbar-width:thin;scrollbar-color:var(--background-base-tertiary) transparent; }
+@supports selector(::-webkit-scrollbar) {
+  .fdoc-menu__list { scrollbar-width:auto;scrollbar-color:auto; }
+}
 .fdoc-menu__list::-webkit-scrollbar { width:16px;height:16px; }
 .fdoc-menu__list::-webkit-scrollbar-thumb { background:var(--background-base-tertiary);border:4px solid transparent;background-clip:padding-box;border-radius:var(--radius-middle); }
 .fdoc-menu__list { flex:0 1 auto;outline:none; }

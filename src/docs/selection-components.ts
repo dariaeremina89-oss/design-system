@@ -44,7 +44,7 @@ Description — Caption 12/16, Helper — Body 14/20. Иконки и Checkbox �
 - selection: check/checkbox, selectionPosition: left/right, selected. Отметка check — иконка filled/check_circle_filled 24 px, цвет icon-primary-secondary.
 - divider включает готовый Divider без дополнительных отступов.
 - state: default/hover/pressed/focused/disabled/skeleton. Реальное взаимодействие также включает состояния.
-- Hover и Pressed меняют фон. Focused — внешняя обводка border-large цвета border-base-default-focused без изменения размеров.
+- Hover и Pressed меняют фон. Focused — обводка border-large цвета border-base-default-focused без изменения размеров. У отдельной строки она внешняя; в прокручиваемом Menu размещается внутри строки, чтобы сохранять видимость у краев.
 - disabled блокирует действие и фокус, использует disabled-токены текста и иконок.
 
 ## Доступность и проверка

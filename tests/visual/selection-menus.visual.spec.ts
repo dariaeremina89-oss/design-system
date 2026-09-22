@@ -74,6 +74,7 @@ test('Menu scroll viewport stays inside its bounds and row padding matches the d
   await page.goto(story('components-selection-menu--search-and-scroll'));await expect(page.getByRole('searchbox')).toBeVisible();
   const bounds=(await page.locator('.fdoc-menu').boundingBox())!, scroll=(await page.getByRole('menu').boundingBox())!;
   expect(scroll.x).toBeGreaterThanOrEqual(bounds.x);expect(scroll.x+scroll.width).toBeLessThanOrEqual(bounds.x+bounds.width);
+  expect(await page.getByRole('menu').evaluate(el=>el.getBoundingClientRect().width-el.clientWidth)).toBe(16);
   expect((await page.locator('.fdoc-menu__footer').boundingBox())!.height).toBe(56);
  }
 });
