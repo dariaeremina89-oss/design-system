@@ -8,4 +8,5 @@
 .fdoc-button-toggle .fdoc-button:focus-visible { position:relative; z-index:1; }
 
 .fdoc-button-toggle[data-color=skeleton] { outline-color:var(--background-base-skeleton); }
+.fdoc-button-toggle__segment > .fdoc-skeleton { border-radius:var(--radius-middle); }
 .fdoc-button-toggle[data-color=skeleton] .fdoc-button-toggle__segment[data-separator=true]::before { background:var(--background-base-skeleton); }
