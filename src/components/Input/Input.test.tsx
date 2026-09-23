@@ -104,6 +104,24 @@ describe('Input', () => {
     expect(document.querySelector('[data-icon="magnifying-glass"]')).toBeInTheDocument();
   });
 
+  it('supports interactive leading content and gives it priority over leadingIcon', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(
+      <Input
+        label="Поле"
+        leadingIcon="magnifying-glass"
+        leadingContent={<button type="button" onClick={onClick}>Тип значения</button>}
+      />,
+    );
+
+    const button = screen.getByRole('button', { name: 'Тип значения' });
+    expect(button).toBeInTheDocument();
+    expect(screen.queryByTestId('input-leading-icon')).not.toBeInTheDocument();
+    await user.click(button);
+    expect(onClick).toHaveBeenCalledOnce();
+  });
+
   it('preserves the input anatomy in skeleton state', () => {
     const { container } = render(
       <Input
