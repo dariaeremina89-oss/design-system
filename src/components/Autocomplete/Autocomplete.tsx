@@ -9,10 +9,11 @@ import {
   type Ref,
 } from 'react';
 import { Input, type InputProps } from '../Input/Input';
-import { Icon, type IconName } from '../Icon/Icon';
+import type { IconName } from '../Icon/Icon';
 import { Highlight } from '../Highlight/Highlight';
 import { Menu, menuOptionId, type MenuItem } from '../Menu/Menu';
 import { Popup, type PopupProps } from '../Menu/Popup';
+import { FieldIcon } from '../TextField/TextField';
 import './Autocomplete.css';
 
 export interface AutocompleteItem {
@@ -386,9 +387,7 @@ export function Autocomplete({
         onKeyDown={handleKeyDown}
         trailingContent={
           resolvedMode === 'select' ? (
-            <span className="fdoc-autocomplete__chevron" aria-hidden="true">
-              <Icon name={showPopup ? 'arrow-drop-up' : 'arrow-drop-down'} size={24} />
-            </span>
+            <FieldIcon className="fdoc-autocomplete__chevron" icon={showPopup ? 'arrow-drop-up' : 'arrow-drop-down'} />
           ) : undefined
         }
       />
