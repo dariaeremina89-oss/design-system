@@ -2,6 +2,13 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Textarea } from './Textarea';
 import { testingDocs } from '../../docs/testing';
+import { controlsParameters, pickFieldControls } from '../../docs/story-controls';
+
+const controlOrder = [
+  'label', 'required', 'value', 'defaultValue', 'placeholder', 'caption', 'error',
+  'counter', 'maxLength', 'size', 'resize', 'disabled', 'skeleton',
+  'onChange', 'onFocus', 'onBlur', 'onKeyDown',
+] as const;
 
 const meta = {
   title: 'Components/Inputs/Textarea',
@@ -9,6 +16,7 @@ const meta = {
   tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
+    controls: controlsParameters(controlOrder),
     docs: { description: { component: `
 **Textarea** — нативное многострочное поле F.Doc.
 
@@ -44,11 +52,12 @@ Skeleton использует общий компонент Skeleton и сохр
   decorators: [(Story, context) => <div style={{ width: context.name === 'States' ? 'min(960px, 100%)' : 'min(456px, 100%)' }}><Story /></div>],
   args: { label: 'Label text', placeholder: 'Placeholder', caption: 'Caption text' },
   argTypes: {
-    size: { control: 'radio', options: ['medium', 'small'] },
-    label: { control: 'text' }, caption: { control: 'text' }, error: { control: 'text' },
-    value: { control: 'text' }, defaultValue: { control: 'text' }, counter: { control: 'boolean' },
-    required: { control: 'boolean' }, resize: { control: 'boolean' }, disabled: { control: 'boolean' }, skeleton: { control: 'boolean' },
-    onChange: { action: 'change' }, onFocus: { action: 'focus' }, onBlur: { action: 'blur' },
+    ...pickFieldControls(
+      'label', 'required', 'value', 'defaultValue', 'placeholder', 'caption', 'error',
+      'counter', 'maxLength', 'size', 'disabled', 'skeleton',
+      'onChange', 'onFocus', 'onBlur', 'onKeyDown',
+    ),
+    resize: { control: 'boolean', description: 'Разрешает ручное изменение высоты по вертикали.', table: { category: 'Behavior' } },
   },
 } satisfies Meta<typeof Textarea>;
 export default meta;
