@@ -8,13 +8,12 @@ import {
   type ReactNode,
   type Ref,
 } from 'react';
-import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { Chips } from '../Chips/Chips';
-import { Icon, type IconName } from '../Icon/Icon';
+import type { IconName } from '../Icon/Icon';
 import { Input, type InputProps } from '../Input/Input';
 import { Menu, menuOptionId, type MenuItem } from '../Menu/Menu';
 import { Popup, type PopupProps } from '../Menu/Popup';
-import { FieldHelper, FieldLabel, hasRenderableContent, joinClassNames } from '../TextField/TextField';
+import { FieldClearButton, FieldHelper, FieldIcon, FieldLabel, hasRenderableContent, joinClassNames } from '../TextField/TextField';
 import './Multiselect.css';
 
 export interface MultiselectOption {
@@ -262,7 +261,7 @@ export function Multiselect({
         }}
       >
         {leadingIcon !== undefined && (
-          <span className="fdoc-multiselect__leading" aria-hidden="true"><Icon name={leadingIcon} size={24} /></span>
+          <FieldIcon className="fdoc-multiselect__leading" icon={leadingIcon} />
         )}
 
         <div className="fdoc-multiselect__content">
@@ -312,20 +311,14 @@ export function Multiselect({
         </div>
 
         {clearable && values.length > 0 && !disabled && (
-          <ButtonIcon
+          <FieldClearButton
             className="fdoc-multiselect__clear"
-            size="xsmall"
-            iconSize={24}
-            color="neutral"
-            icon="filled/cross_circle_filled"
             aria-label="Очистить выбор"
             onMouseDown={event => event.preventDefault()}
             onClick={clear}
           />
         )}
-        <span className="fdoc-multiselect__chevron" aria-hidden="true">
-          <Icon name={open ? 'arrow-drop-up' : 'arrow-drop-down'} size={24} />
-        </span>
+        <FieldIcon className="fdoc-multiselect__chevron" icon={open ? 'arrow-drop-up' : 'arrow-drop-down'} />
       </div>
 
       {name && values.map(value => <input key={value} type="hidden" name={name} value={value} disabled={disabled} />)}
