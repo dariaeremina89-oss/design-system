@@ -32,6 +32,10 @@ describe('Select', () => {
     const input=screen.getByRole('combobox');expect(input).toBeDisabled();expect(input).toHaveAttribute('aria-invalid','true');expect(input).toHaveAccessibleDescription('Выберите статус');fireEvent.click(input);expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
     rerender(<Select options={options} label="Статус" skeleton/>);expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
   });
+  it('preserves the required field contract from Input', () => {
+    render(<Select options={options} label="Статус" required/>);
+    const input=screen.getByRole('combobox');expect(input).toBeRequired();expect(input).toHaveAttribute('aria-required','true');expect(screen.getByText('*')).toBeInTheDocument();
+  });
   it('does not commit an IME composition and safely handles zero options', async () => {
     const change=vi.fn();render(<Select options={[]} aria-label="Категория" creatable onValueChange={change}/>);
     const input=screen.getByRole('combobox');fireEvent.change(input,{target:{value:'日本'}});fireEvent.keyDown(input,{key:'Enter',isComposing:true});expect(change).not.toHaveBeenCalled();
