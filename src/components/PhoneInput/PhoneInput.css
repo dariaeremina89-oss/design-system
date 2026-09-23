@@ -15,23 +15,21 @@
   padding: 0;
   overflow: visible;
   border: 0;
+  border-radius: var(--radius-small);
   outline: 0;
   background: transparent;
   cursor: pointer;
 }
 
-.fdoc-phone-input__selector[data-state='focused']::after {
-  box-sizing: border-box;
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 33px;
-  height: 28px;
-  transform: translate(-50%, -50%);
-  border: var(--border-large) solid var(--border-base-default-focused);
-  border-radius: var(--radius-middle);
-  pointer-events: none;
+.fdoc-phone-input__selector > .fdoc-icon {
+  display: block;
+  flex: 0 0 var(--elements-24);
+  width: var(--elements-24);
+  height: var(--elements-24);
+}
+
+.fdoc-phone-input__selector[data-state='focused'] {
+  box-shadow: 0 0 0 var(--border-large) var(--border-base-default-focused);
 }
 
 .fdoc-phone-input__selector:disabled {
