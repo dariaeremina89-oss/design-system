@@ -47,7 +47,7 @@ Skeleton использует общий компонент Skeleton и сохр
     size: { control: 'radio', options: ['medium', 'small'] },
     label: { control: 'text' }, caption: { control: 'text' }, error: { control: 'text' },
     value: { control: 'text' }, defaultValue: { control: 'text' }, counter: { control: 'boolean' },
-    resize: { control: 'boolean' }, disabled: { control: 'boolean' }, skeleton: { control: 'boolean' },
+    required: { control: 'boolean' }, resize: { control: 'boolean' }, disabled: { control: 'boolean' }, skeleton: { control: 'boolean' },
     onChange: { action: 'change' }, onFocus: { action: 'focus' }, onBlur: { action: 'blur' },
   },
 } satisfies Meta<typeof Textarea>;
