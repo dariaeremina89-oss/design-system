@@ -14,7 +14,7 @@ const options: MultiselectOption[] = [
 
 const controlOrder = [
   'label', 'placeholder', 'value', 'defaultValue', 'options', 'caption', 'error', 'counter',
-  'required', 'size', 'clearable', 'disabled', 'skeleton', 'placement', 'menuMaxHeight', 'emptyText',
+  'required', 'size', 'selectionPosition', 'clearable', 'disabled', 'skeleton', 'placement', 'menuMaxHeight', 'emptyText',
   'onValueChange', 'onClear', 'onFocus', 'onBlur', 'onKeyDown',
 ] as const;
 
@@ -36,11 +36,14 @@ const meta = {
 
 Размеры поля совпадают с Input и Select: Medium — 56 px, Small — 48 px. Chips внутри поля — 32 px. Menu использует строки с Checkbox и остается открытым после выбора, чтобы пользователь мог отметить несколько значений подряд.
 
+Checkbox в строке по умолчанию расположен слева. Через selectionPosition его можно перенести вправо, например если левый слот нужен под leadingIcon.
+
 ### Поведение
 
 - value/defaultValue содержат массив option.value;
 - onValueChange возвращает полный новый массив выбранных значений;
 - повторный выбор пункта снимает его выбор;
+- после выбора мышкой строка не сохраняет focused-состояние, выбранность показывает Checkbox;
 - Disabled option нельзя выбрать и удалить через клавиатуру;
 - Escape закрывает Menu, Tab закрывает Menu и продолжает обычную навигацию;
 - ArrowDown/ArrowUp, Home/End перемещают активный пункт, Enter/Space переключают его;
@@ -60,6 +63,7 @@ const meta = {
     label: 'Команды',
     placeholder: 'Выберите команды',
     caption: 'Можно выбрать несколько вариантов',
+    selectionPosition: 'left',
     clearable: true,
   },
   argTypes: {
@@ -68,6 +72,12 @@ const meta = {
     defaultValue: { control: 'object', description: 'Начальный массив выбранных option.value.', table: { category: 'Value' } },
     options: { control: 'object', description: 'Доступные варианты выбора.', table: { category: 'Content' } },
     counter: { control: 'boolean', description: 'Показывает количество выбранных значений.', table: { category: 'Content' } },
+    selectionPosition: {
+      control: 'radio',
+      options: ['left', 'right'],
+      description: 'Позиция Checkbox в строках Menu. Справа освобождает левый слот под leadingIcon.',
+      table: { category: 'Appearance' },
+    },
     placement: { control: 'select', options: ['auto', 'top', 'bottom'], table: { category: 'Behavior' } },
     menuMaxHeight: { control: { type: 'number', min: 48 }, table: { category: 'Behavior' } },
     emptyText: { control: 'text', table: { category: 'Content' } },
@@ -101,6 +111,18 @@ export const States: Story = {
       <Multiselect {...args} label="Skeleton" skeleton />
     </div>
   ),
+};
+
+export const WithLeadingIcons: Story = {
+  args: {
+    label: 'Разделы',
+    selectionPosition: 'right',
+    options: [
+      { value: 'docs', label: 'Документы', leadingIcon: 'doc-list' },
+      { value: 'archive', label: 'Архив', leadingIcon: 'archive' },
+      { value: 'settings', label: 'Настройки', leadingIcon: 'gear' },
+    ],
+  },
 };
 
 export const ManyValues: Story = {
