@@ -22,7 +22,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Autocomplete выбирает одно значение из списка через поиск. Визуально наследует Input, Select и Menu: без полученного списка работает как Input, при наличии вариантов — как Select. Произвольное значение сохранить нельзя.',
+          'Autocomplete выбирает одно значение из списка через поиск. Визуально наследует Input, Select и Menu: без полученного списка работает как Input, при наличии вариантов — как Select. Произвольное значение сохранить нельзя. required показывает обязательность через Label и передает aria-required полю.',
       },
     },
   },
@@ -49,6 +49,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+export const Required: Story = { args: { required: true } };
 
 export const Sizes: Story = {
   render: args => (
