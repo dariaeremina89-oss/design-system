@@ -34,11 +34,11 @@
   pointer-events: none;
 }
 
-.fdoc-input__field:focus-within {
+.fdoc-input__field:has(.fdoc-input__control:focus) {
   padding: calc(var(--space-12) - var(--border-small));
 }
 
-.fdoc-input--small .fdoc-input__field:focus-within {
+.fdoc-input--small .fdoc-input__field:has(.fdoc-input__control:focus) {
   padding-top: calc(var(--space-8) - var(--border-small));
   padding-bottom: calc(var(--space-8) - var(--border-small));
 }
