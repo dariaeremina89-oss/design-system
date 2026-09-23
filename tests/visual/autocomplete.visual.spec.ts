@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
 
 test('autocomplete follows Input and Menu geometry', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-selection-autocomplete--states&viewMode=story');
-  const fields = page.locator('.fdoc-autocomplete .fdoc-input__field');
-  await expect(fields.first()).toHaveCSS('min-height', '56px');
-  await expect(fields.first()).toHaveCSS('border-radius', '8px');
+  await page.goto('/iframe.html?id=components-selection-autocomplete--open&viewMode=story');
+  const field = page.locator('.fdoc-autocomplete .fdoc-input__field').first();
+  await expect(field).toHaveCSS('min-height', '56px');
+  await expect(field).toHaveCSS('border-radius', '8px');
 
   const openMenu = page.locator('.fdoc-popup .fdoc-menu').first();
   await expect(openMenu).toBeVisible();
