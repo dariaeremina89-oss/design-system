@@ -85,7 +85,6 @@
   justify-content: center;
   width: var(--elements-24);
   height: var(--elements-24);
-  color: var(--icon-base-secondary);
 }
 
 .fdoc-input__sum {
@@ -109,18 +108,6 @@
   height: var(--elements-24);
   padding: var(--space-4);
   color: var(--icon-base-default);
-}
-
-.fdoc-input__clear {
-  flex: 0 0 var(--elements-24);
-}
-
-.fdoc-input__clear.fdoc-button-icon {
-  padding: 0;
-}
-
-.fdoc-input__field--disabled .fdoc-input__slot {
-  color: var(--icon-base-secondary-disabled);
 }
 
 .fdoc-input__field--disabled .fdoc-input__sum-icon {
