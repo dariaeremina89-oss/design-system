@@ -1,4 +1,4 @@
-import { Children, type HTMLAttributes, type ReactNode } from 'react';
+import { Children, Fragment, isValidElement, type HTMLAttributes, type ReactNode } from 'react';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { Icon, type IconName } from '../Icon/Icon';
 import './InfoBlock.css';
@@ -36,6 +36,14 @@ function joinClassNames(...classes: Array<string | false | undefined>) {
   return classes.filter(Boolean).join(' ');
 }
 
+function flattenActions(node: ReactNode): ReactNode[] {
+  return Children.toArray(node).flatMap(child =>
+    isValidElement(child) && child.type === Fragment
+      ? flattenActions(child.props.children)
+      : [child],
+  );
+}
+
 export function InfoBlock({
   size = 'medium',
   direction = 'horizontal',
@@ -51,7 +59,7 @@ export function InfoBlock({
   className,
   ...props
 }: InfoBlockProps) {
-  const actionItems = Children.toArray(actions).slice(0, 2);
+  const actionItems = flattenActions(actions).slice(0, 2);
 
   return (
     <div
