@@ -14,7 +14,7 @@ test('PhoneInput matches Input geometry and keeps component typography', async (
   await expect(selector.locator('[data-icon="flag_chevron/Country=Rus, State=Default"]')).toBeVisible();
 });
 
-test('PhoneInput uses the Figma selector state while the text input is focused', async ({ page }) => {
+test('PhoneInput keeps field focus separate from selector focus', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-phoneinput--default&viewMode=story');
   const input = page.getByLabel('Номер телефона');
   const field = page.locator('.fdoc-phone-input .fdoc-input__field');
@@ -22,7 +22,15 @@ test('PhoneInput uses the Figma selector state while the text input is focused',
 
   await input.focus();
   await expect(field).toHaveCSS('border-width', '2px');
-  await expect(selector.locator('[data-icon="flag_chevron/Country=Rus, State=Focused"]')).toBeVisible();
+  await expect(selector.locator('[data-icon="flag_chevron/Country=Rus, State=Default"]')).toBeVisible();
+
+  await selector.focus();
+  const focusedIcon = selector.locator('[data-icon="flag_chevron/Country=Rus, State=Focused"]');
+  await expect(focusedIcon).toBeVisible();
+  await expect(focusedIcon).toHaveCSS('width', '26px');
+  await expect(focusedIcon).toHaveCSS('height', '26px');
+  await expect(selector).toHaveCSS('width', '24px');
+  await expect(selector).toHaveCSS('height', '24px');
 });
 
 test('PhoneInput opens a two-item country Menu and keeps the field focused visually', async ({ page }) => {
