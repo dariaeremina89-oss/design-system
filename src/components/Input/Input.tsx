@@ -5,10 +5,9 @@ import {
   type ReactNode,
   type Ref,
 } from 'react';
-import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
-import { Icon, type IconName } from '../Icon/Icon';
+import type { IconName } from '../Icon/Icon';
 import { InputSkeleton } from './InputSkeleton';
-import { FieldLabel, FieldHelper, useTextField, joinClassNames } from '../TextField/TextField';
+import { FieldClearButton, FieldHelper, FieldIcon, FieldLabel, useTextField, joinClassNames } from '../TextField/TextField';
 import './Input.css';
 
 export type InputSize = 'medium' | 'small';
@@ -154,9 +153,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         data-testid="input-field"
       >
         {leadingIcon !== undefined && (
-          <span className="fdoc-input__slot fdoc-input__slot--leading" aria-hidden="true" data-testid="input-leading-icon">
-            <Icon name={leadingIcon} size={24} />
-          </span>
+          <FieldIcon icon={leadingIcon} className="fdoc-input__slot fdoc-input__slot--leading" data-testid="input-leading-icon" />
         )}
 
         <span className="fdoc-input__content" data-testid="input-content">
@@ -192,29 +189,23 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             {sum}
             {sumIcon !== undefined && (
               <span className="fdoc-input__sum-icon" aria-hidden="true" data-testid="input-sum-icon">
-                <Icon name={sumIcon} size={16} />
+                <span className="fdoc-icon" style={{ width: 16, height: 16 }} />
               </span>
             )}
           </span>
         )}
 
         {showClear && (
-          <ButtonIcon
+          <FieldClearButton
             className="fdoc-input__clear"
             icon={clearIcon}
-            iconSize={24}
-            size="xsmall"
-            color="neutral"
-            aria-label="Очистить поле"
             data-testid="input-clear"
             onClick={handleClear}
           />
         )}
 
         {trailingIcon !== undefined && (
-          <span className="fdoc-input__slot fdoc-input__slot--trailing" aria-hidden="true" data-testid="input-trailing-icon">
-            <Icon name={trailingIcon} size={24} />
-          </span>
+          <FieldIcon icon={trailingIcon} className="fdoc-input__slot fdoc-input__slot--trailing" data-testid="input-trailing-icon" />
         )}
 
         {trailingContent}
