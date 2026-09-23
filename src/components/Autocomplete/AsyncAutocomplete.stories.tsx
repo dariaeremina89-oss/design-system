@@ -87,8 +87,14 @@ export const Loading: Story = {
   args: {
     data: [],
     defaultInputValue: 'Яб',
-    defaultOpen: true,
     loading: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Нажмите на поле, чтобы показать Loading в Menu.',
+      },
+    },
   },
 };
 
@@ -96,7 +102,13 @@ export const NoResults: Story = {
   args: {
     data: [],
     defaultInputValue: 'Киви',
-    defaultOpen: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Нажмите на поле, чтобы показать состояние без результатов.',
+      },
+    },
   },
 };
 
@@ -104,13 +116,19 @@ export const LoadError: Story = {
   args: {
     data: [],
     defaultInputValue: 'Яб',
-    defaultOpen: true,
     loadError: (
       <>
         Не удалось получить список. Попробуйте вернуться позже. Если ошибка сохраняется, обратитесь в техподдержку{' '}
         <u>support@fdoc.ru</u>
       </>
     ),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Нажмите на поле, чтобы показать ошибку загрузки Menu.',
+      },
+    },
   },
 };
 
