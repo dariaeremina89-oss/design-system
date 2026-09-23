@@ -101,3 +101,6 @@ export { createColorTheme } from './styles/color-theme';
 
 export { Highlight } from './components/Highlight/Highlight';
 export type { HighlightProps } from './components/Highlight/Highlight';
+
+export { InfoBlock } from './components/InfoBlock/InfoBlock';
+export type { InfoBlockProps, InfoBlockSize, InfoBlockDirection, InfoBlockColor } from './components/InfoBlock/InfoBlock';
