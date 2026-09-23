@@ -6,6 +6,7 @@ test('autocomplete follows Input and Menu geometry', async ({ page }) => {
   await expect(field).toHaveCSS('min-height', '56px');
   await expect(field).toHaveCSS('border-radius', '8px');
 
+  await page.getByRole('combobox').click();
   const openMenu = page.locator('.fdoc-popup .fdoc-menu').first();
   await expect(openMenu).toBeVisible();
   await expect(openMenu).toHaveCSS('border-radius', '8px');
@@ -26,9 +27,11 @@ test('autocomplete highlights a local match and keeps focus on combobox', async 
 
 test('async loading and load error use Menu states', async ({ page }) => {
   await page.goto('/iframe.html?id=components-selection-asyncautocomplete--loading&viewMode=story');
+  await page.getByRole('combobox').click();
   await expect(page.locator('.fdoc-popup .fdoc-item-row[data-state="skeleton"]')).toHaveCount(5);
 
   await page.goto('/iframe.html?id=components-selection-asyncautocomplete--load-error&viewMode=story');
+  await page.getByRole('combobox').click();
   const error = page.locator('.fdoc-autocomplete__message--error .fdoc-item-row__title');
   await expect(error).toContainText('Не удалось получить список');
 });
