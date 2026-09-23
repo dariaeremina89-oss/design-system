@@ -12,6 +12,13 @@ describe('InfoBlock', () => {
     expect(screen.getByTestId('info-block-close')).toBeInTheDocument();
   });
 
+  it('supports optional anatomy', () => {
+    render(<InfoBlock text="Text only" showLeftIcon={false} closable={false} />);
+    expect(screen.getByText('Text only')).toBeInTheDocument();
+    expect(screen.queryByTestId('info-block-icon')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('info-block-close')).not.toBeInTheDocument();
+  });
+
   it('calls onClose', () => {
     const onClose = vi.fn();
     render(<InfoBlock title="Title" onClose={onClose} />);
@@ -19,9 +26,15 @@ describe('InfoBlock', () => {
     expect(onClose).toHaveBeenCalledOnce();
   });
 
-  it('supports up to two actions in the actions slot', () => {
-    render(<InfoBlock actions={<><Button>One</Button><Button>Two</Button></>} />);
+  it('renders no more than two actions', () => {
+    render(<InfoBlock actions={<><Button>One</Button><Button>Two</Button><Button>Three</Button></>} />);
     expect(screen.getByText('One')).toBeInTheDocument();
     expect(screen.getByText('Two')).toBeInTheDocument();
+    expect(screen.queryByText('Three')).not.toBeInTheDocument();
+  });
+
+  it('applies size, direction and semantic color classes', () => {
+    render(<InfoBlock size="small" direction="vertical" color="warning" />);
+    expect(screen.getByTestId('info-block')).toHaveClass('fdoc-info-block--small', 'fdoc-info-block--vertical', 'fdoc-info-block--warning');
   });
 });
