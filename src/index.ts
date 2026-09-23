@@ -71,6 +71,15 @@ export { Dropdown } from './components/Menu/Dropdown';
 export type { DropdownProps } from './components/Menu/Dropdown';
 export { Select } from './components/Select/Select';
 export type { SelectProps, SelectOption } from './components/Select/Select';
+export { Autocomplete } from './components/Autocomplete/Autocomplete';
+export type {
+  AutocompleteProps,
+  AutocompleteItem,
+  AutocompleteMode,
+  AutocompleteInputChangeReason,
+} from './components/Autocomplete/Autocomplete';
+export { AsyncAutocomplete } from './components/Autocomplete/AsyncAutocomplete';
+export type { AsyncAutocompleteProps } from './components/Autocomplete/AsyncAutocomplete';
 export { Chips } from './components/Chips/Chips';
 export type { ChipsProps, ChipsColor, ChipsSize, ChipsShape, ChipsState } from './components/Chips/Chips';
 export { ChipsGroup } from './components/Chips/ChipsGroup';
