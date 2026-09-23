@@ -14,6 +14,16 @@ test('PhoneInput matches Input geometry and keeps component typography', async (
   await expect(selector.locator('[data-icon="flag_chevron/Country=Rus, State=Default"]')).toBeVisible();
 });
 
+test('PhoneInput inherits field click focus from Input', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-phoneinput--default&viewMode=story');
+  const field = page.locator('.fdoc-phone-input .fdoc-input__field');
+  const input = page.getByLabel('Номер телефона');
+
+  await field.click({ position: { x: 200, y: 10 } });
+  await expect(input).toBeFocused();
+  await expect(field).toHaveCSS('border-width', '2px');
+});
+
 test('PhoneInput keeps field focus separate from selector focus', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-phoneinput--default&viewMode=story');
   const input = page.getByLabel('Номер телефона');
@@ -25,15 +35,14 @@ test('PhoneInput keeps field focus separate from selector focus', async ({ page 
   await expect(selector.locator('[data-icon="flag_chevron/Country=Rus, State=Default"]')).toBeVisible();
 
   await selector.focus();
-  const focusedIcon = selector.locator('[data-icon="flag_chevron/Country=Rus, State=Focused"]');
-  await expect(focusedIcon).toBeVisible();
-  await expect(focusedIcon).toHaveCSS('width', '26px');
-  await expect(focusedIcon).toHaveCSS('height', '26px');
+  await expect(field).toHaveCSS('border-width', '1px');
+  await expect(selector.locator('[data-icon="flag_chevron/Country=Rus, State=Default"]')).toBeVisible();
+  await expect(selector).toHaveAttribute('data-state', 'focused');
   await expect(selector).toHaveCSS('width', '24px');
   await expect(selector).toHaveCSS('height', '24px');
 });
 
-test('PhoneInput opens a two-item country Menu and keeps the field focused visually', async ({ page }) => {
+test('PhoneInput opens a two-item country Menu without replacing Input field focus styles', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-phoneinput--default&viewMode=story');
   const selector = page.getByRole('button', { name: 'Тип номера: Россия +7' });
   const field = page.locator('.fdoc-phone-input .fdoc-input__field');
@@ -44,7 +53,7 @@ test('PhoneInput opens a two-item country Menu and keeps the field focused visua
   await expect(menu.getByRole('option')).toHaveCount(2);
   await expect(menu.getByRole('option', { name: 'Россия +7' })).toBeVisible();
   await expect(menu.getByRole('option', { name: 'Иностранный номер' })).toBeVisible();
-  await expect(field).toHaveCSS('border-width', '2px');
+  await expect(field).toHaveCSS('border-width', '1px');
   await expect(selector.locator('[data-icon="flag_chevron/Country=Rus, State=Open"]')).toBeVisible();
 
   const fieldWidth = await field.evaluate(element => element.getBoundingClientRect().width);
