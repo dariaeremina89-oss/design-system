@@ -16,6 +16,14 @@ export type {
 } from './components/ProgressIndicator/ProgressIndicator';
 export { Input } from './components/Input/Input';
 export type { InputProps, InputSize } from './components/Input/Input';
+export {
+  PhoneInput,
+  PHONE_INPUT_REQUIRED_ERROR,
+  PHONE_INPUT_FORMAT_ERROR,
+  formatRussianPhone,
+  isValidPhoneValue,
+} from './components/PhoneInput/PhoneInput';
+export type { PhoneInputProps, PhoneInputType } from './components/PhoneInput/PhoneInput';
 export { ButtonIcon } from './components/ButtonIcon/ButtonIcon';
 export type {
   ButtonIconColor,
