@@ -49,6 +49,8 @@ export interface PhoneInputProps extends Omit<InputProps,
 
 const russianPlaceholder = '(000) 000-00-00';
 
+type SelectorState = 'Default' | 'Hover' | 'Focused' | 'Pressed' | 'Open' | 'Disabled';
+
 function digitsOnly(value: string) {
   return value.replace(/\D/g, '');
 }
@@ -106,10 +108,10 @@ export function isValidPhoneValue(value: string, type: PhoneInputType) {
   const digits = digitsOnly(value);
   if (!digits) return false;
   if (type === 'russian') return normalizeRussianComplete(value) !== undefined;
-  return digits.length >= 4;
+  return true;
 }
 
-function selectorIcon(type: PhoneInputType, state: 'Default' | 'Hover' | 'Focused' | 'Pressed' | 'Open' | 'Disabled') {
+function selectorIcon(type: PhoneInputType, state: Exclude<SelectorState, 'Focused'>) {
   const country = type === 'russian' ? 'Rus' : 'Earth';
   return `flag_chevron/Country=${country}, State=${state}` as IconName;
 }
@@ -255,7 +257,7 @@ export function PhoneInput({
     requestAnimationFrame(() => input.current?.focus());
   }
 
-  const visualState = disabled
+  const visualState: SelectorState = disabled
     ? 'Disabled'
     : open
       ? 'Open'
@@ -266,6 +268,7 @@ export function PhoneInput({
           : selectorHover
             ? 'Hover'
             : 'Default';
+  const assetState: Exclude<SelectorState, 'Focused'> = visualState === 'Focused' ? 'Default' : visualState;
 
   const items: MenuItem[] = [
     { id: 'russian', textValue: 'Россия +7', title: menuTitle('russian') },
@@ -314,7 +317,7 @@ export function PhoneInput({
             onBlur={() => setSelectorFocus(false)}
             onClick={() => changeOpen(!open)}
           >
-            <Icon name={selectorIcon(phoneType, visualState)} size={visualState === 'Focused' ? 26 : 24} />
+            <Icon name={selectorIcon(phoneType, assetState)} size={24} />
           </button>
         )}
         onChange={event => handleChange(event.currentTarget.value)}
