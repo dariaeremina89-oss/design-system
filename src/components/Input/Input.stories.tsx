@@ -48,6 +48,7 @@ Caret не является пропсом: текстовый курсор ос
     error: { control: 'text' },
     caption: { control: 'text' },
     counter: { control: 'boolean' },
+    required: { control: 'boolean' },
     leadingIcon: { control: 'select', options: iconNames },
     trailingIcon: { control: 'select', options: iconNames },
     sum: { control: 'text' },
