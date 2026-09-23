@@ -1,16 +1,55 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Select } from './Select';
 import { selectionDocs } from '../../docs/selection-components';
-const options=[{value:'draft',label:'Черновик',description:'Документ еще не отправлен'},{value:'sent',label:'Отправлен',description:'Ожидает подписи'},{value:'blocked',label:'Архив',disabled:true},{value:'signed',label:'Подписан',helper:'Готово'}];
-const meta={title:'Components/Selection/Select',component:Select,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:selectionDocs('Select')}}},args:{label:'Статус документа',placeholder:'Выберите статус',options,caption:'Текущее состояние документа'},decorators:[Story=><div style={{width:'100%',maxWidth:456}}><Story/></div>],argTypes:{size:{control:'radio',options:['small','medium']},creatable:{control:'boolean'},clearable:{control:'boolean'},required:{control:'boolean'},disabled:{control:'boolean'},skeleton:{control:'boolean'},placement:{control:'select',options:['auto','top','bottom']}}} satisfies Meta<typeof Select>;
-export default meta;type Story=StoryObj<typeof meta>;
-export const Default:Story={};
-export const Required:Story={args:{required:true}};
-export const Sizes:Story={render:args=><div style={{display:'grid',gap:24}}><Select {...args} size="medium"/><Select {...args} size="small"/></div>};
-export const States:Story={render:args=><div style={{display:'grid',gap:24}}><Select {...args}/><Select {...args} defaultValue="draft" clearable/><Select {...args} error="Выберите статус" required/><Select {...args} disabled defaultValue="sent"/><Select {...args} disabled error="Выбор недоступен"/><Select {...args} skeleton/></div>};
-export const Creatable:Story={args:{creatable:true,clearable:true,label:'Категория',placeholder:'Выберите или введите категорию',caption:'Enter сохраняет новое значение. Список вариантов не фильтруется'}};
-export const WithDescription:Story={args:{defaultValue:'signed',description:'Дополнительное описание',leadingIcon:'copy',counter:'1 / 1',required:true,clearable:true}};
-export const Skeleton:Story={args:{skeleton:true,description:'Описание',leadingIcon:'copy',counter:'1 / 1'}};
-export const Empty:Story={args:{options:[]}};
-export const LongList:Story={args:{options:Array.from({length:100},(_,i)=>({value:String(i+1),label:`Организация ${i+1}`}))}};
-export const AtEdge:Story={decorators:[Story=><div style={{height:'calc(100vh - 48px)',display:'flex',alignItems:'flex-end'}}><Story/></div>]};
+import { controlsParameters, pickFieldControls } from '../../docs/story-controls';
+
+const options = [
+  { value: 'draft', label: 'Черновик', description: 'Документ еще не отправлен' },
+  { value: 'sent', label: 'Отправлен', description: 'Ожидает подписи' },
+  { value: 'blocked', label: 'Архив', disabled: true },
+  { value: 'signed', label: 'Подписан', helper: 'Готово' },
+];
+
+const controlOrder = [
+  'label', 'required', 'value', 'defaultValue', 'placeholder', 'description', 'caption', 'error',
+  'counter', 'size', 'clearable', 'disabled', 'skeleton',
+  'creatable', 'placement', 'menuMaxHeight', 'emptyText',
+  'onValueChange', 'onClear', 'onOpenChange',
+] as const;
+
+const meta = {
+  title: 'Components/Selection/Select',
+  component: Select,
+  tags: ['autodocs', 'ready'],
+  parameters: {
+    layout: 'padded',
+    controls: controlsParameters(controlOrder),
+    docs: { description: { component: selectionDocs('Select') } },
+  },
+  args: { label: 'Статус документа', placeholder: 'Выберите статус', options, caption: 'Текущее состояние документа' },
+  decorators: [Story => <div style={{ width: '100%', maxWidth: 456 }}><Story /></div>],
+  argTypes: {
+    ...pickFieldControls(
+      'label', 'required', 'value', 'defaultValue', 'placeholder', 'description', 'caption', 'error',
+      'counter', 'size', 'clearable', 'disabled', 'skeleton',
+      'onValueChange', 'onClear', 'onOpenChange',
+    ),
+    creatable: { control: 'boolean', description: 'Разрешает ввод собственного значения.', table: { category: 'Behavior' } },
+    placement: { control: 'select', options: ['auto', 'top', 'bottom'], description: 'Позиция Menu относительно поля.', table: { category: 'Appearance' } },
+    menuMaxHeight: { control: { type: 'number', min: 48 }, description: 'Максимальная высота Menu, px.', table: { category: 'Appearance' } },
+    emptyText: { control: 'text', description: 'Текст пустого списка.', table: { category: 'Content' } },
+  },
+} satisfies Meta<typeof Select>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+export const Default: Story = {};
+export const Required: Story = { args: { required: true } };
+export const Sizes: Story = { render: args => <div style={{ display: 'grid', gap: 24 }}><Select {...args} size="medium"/><Select {...args} size="small"/></div> };
+export const States: Story = { render: args => <div style={{ display: 'grid', gap: 24 }}><Select {...args}/><Select {...args} defaultValue="draft" clearable/><Select {...args} error="Выберите статус" required/><Select {...args} disabled defaultValue="sent"/><Select {...args} disabled error="Выбор недоступен"/><Select {...args} skeleton/></div> };
+export const Creatable: Story = { args: { creatable: true, clearable: true, label: 'Категория', placeholder: 'Выберите или введите категорию', caption: 'Enter сохраняет новое значение. Список вариантов не фильтруется' } };
+export const WithDescription: Story = { args: { defaultValue: 'signed', description: 'Дополнительное описание', leadingIcon: 'copy', counter: '1 / 1', required: true, clearable: true } };
+export const Skeleton: Story = { args: { skeleton: true, description: 'Описание', leadingIcon: 'copy', counter: '1 / 1' } };
+export const Empty: Story = { args: { options: [] } };
+export const LongList: Story = { args: { options: Array.from({ length: 100 }, (_, i) => ({ value: String(i + 1), label: `Организация ${i + 1}` })) } };
+export const AtEdge: Story = { decorators: [Story => <div style={{ height: 'calc(100vh - 48px)', display: 'flex', alignItems: 'flex-end' }}><Story/></div>] };
