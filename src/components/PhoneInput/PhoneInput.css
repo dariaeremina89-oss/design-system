@@ -1,0 +1,120 @@
+.fdoc-phone-input {
+  width: 100%;
+  min-width: 0;
+}
+
+.fdoc-phone-input__selector {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: 0 0 var(--elements-24);
+  align-items: center;
+  justify-content: center;
+  width: var(--elements-24);
+  height: var(--elements-24);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  outline: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.fdoc-phone-input__selector:disabled {
+  cursor: not-allowed;
+}
+
+.fdoc-phone-input__field .fdoc-input__control {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-24);
+}
+
+.fdoc-phone-input[data-open='true'] .fdoc-input__field {
+  border-width: var(--border-middle);
+  border-color: var(--border-primary-default);
+  padding: calc(var(--space-12) - var(--border-small));
+}
+
+.fdoc-phone-input[data-open='true'] .fdoc-input--small .fdoc-input__field {
+  padding-top: calc(var(--space-8) - var(--border-small));
+  padding-bottom: calc(var(--space-8) - var(--border-small));
+}
+
+.fdoc-phone-input__field--empty-russian .fdoc-input__content,
+.fdoc-phone-input__field--empty-international .fdoc-input__content {
+  position: relative;
+}
+
+.fdoc-phone-input__field--empty-russian .fdoc-input__content::before,
+.fdoc-phone-input__field--empty-international .fdoc-input__content::before {
+  position: absolute;
+  top: 50%;
+  left: var(--space-4);
+  z-index: 0;
+  transform: translateY(-50%);
+  color: var(--text-base-default);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-24);
+  pointer-events: none;
+}
+
+.fdoc-phone-input__field--empty-russian .fdoc-input__content::before {
+  content: '+7';
+}
+
+.fdoc-phone-input__field--empty-international .fdoc-input__content::before {
+  content: '+';
+}
+
+.fdoc-phone-input__field--empty-russian .fdoc-input__control {
+  position: relative;
+  z-index: 1;
+  padding-left: 24px;
+}
+
+.fdoc-phone-input__field--empty-international .fdoc-input__control {
+  position: relative;
+  z-index: 1;
+  padding-left: 12px;
+}
+
+.fdoc-phone-input__field--empty-russian .fdoc-input__control::placeholder {
+  color: var(--text-base-secondary);
+}
+
+.fdoc-phone-input__field .fdoc-input__field--disabled .fdoc-input__content::before {
+  color: var(--text-base-default-disabled);
+}
+
+.fdoc-phone-input__menu-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-12);
+  min-width: 0;
+}
+
+.fdoc-phone-input__menu-flag {
+  display: inline-flex;
+  flex: 0 0 16px;
+  align-items: center;
+  width: 16px;
+  height: var(--elements-24);
+  overflow: hidden;
+}
+
+.fdoc-phone-input__menu-flag .fdoc-icon {
+  flex: 0 0 var(--elements-24);
+  max-width: none;
+}
+
+.fdoc-phone-input__menu-earth {
+  flex: 0 0 var(--elements-24);
+  color: var(--icon-base-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fdoc-phone-input__selector { transition: none; }
+}
