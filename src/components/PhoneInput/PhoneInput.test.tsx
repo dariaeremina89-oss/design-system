@@ -38,6 +38,66 @@ describe('PhoneInput', () => {
     expect(onValueChange).toHaveBeenLastCalledWith('+79081822772');
   });
 
+  it('switches to International during manual foreign input', async () => {
+    const user = userEvent.setup();
+    const onTypeChange = vi.fn();
+    render(<PhoneInput label="Телефон" onPhoneTypeChange={onTypeChange} />);
+    const input = screen.getByLabelText('Телефон');
+
+    await user.type(input, '47');
+
+    expect(input).toHaveValue('+47');
+    expect(screen.getByRole('button', { name: 'Тип номера: Иностранный номер' })).toBeInTheDocument();
+    expect(onTypeChange).toHaveBeenCalledWith('international');
+  });
+
+  it('switches from International to Russian when manual input becomes a Russian number', async () => {
+    const user = userEvent.setup();
+    const onTypeChange = vi.fn();
+    render(
+      <PhoneInput
+        label="Телефон"
+        defaultPhoneType="international"
+        onPhoneTypeChange={onTypeChange}
+      />,
+    );
+    const input = screen.getByLabelText('Телефон');
+
+    await user.type(input, '9081822772');
+
+    expect(input).toHaveValue('+7 (908) 182-27-72');
+    expect(screen.getByRole('button', { name: 'Тип номера: Россия +7' })).toBeInTheDocument();
+    expect(onTypeChange).toHaveBeenLastCalledWith('russian');
+  });
+
+  it('converts an 89 Russian number typed in International mode to +7', async () => {
+    const user = userEvent.setup();
+    render(<PhoneInput label="Телефон" defaultPhoneType="international" />);
+    const input = screen.getByLabelText('Телефон');
+
+    await user.type(input, '89081822772');
+
+    expect(input).toHaveValue('+7 (908) 182-27-72');
+    expect(screen.getByRole('button', { name: 'Тип номера: Россия +7' })).toBeInTheDocument();
+  });
+
+  it('deletes digits through Russian mask separators', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<PhoneInput label="Телефон" onValueChange={onValueChange} />);
+    const input = screen.getByLabelText('Телефон');
+
+    await user.type(input, '908');
+    expect(input).toHaveValue('+7 (908)');
+
+    await user.keyboard('{Backspace}');
+    expect(input).toHaveValue('+7 (90');
+
+    await user.keyboard('{Backspace}{Backspace}');
+    expect(input).toHaveValue('');
+    expect(onValueChange).toHaveBeenLastCalledWith('');
+  });
+
   it('normalizes a pasted Russian number starting with 8', () => {
     const onValueChange = vi.fn();
     render(<PhoneInput label="Телефон" onValueChange={onValueChange} />);
@@ -57,18 +117,19 @@ describe('PhoneInput', () => {
     expect(screen.getByRole('button', { name: 'Тип номера: Иностранный номер' })).toBeInTheDocument();
   });
 
-  it('opens Menu from the selector and changes type without a selection icon', async () => {
+  it('opens Menu from the selector and returns focus to the selector after choosing a type', async () => {
     const user = userEvent.setup();
     render(<PhoneInput label="Телефон" />);
-    await user.click(screen.getByRole('button', { name: 'Тип номера: Россия +7' }));
+    const selector = screen.getByRole('button', { name: 'Тип номера: Россия +7' });
+    await user.click(selector);
     expect(screen.getByRole('listbox', { name: 'Тип номера' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Россия +7' })).toHaveAttribute('aria-selected', 'true');
     const international = screen.getByRole('option', { name: 'Иностранный номер' });
     expect(international.querySelector('.fdoc-item-row__check')).not.toBeInTheDocument();
     await user.click(international);
     expect(screen.queryByRole('listbox', { name: 'Тип номера' })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Тип номера: Иностранный номер' })).toBeInTheDocument();
-    await waitFor(() => expect(screen.getByLabelText('Телефон')).toHaveFocus());
+    const internationalSelector = screen.getByRole('button', { name: 'Тип номера: Иностранный номер' });
+    await waitFor(() => expect(internationalSelector).toHaveFocus());
   });
 
   it('filters unsupported characters from International input', async () => {
