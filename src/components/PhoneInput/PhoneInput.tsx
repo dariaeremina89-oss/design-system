@@ -119,6 +119,11 @@ function resolveTypedInput(value: string, currentType: PhoneInputType) {
       }
     } else if (!trimmed.startsWith('+') && digits.length <= 10 && digits.startsWith('9')) {
       return { type: 'russian' as const, value: `+7${digits}` };
+    } else if (digits.length <= 10) {
+      // Input displays a synthetic +7 prefix in Russian mode. Browser change events
+      // include that prefix, so keep treating the following digits as national input.
+      const national = digits.startsWith('7') ? digits.slice(1) : digits;
+      return { type: 'russian' as const, value: national ? `+7${national.slice(0, 10)}` : '' };
     }
   }
 
