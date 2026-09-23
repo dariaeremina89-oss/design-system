@@ -13,9 +13,9 @@ const options: MultiselectOption[] = [
 ];
 
 const controlOrder = [
-  'label', 'placeholder', 'value', 'defaultValue', 'options', 'caption', 'error', 'counter',
-  'required', 'size', 'selectionPosition', 'clearable', 'disabled', 'skeleton', 'placement', 'menuMaxHeight', 'emptyText',
-  'onValueChange', 'onClear', 'onFocus', 'onBlur', 'onKeyDown',
+  'label', 'placeholder', 'value', 'defaultValue', 'options', 'display', 'caption', 'error', 'counter',
+  'required', 'size', 'creatable', 'selectAll', 'selectionPosition', 'clearable', 'disabled', 'skeleton',
+  'placement', 'menuMaxHeight', 'emptyText', 'onValueChange', 'onClear', 'onFocus', 'onBlur', 'onKeyDown',
 ] as const;
 
 const meta = {
@@ -28,29 +28,35 @@ const meta = {
     docs: {
       description: {
         component: `
-**Multiselect** выбирает несколько значений из заранее заданного списка.
+**Multiselect** выбирает несколько значений из списка и поддерживает разные способы показа выбранного.
 
-### Анатомия
+### Display
 
-Переиспользует общую геометрию полей, Chips, ButtonIcon, Menu и Popup. Выбранные значения отображаются внутри поля как Chips. Каждый Chips можно удалить отдельно, Clear очищает выбор целиком, chevron открывает и закрывает Menu.
+- **comma** — значения через запятую в одну строку; при нехватке ширины текст обрезается через ellipsis;
+- **count** — текст «Выбрано N»;
+- **firstAndCount** — первое значение и количество остальных, например «Дизайн +3»;
+- **chips** — отдельные Chips с удалением каждого значения; Chips переносятся на новые строки, поэтому поле растет по высоте.
 
-Размеры поля совпадают с Input и Select: Medium — 56 px, Small — 48 px. Chips внутри поля — 32 px. Menu использует строки с Checkbox и остается открытым после выбора, чтобы пользователь мог отметить несколько значений подряд.
+### Creatable
 
-Checkbox в строке по умолчанию расположен слева. Через selectionPosition его можно перенести вправо, например если левый слот нужен под leadingIcon.
+При **creatable=true** компонент всегда использует display=chips. После выбранных Chips находится поле ввода. Enter превращает введенный текст в новый Chips. Пользовательское значение хранится в value, но не добавляется в Menu.
 
-### Поведение
+### Menu
 
-- value/defaultValue содержат массив option.value;
-- onValueChange возвращает полный новый массив выбранных значений;
+Menu использует ItemRow с Checkbox и остается открытым после выбора. Checkbox по умолчанию расположен слева. selectionPosition="right" освобождает левый слот строки под leadingIcon. selectAll добавляет первой строкой «Выбрать все»; при частичном выборе Checkbox этой строки становится indeterminate.
+
+### Общее поведение
+
+- value/defaultValue содержат массив значений;
+- onValueChange возвращает полный новый массив;
+- Clear использует общий FieldClearButton и очищает весь выбор;
 - повторный выбор пункта снимает его выбор;
-- после выбора мышкой строка не сохраняет focused-состояние, выбранность показывает Checkbox;
-- Disabled option нельзя выбрать и удалить через клавиатуру;
+- после выбора мышкой строка не сохраняет focused-состояние;
+- Disabled option нельзя выбрать;
 - Escape закрывает Menu, Tab закрывает Menu и продолжает обычную навигацию;
-- ArrowDown/ArrowUp, Home/End перемещают активный пункт, Enter/Space переключают его;
-- Backspace при закрытом Menu удаляет последнее выбранное значение;
-- required показывает маркер у Label и передает aria-required combobox;
-- validation error поля не закрывает и не заменяет Menu;
-- открытое Menu не задается через Controls: его состояние проверяется интерактивно кликом или клавиатурой.
+- ArrowDown/ArrowUp перемещают активный пункт, Enter переключает его;
+- Backspace удаляет последнее выбранное значение, когда это не мешает вводу creatable;
+- required использует общий FieldLabel и aria-required.
 
 Это компонент тестовой дизайн-системы и личного плейбука, а не официальный production-пакет F.Doc.
         `,
@@ -63,15 +69,24 @@ Checkbox в строке по умолчанию расположен слева
     label: 'Команды',
     placeholder: 'Выберите команды',
     caption: 'Можно выбрать несколько вариантов',
+    display: 'comma',
     selectionPosition: 'left',
     clearable: true,
   },
   argTypes: {
     ...pickFieldControls('label', 'placeholder', 'caption', 'error', 'required', 'size', 'clearable', 'disabled', 'skeleton', 'onValueChange', 'onClear', 'onFocus', 'onBlur', 'onKeyDown'),
-    value: { control: 'object', description: 'Управляемый массив выбранных option.value.', table: { category: 'Value' } },
-    defaultValue: { control: 'object', description: 'Начальный массив выбранных option.value.', table: { category: 'Value' } },
+    value: { control: 'object', description: 'Управляемый массив выбранных значений.', table: { category: 'Value' } },
+    defaultValue: { control: 'object', description: 'Начальный массив выбранных значений.', table: { category: 'Value' } },
     options: { control: 'object', description: 'Доступные варианты выбора.', table: { category: 'Content' } },
-    counter: { control: 'boolean', description: 'Показывает количество выбранных значений.', table: { category: 'Content' } },
+    display: {
+      control: 'radio',
+      options: ['comma', 'count', 'firstAndCount', 'chips'],
+      description: 'Способ отображения выбранных значений. Creatable всегда использует chips.',
+      table: { category: 'Appearance' },
+    },
+    counter: { control: 'boolean', description: 'Показывает количество выбранных значений в Helper.', table: { category: 'Content' } },
+    creatable: { control: 'boolean', description: 'Разрешает создавать свое значение через ввод + Enter.', table: { category: 'Behavior' } },
+    selectAll: { control: 'boolean', description: 'Добавляет строку «Выбрать все» в Menu.', table: { category: 'Behavior' } },
     selectionPosition: {
       control: 'radio',
       options: ['left', 'right'],
@@ -91,6 +106,42 @@ export const Default: Story = {};
 export const Required: Story = { args: { required: true } };
 export const Filled: Story = { args: { defaultValue: ['design', 'frontend'] } };
 export const Counter: Story = { args: { defaultValue: ['design', 'frontend', 'qa'], counter: true } };
+
+export const DisplayModes: Story = {
+  render: args => (
+    <div style={{ display: 'grid', gap: 24 }}>
+      <Multiselect {...args} label="Comma" display="comma" defaultValue={['design', 'frontend', 'backend', 'qa']} />
+      <Multiselect {...args} label="Count" display="count" defaultValue={['design', 'frontend', 'backend', 'qa']} />
+      <Multiselect {...args} label="First + count" display="firstAndCount" defaultValue={['design', 'frontend', 'backend', 'qa']} />
+      <Multiselect {...args} label="Chips" display="chips" defaultValue={['design', 'frontend', 'backend', 'qa']} />
+    </div>
+  ),
+};
+
+export const ChipsWrap: Story = {
+  args: {
+    display: 'chips',
+    defaultValue: ['design', 'frontend', 'backend', 'qa', 'analytics'],
+    label: 'Много выбранных значений',
+  },
+};
+
+export const Creatable: Story = {
+  args: {
+    creatable: true,
+    defaultValue: ['design', 'frontend'],
+    label: 'Команды и свое значение',
+    caption: 'Введите свое значение и нажмите Enter',
+  },
+};
+
+export const SelectAll: Story = {
+  args: {
+    selectAll: true,
+    defaultValue: ['design', 'frontend'],
+    label: 'Команды',
+  },
+};
 
 export const Sizes: Story = {
   render: args => (
@@ -125,15 +176,9 @@ export const WithLeadingIcons: Story = {
   },
 };
 
-export const ManyValues: Story = {
-  args: {
-    defaultValue: ['design', 'frontend', 'backend', 'qa', 'analytics'],
-    label: 'Много выбранных значений',
-  },
-};
-
 export const LongValues: Story = {
   args: {
+    display: 'comma',
     options: [
       { value: 'one', label: 'Очень длинное название выбранного значения, которое не должно ломать ширину поля' },
       { value: 'two', label: 'Еще один длинный вариант для проверки переполнения' },
