@@ -9,16 +9,25 @@
   align-items: center;
   gap: var(--space-16);
   min-width: 0;
-  min-height: var(--size-input-medium);
+  height: var(--size-input-medium);
   padding: var(--space-12);
   transition: border-color 120ms ease;
   cursor: pointer;
 }
 
 .fdoc-multiselect__field--small {
-  min-height: var(--size-input-small);
+  height: var(--size-input-small);
   padding-top: var(--space-8);
   padding-bottom: var(--space-8);
+}
+
+.fdoc-multiselect__field--chips {
+  height: auto;
+  min-height: var(--size-input-medium);
+}
+
+.fdoc-multiselect__field--chips.fdoc-multiselect__field--small {
+  min-height: var(--size-input-small);
 }
 
 .fdoc-multiselect__field--has-leading {
