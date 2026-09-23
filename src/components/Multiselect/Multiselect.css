@@ -1,0 +1,112 @@
+@import "../Input/Input.css";
+
+.fdoc-multiselect {
+  position: relative;
+}
+
+.fdoc-multiselect__field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: 0;
+  height: var(--size-input-medium);
+  padding: var(--space-12);
+  transition: border-color 120ms ease;
+  cursor: pointer;
+}
+
+.fdoc-multiselect__field--small {
+  height: var(--size-input-small);
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-8);
+}
+
+.fdoc-multiselect__field:focus-within {
+  padding: calc(var(--space-12) - var(--border-small));
+}
+
+.fdoc-multiselect__field--small:focus-within {
+  padding-top: calc(var(--space-8) - var(--border-small));
+  padding-bottom: calc(var(--space-8) - var(--border-small));
+}
+
+.fdoc-multiselect__field--disabled {
+  cursor: not-allowed;
+}
+
+.fdoc-multiselect__content {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-width: 0;
+  height: var(--elements-32);
+  overflow: hidden;
+}
+
+.fdoc-multiselect__control {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fdoc-multiselect__chips {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.fdoc-multiselect__chips > .fdoc-chips {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.fdoc-multiselect__placeholder {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-base-secondary);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-24);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fdoc-multiselect__leading,
+.fdoc-multiselect__chevron {
+  display: inline-flex;
+  flex: 0 0 var(--elements-24);
+  align-items: center;
+  justify-content: center;
+  width: var(--elements-24);
+  height: var(--elements-24);
+  color: var(--icon-base-default);
+}
+
+.fdoc-multiselect__clear {
+  flex: 0 0 var(--elements-24);
+  padding: 0;
+}
+
+.fdoc-multiselect__field--disabled .fdoc-multiselect__leading,
+.fdoc-multiselect__field--disabled .fdoc-multiselect__chevron {
+  color: var(--icon-base-default-disabled);
+}
+
+.fdoc-multiselect__field--disabled .fdoc-multiselect__placeholder {
+  color: var(--text-base-secondary-disabled);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fdoc-multiselect__field { transition: none; }
+}
