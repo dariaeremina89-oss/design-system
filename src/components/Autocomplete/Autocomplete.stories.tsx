@@ -73,46 +73,76 @@ export const States: Story = {
 
 export const Open: Story = {
   args: {
-    defaultOpen: true,
     mode: 'select',
     label: 'Focused & Open / Select',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Нажмите на поле, чтобы открыть Menu.',
+      },
+    },
   },
 };
 
 export const Typing: Story = {
   args: {
     defaultInputValue: 'Шок',
-    defaultOpen: true,
     label: 'Typing',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Нажмите на поле, чтобы показать отфильтрованный список.',
+      },
+    },
   },
 };
 
 export const NoResults: Story = {
   args: {
     defaultInputValue: 'Киви',
-    defaultOpen: true,
     label: 'No Results',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Нажмите на поле, чтобы показать состояние без результатов.',
+      },
+    },
   },
 };
 
 export const Loading: Story = {
   args: {
     defaultInputValue: 'Яб',
-    defaultOpen: true,
     loading: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Нажмите на поле, чтобы показать Loading в Menu.',
+      },
+    },
   },
 };
 
 export const LoadError: Story = {
   args: {
     defaultInputValue: 'Яб',
-    defaultOpen: true,
     loadError: (
       <>
         Не удалось получить список. Попробуйте вернуться позже. Если ошибка сохраняется, обратитесь в техподдержку{' '}
         <u>support@fdoc.ru</u>
       </>
     ),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Нажмите на поле, чтобы показать ошибку загрузки Menu.',
+      },
+    },
   },
 };
 
