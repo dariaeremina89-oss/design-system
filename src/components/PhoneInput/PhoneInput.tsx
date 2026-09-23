@@ -295,7 +295,26 @@ export function PhoneInput({
       if (index >= 0) indexes = [index];
     }
 
-    if (!indexes.length) return false;
+    if (!indexes.length) {
+      // +7 is normally a synthetic Russian prefix, but deleting the 7 explicitly
+      // means the user wants to leave the Russian mask and continue internationally.
+      if (
+        event.key === 'Backspace' &&
+        start === end &&
+        displayValue.startsWith('+7') &&
+        start === 2
+      ) {
+        event.preventDefault();
+        commit('+', 'international');
+        requestAnimationFrame(() => {
+          const element = input.current;
+          if (!element) return;
+          element.setSelectionRange(1, 1);
+        });
+        return true;
+      }
+      return false;
+    }
 
     event.preventDefault();
     const national = digitsOnly(normalizedValue).replace(/^7/, '').split('');
