@@ -90,17 +90,6 @@
   justify-content: center;
   width: var(--elements-24);
   height: var(--elements-24);
-  color: var(--icon-base-secondary);
-}
-
-.fdoc-multiselect__clear {
-  flex: 0 0 var(--elements-24);
-  padding: 0;
-}
-
-.fdoc-multiselect__field--disabled .fdoc-multiselect__leading,
-.fdoc-multiselect__field--disabled .fdoc-multiselect__chevron {
-  color: var(--icon-base-secondary-disabled);
 }
 
 .fdoc-multiselect__field--disabled .fdoc-multiselect__placeholder {
