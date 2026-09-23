@@ -12,6 +12,7 @@
   width: var(--elements-24);
   height: var(--elements-24);
   padding: 0;
+  overflow: visible;
   border: 0;
   border-radius: var(--radius-full);
   outline: 0;
