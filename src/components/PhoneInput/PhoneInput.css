@@ -5,6 +5,7 @@
 
 .fdoc-phone-input__selector {
   box-sizing: border-box;
+  position: relative;
   display: inline-flex;
   flex: 0 0 var(--elements-24);
   align-items: center;
@@ -14,10 +15,23 @@
   padding: 0;
   overflow: visible;
   border: 0;
-  border-radius: var(--radius-full);
   outline: 0;
   background: transparent;
   cursor: pointer;
+}
+
+.fdoc-phone-input__selector[data-state='focused']::after {
+  box-sizing: border-box;
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 33px;
+  height: 28px;
+  transform: translate(-50%, -50%);
+  border: var(--border-large) solid var(--border-base-default-focused);
+  border-radius: var(--radius-middle);
+  pointer-events: none;
 }
 
 .fdoc-phone-input__selector:disabled {
@@ -29,17 +43,6 @@
   font-size: var(--font-size-16);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-24);
-}
-
-.fdoc-phone-input[data-open='true'] .fdoc-input__field {
-  border-width: var(--border-middle);
-  border-color: var(--border-primary-default);
-  padding: calc(var(--space-12) - var(--border-small));
-}
-
-.fdoc-phone-input[data-open='true'] .fdoc-input--small .fdoc-input__field {
-  padding-top: calc(var(--space-8) - var(--border-small));
-  padding-bottom: calc(var(--space-8) - var(--border-small));
 }
 
 .fdoc-phone-input__field--empty-russian .fdoc-input__content,
