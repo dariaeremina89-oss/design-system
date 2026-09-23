@@ -173,7 +173,6 @@ export function PhoneInput({
   const [selectorHover, setSelectorHover] = useState(false);
   const [selectorFocus, setSelectorFocus] = useState(false);
   const [selectorPressed, setSelectorPressed] = useState(false);
-  const [inputFocus, setInputFocus] = useState(false);
 
   const inferredControlledType = controlledType === undefined && controlledValue !== undefined
     ? detectCompleteType(controlledValue)
@@ -262,7 +261,7 @@ export function PhoneInput({
       ? 'Open'
       : selectorPressed
         ? 'Pressed'
-        : selectorFocus || inputFocus
+        : selectorFocus
           ? 'Focused'
           : selectorHover
             ? 'Hover'
@@ -315,17 +314,16 @@ export function PhoneInput({
             onBlur={() => setSelectorFocus(false)}
             onClick={() => changeOpen(!open)}
           >
-            <Icon name={selectorIcon(phoneType, visualState)} size={24} />
+            <Icon name={selectorIcon(phoneType, visualState)} size={visualState === 'Focused' ? 26 : 24} />
           </button>
         )}
         onChange={event => handleChange(event.currentTarget.value)}
         onPaste={handlePaste}
         onFocus={event => {
-          setInputFocus(true);
           if (open) changeOpen(false);
           onFocus?.(event);
         }}
-        onBlur={event => { setInputFocus(false); onBlur?.(event); }}
+        onBlur={event => { onBlur?.(event); }}
         onKeyDown={event => { onKeyDown?.(event); }}
       />
 
