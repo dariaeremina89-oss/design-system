@@ -2,6 +2,7 @@ import {
   forwardRef,
   type ChangeEvent,
   type InputHTMLAttributes,
+  type MouseEvent as ReactMouseEvent,
   type ReactNode,
   type Ref,
 } from 'react';
@@ -113,6 +114,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     onClear?.();
   };
 
+  const handleFieldMouseDown = (event: ReactMouseEvent<HTMLDivElement>) => {
+    if (disabled || event.button !== 0) return;
+    const target = event.target as HTMLElement;
+    if (target.closest('input, button, a, select, textarea, [contenteditable="true"], [role="button"], [tabindex]:not([tabindex="-1"])')) return;
+    event.preventDefault();
+    event.currentTarget.querySelector<HTMLInputElement>('.fdoc-input__control')?.focus();
+  };
+
   if (skeleton) {
     return (
       <InputSkeleton
@@ -158,6 +167,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         )}
         ref={fieldRef}
         data-testid="input-field"
+        onMouseDown={handleFieldMouseDown}
       >
         {leadingContent !== undefined && leadingContent !== null ? leadingContent : leadingIcon !== undefined && (
           <FieldIcon icon={leadingIcon} className="fdoc-input__slot fdoc-input__slot--leading" data-testid="input-leading-icon" />
