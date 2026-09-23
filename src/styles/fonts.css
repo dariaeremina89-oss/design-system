@@ -21,3 +21,9 @@
   font-weight: 800;
   font-display: swap;
 }
+
+/* Components must not inherit Storybook's Nunito Sans or an application font.
+   :where keeps specificity at zero so explicit typography styles can override it. */
+:where([class^='fdoc-'], [class*=' fdoc-']) {
+  font-family: var(--font-family-sans, Inter, Arial, sans-serif);
+}
