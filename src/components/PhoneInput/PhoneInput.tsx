@@ -4,6 +4,7 @@ import {
   useImperativeHandle,
   useRef,
   useState,
+  type ChangeEvent,
   type ClipboardEvent,
   type Ref,
 } from 'react';
@@ -80,7 +81,7 @@ function normalizeRussianPartial(value: string) {
   const complete = normalizeRussianComplete(value);
   if (complete) return complete;
   const digits = digitsOnly(value);
-  if (!digits) return '';
+  if (!digits || digits === '7') return '';
   if (digits.startsWith('7')) return `+7${digits.slice(1, 11)}`;
   if (digits.startsWith('8') && digits.length === 11) return `+7${digits.slice(1, 11)}`;
   return `+7${digits.slice(0, 10)}`;
@@ -88,6 +89,39 @@ function normalizeRussianPartial(value: string) {
 
 function normalizeForType(value: string, type: PhoneInputType) {
   return type === 'russian' ? normalizeRussianPartial(value) : normalizeInternational(value);
+}
+
+function resolveTypedInput(value: string, currentType: PhoneInputType) {
+  const trimmed = value.trim();
+  const digits = digitsOnly(value);
+  const completeRussian = normalizeRussianComplete(value);
+
+  if (completeRussian) {
+    return { type: 'russian' as const, value: completeRussian };
+  }
+
+  if (!digits) {
+    return {
+      type: trimmed.startsWith('+') ? 'international' as const : currentType,
+      value: '',
+    };
+  }
+
+  if (currentType === 'russian') {
+    if (trimmed.startsWith('+7')) {
+      const national = digits.slice(1);
+      if (!national || national.startsWith('9')) {
+        return {
+          type: 'russian' as const,
+          value: national ? `+7${national.slice(0, 10)}` : '',
+        };
+      }
+    } else if (!trimmed.startsWith('+') && digits.length <= 10 && digits.startsWith('9')) {
+      return { type: 'russian' as const, value: `+7${digits}` };
+    }
+  }
+
+  return { type: 'international' as const, value: `+${digits}` };
 }
 
 export function formatRussianPhone(value: string) {
@@ -210,27 +244,49 @@ export function PhoneInput({
   }
 
   function handleChange(text: string) {
-    const digits = digitsOnly(text);
-    if (!digits) {
-      commit('', phoneType);
-      return;
+    const resolved = resolveTypedInput(text, phoneType);
+    commit(resolved.value, resolved.type);
+  }
+
+  function repairMaskedDeletion(text: string, inputType: string | undefined, caret: number | null) {
+    if (phoneType !== 'russian' || !inputType?.startsWith('deleteContent')) return text;
+    if (digitsOnly(text) !== digitsOnly(displayValue)) return text;
+    if (!displayValue) return text;
+
+    const chars = Array.from(text);
+    const cursor = caret ?? chars.length;
+    const countryDigitIndex = text.trimStart().startsWith('+7') ? text.indexOf('7') : -1;
+    let removeIndex = -1;
+
+    if (inputType === 'deleteContentBackward') {
+      for (let index = Math.min(cursor - 1, chars.length - 1); index >= 0; index -= 1) {
+        if (/\d/.test(chars[index]) && index !== countryDigitIndex) {
+          removeIndex = index;
+          break;
+        }
+      }
+    } else if (inputType === 'deleteContentForward') {
+      for (let index = Math.max(cursor, 0); index < chars.length; index += 1) {
+        if (/\d/.test(chars[index]) && index !== countryDigitIndex) {
+          removeIndex = index;
+          break;
+        }
+      }
     }
 
-    if (phoneType === 'international') {
-      const russian = normalizeRussianComplete(text);
-      if (russian) commit(russian, 'russian');
-      else commit(`+${digits}`, 'international');
-      return;
-    }
+    if (removeIndex < 0) return text;
+    chars.splice(removeIndex, 1);
+    return chars.join('');
+  }
 
-    if (text.trim().startsWith('+') && !digits.startsWith('7')) {
-      commit(`+${digits}`, 'international');
-      return;
-    }
-
-    if (digits.startsWith('7')) commit(`+7${digits.slice(1, 11)}`, 'russian');
-    else if (digits.startsWith('8') && digits.length === 11) commit(`+7${digits.slice(1, 11)}`, 'russian');
-    else commit(`+7${digits.slice(0, 10)}`, 'russian');
+  function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
+    const nativeInput = event.nativeEvent as InputEvent;
+    const text = repairMaskedDeletion(
+      event.currentTarget.value,
+      nativeInput.inputType,
+      event.currentTarget.selectionStart,
+    );
+    handleChange(text);
   }
 
   function handlePaste(event: ClipboardEvent<HTMLInputElement>) {
@@ -254,7 +310,7 @@ export function PhoneInput({
     }
     commit(nextValue, nextType);
     changeOpen(false);
-    requestAnimationFrame(() => input.current?.focus());
+    requestAnimationFrame(() => selector.current?.focus());
   }
 
   const visualState: SelectorState = disabled
@@ -320,7 +376,7 @@ export function PhoneInput({
             <Icon name={selectorIcon(phoneType, assetState)} size={24} />
           </button>
         )}
-        onChange={event => handleChange(event.currentTarget.value)}
+        onChange={handleInputChange}
         onPaste={handlePaste}
         onFocus={event => {
           if (open) changeOpen(false);
