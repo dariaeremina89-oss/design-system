@@ -1,8 +1,16 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { PhoneInput, PHONE_INPUT_FORMAT_ERROR, PHONE_INPUT_REQUIRED_ERROR, isValidPhoneValue } from './PhoneInput';
+
+beforeAll(() => {
+  vi.stubGlobal('ResizeObserver', class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  });
+});
 
 describe('PhoneInput', () => {
   it('renders Russian mode by default with a separate type selector', () => {
@@ -46,7 +54,7 @@ describe('PhoneInput', () => {
     render(<PhoneInput label="Телефон" />);
     await user.click(screen.getByRole('button', { name: 'Тип номера: Россия +7' }));
     expect(screen.getByRole('listbox', { name: 'Тип номера' })).toBeInTheDocument();
-    expect(screen.getByRole('option', { name: 'Россия +7' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Россия +7' })).toHaveAttribute('aria-selected', 'true');
     const international = screen.getByRole('option', { name: 'Иностранный номер' });
     expect(international.querySelector('.fdoc-item-row__check')).not.toBeInTheDocument();
     await user.click(international);
@@ -65,13 +73,14 @@ describe('PhoneInput', () => {
 
   it('inherits required and error semantics from Input', () => {
     const { rerender } = render(<PhoneInput label="Телефон" required error={PHONE_INPUT_REQUIRED_ERROR} />);
-    expect(screen.getByLabelText('Телефон')).toHaveAttribute('aria-required', 'true');
-    expect(screen.getByLabelText('Телефон')).toHaveAttribute('aria-invalid', 'true');
-    expect(screen.getByLabelText('Телефон')).toHaveAccessibleDescription(PHONE_INPUT_REQUIRED_ERROR);
+    const requiredInput = screen.getByRole('textbox', { name: /Телефон/ });
+    expect(requiredInput).toHaveAttribute('aria-required', 'true');
+    expect(requiredInput).toHaveAttribute('aria-invalid', 'true');
+    expect(requiredInput).toHaveAccessibleDescription(PHONE_INPUT_REQUIRED_ERROR);
     expect(screen.getByText('*')).toBeInTheDocument();
 
     rerender(<PhoneInput label="Телефон" defaultValue="+7908182277" error={PHONE_INPUT_FORMAT_ERROR} />);
-    expect(screen.getByLabelText('Телефон')).toHaveAccessibleDescription(PHONE_INPUT_FORMAT_ERROR);
+    expect(screen.getByRole('textbox', { name: 'Телефон' })).toHaveAccessibleDescription(PHONE_INPUT_FORMAT_ERROR);
   });
 
   it('disables both the input and type selector', () => {
