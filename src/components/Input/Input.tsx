@@ -32,6 +32,8 @@ export interface InputProps
   counter?: ReactNode | boolean;
   /** Имя иконки из библиотеки слева. */
   leadingIcon?: IconName;
+  /** Составной или интерактивный контент слева. Имеет приоритет над leadingIcon. */
+  leadingContent?: ReactNode;
   /** Имя иконки из библиотеки справа. */
   trailingIcon?: IconName;
   /** Дополнительное действие справа внутри поля. */
@@ -69,6 +71,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     caption,
     counter,
     leadingIcon,
+    leadingContent,
     trailingIcon,
     trailingContent,
     fieldRef,
@@ -96,6 +99,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       'aria-describedby': inputProps['aria-describedby'] });
   const showClear = clearable && hasValue && !disabled && !skeleton;
   const isError = hasError;
+  const hasLeading = leadingContent !== undefined && leadingContent !== null
+    ? true
+    : leadingIcon !== undefined;
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     updateValue(event);
@@ -118,6 +124,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         caption={caption}
         counter={counter}
         leadingIcon={leadingIcon}
+        leadingContent={leadingContent}
         trailingIcon={trailingIcon}
         trailingContent={trailingSkeleton}
         sum={sum}
@@ -145,14 +152,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       <div
         className={joinClassNames(
           'fdoc-input__field fdoc-field__field',
-          leadingIcon !== undefined && 'fdoc-input__field--has-leading',
+          hasLeading && 'fdoc-input__field--has-leading',
           isError && 'fdoc-input__field--error fdoc-field__field--error',
           disabled && 'fdoc-input__field--disabled fdoc-field__field--disabled',
         )}
         ref={fieldRef}
         data-testid="input-field"
       >
-        {leadingIcon !== undefined && (
+        {leadingContent !== undefined && leadingContent !== null ? leadingContent : leadingIcon !== undefined && (
           <FieldIcon icon={leadingIcon} className="fdoc-input__slot fdoc-input__slot--leading" data-testid="input-leading-icon" />
         )}
 
