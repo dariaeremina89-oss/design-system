@@ -10,3 +10,6 @@ it('only Enter and the button submit; clear empties without submitting',async()=
 it('disabled blocks both input and button; skeleton exposes no controls',()=>{
  const {rerender}=render(<Search label="Документы" disabled/>);expect(screen.getByRole('searchbox')).toBeDisabled();expect(screen.getByRole('button',{name:'Найти'})).toBeDisabled();rerender(<Search label="Документы" skeleton/>);expect(screen.queryByRole('searchbox')).not.toBeInTheDocument();expect(screen.queryByRole('button')).not.toBeInTheDocument();
 });
+it('preserves the required field contract from Input',()=>{
+ render(<Search label="Документы" required/>);const input=screen.getByRole('searchbox');expect(input).toBeRequired();expect(input).toHaveAttribute('aria-required','true');expect(screen.getByText('*')).toBeInTheDocument();
+});
