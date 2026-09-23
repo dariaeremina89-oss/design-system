@@ -93,4 +93,12 @@ describe('AsyncAutocomplete', () => {
     expect(screen.getAllByRole('option')).toHaveLength(2);
     expect(screen.getByRole('option', { name: 'Первый результат' })).toBeInTheDocument();
   });
+
+  it('preserves the required field contract from Autocomplete', () => {
+    render(<AsyncAutocomplete data={[]} label="Продукты" required onFetch={() => undefined} />);
+    const input = screen.getByRole('combobox');
+    expect(input).toBeRequired();
+    expect(input).toHaveAttribute('aria-required', 'true');
+    expect(screen.getByText('*')).toBeInTheDocument();
+  });
 });
