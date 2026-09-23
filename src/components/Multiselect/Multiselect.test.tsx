@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Multiselect } from './Multiselect';
 
@@ -18,21 +18,43 @@ const options = [
 ];
 
 describe('Multiselect', () => {
-  it('toggles several values without closing Menu', async () => {
+  it('toggles several values without closing Menu and clears pointer focus state', async () => {
     const user = userEvent.setup();
     const change = vi.fn();
     render(<Multiselect options={options} label="Команды" onValueChange={change} />);
     const input = screen.getByRole('combobox');
 
     await user.click(screen.getByTestId('multiselect-field'));
-    await user.click(screen.getByRole('option', { name: 'Первый' }));
+    const first = screen.getByRole('option', { name: 'Первый' });
+    await user.click(first);
     expect(change).toHaveBeenLastCalledWith(['one']);
     expect(screen.getByRole('listbox')).toBeInTheDocument();
+    expect(first).toHaveAttribute('data-state', 'default');
+    expect(input).toHaveFocus();
+    expect(input).not.toHaveAttribute('aria-activedescendant');
 
     await user.click(screen.getByRole('option', { name: 'Третий' }));
     expect(change).toHaveBeenLastCalledWith(['one', 'three']);
     expect(input).toHaveValue('Первый, Третий');
     expect(screen.getByRole('listbox')).toBeInTheDocument();
+  });
+
+  it('puts Checkbox on the left by default and can move it right to preserve leadingIcon', async () => {
+    const user = userEvent.setup();
+    const iconOptions = [{ value: 'docs', label: 'Документы', leadingIcon: 'doc-list' as const }];
+    const { rerender } = render(<Multiselect options={iconOptions} label="Разделы" />);
+
+    await user.click(screen.getByTestId('multiselect-field'));
+    let option = screen.getByRole('option', { name: 'Документы' });
+    let main = option.querySelector('.fdoc-item-row__main');
+    expect(main?.firstElementChild).toContainElement(option.querySelector('.fdoc-item-row__checkbox'));
+    expect(within(option).queryByTestId('nonexistent')).not.toBeInTheDocument();
+    expect(option.querySelector('[data-icon="doc-list"]')).not.toBeInTheDocument();
+
+    rerender(<Multiselect options={iconOptions} label="Разделы" selectionPosition="right" />);
+    option = screen.getByRole('option', { name: 'Документы' });
+    expect(option.querySelector('[data-icon="doc-list"]')).toBeInTheDocument();
+    expect(option.querySelector('.fdoc-item-row__checkbox')).toBeInTheDocument();
   });
 
   it('skips disabled options during keyboard navigation and toggles with Enter', async () => {
