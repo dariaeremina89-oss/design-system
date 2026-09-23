@@ -286,7 +286,7 @@ export function Multiselect({
           />
 
           {selectedOptions.length > 0 ? (
-            <div className="fdoc-multiselect__chips" aria-hidden="true">
+            <div className="fdoc-multiselect__chips" role="group" aria-label="Выбранные значения">
               {selectedOptions.map(option => (
                 <Chips
                   key={option.value}
