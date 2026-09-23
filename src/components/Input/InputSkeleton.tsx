@@ -1,7 +1,7 @@
 import { Children, isValidElement, type ReactNode } from 'react';
-import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import type { IconName } from '../Icon/Icon';
 import { Skeleton } from '../Skeleton/Skeleton';
+import { FieldClearButton } from '../TextField/TextField';
 import type { InputSize } from './Input';
 
 export interface InputSkeletonProps {
@@ -87,7 +87,6 @@ export function InputSkeleton({
   const hasSum = hasRenderableContent(sum);
   const providedValue = value !== undefined && value !== null ? value : defaultValue;
   const hasValue = textLength(providedValue as ReactNode) > 0;
-  const helperText = hasError ? error : caption;
 
   return (
     <div
@@ -127,7 +126,7 @@ export function InputSkeleton({
         data-testid="input-skeleton-field"
       >
         {leadingIcon !== undefined && (
-          <span className="fdoc-input__slot fdoc-input__slot--leading" data-testid="input-skeleton-leading-icon">
+          <span className="fdoc-input__slot fdoc-input__slot--leading fdoc-field__icon" data-testid="input-skeleton-leading-icon">
             <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" data-testid="input-skeleton-leading-icon-shape" />
           </span>
         )}
@@ -169,18 +168,16 @@ export function InputSkeleton({
         )}
 
         {clearable && hasValue && (
-          <ButtonIcon
+          <FieldClearButton
             className="fdoc-input__clear"
-            size="xsmall"
-            color="neutral"
             state="skeleton"
-            aria-label="Очистка поля"
+            aria-label="Очистить поле"
             data-testid="input-skeleton-clear"
           />
         )}
 
         {trailingIcon !== undefined && (
-          <span className="fdoc-input__slot fdoc-input__slot--trailing" data-testid="input-skeleton-trailing-icon">
+          <span className="fdoc-input__slot fdoc-input__slot--trailing fdoc-field__icon" data-testid="input-skeleton-trailing-icon">
             <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" data-testid="input-skeleton-trailing-icon-shape" />
           </span>
         )}
