@@ -76,6 +76,7 @@ describe('Multiselect', () => {
       <Multiselect
         options={options}
         label="Команды"
+        display="chips"
         defaultValue={['one', 'three']}
         onValueChange={change}
         onClear={clear}
@@ -134,5 +135,49 @@ describe('Multiselect', () => {
     input.focus();
     await user.keyboard('{Backspace}');
     expect(input).toHaveValue('Первый');
+  });
+
+  it('renders comma, count, firstAndCount and chips display modes', () => {
+    const { rerender } = render(<Multiselect options={options} defaultValue={['one', 'three']} display="comma" aria-label="Команды" />);
+    expect(screen.getByText('Первый, Третий')).toHaveClass('fdoc-multiselect__value');
+
+    rerender(<Multiselect options={options} defaultValue={['one', 'three']} display="count" aria-label="Команды" />);
+    expect(screen.getByText('Выбрано 2')).toBeInTheDocument();
+
+    rerender(<Multiselect options={options} defaultValue={['one', 'three']} display="firstAndCount" aria-label="Команды" />);
+    expect(screen.getByText('Первый +1')).toBeInTheDocument();
+
+    rerender(<Multiselect options={options} defaultValue={['one', 'three']} display="chips" aria-label="Команды" />);
+    expect(screen.getByRole('button', { name: 'Удалить: Первый' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Удалить: Третий' })).toBeInTheDocument();
+  });
+
+  it('creates custom values as chips and never adds them to Menu', async () => {
+    const user = userEvent.setup();
+    const change = vi.fn();
+    render(<Multiselect options={options} defaultValue={['one']} creatable onValueChange={change} label="Команды" />);
+    const input = screen.getByRole('combobox');
+
+    await user.click(input);
+    await user.type(input, 'Свое значение{Enter}');
+
+    expect(change).toHaveBeenLastCalledWith(['one', 'Свое значение']);
+    expect(screen.getByRole('button', { name: 'Удалить: Свое значение' })).toBeInTheDocument();
+    expect(screen.queryByRole('option', { name: 'Свое значение' })).not.toBeInTheDocument();
+    expect(input).toHaveValue('');
+  });
+
+  it('supports selectAll and indeterminate state', async () => {
+    const user = userEvent.setup();
+    const change = vi.fn();
+    render(<Multiselect options={options} defaultValue={['one']} selectAll onValueChange={change} label="Команды" />);
+
+    await user.click(screen.getByTestId('multiselect-field'));
+    const all = screen.getByRole('option', { name: 'Выбрать все' });
+    const checkbox = all.querySelector('input[type="checkbox"]') as HTMLInputElement;
+    expect(checkbox.indeterminate).toBe(true);
+
+    await user.click(all);
+    expect(change).toHaveBeenLastCalledWith(['one', 'three']);
   });
 });
