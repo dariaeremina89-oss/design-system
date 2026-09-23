@@ -30,7 +30,7 @@
 }
 
 /* Common field states; geometry is defined by each control. */
-.fdoc-field__field:focus-within {
+.fdoc-field__field:has(.fdoc-field__control:focus) {
   border-width: var(--border-middle);
   border-color: var(--border-primary-default);
 }
@@ -85,7 +85,7 @@
   color: var(--text-error-secondary-disabled);
 }
 
-.fdoc-field__field:hover:not(.fdoc-field__field--disabled):not(.fdoc-field__field--error):not(:focus-within) {
+.fdoc-field__field:hover:not(.fdoc-field__field--disabled):not(.fdoc-field__field--error):not(:has(.fdoc-field__control:focus)) {
   border-color: var(--border-base-secondary-hover);
 }
 
@@ -98,9 +98,9 @@
 
 .fdoc-field__field.fdoc-field__field--error { border-color: var(--border-error-default); }
 
-.fdoc-field__field.fdoc-field__field--error:hover:not(.fdoc-field__field--disabled):not(:focus-within) { border-color: var(--border-error-hover); }
+.fdoc-field__field.fdoc-field__field--error:hover:not(.fdoc-field__field--disabled):not(:has(.fdoc-field__control:focus)) { border-color: var(--border-error-hover); }
 
-.fdoc-field__field.fdoc-field__field--error:focus-within { border-color: var(--border-error-default); }
+.fdoc-field__field.fdoc-field__field--error:has(.fdoc-field__control:focus) { border-color: var(--border-error-default); }
 
 .fdoc-field__field.fdoc-field__field--error.fdoc-field__field--disabled { border-color: var(--border-error-disabled); }
 
