@@ -53,6 +53,8 @@ export interface MultiselectProps
   onValueChange?: (value: string[]) => void;
   /** Вызывается после полной очистки. */
   onClear?: () => void;
+  /** Позиция Checkbox внутри строк Menu. Слева по умолчанию; справа оставляет левый слот под leadingIcon. */
+  selectionPosition?: 'left' | 'right';
   /** Управляемое состояние Menu. */
   open?: boolean;
   defaultOpen?: boolean;
@@ -69,6 +71,7 @@ export function Multiselect({
   defaultValue = [],
   onValueChange,
   onClear,
+  selectionPosition = 'left',
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
@@ -211,6 +214,7 @@ export function Multiselect({
     leadingIcon: option.leadingIcon,
     disabled: option.disabled,
     selection: 'checkbox',
+    selectionPosition,
     selected: values.includes(option.value),
   }));
 
@@ -360,7 +364,11 @@ export function Multiselect({
             focusItems={false}
             maxHeight={menuMaxHeight}
             emptyText={emptyText}
-            onAction={item => toggle(item.id)}
+            onAction={item => {
+              toggle(item.id);
+              setActiveValue(undefined);
+              inputRef.current?.focus();
+            }}
           />
         </Popup>
       )}
