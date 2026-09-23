@@ -90,13 +90,6 @@
   justify-content: center;
   width: var(--elements-24);
   height: var(--elements-24);
-}
-
-.fdoc-multiselect__leading {
-  color: var(--icon-base-default);
-}
-
-.fdoc-multiselect__chevron {
   color: var(--icon-base-secondary);
 }
 
@@ -105,10 +98,7 @@
   padding: 0;
 }
 
-.fdoc-multiselect__field--disabled .fdoc-multiselect__leading {
-  color: var(--icon-base-default-disabled);
-}
-
+.fdoc-multiselect__field--disabled .fdoc-multiselect__leading,
 .fdoc-multiselect__field--disabled .fdoc-multiselect__chevron {
   color: var(--icon-base-secondary-disabled);
 }
