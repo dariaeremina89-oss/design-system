@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
@@ -60,7 +60,7 @@ describe('PhoneInput', () => {
     await user.click(international);
     expect(screen.queryByRole('listbox', { name: 'Тип номера' })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Тип номера: Иностранный номер' })).toBeInTheDocument();
-    expect(screen.getByLabelText('Телефон')).toHaveFocus();
+    await waitFor(() => expect(screen.getByLabelText('Телефон')).toHaveFocus());
   });
 
   it('filters unsupported characters from International input', async () => {
