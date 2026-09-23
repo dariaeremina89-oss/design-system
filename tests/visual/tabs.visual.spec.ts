@@ -3,7 +3,8 @@ import { expect, test, type Locator } from '@playwright/test';
 async function setRangeValue(slider: Locator, value: number) {
   await slider.evaluate((node, nextValue) => {
     const input = node as HTMLInputElement;
-    input.value = String(nextValue);
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+    setter?.call(input, String(nextValue));
     input.dispatchEvent(new Event('input', { bubbles: true }));
     input.dispatchEvent(new Event('change', { bubbles: true }));
   }, value);
@@ -24,6 +25,7 @@ test('Tabs enables overflow arrows only when items do not fit the container', as
   await expect(bar).not.toHaveAttribute('data-scrollable', 'true');
 
   await setRangeValue(slider, 360);
+  await expect(slider).toHaveValue('360');
 
   await expect(left).toBeVisible();
   await expect(right).toBeVisible();
@@ -42,6 +44,7 @@ test('Tabs enables overflow arrows only when items do not fit the container', as
   await expect(left).toBeEnabled();
 
   await setRangeValue(slider, 900);
+  await expect(slider).toHaveValue('900');
 
   await expect(left).toHaveCount(0);
   await expect(right).toHaveCount(0);
