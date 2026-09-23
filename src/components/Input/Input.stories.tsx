@@ -2,6 +2,14 @@ import { testingDocs } from '../../docs/testing';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { iconNames } from '../Icon/Icon';
 import { Input } from './Input';
+import { controlsParameters, pickFieldControls } from '../../docs/story-controls';
+
+const controlOrder = [
+  'label', 'required', 'value', 'defaultValue', 'placeholder', 'description', 'caption', 'error',
+  'counter', 'maxLength', 'size', 'clearable', 'disabled', 'skeleton',
+  'leadingIcon', 'trailingIcon', 'sum', 'sumIcon', 'clearIcon',
+  'onChange', 'onFocus', 'onBlur', 'onKeyDown', 'onClear',
+] as const;
 
 const meta = {
   title: 'Components/Inputs/Input',
@@ -9,6 +17,7 @@ const meta = {
   tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
+    controls: controlsParameters(controlOrder),
     docs: {
       description: {
         component: `
@@ -40,25 +49,16 @@ Caret не является пропсом: текстовый курсор ос
     wrapperClassName: 'story-input-width',
   },
   argTypes: {
-    value: { control: 'text' },
-    defaultValue: { control: 'text' },
-    size: { control: 'radio', options: ['medium', 'small'], description: 'Medium 56 или Small 48 в Figma' },
-    label: { control: 'text' },
-    description: { control: 'text' },
-    error: { control: 'text' },
-    caption: { control: 'text' },
-    counter: { control: 'boolean' },
-    required: { control: 'boolean' },
-    leadingIcon: { control: 'select', options: iconNames },
-    trailingIcon: { control: 'select', options: iconNames },
-    sum: { control: 'text' },
-    sumIcon: { control: 'select', options: iconNames },
-    clearIcon: { control: 'select', options: iconNames },
-    onChange: { action: 'change' },
-    onFocus: { action: 'focus' },
-    onBlur: { action: 'blur' },
-    onKeyDown: { action: 'keydown' },
-    onClear: { action: 'clear' },
+    ...pickFieldControls(
+      'label', 'required', 'value', 'defaultValue', 'placeholder', 'description', 'caption', 'error',
+      'counter', 'maxLength', 'size', 'clearable', 'disabled', 'skeleton',
+      'onChange', 'onFocus', 'onBlur', 'onKeyDown', 'onClear',
+    ),
+    leadingIcon: { control: 'select', options: iconNames, description: 'Иконка слева из библиотеки Icon.', table: { category: 'Appearance' } },
+    trailingIcon: { control: 'select', options: iconNames, description: 'Иконка справа из библиотеки Icon.', table: { category: 'Appearance' } },
+    sum: { control: 'text', description: 'Дополнительное значение справа внутри поля.', table: { category: 'Content' } },
+    sumIcon: { control: 'select', options: iconNames, description: 'Иконка рядом с Sum.', table: { category: 'Appearance' } },
+    clearIcon: { control: 'select', options: iconNames, description: 'Иконка действия очистки.', table: { category: 'Appearance' } },
   },
 } satisfies Meta<typeof Input>;
 
@@ -119,7 +119,6 @@ export const LongUnbrokenText: Story = {
     counter: true,
   },
 };
-
 export const LongRequiredLabel: Story = {
   args: {
     label: 'Очень длинный label без пробелов, который должен переноситься вместе с required marker',
