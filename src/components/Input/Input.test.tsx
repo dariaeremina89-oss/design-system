@@ -81,6 +81,14 @@ describe('Input', () => {
     expect(container.querySelector('.fdoc-input__description')).not.toBeInTheDocument();
   });
 
+  it('focuses the native input when the field chrome is clicked', async () => {
+    const user = userEvent.setup();
+    render(<Input label="Поле" />);
+    const input = screen.getByLabelText('Поле');
+    await user.click(screen.getByTestId('input-field'));
+    expect(input).toHaveFocus();
+  });
+
   it('clears an uncontrolled value when clear button is pressed', async () => {
     const user = userEvent.setup();
     const onClear = vi.fn();
@@ -115,11 +123,14 @@ describe('Input', () => {
       />,
     );
 
+    const input = screen.getByLabelText('Поле');
     const button = screen.getByRole('button', { name: 'Тип значения' });
     expect(button).toBeInTheDocument();
     expect(screen.queryByTestId('input-leading-icon')).not.toBeInTheDocument();
     await user.click(button);
     expect(onClick).toHaveBeenCalledOnce();
+    expect(button).toHaveFocus();
+    expect(input).not.toHaveFocus();
   });
 
   it('preserves the input anatomy in skeleton state', () => {
