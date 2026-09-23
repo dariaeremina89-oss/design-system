@@ -47,6 +47,7 @@ describe('Textarea', () => {
     expect(ref.current).toBe(screen.getByTestId('comment'));
     expect(ref.current).toBeRequired();
     expect(ref.current).toHaveAttribute('aria-required', 'true');
+    expect(screen.getByText('*')).toBeInTheDocument();
     expect(screen.getByTestId('comment-root')).toBeInTheDocument();
   });
   it('blocks disabled input, focus and resize but preserves the error', async () => {
