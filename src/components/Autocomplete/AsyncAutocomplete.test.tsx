@@ -1,4 +1,5 @@
-import { act, beforeAll, afterEach, describe, expect, it, vi } from 'vitest';
+import { act } from 'react';
+import { beforeAll, afterEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { AsyncAutocomplete } from './AsyncAutocomplete';
 
