@@ -50,6 +50,8 @@ export interface AutocompleteProps
   onValueChange?: (value: string, item?: AutocompleteItem) => void;
   /** Вызывается после выбора элемента. */
   onItemSelect?: (item: AutocompleteItem) => void;
+  /** Вызывается после очистки значения и текста. */
+  onClear?: () => void;
   /** Управляемый текст поискового запроса. */
   inputValue?: string;
   /** Начальный текст поискового запроса. */
@@ -95,6 +97,7 @@ export function Autocomplete({
   defaultValue = '',
   onValueChange,
   onItemSelect,
+  onClear,
   inputValue: controlledInputValue,
   defaultInputValue,
   onInputValueChange,
@@ -145,7 +148,6 @@ export function Autocomplete({
   const [activeValue, setActiveValue] = useState<string>();
 
   const selectedValue = controlledValue ?? internalValue;
-  const selectedItem = data.find(item => item.value === selectedValue);
   const query = controlledInputValue ?? internalInputValue;
   const open = !disabled && !skeleton && (controlledOpen ?? internalOpen);
   const threshold = Math.max(0, minCharacters);
@@ -214,6 +216,7 @@ export function Autocomplete({
     setSelectedValue('');
     setInputValue('', 'clear');
     changeOpen(false);
+    onClear?.();
     requestAnimationFrame(() => inputRef.current?.focus());
   }
 
@@ -222,8 +225,11 @@ export function Autocomplete({
     if (selectedValue) setSelectedValue('');
     setInputValue(next, 'input');
     setActiveValue(undefined);
-    if (next.length >= threshold || idleText !== undefined) showMenu();
+
+    const nextEligible = next.length >= threshold;
+    if (nextEligible || idleText !== undefined || loading || loadError !== undefined) changeOpen(true);
     else changeOpen(false);
+
     onChange?.(event);
   }
 
