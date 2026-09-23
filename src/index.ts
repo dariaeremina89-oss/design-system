@@ -72,7 +72,7 @@ export type { DropdownProps } from './components/Menu/Dropdown';
 export { Select } from './components/Select/Select';
 export type { SelectProps, SelectOption } from './components/Select/Select';
 export { Multiselect } from './components/Multiselect/Multiselect';
-export type { MultiselectProps, MultiselectOption } from './components/Multiselect/Multiselect';
+export type { MultiselectProps, MultiselectOption, MultiselectDisplay } from './components/Multiselect/Multiselect';
 export { Autocomplete } from './components/Autocomplete/Autocomplete';
 export type {
   AutocompleteProps,
