@@ -22,7 +22,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'AsyncAutocomplete использует ту же визуальную и интерактивную модель, что Autocomplete, но варианты получает по запросу. Запрос запускается после minCharacters и debounce; состояния Loading и Load Error относятся к Menu и не заменяют validation error поля.',
+          'AsyncAutocomplete использует ту же визуальную и интерактивную модель, что Autocomplete, но варианты получает по запросу. Запрос запускается после minCharacters и debounce; состояния Loading и Load Error относятся к Menu и не заменяют validation error поля. required работает так же, как у Autocomplete и Input.',
       },
     },
   },
@@ -43,6 +43,7 @@ const meta = {
     debounce: { control: { type: 'number', min: 0 } },
     limit: { control: { type: 'number', min: 0 } },
     clearable: { control: 'boolean' },
+    required: { control: 'boolean' },
     disabled: { control: 'boolean' },
     loading: { control: 'boolean' },
     highlightMatches: { control: 'boolean' },
@@ -53,6 +54,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+export const Required: Story = { args: { required: true } };
 
 export const InteractiveRequest: Story = {
   render: args => {
