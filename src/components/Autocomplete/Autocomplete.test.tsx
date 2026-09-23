@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Autocomplete } from './Autocomplete';
 
@@ -58,20 +58,22 @@ describe('Autocomplete', () => {
 
     expect(input).toHaveValue('Яблоки');
     await user.type(input, 'x');
-    expect(change).toHaveBeenCalledWith('');
+    expect(change).toHaveBeenCalledWith('', undefined);
   });
 
   it('clear resets value and query, closes Menu and restores focus', async () => {
     const user = userEvent.setup();
     const change = vi.fn();
-    render(<Autocomplete data={data} defaultValue="apple" clearable onValueChange={change} />);
+    const onClear = vi.fn();
+    render(<Autocomplete data={data} defaultValue="apple" clearable onValueChange={change} onClear={onClear} />);
     const input = screen.getByRole('combobox');
 
     await user.click(input);
     expect(screen.getByRole('listbox')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Очистить поле' }));
 
-    expect(change).toHaveBeenCalledWith('');
+    expect(change).toHaveBeenCalledWith('', undefined);
+    expect(onClear).toHaveBeenCalledTimes(1);
     expect(input).toHaveValue('');
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
     expect(input).toHaveFocus();
@@ -82,12 +84,12 @@ describe('Autocomplete', () => {
     const { rerender } = render(
       <Autocomplete data={[]} defaultInputValue="Киви" defaultOpen noOptionsText="Результаты не найдены" />,
     );
-    expect(screen.getByText('Результаты не найдены')).toBeInTheDocument();
+    expect(within(screen.getByRole('listbox')).getByText('Результаты не найдены')).toBeInTheDocument();
 
     rerender(
       <Autocomplete data={[]} defaultInputValue="Киви" defaultOpen loadError="Ошибка загрузки" />,
     );
-    expect(screen.getByText('Ошибка загрузки')).toBeInTheDocument();
+    expect(within(screen.getByRole('listbox')).getByText('Ошибка загрузки')).toBeInTheDocument();
 
     rerender(<Autocomplete data={data} error="Выберите продукт" required />);
     const input = screen.getByRole('combobox');
