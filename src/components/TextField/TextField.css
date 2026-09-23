@@ -13,6 +13,22 @@
   line-height: var(--line-height-24);
 }
 
+.fdoc-field__icon {
+  color: var(--icon-base-secondary);
+}
+
+.fdoc-field__field--disabled .fdoc-field__icon {
+  color: var(--icon-base-secondary-disabled);
+}
+
+.fdoc-field__clear {
+  flex: 0 0 var(--elements-24);
+}
+
+.fdoc-field__clear.fdoc-button-icon {
+  padding: 0;
+}
+
 /* Common field states; geometry is defined by each control. */
 .fdoc-field__field:focus-within {
   border-width: var(--border-middle);
