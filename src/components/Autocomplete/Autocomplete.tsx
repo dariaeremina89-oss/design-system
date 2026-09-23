@@ -137,6 +137,7 @@ export function Autocomplete({
   const menuId = `${id}-menu`;
   const inputRef = useRef<HTMLInputElement>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
+  const suppressOpenOnFocusRef = useRef(false);
   useImperativeHandle(ref, () => inputRef.current!, [skeleton]);
 
   const defaultItem = data.find(item => item.value === defaultValue);
@@ -217,6 +218,7 @@ export function Autocomplete({
     setInputValue('', 'clear');
     changeOpen(false);
     onClear?.();
+    suppressOpenOnFocusRef.current = true;
     inputRef.current?.focus();
   }
 
@@ -373,6 +375,10 @@ export function Autocomplete({
         onChange={handleChange}
         onFocus={event => {
           onFocus?.(event);
+          if (suppressOpenOnFocusRef.current) {
+            suppressOpenOnFocusRef.current = false;
+            return;
+          }
           if (canShowMenu()) showMenu();
         }}
         onBlur={onBlur}
