@@ -52,7 +52,7 @@
 .fdoc-phone-input__field--empty-international .fdoc-input__content::before {
   position: absolute;
   top: 50%;
-  left: var(--space-4);
+  left: 0;
   z-index: 0;
   transform: translateY(-50%);
   color: var(--text-base-default);
@@ -74,13 +74,13 @@
 .fdoc-phone-input__field--empty-russian .fdoc-input__control {
   position: relative;
   z-index: 1;
-  padding-left: 24px;
+  padding-left: calc(var(--elements-24) - var(--space-4));
 }
 
 .fdoc-phone-input__field--empty-international .fdoc-input__control {
   position: relative;
   z-index: 1;
-  padding-left: 12px;
+  padding-left: var(--space-8);
 }
 
 .fdoc-phone-input__field--empty-russian .fdoc-input__control::placeholder {
