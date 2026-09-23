@@ -24,11 +24,15 @@ test('PhoneInput inherits field click focus from Input', async ({ page }) => {
   await expect(field).toHaveCSS('border-width', '2px');
 });
 
-test('PhoneInput keeps field focus separate from selector focus', async ({ page }) => {
+test('PhoneInput keeps selector glyph geometry stable when selector receives focus', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-phoneinput--default&viewMode=story');
   const input = page.getByLabel('Номер телефона');
   const field = page.locator('.fdoc-phone-input .fdoc-input__field');
   const selector = page.getByRole('button', { name: 'Тип номера: Россия +7' });
+  const glyph = selector.locator('.fdoc-icon');
+
+  const beforeSelector = await selector.boundingBox();
+  const beforeGlyph = await glyph.boundingBox();
 
   await input.focus();
   await expect(field).toHaveCSS('border-width', '2px');
@@ -40,6 +44,11 @@ test('PhoneInput keeps field focus separate from selector focus', async ({ page 
   await expect(selector).toHaveAttribute('data-state', 'focused');
   await expect(selector).toHaveCSS('width', '24px');
   await expect(selector).toHaveCSS('height', '24px');
+
+  const afterSelector = await selector.boundingBox();
+  const afterGlyph = await glyph.boundingBox();
+  expect(afterSelector).toEqual(beforeSelector);
+  expect(afterGlyph).toEqual(beforeGlyph);
 });
 
 test('PhoneInput opens a two-item country Menu without replacing Input field focus styles', async ({ page }) => {
@@ -59,6 +68,45 @@ test('PhoneInput opens a two-item country Menu without replacing Input field foc
   const fieldWidth = await field.evaluate(element => element.getBoundingClientRect().width);
   const menuWidth = await page.locator('.fdoc-popup').evaluate(element => element.getBoundingClientRect().width);
   expect(Math.abs(fieldWidth - menuWidth)).toBeLessThan(1);
+});
+
+test('PhoneInput switches from International to Russian after manual 10-digit Russian input', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-phoneinput--international&viewMode=story');
+  const input = page.getByLabel('Номер телефона');
+
+  await input.fill('');
+  await input.pressSequentially('9081822772');
+
+  await expect(input).toHaveValue('+7 (908) 182-27-72');
+  await expect(page.getByRole('button', { name: 'Тип номера: Россия +7' })).toBeVisible();
+});
+
+test('PhoneInput converts a manually typed 89 Russian number to Russian mask', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-phoneinput--international&viewMode=story');
+  const input = page.getByLabel('Номер телефона');
+
+  await input.fill('');
+  await input.pressSequentially('89081822772');
+
+  await expect(input).toHaveValue('+7 (908) 182-27-72');
+  await expect(page.getByRole('button', { name: 'Тип номера: Россия +7' })).toBeVisible();
+});
+
+test('PhoneInput backspaces through the complete Russian mask without sticking on separators', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-phoneinput--default&viewMode=story');
+  const input = page.getByLabel('Номер телефона');
+
+  await input.pressSequentially('9081822772');
+  await expect(input).toHaveValue('+7 (908) 182-27-72');
+
+  for (let remaining = 9; remaining >= 0; remaining -= 1) {
+    await input.press('Backspace');
+    const value = await input.inputValue();
+    const nationalDigits = value.replace(/\D/g, '').replace(/^7/, '');
+    expect(nationalDigits).toHaveLength(remaining);
+  }
+
+  await expect(input).toHaveValue('');
 });
 
 test('PhoneInput switches selector assets between Russian, International and Disabled', async ({ page }) => {
