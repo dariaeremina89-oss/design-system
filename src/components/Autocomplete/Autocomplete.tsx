@@ -217,7 +217,7 @@ export function Autocomplete({
     setInputValue('', 'clear');
     changeOpen(false);
     onClear?.();
-    requestAnimationFrame(() => inputRef.current?.focus());
+    inputRef.current?.focus();
   }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
