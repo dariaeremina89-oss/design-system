@@ -60,10 +60,11 @@ describe('Input visual contract', () => {
   });
 
   it('keeps Focused and Error border states on the correct tokens', () => {
-    expectRuleValue('.fdoc-field__field:focus-within', 'border-width', 'var(--border-middle)');
-    expectRuleValue('.fdoc-field__field:focus-within', 'border-color', 'var(--border-primary-default)');
+    expectRuleValue('.fdoc-field__field:has(.fdoc-field__control:focus)', 'border-width', 'var(--border-middle)');
+    expectRuleValue('.fdoc-field__field:has(.fdoc-field__control:focus)', 'border-color', 'var(--border-primary-default)');
+    expectRuleValue('.fdoc-input__field:has(.fdoc-input__control:focus)', 'padding', 'calc(var(--space-12) - var(--border-small))');
     expectRuleValue('.fdoc-field__field.fdoc-field__field--error', 'border-color', 'var(--border-error-default)');
-    expectRuleValue('.fdoc-field__field.fdoc-field__field--error:focus-within', 'border-color', 'var(--border-error-default)');
+    expectRuleValue('.fdoc-field__field.fdoc-field__field--error:has(.fdoc-field__control:focus)', 'border-color', 'var(--border-error-default)');
     expectRuleValue('.fdoc-field__field.fdoc-field__field--error.fdoc-field__field--disabled', 'border-color', 'var(--border-error-disabled)');
     expectRuleValue('.fdoc-field__field.fdoc-field__field--disabled', 'background', 'var(--background-base-default-disabled)');
   });
