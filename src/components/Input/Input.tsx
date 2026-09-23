@@ -5,7 +5,7 @@ import {
   type ReactNode,
   type Ref,
 } from 'react';
-import type { IconName } from '../Icon/Icon';
+import { Icon, type IconName } from '../Icon/Icon';
 import { InputSkeleton } from './InputSkeleton';
 import { FieldClearButton, FieldHelper, FieldIcon, FieldLabel, useTextField, joinClassNames } from '../TextField/TextField';
 import './Input.css';
@@ -189,7 +189,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             {sum}
             {sumIcon !== undefined && (
               <span className="fdoc-input__sum-icon" aria-hidden="true" data-testid="input-sum-icon">
-                <span className="fdoc-icon" style={{ width: 16, height: 16 }} />
+                <Icon name={sumIcon} size={16} />
               </span>
             )}
           </span>
