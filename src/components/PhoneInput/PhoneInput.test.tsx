@@ -20,6 +20,14 @@ describe('PhoneInput', () => {
     expect(document.querySelector('[data-icon="flag_chevron/Country=Rus, State=Default"]')).toBeInTheDocument();
   });
 
+  it('inherits field click focus from Input', async () => {
+    const user = userEvent.setup();
+    render(<PhoneInput label="Телефон" />);
+    const input = screen.getByLabelText('Телефон');
+    await user.click(screen.getByTestId('input-field'));
+    expect(input).toHaveFocus();
+  });
+
   it('formats Russian input and emits a normalized value', async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
@@ -96,11 +104,12 @@ describe('PhoneInput', () => {
     expect(screen.queryByRole('button', { name: /Тип номера/ })).not.toBeInTheDocument();
   });
 
-  it('validates normalized Russian and International values', () => {
+  it('validates the fixed Russian mask and leaves International length to product validation', () => {
     expect(isValidPhoneValue('+79081822772', 'russian')).toBe(true);
     expect(isValidPhoneValue('+7908182277', 'russian')).toBe(false);
     expect(isValidPhoneValue('+4747603236', 'international')).toBe(true);
-    expect(isValidPhoneValue('+47', 'international')).toBe(false);
+    expect(isValidPhoneValue('+47', 'international')).toBe(true);
+    expect(isValidPhoneValue('', 'international')).toBe(false);
   });
 
   it('has no accessibility violations in the default state', async () => {
