@@ -108,23 +108,19 @@ function resolveTypedInput(value: string, currentType: PhoneInputType) {
     };
   }
 
-  if (currentType === 'russian') {
-    if (trimmed.startsWith('+7')) {
-      const national = digits.slice(1);
-      if (!national || national.startsWith('9')) {
-        return {
-          type: 'russian' as const,
-          value: national ? `+7${national.slice(0, 10)}` : '',
-        };
-      }
-    } else if (!trimmed.startsWith('+') && digits.length <= 10 && digits.startsWith('9')) {
-      return { type: 'russian' as const, value: `+7${digits}` };
-    } else if (digits.length <= 10) {
-      // Input displays a synthetic +7 prefix in Russian mode. Browser change events
-      // include that prefix, so keep treating the following digits as national input.
-      const national = digits.startsWith('7') ? digits.slice(1) : digits;
-      return { type: 'russian' as const, value: national ? `+7${national.slice(0, 10)}` : '' };
+  // Type is inferred continuously from what the user has entered, not locked by
+  // the selector state. +7 becomes Russian once the national mobile prefix is clear.
+  if (trimmed.startsWith('+7')) {
+    const national = digits.slice(1);
+    if (!national) return { type: currentType, value: '+7' };
+    if (national.startsWith('9')) {
+      return { type: 'russian' as const, value: `+7${national.slice(0, 10)}` };
     }
+    return { type: 'international' as const, value: `+${digits}` };
+  }
+
+  if (!trimmed.startsWith('+') && digits.length <= 10 && digits.startsWith('9')) {
+    return { type: 'russian' as const, value: `+7${digits}` };
   }
 
   return { type: 'international' as const, value: `+${digits}` };
