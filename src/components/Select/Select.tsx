@@ -1,10 +1,10 @@
 import { useEffect, useId, useImperativeHandle, useRef, useState, type Ref } from 'react';
 import { Input, type InputProps } from '../Input/Input';
-import { Icon, type IconName } from '../Icon/Icon';
-import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
+import type { IconName } from '../Icon/Icon';
 import { Skeleton } from '../Skeleton/Skeleton';
 import { Menu, menuOptionId, type MenuItem } from '../Menu/Menu';
 import { Popup, type PopupProps } from '../Menu/Popup';
+import { FieldClearButton, FieldIcon } from '../TextField/TextField';
 import './Select.css';
 
 export interface SelectOption {
@@ -111,11 +111,11 @@ export function Select({ options, value: controlled, defaultValue = '', onValueC
       aria-autocomplete="none" aria-activedescendant={open && activeId !== undefined ? menuOptionId(menuId, activeId) : undefined}
       onFocus={onFocus} onBlur={onBlur} onClick={onClick} onKeyDown={key}
       onChange={event => { if (!creatable) return; setQuery(event.target.value); setActive(undefined); if (!open) changeOpen(true); }}
-      trailingSkeleton={<>{clearable && value !== '' && !disabled && <ButtonIcon size="xsmall" iconSize={24} color="neutral" state="skeleton" aria-label="Очистить выбор"/>}<Skeleton shape="icon" width={24} height={24}/></>}
+      trailingSkeleton={<>{clearable && value !== '' && !disabled && <FieldClearButton className="fdoc-select__clear" state="skeleton" aria-label="Очистить выбор"/>}<Skeleton shape="icon" width={24} height={24}/></>}
       trailingContent={<>
-        {clearable && value !== '' && !disabled && <ButtonIcon className="fdoc-select__clear" size="xsmall" iconSize={24} color="neutral" icon="filled/cross_circle_filled" aria-label="Очистить выбор"
+        {clearable && value !== '' && !disabled && <FieldClearButton className="fdoc-select__clear" aria-label="Очистить выбор"
           onMouseDown={event => event.preventDefault()} onClick={() => { choose(''); onClear?.(); }}/>} 
-        <span className="fdoc-select__chevron" aria-hidden="true"><Icon name={open ? 'arrow-drop-up' : 'arrow-drop-down'} size={24}/></span>
+        <FieldIcon className="fdoc-select__chevron" icon={open ? 'arrow-drop-up' : 'arrow-drop-down'} />
       </>}/>
     {open && <Popup anchor={anchor} placement={placement} matchWidth maxHeight={menuMaxHeight}
       onDismiss={reason => { changeOpen(false); if (reason === 'escape') input.current?.focus(); }}>
