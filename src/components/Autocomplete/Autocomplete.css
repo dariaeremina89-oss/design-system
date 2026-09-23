@@ -11,11 +11,6 @@
   justify-content: center;
   width: var(--elements-24);
   height: var(--elements-24);
-  color: var(--icon-base-secondary);
-}
-
-.fdoc-autocomplete .fdoc-input__field--disabled .fdoc-autocomplete__chevron {
-  color: var(--icon-base-secondary-disabled);
 }
 
 .fdoc-autocomplete__message[data-variant='header'] .fdoc-item-row__container {
