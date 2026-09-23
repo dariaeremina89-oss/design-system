@@ -6,6 +6,7 @@ import {
   useState,
   type ChangeEvent,
   type ClipboardEvent,
+  type KeyboardEvent,
   type Ref,
 } from 'react';
 import { Input, type InputProps } from '../Input/Input';
@@ -150,6 +151,15 @@ function selectorIcon(type: PhoneInputType, state: Exclude<SelectorState, 'Focus
   return `flag_chevron/Country=${country}, State=${state}` as IconName;
 }
 
+function russianNationalDigitPositions(value: string) {
+  const prefixIndex = value.startsWith('+7') ? 1 : -1;
+  const positions: number[] = [];
+  Array.from(value).forEach((character, index) => {
+    if (/\d/.test(character) && index !== prefixIndex) positions.push(index);
+  });
+  return positions;
+}
+
 function menuTitle(type: PhoneInputType) {
   if (type === 'russian') {
     return (
@@ -248,45 +258,56 @@ export function PhoneInput({
     commit(resolved.value, resolved.type);
   }
 
-  function repairMaskedDeletion(text: string, inputType: string | undefined, caret: number | null) {
-    if (phoneType !== 'russian' || !inputType?.startsWith('deleteContent')) return text;
-    if (digitsOnly(text) !== digitsOnly(displayValue)) return text;
-    if (!displayValue) return text;
-
-    const chars = Array.from(text);
-    const cursor = caret ?? chars.length;
-    const countryDigitIndex = text.trimStart().startsWith('+7') ? text.indexOf('7') : -1;
-    let removeIndex = -1;
-
-    if (inputType === 'deleteContentBackward') {
-      for (let index = Math.min(cursor - 1, chars.length - 1); index >= 0; index -= 1) {
-        if (/\d/.test(chars[index]) && index !== countryDigitIndex) {
-          removeIndex = index;
-          break;
-        }
-      }
-    } else if (inputType === 'deleteContentForward') {
-      for (let index = Math.max(cursor, 0); index < chars.length; index += 1) {
-        if (/\d/.test(chars[index]) && index !== countryDigitIndex) {
-          removeIndex = index;
-          break;
-        }
-      }
-    }
-
-    if (removeIndex < 0) return text;
-    chars.splice(removeIndex, 1);
-    return chars.join('');
+  function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
+    handleChange(event.currentTarget.value);
   }
 
-  function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
-    const nativeInput = event.nativeEvent as InputEvent;
-    const text = repairMaskedDeletion(
-      event.currentTarget.value,
-      nativeInput.inputType,
-      event.currentTarget.selectionStart,
-    );
-    handleChange(text);
+  function handleRussianDeletion(event: KeyboardEvent<HTMLInputElement>) {
+    if (phoneType !== 'russian' || (event.key !== 'Backspace' && event.key !== 'Delete')) return false;
+    if (!displayValue) return false;
+
+    const start = event.currentTarget.selectionStart ?? displayValue.length;
+    const end = event.currentTarget.selectionEnd ?? start;
+    const positions = russianNationalDigitPositions(displayValue);
+    if (!positions.length) return false;
+
+    let indexes: number[] = [];
+    if (start !== end) {
+      indexes = positions
+        .map((position, index) => ({ position, index }))
+        .filter(({ position }) => position >= start && position < end)
+        .map(({ index }) => index);
+    } else if (event.key === 'Backspace') {
+      for (let index = positions.length - 1; index >= 0; index -= 1) {
+        if (positions[index] < start) {
+          indexes = [index];
+          break;
+        }
+      }
+    } else {
+      const index = positions.findIndex(position => position >= start);
+      if (index >= 0) indexes = [index];
+    }
+
+    if (!indexes.length) return false;
+
+    event.preventDefault();
+    const national = digitsOnly(normalizedValue).replace(/^7/, '').split('');
+    const firstRemovedIndex = Math.min(...indexes);
+    [...indexes].sort((a, b) => b - a).forEach(index => national.splice(index, 1));
+    const nextValue = national.length ? `+7${national.join('')}` : '';
+    commit(nextValue, 'russian');
+
+    requestAnimationFrame(() => {
+      const element = input.current;
+      if (!element) return;
+      const nextDisplay = formatRussianPhone(nextValue);
+      const nextPositions = russianNationalDigitPositions(nextDisplay);
+      const nextCaret = nextPositions[firstRemovedIndex] ?? nextDisplay.length;
+      element.setSelectionRange(nextCaret, nextCaret);
+    });
+
+    return true;
   }
 
   function handlePaste(event: ClipboardEvent<HTMLInputElement>) {
@@ -383,7 +404,11 @@ export function PhoneInput({
           onFocus?.(event);
         }}
         onBlur={event => { onBlur?.(event); }}
-        onKeyDown={event => { onKeyDown?.(event); }}
+        onKeyDown={event => {
+          onKeyDown?.(event);
+          if (event.defaultPrevented) return;
+          handleRussianDeletion(event);
+        }}
       />
 
       {open && (
