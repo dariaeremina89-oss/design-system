@@ -99,6 +99,14 @@ describe('Autocomplete', () => {
     expect(screen.getByRole('listbox')).toBeInTheDocument();
   });
 
+  it('preserves the required field contract from Input', () => {
+    render(<Autocomplete data={data} label="Продукты" required />);
+    const input = screen.getByRole('combobox');
+    expect(input).toBeRequired();
+    expect(input).toHaveAttribute('aria-required', 'true');
+    expect(screen.getByText('*')).toBeInTheDocument();
+  });
+
   it('respects minCharacters before showing results', () => {
     render(<Autocomplete data={data} minCharacters={2} />);
     const input = screen.getByRole('combobox');
