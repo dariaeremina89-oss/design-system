@@ -3,6 +3,7 @@ import {
   useImperativeHandle,
   useRef,
   useState,
+  type ChangeEvent,
   type FocusEvent,
   type KeyboardEvent,
   type ReactNode,
@@ -15,6 +16,8 @@ import { Menu, menuOptionId, type MenuItem } from '../Menu/Menu';
 import { Popup, type PopupProps } from '../Menu/Popup';
 import { FieldClearButton, FieldHelper, FieldIcon, FieldLabel, hasRenderableContent, joinClassNames } from '../TextField/TextField';
 import './Multiselect.css';
+
+export type MultiselectDisplay = 'comma' | 'count' | 'firstAndCount' | 'chips';
 
 export interface MultiselectOption {
   value: string;
@@ -44,14 +47,22 @@ export interface MultiselectProps
   > {
   /** Доступные варианты выбора. */
   options: MultiselectOption[];
-  /** Управляемый список выбранных option.value. */
+  /** Управляемый список выбранных option.value. В creatable свои значения хранятся строкой как value. */
   value?: string[];
   /** Начальный список выбранных значений. */
   defaultValue?: string[];
-  /** Вызывается после выбора, удаления Chips или полной очистки. */
+  /** Вызывается после выбора, удаления Chips, создания значения или полной очистки. */
   onValueChange?: (value: string[]) => void;
   /** Вызывается после полной очистки. */
   onClear?: () => void;
+  /** Представление выбранных значений. Creatable всегда использует chips. */
+  display?: MultiselectDisplay;
+  /** Разрешает ввод своего значения. По Enter значение превращается в Chips и не добавляется в Menu. */
+  creatable?: boolean;
+  /** Добавляет первой строкой Menu действие «Выбрать все». */
+  selectAll?: boolean;
+  /** Текст строки выбора всех доступных вариантов. */
+  selectAllLabel?: ReactNode;
   /** Позиция Checkbox внутри строк Menu. Слева по умолчанию; справа оставляет левый слот под leadingIcon. */
   selectionPosition?: 'left' | 'right';
   /** Управляемое состояние Menu. */
@@ -64,12 +75,18 @@ export interface MultiselectProps
   ref?: Ref<HTMLInputElement>;
 }
 
+const SELECT_ALL_ID = '__select-all';
+
 export function Multiselect({
   options,
   value: controlledValue,
   defaultValue = [],
   onValueChange,
   onClear,
+  display = 'comma',
+  creatable = false,
+  selectAll = false,
+  selectAllLabel = 'Выбрать все',
   selectionPosition = 'left',
   open: controlledOpen,
   defaultOpen = false,
@@ -110,14 +127,24 @@ export function Multiselect({
   const [internalValue, setInternalValue] = useState(defaultValue);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const [activeValue, setActiveValue] = useState<string>();
-  const values = (controlledValue ?? internalValue).filter(value => options.some(option => option.value === value));
-  const selectedOptions = values.flatMap(value => {
-    const option = options.find(candidate => candidate.value === value);
-    return option ? [option] : [];
-  });
+  const [query, setQuery] = useState('');
+  const suppressOpenOnFocusRef = useRef(false);
+
+  const optionValues = new Set(options.map(option => option.value));
+  const rawValues = controlledValue ?? internalValue;
+  const values = [...new Set(rawValues)].filter(value => creatable || optionValues.has(value));
+  const selectedOptions = values.map(value => options.find(option => option.value === value) ?? ({ value, label: value } as MultiselectOption));
   const enabledOptions = options.filter(option => !option.disabled);
-  const activeId = enabledOptions.some(option => option.value === activeValue) ? activeValue : undefined;
+  const enabledOptionValues = enabledOptions.map(option => option.value);
+  const allSelected = enabledOptionValues.length > 0 && enabledOptionValues.every(value => values.includes(value));
+  const someSelected = enabledOptionValues.some(value => values.includes(value)) && !allSelected;
+  const keyboardIds = [
+    ...(selectAll && enabledOptionValues.length ? [SELECT_ALL_ID] : []),
+    ...enabledOptionValues,
+  ];
+  const activeId = keyboardIds.includes(activeValue ?? '') ? activeValue : undefined;
   const open = !disabled && !skeleton && (controlledOpen ?? internalOpen);
+  const resolvedDisplay: MultiselectDisplay = creatable ? 'chips' : display;
 
   const inputRef = useRef<HTMLInputElement>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -127,11 +154,14 @@ export function Multiselect({
     if (disabled || skeleton) next = false;
     if (controlledOpen === undefined) setInternalOpen(next);
     onOpenChange?.(next);
-    if (!next) setActiveValue(undefined);
+    if (!next) {
+      setActiveValue(undefined);
+      if (creatable) setQuery('');
+    }
   }
 
   function commit(next: string[]) {
-    const unique = [...new Set(next)].filter(value => options.some(option => option.value === value));
+    const unique = [...new Set(next)].filter(value => creatable || optionValues.has(value));
     if (controlledValue === undefined) setInternalValue(unique);
     onValueChange?.(unique);
   }
@@ -142,17 +172,44 @@ export function Multiselect({
     commit(values.includes(value) ? values.filter(item => item !== value) : [...values, value]);
   }
 
+  function toggleAll() {
+    if (!enabledOptionValues.length || disabled) return;
+    if (allSelected) commit(values.filter(value => !enabledOptionValues.includes(value)));
+    else commit([...values, ...enabledOptionValues]);
+  }
+
   function clear() {
     commit([]);
+    setQuery('');
     onClear?.();
     changeOpen(false);
+    suppressOpenOnFocusRef.current = true;
     inputRef.current?.focus();
   }
 
+  function createValue() {
+    const text = query.trim();
+    if (!creatable || !text) return false;
+    const existingOption = options.find(option =>
+      option.value.toLocaleLowerCase() === text.toLocaleLowerCase()
+      || option.label.toLocaleLowerCase() === text.toLocaleLowerCase(),
+    );
+    if (existingOption) {
+      if (!existingOption.disabled && !values.includes(existingOption.value)) commit([...values, existingOption.value]);
+      setQuery('');
+      setActiveValue(undefined);
+      return true;
+    }
+    const existingValue = values.find(value => value.toLocaleLowerCase() === text.toLocaleLowerCase());
+    if (!existingValue) commit([...values, text]);
+    setQuery('');
+    setActiveValue(undefined);
+    return true;
+  }
+
   function openWithKeyboard(fromEnd = false) {
-    if (disabled || skeleton) return;
-    const next = fromEnd ? enabledOptions.at(-1)?.value : enabledOptions[0]?.value;
-    setActiveValue(next);
+    if (disabled || skeleton || !keyboardIds.length) return;
+    setActiveValue(fromEnd ? keyboardIds.at(-1) : keyboardIds[0]);
     changeOpen(true);
   }
 
@@ -178,48 +235,80 @@ export function Multiselect({
         openWithKeyboard(event.key === 'ArrowUp');
         return;
       }
-      if (!enabledOptions.length) return;
-      const index = enabledOptions.findIndex(option => option.value === activeId);
+      if (!keyboardIds.length) return;
+      const index = keyboardIds.findIndex(value => value === activeId);
       const nextIndex = event.key === 'ArrowDown'
-        ? (index + 1) % enabledOptions.length
+        ? (index + 1) % keyboardIds.length
         : index <= 0
-          ? enabledOptions.length - 1
+          ? keyboardIds.length - 1
           : index - 1;
-      setActiveValue(enabledOptions[nextIndex]?.value);
+      setActiveValue(keyboardIds[nextIndex]);
       return;
     }
-    if (open && (event.key === 'Home' || event.key === 'End') && enabledOptions.length) {
+    if (!creatable && open && (event.key === 'Home' || event.key === 'End') && keyboardIds.length) {
       event.preventDefault();
-      setActiveValue(event.key === 'Home' ? enabledOptions[0]?.value : enabledOptions.at(-1)?.value);
+      setActiveValue(event.key === 'Home' ? keyboardIds[0] : keyboardIds.at(-1));
       return;
     }
-    if (open && (event.key === 'Enter' || event.key === ' ') && activeId !== undefined) {
+    if (open && (event.key === 'Enter' || (!creatable && event.key === ' ')) && activeId !== undefined) {
       event.preventDefault();
-      toggle(activeId);
+      if (activeId === SELECT_ALL_ID) toggleAll();
+      else toggle(activeId);
       return;
     }
-    if (!open && event.key === 'Backspace' && values.length > 0) {
+    if (event.key === 'Enter' && creatable && query.trim()) {
+      event.preventDefault();
+      createValue();
+      if (!open) changeOpen(true);
+      return;
+    }
+    if (event.key === 'Backspace' && values.length > 0 && (!creatable || query === '')) {
+      if (!creatable && open) return;
       event.preventDefault();
       commit(values.slice(0, -1));
     }
   }
 
-  const menuItems: MenuItem[] = options.map(option => ({
-    id: option.value,
-    title: option.label,
-    textValue: option.label,
-    description: option.description,
-    helper: option.helper,
-    leadingIcon: option.leadingIcon,
-    disabled: option.disabled,
-    selection: 'checkbox',
-    selectionPosition,
-    selected: values.includes(option.value),
-  }));
+  function handleCreatableChange(event: ChangeEvent<HTMLInputElement>) {
+    setQuery(event.target.value);
+    setActiveValue(undefined);
+    if (!open) changeOpen(true);
+  }
+
+  const menuItems: MenuItem[] = [
+    ...(selectAll && enabledOptionValues.length ? [{
+      id: SELECT_ALL_ID,
+      title: selectAllLabel,
+      textValue: typeof selectAllLabel === 'string' ? selectAllLabel : 'Выбрать все',
+      selection: 'checkbox' as const,
+      selectionPosition,
+      selected: allSelected,
+      selectionIndeterminate: someSelected,
+    }] : []),
+    ...options.map(option => ({
+      id: option.value,
+      title: option.label,
+      textValue: option.label,
+      description: option.description,
+      helper: option.helper,
+      leadingIcon: option.leadingIcon,
+      disabled: option.disabled,
+      selection: 'checkbox' as const,
+      selectionPosition,
+      selected: values.includes(option.value),
+    })),
+  ];
 
   const resolvedCounter = counter === true ? String(values.length) : counter;
   const isError = hasRenderableContent(error);
   const accessibleValue = selectedOptions.map(option => option.label).join(', ');
+  const displayText = resolvedDisplay === 'count'
+    ? `Выбрано ${values.length}`
+    : resolvedDisplay === 'firstAndCount'
+      ? selectedOptions.length > 1
+        ? `${selectedOptions[0]?.label ?? ''} +${selectedOptions.length - 1}`
+        : selectedOptions[0]?.label ?? ''
+      : accessibleValue;
 
   if (skeleton) {
     return (
@@ -241,7 +330,13 @@ export function Multiselect({
   }
 
   return (
-    <div className={joinClassNames('fdoc-multiselect fdoc-field', wrapperClassName)} data-open={open || undefined} data-testid="multiselect">
+    <div
+      className={joinClassNames('fdoc-multiselect fdoc-field', wrapperClassName)}
+      data-open={open || undefined}
+      data-display={resolvedDisplay}
+      data-creatable={creatable || undefined}
+      data-testid="multiselect"
+    >
       <FieldLabel prefix="input" label={label} inputId={id} required={required} disabled={disabled} isError={isError} />
 
       <div
@@ -249,6 +344,7 @@ export function Multiselect({
         className={joinClassNames(
           'fdoc-multiselect__field fdoc-field__field',
           `fdoc-multiselect__field--${size}`,
+          resolvedDisplay === 'chips' && 'fdoc-multiselect__field--chips',
           leadingIcon !== undefined && 'fdoc-multiselect__field--has-leading',
           isError && 'fdoc-field__field--error',
           disabled && 'fdoc-field__field--disabled',
@@ -256,40 +352,21 @@ export function Multiselect({
         data-testid="multiselect-field"
         onClick={event => {
           if (disabled || (event.target as HTMLElement).closest('button')) return;
+          const target = event.target as HTMLElement;
           inputRef.current?.focus();
-          changeOpen(!open);
+          if (target.closest('.fdoc-multiselect__chevron')) changeOpen(!open);
+          else if (creatable) {
+            if (!open) changeOpen(true);
+          } else changeOpen(!open);
         }}
       >
         {leadingIcon !== undefined && (
           <FieldIcon className="fdoc-multiselect__leading" icon={leadingIcon} />
         )}
 
-        <div className="fdoc-multiselect__content">
-          <input
-            {...inputProps}
-            id={id}
-            ref={inputRef}
-            className={joinClassNames('fdoc-multiselect__control fdoc-field__control', className)}
-            value={accessibleValue}
-            readOnly
-            disabled={disabled}
-            required={required}
-            role="combobox"
-            autoComplete="off"
-            aria-required={required || undefined}
-            aria-invalid={isError || undefined}
-            aria-describedby={helperId}
-            aria-haspopup="listbox"
-            aria-expanded={open}
-            aria-controls={open ? menuId : undefined}
-            aria-activedescendant={open && activeId ? menuOptionId(menuId, activeId) : undefined}
-            onFocus={(event: FocusEvent<HTMLInputElement>) => onFocus?.(event)}
-            onBlur={onBlur}
-            onKeyDown={handleKeyDown}
-          />
-
-          {selectedOptions.length > 0 ? (
-            <div className="fdoc-multiselect__chips" role="group" aria-label="Выбранные значения">
+        <div className="fdoc-multiselect__content" data-display={resolvedDisplay}>
+          {resolvedDisplay === 'chips' ? (
+            <div className="fdoc-multiselect__chips" role={selectedOptions.length ? 'group' : undefined} aria-label={selectedOptions.length ? 'Выбранные значения' : undefined}>
               {selectedOptions.map(option => (
                 <Chips
                   key={option.value}
@@ -299,14 +376,81 @@ export function Multiselect({
                   disabled={disabled}
                   onRemove={disabled ? undefined : () => {
                     commit(values.filter(value => value !== option.value));
+                    suppressOpenOnFocusRef.current = true;
                     inputRef.current?.focus();
                   }}
                   removeLabel={`Удалить: ${option.label}`}
                 />
               ))}
+              <input
+                {...inputProps}
+                id={id}
+                ref={inputRef}
+                className={joinClassNames(
+                  'fdoc-multiselect__control fdoc-field__control',
+                  creatable && 'fdoc-multiselect__control--creatable',
+                  className,
+                )}
+                value={creatable ? query : accessibleValue}
+                readOnly={!creatable}
+                disabled={disabled}
+                required={required && values.length === 0}
+                role="combobox"
+                autoComplete="off"
+                placeholder={creatable && selectedOptions.length === 0 ? placeholder : undefined}
+                aria-required={required || undefined}
+                aria-invalid={isError || undefined}
+                aria-describedby={helperId}
+                aria-haspopup="listbox"
+                aria-expanded={open}
+                aria-controls={open ? menuId : undefined}
+                aria-autocomplete={creatable ? 'list' : 'none'}
+                aria-activedescendant={open && activeId ? menuOptionId(menuId, activeId) : undefined}
+                onChange={creatable ? handleCreatableChange : undefined}
+                onFocus={(event: FocusEvent<HTMLInputElement>) => {
+                  onFocus?.(event);
+                  if (suppressOpenOnFocusRef.current) {
+                    suppressOpenOnFocusRef.current = false;
+                    return;
+                  }
+                  if (creatable && !open) changeOpen(true);
+                }}
+                onBlur={onBlur}
+                onKeyDown={handleKeyDown}
+              />
+              {!creatable && selectedOptions.length === 0 && hasRenderableContent(placeholder) && (
+                <span className="fdoc-multiselect__placeholder">{placeholder}</span>
+              )}
             </div>
           ) : (
-            hasRenderableContent(placeholder) && <span className="fdoc-multiselect__placeholder">{placeholder}</span>
+            <>
+              <input
+                {...inputProps}
+                id={id}
+                ref={inputRef}
+                className={joinClassNames('fdoc-multiselect__control fdoc-field__control', className)}
+                value={accessibleValue}
+                readOnly
+                disabled={disabled}
+                required={required}
+                role="combobox"
+                autoComplete="off"
+                aria-required={required || undefined}
+                aria-invalid={isError || undefined}
+                aria-describedby={helperId}
+                aria-haspopup="listbox"
+                aria-expanded={open}
+                aria-controls={open ? menuId : undefined}
+                aria-autocomplete="none"
+                aria-activedescendant={open && activeId ? menuOptionId(menuId, activeId) : undefined}
+                onFocus={(event: FocusEvent<HTMLInputElement>) => onFocus?.(event)}
+                onBlur={onBlur}
+                onKeyDown={handleKeyDown}
+              />
+              {selectedOptions.length > 0
+                ? <span className="fdoc-multiselect__value" aria-hidden="true">{displayText}</span>
+                : hasRenderableContent(placeholder) && <span className="fdoc-multiselect__placeholder">{placeholder}</span>}
+            </>
           )}
         </div>
 
@@ -358,7 +502,9 @@ export function Multiselect({
             maxHeight={menuMaxHeight}
             emptyText={emptyText}
             onAction={item => {
-              toggle(item.id);
+              if (item.id === SELECT_ALL_ID) toggleAll();
+              else toggle(item.id);
+              if (creatable) setQuery('');
               setActiveValue(undefined);
               inputRef.current?.focus();
             }}
