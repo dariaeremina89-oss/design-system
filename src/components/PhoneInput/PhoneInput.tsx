@@ -75,7 +75,7 @@ function detectCompleteType(value: string): PhoneInputType | undefined {
 
 function normalizeInternational(value: string) {
   const digits = digitsOnly(value);
-  return digits ? `+${digits}` : '';
+  return digits ? `+${digits}` : value.trim().startsWith('+') ? '+' : '';
 }
 
 function normalizeRussianPartial(value: string) {
@@ -104,7 +104,7 @@ function resolveTypedInput(value: string, currentType: PhoneInputType) {
   if (!digits) {
     return {
       type: trimmed.startsWith('+') ? 'international' as const : currentType,
-      value: '',
+      value: trimmed.startsWith('+') ? '+' : '',
     };
   }
 
@@ -231,6 +231,7 @@ export function PhoneInput({
     ? formatRussianPhone(normalizedValue)
     : normalizeInternational(normalizedValue);
   const empty = normalizedValue === '';
+  const prefixOnly = phoneType === 'international' && normalizedValue === '+';
 
   useEffect(() => {
     if (controlledValue === undefined || controlledType !== undefined) return;
@@ -358,6 +359,7 @@ export function PhoneInput({
       data-phone-type={phoneType}
       data-open={open || undefined}
       data-empty={empty || undefined}
+      data-prefix-only={prefixOnly || undefined}
     >
       {name && !skeleton && <input type="hidden" name={name} value={normalizedValue} disabled={disabled} />}
       <Input
@@ -368,6 +370,7 @@ export function PhoneInput({
         label={label}
         name={undefined}
         value={displayValue}
+        data-prefix-only={prefixOnly || undefined}
         disabled={disabled}
         skeleton={skeleton}
         wrapperClassName={`fdoc-phone-input__field${empty ? ` fdoc-phone-input__field--empty-${phoneType}` : ''}`}
