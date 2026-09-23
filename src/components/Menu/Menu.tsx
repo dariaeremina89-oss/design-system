@@ -99,13 +99,13 @@ export function Menu({ items, id: providedId, role = 'menu', selectedId, activeI
         const itemRole = role === 'listbox' ? 'option' : item.selection === 'checkbox' ? 'menuitemcheckbox' : 'menuitem';
         const chosen = item.selected ?? (selectedId !== undefined ? itemId === selectedId : false);
         // Links retain their native semantics and their own states inside a presentation row.
-        if (item.variant === 'link') return <div key={itemId} role="none"><ItemRow {...row} id={menuOptionId(id, itemId)} linkProps={{ role: itemRole, tabIndex: focusItems && enabledItem && itemId === tabStop ? 0 : -1 }} state={skeleton ? 'skeleton' : item.state} onClick={select} onFocus={() => { if (enabledItem) activate(itemId); }} /></div>;
+        if (item.variant === 'link') return <div key={itemId} role="none"><ItemRow {...row} id={menuOptionId(id, itemId)} linkProps={{ role: itemRole, tabIndex: focusItems && enabledItem && itemId === tabStop ? 0 : -1 }} state={skeleton ? 'skeleton' : item.state} onClick={select} onFocus={() => { if (enabledItem && focusItems) activate(itemId); }} /></div>;
         return <ItemRow {...row} key={itemId} id={menuOptionId(id, itemId)} role={item.variant === 'header' || item.variant === 'search' ? 'presentation' : itemRole}
           tabIndex={focusItems && enabledItem && itemId === tabStop ? 0 : -1}
           selected={chosen} state={skeleton ? 'skeleton' : item.state ?? (!focusItems && itemId === active ? 'focused' : 'default')}
           aria-selected={role === 'listbox' && item.variant !== 'header' ? chosen : undefined}
           aria-checked={itemRole === 'menuitemcheckbox' ? chosen : undefined}
-          onFocus={() => { if (enabledItem) activate(itemId); }} onClick={select}/>;
+          onFocus={() => { if (enabledItem && focusItems) activate(itemId); }} onClick={select}/>;
       })}
       {!visible.length && <div className="fdoc-menu__empty" role="presentation">{emptyText}</div>}
     </div>
