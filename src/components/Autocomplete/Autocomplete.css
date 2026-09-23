@@ -1,0 +1,54 @@
+.fdoc-autocomplete {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.fdoc-autocomplete__chevron {
+  display: inline-flex;
+  flex: 0 0 var(--elements-24);
+  align-items: center;
+  justify-content: center;
+  width: var(--elements-24);
+  height: var(--elements-24);
+  color: var(--icon-base-secondary);
+}
+
+.fdoc-autocomplete .fdoc-input__field--disabled .fdoc-autocomplete__chevron {
+  color: var(--icon-base-secondary-disabled);
+}
+
+.fdoc-autocomplete__message[data-variant='header'] .fdoc-item-row__container {
+  min-height: 48px;
+  padding: var(--space-12);
+}
+
+.fdoc-autocomplete__message[data-variant='header'] .fdoc-item-row__text {
+  padding: var(--space-2) var(--space-4);
+}
+
+.fdoc-autocomplete__message[data-variant='header'] .fdoc-item-row__title {
+  color: var(--text-base-default);
+  font-family: var(--page-body-family);
+  font-size: var(--page-body-size);
+  line-height: var(--page-body-line-height);
+  font-weight: var(--page-body-weight-base);
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.fdoc-autocomplete__message--error[data-variant='header'] .fdoc-item-row__title {
+  color: var(--text-error-secondary);
+}
+
+.fdoc-autocomplete__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
