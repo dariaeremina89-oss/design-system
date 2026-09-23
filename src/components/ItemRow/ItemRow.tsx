@@ -7,7 +7,7 @@ import { Link, type LinkProps } from '../Link/Link';
 import { Search, type SearchProps } from '../Search/Search';
 import './ItemRow.css';
 
-export type ItemRowState = 'default' | 'hover' | 'pressed' | 'focused' | 'disabled' | 'skeleton';
+export type ItemRowState = 'default'|'hover'|'pressed'|'focused'|'disabled'|'skeleton';
 export interface ItemRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   title?: ReactNode;
   description?: ReactNode;
@@ -19,6 +19,7 @@ export interface ItemRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'titl
   selection?: 'check' | 'checkbox';
   selectionPosition?: 'left' | 'right';
   selected?: boolean;
+  selectionIndeterminate?: boolean;
   divider?: boolean;
   disabled?: boolean;
   state?: ItemRowState;
@@ -29,13 +30,14 @@ export interface ItemRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'titl
 }
 
 export function ItemRow({ title, description, helper, variant = 'item', leadingIcon, logo, trailingIcon,
-  selection, selectionPosition = 'right', selected = false, divider = false, disabled = false,
-  state = 'default', href, linkProps, searchProps, className = '', onClick, onKeyDown, role, tabIndex, ref, ...props }: ItemRowProps) {
+  selection, selectionPosition = 'right', selected = false, selectionIndeterminate = false,
+  divider = false, disabled = false, state = 'default', href, linkProps, searchProps,
+  className = '', onClick, onKeyDown, role, tabIndex, ref, ...props }: ItemRowProps) {
   const loading = state === 'skeleton';
   const inactive = disabled || state === 'disabled';
   const interactive = variant === 'item' && (!!onClick || !!role);
   const indicator = selection === 'checkbox'
-    ? <span className="fdoc-item-row__checkbox" inert aria-hidden="true"><Checkbox checked={selected} readOnly disabled={inactive} tabIndex={-1} aria-label="Выбор" /></span>
+    ? <span className="fdoc-item-row__checkbox" inert aria-hidden="true"><Checkbox checked={selected} indeterminate={selectionIndeterminate} readOnly disabled={inactive} tabIndex={-1} aria-label="Выбор" /></span>
     : selection === 'check' ? <span className="fdoc-item-row__check" data-selected={selected}><Icon name="filled/check_circle_filled" size={24}/></span> : null;
   const slot = (side: 'left' | 'right') => {
     const content = selection && selectionPosition === side ? indicator
