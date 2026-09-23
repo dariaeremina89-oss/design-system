@@ -13,6 +13,7 @@ export interface InputSkeletonProps {
   caption?: ReactNode;
   counter?: ReactNode | boolean;
   leadingIcon?: IconName;
+  leadingContent?: ReactNode;
   trailingIcon?: IconName;
   trailingContent?: ReactNode;
   sum?: ReactNode;
@@ -65,6 +66,7 @@ export function InputSkeleton({
   caption,
   counter,
   leadingIcon,
+  leadingContent,
   trailingIcon,
   trailingContent,
   sum,
@@ -85,6 +87,7 @@ export function InputSkeleton({
     && counter !== false
     && counter !== '';
   const hasSum = hasRenderableContent(sum);
+  const hasLeading = leadingIcon !== undefined || hasRenderableContent(leadingContent);
   const providedValue = value !== undefined && value !== null ? value : defaultValue;
   const hasValue = textLength(providedValue as ReactNode) > 0;
 
@@ -120,12 +123,12 @@ export function InputSkeleton({
       <div
         className={joinClassNames(
           'fdoc-input__field fdoc-field__field',
-          leadingIcon !== undefined && 'fdoc-input__field--has-leading',
+          hasLeading && 'fdoc-input__field--has-leading',
           'fdoc-input__field--skeleton',
         )}
         data-testid="input-skeleton-field"
       >
-        {leadingIcon !== undefined && (
+        {hasLeading && (
           <span className="fdoc-input__slot fdoc-input__slot--leading fdoc-field__icon" data-testid="input-skeleton-leading-icon">
             <Skeleton width="var(--elements-24)" height="var(--elements-24)" shape="icon" data-testid="input-skeleton-leading-icon-shape" />
           </span>
