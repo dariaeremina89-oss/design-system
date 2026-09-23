@@ -63,15 +63,36 @@ export const States: Story = {
   render: args => (
     <div style={{ display: 'grid', gap: 24 }}>
       <Autocomplete {...args} data={[]} mode="input" label="Empty / Input" />
-      <Autocomplete {...args} defaultOpen mode="select" label="Focused & Open / Select" />
-      <Autocomplete {...args} defaultInputValue="Шок" defaultOpen label="Typing" />
       <Autocomplete {...args} defaultValue="banana" label="Filled" showSelectedIcon />
-      <Autocomplete {...args} defaultInputValue="Киви" defaultOpen label="No Results" />
       <Autocomplete {...args} error="Выберите значение" required label="Validation Error" />
       <Autocomplete {...args} disabled defaultValue="apple" label="Disabled" />
       <Autocomplete {...args} skeleton label="Skeleton" />
     </div>
   ),
+};
+
+export const Open: Story = {
+  args: {
+    defaultOpen: true,
+    mode: 'select',
+    label: 'Focused & Open / Select',
+  },
+};
+
+export const Typing: Story = {
+  args: {
+    defaultInputValue: 'Шок',
+    defaultOpen: true,
+    label: 'Typing',
+  },
+};
+
+export const NoResults: Story = {
+  args: {
+    defaultInputValue: 'Киви',
+    defaultOpen: true,
+    label: 'No Results',
+  },
 };
 
 export const Loading: Story = {
