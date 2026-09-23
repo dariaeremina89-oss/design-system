@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Multiselect } from './Multiselect';
 
@@ -46,9 +46,9 @@ describe('Multiselect', () => {
 
     await user.click(screen.getByTestId('multiselect-field'));
     let option = screen.getByRole('option', { name: 'Документы' });
-    let main = option.querySelector('.fdoc-item-row__main');
-    expect(main?.firstElementChild).toContainElement(option.querySelector('.fdoc-item-row__checkbox'));
-    expect(within(option).queryByTestId('nonexistent')).not.toBeInTheDocument();
+    const checkbox = option.querySelector('.fdoc-item-row__checkbox');
+    const main = option.querySelector('.fdoc-item-row__main');
+    expect(main?.firstElementChild).toContainElement(checkbox as HTMLElement);
     expect(option.querySelector('[data-icon="doc-list"]')).not.toBeInTheDocument();
 
     rerender(<Multiselect options={iconOptions} label="Разделы" selectionPosition="right" />);
