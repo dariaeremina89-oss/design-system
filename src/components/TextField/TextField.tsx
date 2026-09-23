@@ -1,4 +1,6 @@
 import { useId, useState, type ChangeEvent, type ReactNode } from 'react';
+import { ButtonIcon, type ButtonIconProps } from '../ButtonIcon/ButtonIcon';
+import { Icon, type IconName } from '../Icon/Icon';
 import { Skeleton } from '../Skeleton/Skeleton';
 import './TextField.css';
 
@@ -8,6 +10,42 @@ export function joinClassNames(...classes: Array<string | false | undefined>) {
 
 export function hasRenderableContent(value: ReactNode | undefined) {
   return value !== undefined && value !== null && value !== false && value !== true && value !== '';
+}
+
+export function FieldIcon({ icon, className, 'data-testid': testId }: {
+  icon: IconName;
+  className?: string;
+  'data-testid'?: string;
+}) {
+  return (
+    <span className={joinClassNames('fdoc-field__icon', className)} aria-hidden="true" data-testid={testId}>
+      <Icon name={icon} size={24} />
+    </span>
+  );
+}
+
+export interface FieldClearButtonProps
+  extends Omit<ButtonIconProps, 'size' | 'iconSize' | 'color' | 'aria-label'> {
+  'aria-label'?: string;
+}
+
+export function FieldClearButton({
+  icon = 'filled/cross_circle_filled',
+  className,
+  'aria-label': ariaLabel = 'Очистить поле',
+  ...props
+}: FieldClearButtonProps) {
+  return (
+    <ButtonIcon
+      {...props}
+      className={joinClassNames('fdoc-field__clear', className)}
+      icon={icon}
+      iconSize={24}
+      size="xsmall"
+      color="neutral"
+      aria-label={ariaLabel}
+    />
+  );
 }
 
 type FieldOptions = {
