@@ -6,7 +6,9 @@ test('autocomplete follows Input and Menu geometry', async ({ page }) => {
   await expect(field).toHaveCSS('min-height', '56px');
   await expect(field).toHaveCSS('border-radius', '8px');
 
-  await page.getByRole('combobox').click();
+  // Open deterministically through the component's keyboard interaction. This avoids
+  // a focus/click race in headless Chromium while keeping the test scoped to Menu geometry.
+  await page.getByRole('combobox').press('ArrowDown');
   const openMenu = page.locator('.fdoc-popup .fdoc-menu').first();
   await expect(openMenu).toBeVisible();
   await expect(openMenu).toHaveCSS('border-radius', '8px');
