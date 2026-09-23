@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AsyncAutocomplete } from './AsyncAutocomplete';
 import type { AutocompleteItem } from './Autocomplete';
+import { controlsParameters, pickFieldControls } from '../../docs/story-controls';
 
 const allItems: AutocompleteItem[] = [
   { value: 'apple', label: 'Яблоки' },
@@ -13,12 +14,22 @@ const allItems: AutocompleteItem[] = [
   { value: 'lemon', label: 'Лимон' },
 ];
 
+const controlOrder = [
+  'label', 'required', 'value', 'defaultValue', 'inputValue', 'defaultInputValue',
+  'placeholder', 'description', 'caption', 'error', 'counter', 'size',
+  'clearable', 'disabled', 'skeleton', 'loading',
+  'minCharacters', 'debounce', 'limit', 'highlightMatches', 'showSelectedIcon', 'placement', 'menuMaxHeight',
+  'noOptionsText', 'idleText', 'loadingText',
+  'onValueChange', 'onInputValueChange', 'onClear', 'onOpenChange',
+] as const;
+
 const meta = {
   title: 'Components/Selection/AsyncAutocomplete',
   component: AsyncAutocomplete,
   tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
+    controls: controlsParameters(controlOrder),
     docs: {
       description: {
         component:
@@ -38,15 +49,22 @@ const meta = {
     onFetch: async () => undefined,
   },
   argTypes: {
-    size: { control: 'radio', options: ['small', 'medium'] },
-    minCharacters: { control: { type: 'number', min: 0 } },
-    debounce: { control: { type: 'number', min: 0 } },
-    limit: { control: { type: 'number', min: 0 } },
-    clearable: { control: 'boolean' },
-    required: { control: 'boolean' },
-    disabled: { control: 'boolean' },
-    loading: { control: 'boolean' },
-    highlightMatches: { control: 'boolean' },
+    ...pickFieldControls(
+      'label', 'required', 'value', 'defaultValue', 'inputValue', 'defaultInputValue',
+      'placeholder', 'description', 'caption', 'error', 'counter', 'size',
+      'clearable', 'disabled', 'skeleton', 'loading',
+      'onValueChange', 'onInputValueChange', 'onClear', 'onOpenChange',
+    ),
+    minCharacters: { control: { type: 'number', min: 0 }, description: 'Минимум символов до запроса и показа результатов.', table: { category: 'Behavior' } },
+    debounce: { control: { type: 'number', min: 0 }, description: 'Задержка перед onFetch, мс.', table: { category: 'Behavior' } },
+    limit: { control: { type: 'number', min: 0 }, description: 'Максимум отображаемых результатов.', table: { category: 'Behavior' } },
+    highlightMatches: { control: 'boolean', description: 'Подсвечивает совпадение запроса в вариантах.', table: { category: 'Behavior' } },
+    showSelectedIcon: { control: 'boolean', description: 'Показывает отметку выбранного элемента в Menu.', table: { category: 'Appearance' } },
+    placement: { control: 'select', options: ['auto', 'top', 'bottom'], description: 'Позиция Menu относительно поля.', table: { category: 'Appearance' } },
+    menuMaxHeight: { control: { type: 'number', min: 48 }, description: 'Максимальная высота Menu, px.', table: { category: 'Appearance' } },
+    noOptionsText: { control: 'text', description: 'Сообщение, когда результатов нет.', table: { category: 'Content' } },
+    idleText: { control: 'text', description: 'Сообщение до достижения minCharacters.', table: { category: 'Content' } },
+    loadingText: { control: 'text', description: 'Доступное текстовое описание Loading.', table: { category: 'Content' } },
   },
 } satisfies Meta<typeof AsyncAutocomplete>;
 
@@ -86,58 +104,27 @@ export const InteractiveRequest: Story = {
 };
 
 export const Loading: Story = {
-  args: {
-    data: [],
-    defaultInputValue: 'Яб',
-    loading: true,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Нажмите на поле, чтобы показать Loading в Menu.',
-      },
-    },
-  },
+  args: { data: [], defaultInputValue: 'Яб', loading: true },
+  parameters: { docs: { description: { story: 'Нажмите на поле, чтобы показать Loading в Menu.' } } },
 };
 
 export const NoResults: Story = {
-  args: {
-    data: [],
-    defaultInputValue: 'Киви',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Нажмите на поле, чтобы показать состояние без результатов.',
-      },
-    },
-  },
+  args: { data: [], defaultInputValue: 'Киви' },
+  parameters: { docs: { description: { story: 'Нажмите на поле, чтобы показать состояние без результатов.' } } },
 };
 
 export const LoadError: Story = {
   args: {
     data: [],
     defaultInputValue: 'Яб',
-    loadError: (
-      <>
-        Не удалось получить список. Попробуйте вернуться позже. Если ошибка сохраняется, обратитесь в техподдержку{' '}
-        <u>support@fdoc.ru</u>
-      </>
-    ),
+    loadError: <>
+      Не удалось получить список. Попробуйте вернуться позже. Если ошибка сохраняется, обратитесь в техподдержку{' '}
+      <u>support@fdoc.ru</u>
+    </>,
   },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Нажмите на поле, чтобы показать ошибку загрузки Menu.',
-      },
-    },
-  },
+  parameters: { docs: { description: { story: 'Нажмите на поле, чтобы показать ошибку загрузки Menu.' } } },
 };
 
 export const FetchOnMount: Story = {
-  args: {
-    data: allItems,
-    minCharacters: 0,
-    debounce: 0,
-  },
+  args: { data: allItems, minCharacters: 0, debounce: 0 },
 };
