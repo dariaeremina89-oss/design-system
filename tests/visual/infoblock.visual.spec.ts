@@ -72,3 +72,15 @@ for (const width of [320, 288, 256, 240]) {
     expect(await block.evaluate(el => el.scrollWidth)).toBeLessThanOrEqual(Math.ceil(blockBox!.width));
   });
 }
+
+
+test('InfoBlock horizontal actions stay vertically centered', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-elements-infoblock--two-actions&viewMode=story');
+  const bodyBox = await page.locator('.fdoc-info-block__body').boundingBox();
+  const actionsBox = await page.locator('.fdoc-info-block__actions').boundingBox();
+  expect(bodyBox).not.toBeNull();
+  expect(actionsBox).not.toBeNull();
+  const bodyCenter = bodyBox!.y + bodyBox!.height / 2;
+  const actionsCenter = actionsBox!.y + actionsBox!.height / 2;
+  expect(Math.abs(bodyCenter - actionsCenter)).toBeLessThanOrEqual(1);
+});
