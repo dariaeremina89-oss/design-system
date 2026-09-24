@@ -133,13 +133,36 @@
 .fdoc-info-block__close { flex: 0 0 auto; }
 
 @container (max-width: 383px) {
+  .fdoc-info-block {
+    padding-left: var(--space-12);
+  }
+
+  .fdoc-info-block__main {
+    gap: var(--space-8);
+  }
+
   .fdoc-info-block--medium.fdoc-info-block--horizontal .fdoc-info-block__body {
     flex-direction: column;
     gap: var(--space-8);
   }
+
   .fdoc-info-block--medium.fdoc-info-block--horizontal .fdoc-info-block__actions {
     width: 100%;
     padding: 0 0 var(--space-8);
     justify-content: flex-start;
+  }
+}
+
+@container (max-width: 287px) {
+  .fdoc-info-block {
+    padding-left: var(--space-8);
+  }
+
+  .fdoc-info-block__main {
+    gap: var(--space-4);
+  }
+
+  .fdoc-info-block__copy {
+    padding-right: var(--space-4);
   }
 }
