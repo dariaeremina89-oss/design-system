@@ -36,6 +36,10 @@ export const WithoutClose: Story = { args: { closable: false } };
 export const NarrowContainer: Story = {
   render: args => <div style={{ width: 288 }}><InfoBlock {...args} actions={twoActions} /></div>,
 };
+export const AdaptiveContainer: Story = {
+  render: args => <div data-testid="adaptive-host" style={{ width: 320 }}><InfoBlock {...args} /></div>,
+};
+
 export const LongContent: Story = {
   args: {
     actions: twoActions,
