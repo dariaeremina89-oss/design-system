@@ -20,7 +20,10 @@ test('Medium horizontal InfoBlock adapts to its own narrow container', async ({ 
   await page.goto('/iframe.html?id=components-feedback-infoblock--narrow-container&viewMode=story');
   const body = page.locator('.fdoc-info-block__body');
   await expect(body).toHaveCSS('flex-direction', 'column');
-  await expect(page.locator('.fdoc-info-block__actions')).toHaveCSS('width', '220px');
+  const actions = page.locator('.fdoc-info-block__actions');
+  const bodyBox = await body.boundingBox();
+  const actionsBox = await actions.boundingBox();
+  expect(actionsBox?.width).toBe(bodyBox?.width);
 });
 
 test('InfoBlock long content stays inside the component', async ({ page }) => {
