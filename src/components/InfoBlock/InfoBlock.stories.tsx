@@ -6,7 +6,7 @@ const oneAction = <Button size="small" color="base">Button</Button>;
 const twoActions = <><Button size="small" color="base">Button</Button><Button size="small" color="tertiary">Button</Button></>;
 
 const meta = {
-  title: 'Components/Feedback/InfoBlock',
+  title: 'Components/Elements/InfoBlock',
   component: InfoBlock,
   tags: ['autodocs', 'ready'],
   parameters: {
