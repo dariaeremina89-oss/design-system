@@ -42,3 +42,33 @@ test('InfoBlock semantic colors remain readable in dark theme', async ({ page })
     expect(background).not.toBe(text);
   }
 });
+
+
+for (const width of [320, 288, 256, 240]) {
+  test(`InfoBlock keeps anatomy inside at ${width}px container`, async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 700 });
+    await page.goto('/iframe.html?id=components-elements-infoblock--adaptive-container&viewMode=story');
+    await page.locator('[data-testid="adaptive-host"]').evaluate((el, value) => {
+      (el as HTMLElement).style.width = `${value}px`;
+    }, width);
+
+    const block = page.getByTestId('info-block');
+    const blockBox = await block.boundingBox();
+    expect(blockBox).not.toBeNull();
+
+    for (const locator of [
+      page.getByTestId('info-block-icon'),
+      page.locator('.fdoc-info-block__copy'),
+      page.getByTestId('info-block-close'),
+    ]) {
+      const box = await locator.boundingBox();
+      expect(box).not.toBeNull();
+      expect(box!.x).toBeGreaterThanOrEqual(blockBox!.x);
+      expect(box!.x + box!.width).toBeLessThanOrEqual(blockBox!.x + blockBox!.width + 0.5);
+    }
+
+    const copyBox = await page.locator('.fdoc-info-block__copy').boundingBox();
+    expect(copyBox!.width).toBeGreaterThanOrEqual(120);
+    expect(await block.evaluate(el => el.scrollWidth)).toBeLessThanOrEqual(Math.ceil(blockBox!.width));
+  });
+}
