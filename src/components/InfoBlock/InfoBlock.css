@@ -81,6 +81,7 @@
 
 .fdoc-info-block--horizontal .fdoc-info-block__body {
   flex-direction: row;
+  align-items: flex-start;
   gap: var(--space-8);
 }
 .fdoc-info-block--horizontal .fdoc-info-block__actions {
@@ -110,11 +111,13 @@
 @container (max-width: 383px) {
   .fdoc-info-block--medium.fdoc-info-block--horizontal .fdoc-info-block__body {
     flex-direction: column;
+    align-items: stretch;
     gap: var(--space-8);
   }
   .fdoc-info-block--medium.fdoc-info-block--horizontal .fdoc-info-block__actions {
     width: 100%;
     padding: 0 0 var(--space-8);
     justify-content: flex-start;
+    align-self: stretch;
   }
 }
