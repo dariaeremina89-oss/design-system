@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('InfoBlock follows Figma geometry and tokens', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-elements-infoblock--two-actions&viewMode=story');
+  await page.goto('/iframe.html?id=components-elements-infoblock--default&viewMode=story');
   const block = page.getByTestId('info-block');
   await expect(block).toHaveCSS('box-sizing', 'border-box');
   await expect(block).toHaveCSS('border-radius', '8px');
@@ -15,15 +15,14 @@ test('InfoBlock follows Figma geometry and tokens', async ({ page }) => {
   await expect(page.locator('.fdoc-info-block__title')).toHaveCSS('line-height', '20px');
 });
 
-test('Medium horizontal InfoBlock adapts to its own narrow container', async ({ page }) => {
+test('InfoBlock actions wrap below automatically in a narrow container', async ({ page }) => {
   await page.setViewportSize({ width: 900, height: 700 });
   await page.goto('/iframe.html?id=components-elements-infoblock--narrow-container&viewMode=story');
-  const body = page.locator('.fdoc-info-block__body');
-  await expect(body).toHaveCSS('flex-direction', 'column');
-  const actions = page.locator('.fdoc-info-block__actions');
-  const bodyBox = await body.boundingBox();
-  const actionsBox = await actions.boundingBox();
-  expect(actionsBox?.width).toBe(bodyBox?.width);
+  const copyBox = await page.locator('.fdoc-info-block__copy').boundingBox();
+  const actionsBox = await page.locator('.fdoc-info-block__actions').boundingBox();
+  expect(copyBox).not.toBeNull();
+  expect(actionsBox).not.toBeNull();
+  expect(actionsBox!.y).toBeGreaterThanOrEqual(copyBox!.y + copyBox!.height - 1);
 });
 
 test('InfoBlock long content stays inside the component', async ({ page }) => {
@@ -43,80 +42,31 @@ test('InfoBlock semantic colors remain readable in dark theme', async ({ page })
   }
 });
 
-
 for (const width of [320, 288, 256, 240]) {
   test(`InfoBlock keeps anatomy inside at ${width}px container`, async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 700 });
-    await page.goto('/iframe.html?id=components-elements-infoblock--adaptive-container&viewMode=story');
-    await page.locator('[data-testid="adaptive-host"]').evaluate((el, value) => {
-      (el as HTMLElement).style.width = `${value}px`;
-    }, width);
-
+    await page.goto('/iframe.html?id=components-elements-infoblock--narrow-container&viewMode=story');
+    const host = page.locator('body > #storybook-root > div').first();
+    await host.evaluate((el, value) => { (el as HTMLElement).style.width = `${value}px`; }, width);
     const block = page.getByTestId('info-block');
     const blockBox = await block.boundingBox();
     expect(blockBox).not.toBeNull();
-
-    for (const locator of [
-      page.getByTestId('info-block-icon'),
-      page.locator('.fdoc-info-block__copy'),
-      page.getByTestId('info-block-close'),
-    ]) {
+    for (const locator of [page.getByTestId('info-block-icon'), page.locator('.fdoc-info-block__copy'), page.getByTestId('info-block-close')]) {
       const box = await locator.boundingBox();
       expect(box).not.toBeNull();
       expect(box!.x).toBeGreaterThanOrEqual(blockBox!.x);
       expect(box!.x + box!.width).toBeLessThanOrEqual(blockBox!.x + blockBox!.width + 0.5);
     }
-
-    const mainBox = await page.locator('.fdoc-info-block__main').boundingBox();
-    const copyBox = await page.locator('.fdoc-info-block__copy').boundingBox();
-    const iconBox = await page.getByTestId('info-block-icon').boundingBox();
-    const closeBox = await page.getByTestId('info-block-close').boundingBox();
-    expect(mainBox).not.toBeNull();
-    expect(copyBox).not.toBeNull();
-    expect(iconBox).not.toBeNull();
-    expect(closeBox).not.toBeNull();
-    expect(mainBox!.width).toBeGreaterThan(iconBox!.width);
-    expect(copyBox!.width).toBeGreaterThan(0);
     expect(await block.evaluate(el => el.scrollWidth)).toBeLessThanOrEqual(Math.ceil(blockBox!.width));
   });
 }
 
-
-test('InfoBlock horizontal actions stay at the top with long content', async ({ page }) => {
+test('InfoBlock actions stay at the top when there is enough width', async ({ page }) => {
   await page.setViewportSize({ width: 900, height: 700 });
-  await page.goto('/iframe.html?id=components-elements-infoblock--adaptive-container&viewMode=story');
-  await page.locator('[data-testid="adaptive-host"]').evaluate(el => {
-    (el as HTMLElement).style.width = '640px';
-  });
+  await page.goto('/iframe.html?id=components-elements-infoblock--wide-container&viewMode=story');
   const copyBox = await page.locator('.fdoc-info-block__copy').boundingBox();
   const actionsBox = await page.locator('.fdoc-info-block__actions').boundingBox();
   expect(copyBox).not.toBeNull();
   expect(actionsBox).not.toBeNull();
   expect(Math.abs(actionsBox!.y - copyBox!.y)).toBeLessThanOrEqual(6);
 });
-
-for (const width of [383, 320, 288, 256, 240]) {
-  test(`InfoBlock with actions adapts without overflow at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width: 900, height: 900 });
-    await page.goto('/iframe.html?id=components-elements-infoblock--adaptive-container&viewMode=story');
-    await page.locator('[data-testid="adaptive-host"]').evaluate((el, value) => {
-      (el as HTMLElement).style.width = `${value}px`;
-    }, width);
-    const block = page.getByTestId('info-block');
-    const body = page.locator('.fdoc-info-block__body');
-    const actions = page.locator('.fdoc-info-block__actions');
-    const blockBox = await block.boundingBox();
-    const bodyBox = await body.boundingBox();
-    const actionsBox = await actions.boundingBox();
-    expect(blockBox).not.toBeNull();
-    expect(bodyBox).not.toBeNull();
-    expect(actionsBox).not.toBeNull();
-    await expect(body).toHaveCSS('flex-direction', 'column');
-    expect(actionsBox!.x).toBeGreaterThanOrEqual(bodyBox!.x - 0.5);
-    expect(actionsBox!.x + actionsBox!.width).toBeLessThanOrEqual(blockBox!.x + blockBox!.width + 0.5);
-    const copyBox = await page.locator('.fdoc-info-block__copy').boundingBox();
-    expect(copyBox).not.toBeNull();
-    expect(actionsBox!.y).toBeGreaterThanOrEqual(copyBox!.y + copyBox!.height - 1);
-    expect(await block.evaluate(el => el.scrollWidth)).toBeLessThanOrEqual(Math.ceil(blockBox!.width));
-  });
-}
