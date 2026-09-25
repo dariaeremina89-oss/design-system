@@ -1,0 +1,9 @@
+import type { ReactNode } from 'react'; import { Button } from '../Button/Button'; import { Dropzone, type DropzoneProps } from '../Dropzone/Dropzone'; import { FileRow, type FileRowProps } from '../FileRow/FileRow'; import { ButtonLink } from '../Link/Link'; import './MultipleFileInput.css';
+export interface MultipleFileInputProps {files?:FileRowProps[];showButtons?:boolean;showDropzone?:boolean;collapsed?:boolean;errorCount?:number;totalSize?:string;reorderable?:boolean;actions?:ReactNode;dropzoneProps?:DropzoneProps;onAddFiles?:(files:File[])=>void;onDeleteAll?:()=>void;onToggleCollapse?:()=>void;className?:string}
+export function MultipleFileInput({files=[],showButtons=false,showDropzone=false,collapsed=false,errorCount=0,totalSize,reorderable=false,actions,dropzoneProps,onAddFiles,onDeleteAll,onToggleCollapse,className=''}:MultipleFileInputProps){
+ const count=files.length; return <div className={`fdoc-multiple-file-input ${className}`} data-testid="multiple-file-input"><div className="fdoc-multiple-file-input__control">
+ {showButtons&&(actions??<div className="fdoc-multiple-file-input__buttons"><Button size="large" iconLeft="plus" onClick={()=>{}}>Выбрать файл</Button><Button size="large" color="base" onClick={onDeleteAll}>Удалить все</Button></div>)}
+ {showDropzone&&<Dropzone {...dropzoneProps} onFiles={onAddFiles}/>}
+ <div className="fdoc-multiple-file-input__summary"><div><ButtonLink color="accent" size="medium" decoration="dashed" onClick={onToggleCollapse}>{count} файлов{totalSize?` · ${totalSize}`:''}</ButtonLink>{errorCount>0&&<span className="fdoc-multiple-file-input__error">Ошибки в файлах ({errorCount})</span>}</div>{count>0&&<ButtonLink color="accent" size="medium" decoration="dashed" onClick={onDeleteAll}>Удалить все</ButtonLink>}</div>
+ </div>{!collapsed&&<div className="fdoc-multiple-file-input__list">{files.map((f,i)=><FileRow key={f.fileName??i} {...f} draggable={reorderable||f.draggable}/>)}</div>}</div>
+}
