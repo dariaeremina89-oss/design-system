@@ -43,7 +43,9 @@
 
 .fdoc-info-block__main {
   display: flex;
+  display: grid;
   flex: 1 1 auto;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: flex-start;
   min-width: 0;
   gap: var(--space-8);
