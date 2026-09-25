@@ -68,7 +68,10 @@ for (const width of [320, 288, 256, 240]) {
     }
 
     const copyBox = await page.locator('.fdoc-info-block__copy').boundingBox();
-    expect(copyBox!.width).toBeGreaterThanOrEqual(120);
+    const iconBox = await page.getByTestId('info-block-icon').boundingBox();
+    const closeBox = await page.getByTestId('info-block-close').boundingBox();
+    const expectedMinCopy = Math.max(0, blockBox!.width - 16 - 4 - iconBox!.width - closeBox!.width - 16 - 12);
+    expect(copyBox!.width).toBeGreaterThanOrEqual(expectedMinCopy - 1);
     expect(await block.evaluate(el => el.scrollWidth)).toBeLessThanOrEqual(Math.ceil(blockBox!.width));
   });
 }
