@@ -103,4 +103,14 @@ export { Highlight } from './components/Highlight/Highlight';
 export type { HighlightProps } from './components/Highlight/Highlight';
 
 export { InfoBlock } from './components/InfoBlock/InfoBlock';
-export type { InfoBlockProps, InfoBlockSize, InfoBlockDirection, InfoBlockColor } from './components/InfoBlock/InfoBlock';
+export type { InfoBlockProps, InfoBlockColor } from './components/InfoBlock/InfoBlock';
+
+
+export { SingleFileInput } from './components/SingleFileInput/SingleFileInput';
+export type { SingleFileInputProps, SingleFileInputType } from './components/SingleFileInput/SingleFileInput';
+export { FileRow } from './components/FileRow/FileRow';
+export type { FileRowProps, FileRowType } from './components/FileRow/FileRow';
+export { Dropzone } from './components/Dropzone/Dropzone';
+export type { DropzoneProps, DropzoneState, DropzoneAlign } from './components/Dropzone/Dropzone';
+export { MultipleFileInput } from './components/MultipleFileInput/MultipleFileInput';
+export type { MultipleFileInputProps } from './components/MultipleFileInput/MultipleFileInput';
