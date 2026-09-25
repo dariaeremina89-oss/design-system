@@ -1,8 +1,9 @@
+import type { ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from '../Button/Button';
 import { InfoBlock } from './InfoBlock';
 
-type StoryArgs = React.ComponentProps<typeof InfoBlock> & { actionsCount: 'none' | 'one' | 'two' };
+type StoryArgs = ComponentProps<typeof InfoBlock> & { actionsCount: 'none' | 'one' | 'two' };
 const actionsByCount = {
   none: undefined,
   one: <Button size="small" color="base">Button</Button>,
