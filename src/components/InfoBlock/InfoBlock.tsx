@@ -3,13 +3,9 @@ import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { Icon, type IconName } from '../Icon/Icon';
 import './InfoBlock.css';
 
-export type InfoBlockSize = 'small' | 'medium';
-export type InfoBlockDirection = 'horizontal' | 'vertical';
 export type InfoBlockColor = 'neutral' | 'base' | 'success' | 'accent' | 'warning' | 'error' | 'inverse';
 
 export interface InfoBlockProps extends Omit<HTMLAttributes<HTMLDivElement>, 'color' | 'title'> {
-  size?: InfoBlockSize;
-  direction?: InfoBlockDirection;
   color?: InfoBlockColor;
   title?: ReactNode;
   text?: ReactNode;
@@ -45,8 +41,6 @@ function flattenActions(node: ReactNode): ReactNode[] {
 }
 
 export function InfoBlock({
-  size = 'medium',
-  direction = 'horizontal',
   color = 'neutral',
   title,
   text,
@@ -64,13 +58,7 @@ export function InfoBlock({
   return (
     <div
       {...props}
-      className={joinClassNames(
-        'fdoc-info-block',
-        `fdoc-info-block--${size}`,
-        `fdoc-info-block--${direction}`,
-        `fdoc-info-block--${color}`,
-        className,
-      )}
+      className={joinClassNames('fdoc-info-block', `fdoc-info-block--${color}`, className)}
       data-testid={props['data-testid'] ?? 'info-block'}
     >
       <div className="fdoc-info-block__main">
@@ -90,15 +78,8 @@ export function InfoBlock({
         </div>
       </div>
       {closable && (
-        <ButtonIcon
-          className="fdoc-info-block__close"
-          aria-label="Закрыть"
-          icon="cross"
-          size="small"
-          color={color === 'inverse' ? 'inverse' : 'neutral'}
-          onClick={onClose}
-          data-testid="info-block-close"
-        />
+        <ButtonIcon className="fdoc-info-block__close" aria-label="Закрыть" icon="cross" size="small"
+          color={color === 'inverse' ? 'inverse' : 'neutral'} onClick={onClose} data-testid="info-block-close" />
       )}
     </div>
   );
