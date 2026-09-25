@@ -7,6 +7,7 @@
   align-items: flex-start;
   width: 100%;
   min-width: 0;
+  container-type: inline-size;
   padding: var(--space-4) var(--space-4) var(--space-4) var(--space-16);
   border: var(--border-small) solid var(--border-base-light);
   border-radius: var(--radius-middle);
