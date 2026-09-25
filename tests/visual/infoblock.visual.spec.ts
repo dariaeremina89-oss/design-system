@@ -82,13 +82,41 @@ for (const width of [320, 288, 256, 240]) {
 }
 
 
-test('InfoBlock horizontal actions stay vertically centered', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-elements-infoblock--two-actions&viewMode=story');
-  const bodyBox = await page.locator('.fdoc-info-block__body').boundingBox();
+test('InfoBlock horizontal actions stay at the top with long content', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 700 });
+  await page.goto('/iframe.html?id=components-elements-infoblock--adaptive-container&viewMode=story');
+  await page.locator('[data-testid="adaptive-host"]').evaluate(el => {
+    (el as HTMLElement).style.width = '640px';
+  });
+  const copyBox = await page.locator('.fdoc-info-block__copy').boundingBox();
   const actionsBox = await page.locator('.fdoc-info-block__actions').boundingBox();
-  expect(bodyBox).not.toBeNull();
+  expect(copyBox).not.toBeNull();
   expect(actionsBox).not.toBeNull();
-  const bodyCenter = bodyBox!.y + bodyBox!.height / 2;
-  const actionsCenter = actionsBox!.y + actionsBox!.height / 2;
-  expect(Math.abs(bodyCenter - actionsCenter)).toBeLessThanOrEqual(1);
+  expect(Math.abs(actionsBox!.y - copyBox!.y)).toBeLessThanOrEqual(6);
 });
+
+for (const width of [383, 320, 288, 256, 240]) {
+  test(`InfoBlock with actions adapts without overflow at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 900 });
+    await page.goto('/iframe.html?id=components-elements-infoblock--adaptive-container&viewMode=story');
+    await page.locator('[data-testid="adaptive-host"]').evaluate((el, value) => {
+      (el as HTMLElement).style.width = `${value}px`;
+    }, width);
+    const block = page.getByTestId('info-block');
+    const body = page.locator('.fdoc-info-block__body');
+    const actions = page.locator('.fdoc-info-block__actions');
+    const blockBox = await block.boundingBox();
+    const bodyBox = await body.boundingBox();
+    const actionsBox = await actions.boundingBox();
+    expect(blockBox).not.toBeNull();
+    expect(bodyBox).not.toBeNull();
+    expect(actionsBox).not.toBeNull();
+    await expect(body).toHaveCSS('flex-direction', 'column');
+    expect(actionsBox!.x).toBeGreaterThanOrEqual(bodyBox!.x - 0.5);
+    expect(actionsBox!.x + actionsBox!.width).toBeLessThanOrEqual(blockBox!.x + blockBox!.width + 0.5);
+    const copyBox = await page.locator('.fdoc-info-block__copy').boundingBox();
+    expect(copyBox).not.toBeNull();
+    expect(actionsBox!.y).toBeGreaterThanOrEqual(copyBox!.y + copyBox!.height - 1);
+    expect(await block.evaluate(el => el.scrollWidth)).toBeLessThanOrEqual(Math.ceil(blockBox!.width));
+  });
+}
