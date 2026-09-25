@@ -7,7 +7,6 @@
   align-items: flex-start;
   width: 100%;
   min-width: 0;
-  container-type: inline-size;
   padding: var(--space-4) var(--space-4) var(--space-4) var(--space-16);
   border: var(--border-small) solid var(--border-base-light);
   border-radius: var(--radius-middle);
@@ -15,36 +14,16 @@
   color: var(--fdoc-info-block-text);
 }
 
-.fdoc-info-block--success {
-  --fdoc-info-block-background: var(--background-success-secondary);
-  --fdoc-info-block-icon: var(--icon-success-secondary);
-}
-.fdoc-info-block--accent {
-  --fdoc-info-block-background: var(--background-accent-secondary);
-  --fdoc-info-block-icon: var(--icon-accent-secondary);
-}
-.fdoc-info-block--warning {
-  --fdoc-info-block-background: var(--background-warning-secondary);
-  --fdoc-info-block-icon: var(--icon-warning-secondary);
-}
-.fdoc-info-block--error {
-  --fdoc-info-block-background: var(--background-error-secondary);
-  --fdoc-info-block-icon: var(--icon-error-secondary);
-}
-.fdoc-info-block--base {
-  --fdoc-info-block-background: var(--background-base-default);
-  --fdoc-info-block-icon: var(--icon-base-secondary);
-}
-.fdoc-info-block--inverse {
-  --fdoc-info-block-background: var(--background-base-inverse);
-  --fdoc-info-block-icon: var(--icon-base-inverse);
-  --fdoc-info-block-text: var(--text-base-inverse);
-}
+.fdoc-info-block--success { --fdoc-info-block-background: var(--background-success-secondary); --fdoc-info-block-icon: var(--icon-success-secondary); }
+.fdoc-info-block--accent { --fdoc-info-block-background: var(--background-accent-secondary); --fdoc-info-block-icon: var(--icon-accent-secondary); }
+.fdoc-info-block--warning { --fdoc-info-block-background: var(--background-warning-secondary); --fdoc-info-block-icon: var(--icon-warning-secondary); }
+.fdoc-info-block--error { --fdoc-info-block-background: var(--background-error-secondary); --fdoc-info-block-icon: var(--icon-error-secondary); }
+.fdoc-info-block--base { --fdoc-info-block-background: var(--background-base-default); --fdoc-info-block-icon: var(--icon-base-secondary); }
+.fdoc-info-block--inverse { --fdoc-info-block-background: var(--background-base-inverse); --fdoc-info-block-icon: var(--icon-base-inverse); --fdoc-info-block-text: var(--text-base-inverse); }
 
 .fdoc-info-block__main {
-  display: grid;
+  display: flex;
   flex: 1 1 auto;
-  grid-template-columns: auto minmax(0, 1fr);
   align-items: flex-start;
   min-width: 0;
   gap: var(--space-8);
@@ -64,6 +43,7 @@
 .fdoc-info-block__body {
   display: flex;
   flex: 1 1 auto;
+  align-items: flex-start;
   min-width: 0;
 }
 
@@ -87,7 +67,6 @@
   font-size: var(--page-body-size);
   line-height: var(--page-body-line-height);
 }
-
 .fdoc-info-block__title { font-weight: var(--page-body-weight-strong); }
 .fdoc-info-block__text { font-weight: var(--page-body-weight-base); }
 
@@ -95,38 +74,28 @@
   display: flex;
   flex: 0 0 auto;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-8);
 }
 
 .fdoc-info-block--horizontal .fdoc-info-block__body {
   flex-direction: row;
-  align-items: flex-start;
   gap: var(--space-8);
 }
 .fdoc-info-block--horizontal .fdoc-info-block__actions {
-  min-height: 40px;
-  padding-top: var(--space-4);
+  padding-top: var(--space-8);
   padding-right: var(--space-8);
   justify-content: flex-end;
   align-self: flex-start;
 }
 
-.fdoc-info-block--vertical .fdoc-info-block__body {
-  flex-direction: column;
-  gap: var(--space-8);
-}
-.fdoc-info-block--vertical .fdoc-info-block__copy { padding-bottom: 0; }
-.fdoc-info-block--vertical .fdoc-info-block__actions {
-  width: 100%;
-  padding-bottom: var(--space-8);
-  justify-content: flex-start;
-}
-
+.fdoc-info-block--vertical .fdoc-info-block__body,
 .fdoc-info-block--small .fdoc-info-block__body {
   flex-direction: column;
   gap: var(--space-8);
 }
+.fdoc-info-block--vertical .fdoc-info-block__copy { padding-bottom: 0; }
+.fdoc-info-block--vertical .fdoc-info-block__actions,
 .fdoc-info-block--small .fdoc-info-block__actions {
   width: 100%;
   padding: 0 0 var(--space-8);
@@ -135,38 +104,16 @@
 
 .fdoc-info-block__close { flex: 0 0 auto; }
 
+/* Actions move below the text when the component itself becomes narrow.
+   Icon and Close keep their Figma sizes; the text owns the remaining width. */
 @container (max-width: 383px) {
-  .fdoc-info-block {
-    padding-left: var(--space-12);
-  }
-
-  .fdoc-info-block__main {
-    gap: var(--space-8);
-  }
-
   .fdoc-info-block--medium.fdoc-info-block--horizontal .fdoc-info-block__body {
     flex-direction: column;
     gap: var(--space-8);
   }
-
   .fdoc-info-block--medium.fdoc-info-block--horizontal .fdoc-info-block__actions {
     width: 100%;
     padding: 0 0 var(--space-8);
     justify-content: flex-start;
-    align-self: stretch;
-  }
-}
-
-@container (max-width: 287px) {
-  .fdoc-info-block {
-    padding-left: var(--space-8);
-  }
-
-  .fdoc-info-block__main {
-    gap: var(--space-4);
-  }
-
-  .fdoc-info-block__copy {
-    padding-right: var(--space-4);
   }
 }
