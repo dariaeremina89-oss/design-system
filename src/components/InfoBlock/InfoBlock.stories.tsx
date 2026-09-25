@@ -37,6 +37,11 @@ export const NarrowContainer: Story = {
   render: args => <div style={{ width: 288 }}><InfoBlock {...args} actions={twoActions} /></div>,
 };
 export const AdaptiveContainer: Story = {
+  args: {
+    actions: twoActions,
+    title: 'Очень длинный заголовок информационного блока',
+    text: 'Длинный текст нужен для проверки реального адаптивного поведения компонента и положения Actions при переносе текста на несколько строк.',
+  },
   render: args => <div data-testid="adaptive-host" style={{ width: 320 }}><InfoBlock {...args} /></div>,
 };
 
