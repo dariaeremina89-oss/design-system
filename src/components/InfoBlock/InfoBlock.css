@@ -23,9 +23,12 @@
 .fdoc-info-block__main { display:flex; flex:1 1 auto; align-items:flex-start; min-width:0; gap:var(--space-8); }
 .fdoc-info-block__icon { display:inline-flex; flex:0 0 var(--elements-24); align-items:center; justify-content:center; width:var(--elements-24); height:var(--elements-24); margin-top:var(--space-8); color:var(--fdoc-info-block-icon); }
 .fdoc-info-block__body { display:flex; flex:1 1 auto; flex-wrap:wrap; align-items:flex-start; min-width:0; column-gap:var(--space-8); row-gap:0; }
-.fdoc-info-block__copy { display:flex; flex:1 1 220px; flex-direction:column; min-width:0; padding:var(--space-10) var(--space-12) var(--space-10) 0; gap:var(--space-2); overflow-wrap:anywhere; word-break:normal; }
+.fdoc-info-block__copy { display:flex; flex:1 1 200px; flex-direction:column; min-width:0; padding:var(--space-10) var(--space-12) var(--space-10) 0; gap:var(--space-2); overflow-wrap:anywhere; word-break:normal; }
 .fdoc-info-block__title,.fdoc-info-block__text { width:100%; min-width:0; color:inherit; font-family:var(--page-body-family); font-size:var(--page-body-size); line-height:var(--page-body-line-height); }
 .fdoc-info-block__title { font-weight:var(--page-body-weight-strong); }
 .fdoc-info-block__text { font-weight:var(--page-body-weight-base); }
-.fdoc-info-block__actions { display:flex; flex:0 0 auto; flex-wrap:wrap; align-items:flex-start; justify-content:flex-start; gap:var(--space-8); padding:var(--space-8) var(--space-8) var(--space-8) 0; }
+.fdoc-info-block__actions { display:flex; flex:0 0 auto; flex-wrap:wrap; align-items:flex-start; justify-content:flex-start; gap:var(--space-8); padding:var(--space-8) var(--space-8) var(--space-8) 0; margin-left:auto; }
 .fdoc-info-block__close { flex:0 0 auto; }
+
+/* When Actions wrap below the copy, they start at the text edge rather than the icon edge. */
+@container (max-width: 383px) {}
