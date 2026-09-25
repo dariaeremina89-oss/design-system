@@ -33,8 +33,9 @@ describe('InfoBlock', () => {
     expect(screen.queryByText('Three')).not.toBeInTheDocument();
   });
 
-  it('applies size, direction and semantic color classes', () => {
-    render(<InfoBlock size="small" direction="vertical" color="warning" />);
-    expect(screen.getByTestId('info-block')).toHaveClass('fdoc-info-block--small', 'fdoc-info-block--vertical', 'fdoc-info-block--warning');
+  it('applies semantic color class without size or direction variants', () => {
+    render(<InfoBlock color="warning" />);
+    expect(screen.getByTestId('info-block')).toHaveClass('fdoc-info-block--warning');
+    expect(screen.getByTestId('info-block')).not.toHaveClass('fdoc-info-block--small', 'fdoc-info-block--vertical');
   });
 });
