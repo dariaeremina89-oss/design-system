@@ -41,8 +41,12 @@ export function Dropzone({
 }: DropzoneProps) {
   const input = useRef<HTMLInputElement>(null);
   const [drag, setDrag] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [pressed, setPressed] = useState(false);
+  const [focused, setFocused] = useState(false);
   const disabled = state === 'disabled';
-  const activeState: DropzoneState | 'drag-over' = drag ? 'drag-over' : state;
+  const interactive = state === 'default';
+  const activeState: DropzoneState | 'drag-over' = drag ? 'drag-over' : interactive && pressed ? 'pressed' : interactive && focused ? 'focused' : interactive && hovered ? 'hover' : state;
   const emit = (list: FileList | null) => { if (!disabled && list) onFiles?.(Array.from(list)); };
   const drop = (e: DragEvent) => { e.preventDefault(); setDrag(false); emit(e.dataTransfer.files); };
 
@@ -57,6 +61,15 @@ export function Dropzone({
     <div
       {...props}
       className={`fdoc-dropzone fdoc-dropzone--${align} fdoc-dropzone--${activeState} ${className}`}
+      tabIndex={disabled ? undefined : 0}
+      onMouseEnter={() => !disabled && setHovered(true)}
+      onMouseLeave={() => { setHovered(false); setPressed(false); }}
+      onMouseDown={() => !disabled && setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      onFocus={() => !disabled && setFocused(true)}
+      onBlur={() => { setFocused(false); setPressed(false); }}
+      onKeyDown={e => { if (!disabled && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); setPressed(true); } }}
+      onKeyUp={e => { if (!disabled && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); setPressed(false); input.current?.click(); } }}
       onClick={() => !disabled && input.current?.click()}
       onDragOver={e => { e.preventDefault(); if (!disabled) setDrag(true); }}
       onDragLeave={() => setDrag(false)}
