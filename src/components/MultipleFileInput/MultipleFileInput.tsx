@@ -1,4 +1,4 @@
-import { useState, type DragEvent, type ReactNode } from 'react';
+import { useRef, useState, type DragEvent, type ReactNode } from 'react';
 import { Button } from '../Button/Button';
 import { Dropzone, type DropzoneProps } from '../Dropzone/Dropzone';
 import { FileRow, type FileRowProps } from '../FileRow/FileRow';
@@ -46,6 +46,7 @@ export function MultipleFileInput({
   className = '',
 }: MultipleFileInputProps) {
   const count = files.length;
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const reorder = (toIndex: number) => {
     if (dragIndex === null || dragIndex === toIndex) return;
@@ -54,12 +55,12 @@ export function MultipleFileInput({
   };
 
   return (
-    <div className={`fdoc-multiple-file-input ${className}`} data-testid="multiple-file-input">
+    <div className={`fdoc-multiple-file-input ${className}`} data-testid="multiple-file-input">\n      <input ref={fileInputRef} hidden type="file" multiple onChange={e => { const selected = Array.from(e.target.files ?? []); if (selected.length) onAddFiles?.(selected); e.currentTarget.value = ''; }} />
       {(showButtons || showDropzone || showCollapse) && (
         <div className="fdoc-multiple-file-input__control">
           {showButtons && (actions ?? (
             <div className="fdoc-multiple-file-input__buttons">
-              <Button size="large" iconLeft="plus" onClick={onChooseFiles}>Выбрать файл</Button>
+              <Button size="large" iconLeft="plus" onClick={() => onChooseFiles ? onChooseFiles() : fileInputRef.current?.click()}>Выбрать файл</Button>
               <Button size="large" color="base" onClick={onDeleteAll}>Удалить все</Button>
             </div>
           ))}
