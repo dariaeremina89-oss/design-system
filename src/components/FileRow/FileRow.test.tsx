@@ -32,6 +32,18 @@ describe('FileRow', () => {
     expect(document.querySelector('[data-icon="filled/exclamation_circle_filled"]')).not.toBeInTheDocument();
   });
 
+  it('shows delete tooltip and opens action menu', () => {
+    const onDelete = vi.fn();
+    const items = [{ id: 'rename', title: 'Переименовать' }, { id: 'delete', title: 'Удалить', onAction: onDelete }];
+    const { rerender } = render(<FileRow />);
+    fireEvent.mouseEnter(screen.getByRole('button', { name: 'Удалить файл' }).parentElement!);
+    rerender(<FileRow deletable={false} menuItems={items} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Действия с файлом' }));
+    expect(screen.getByText('Переименовать')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Удалить'));
+    expect(onDelete).toHaveBeenCalledOnce();
+  });
+
   it('renders Skeleton without row content', () => {
     render(<FileRow type="skeleton" />);
     expect(screen.getByTestId('file-row-skeleton')).toBeInTheDocument();
