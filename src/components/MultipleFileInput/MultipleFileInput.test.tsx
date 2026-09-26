@@ -41,4 +41,17 @@ describe('MultipleFileInput', () => {
     expect(onToggleCollapse).toHaveBeenCalledOnce();
     expect(onDeleteAll).toHaveBeenCalledOnce();
   });
+
+  it('calls reorder and per-row delete actions', () => {
+    const onReorder = vi.fn();
+    const onDelete = vi.fn();
+    const { container } = render(<MultipleFileInput files={[{ ...files[0], onDelete }, files[1]]} reorderable onReorder={onReorder} />);
+    fireEvent.click(screen.getAllByRole('button', { name: 'Удалить файл' })[0]);
+    expect(onDelete).toHaveBeenCalledOnce();
+    const items = container.querySelectorAll('.fdoc-multiple-file-input__item');
+    fireEvent.dragStart(items[0], { dataTransfer: { effectAllowed: '', setData: vi.fn() } });
+    fireEvent.dragOver(items[1], { dataTransfer: { dropEffect: '' } });
+    fireEvent.drop(items[1], { dataTransfer: { dropEffect: '' } });
+    expect(onReorder).toHaveBeenCalledWith(0, 1);
+  });
 });
