@@ -47,6 +47,8 @@ describe('File upload visual contract', () => {
     expectRuleValue('.fdoc-dropzone', 'border-radius', 'var(--radius-small)');
     expectRuleValue('.fdoc-dropzone--hover, .fdoc-dropzone--drag-over', 'background', 'var(--background-primary-secondary-hover)');
     expectRuleValue('.fdoc-dropzone--pressed', 'background', 'var(--transparent-background-primary-pressed)');
+    expectRuleValue('.fdoc-dropzone-skeleton', 'height', '108px');
+    expectRuleValue('.fdoc-dropzone-skeleton--center', 'height', '152px');
   });
 
   it('keeps MultipleFileInput and Group FileRow gaps from Figma', () => {
