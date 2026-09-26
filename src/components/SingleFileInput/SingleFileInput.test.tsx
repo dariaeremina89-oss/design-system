@@ -26,6 +26,11 @@ describe('SingleFileInput', () => {
     expect(screen.queryByRole('button', { name: 'Загрузить' })).not.toBeInTheDocument();
   });
 
+  it('uses ButtonIcon on mobile', () => {
+    render(<SingleFileInput size="mobile" />);
+    expect(screen.getByRole('button', { name: 'Загрузить' })).toHaveAttribute('data-button-icon-size', '32');
+  });
+
   it('renders Skeleton without content', () => {
     render(<SingleFileInput type="skeleton" />);
     expect(screen.getByTestId('single-file-input-skeleton')).toBeInTheDocument();
