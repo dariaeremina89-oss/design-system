@@ -51,7 +51,7 @@ export function Dropzone({
   const drop = (e: DragEvent) => { e.preventDefault(); setDrag(false); emit(e.dataTransfer.files); };
 
   if (state === 'skeleton') {
-    return <Skeleton className={className} width="100%" height={align === 'center' ? 152 : 148} shape="rounded" data-testid="dropzone-skeleton" />;
+    return <div className={`fdoc-dropzone-skeleton fdoc-dropzone-skeleton--${align} ${className}`} data-testid="dropzone-skeleton"><Skeleton width="100%" height="100%" shape="rounded" /></div>;
   }
 
   const isError = activeState === 'error';
