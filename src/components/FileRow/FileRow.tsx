@@ -2,7 +2,8 @@ import { useState, type DragEvent, type HTMLAttributes, type ReactNode } from 'r
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { Icon, type IconName } from '../Icon/Icon';
 import { Link } from '../Link/Link';
-import { Menu, type MenuItem } from '../Menu/Menu';
+import { type MenuItem } from '../Menu/Menu';
+import { Dropdown } from '../Menu/Dropdown';
 import { ProgressIndicator } from '../ProgressIndicator/ProgressIndicator';
 import { Skeleton } from '../Skeleton/Skeleton';
 import { Tooltip } from '../Tooltip/Tooltip';
@@ -30,7 +31,7 @@ export function FileRow({type='uploaded',fileName='File name.png',weight='2,7 М
       {type==='template'&&<span>Шаблон</span>}
       {type==='template-edit'&&<Link href="#" size="medium" color="accent" decoration={null} onClick={e=>{e.preventDefault();if(!disabled)onTemplateEdit?.();}}>Заполнить</Link>}
       {!template&&weight&&<span>{weight}</span>}
-      {trailingView??(hasMenu?<span className="fdoc-file-row__menu-wrap"><ButtonIcon aria-label={menuAriaLabel} icon="more-vertical" size="xsmall" iconSize={16} color="neutral" state={menuOpen?'hover':'default'} aria-expanded={menuOpen} onClick={()=>setMenuOpen(v=>!v)}/>{menuOpen&&<div className="fdoc-file-row__menu"><Menu items={menuItems!} onAction={item=>{onMenuAction?.(item);setMenuOpen(false);}}/></div>}</span>:deletable&&<Tooltip content="Удалить" placement="bottom"><ButtonIcon aria-label="Удалить файл" icon="filled/cross_circle_filled" size="xsmall" iconSize={16} color="neutral" state={disabled?'disabled':'default'} onClick={onDelete}/></Tooltip>)}
+      {trailingView??(hasMenu?<Dropdown items={menuItems!} trigger="hover" placement="bottom-end" open={menuOpen} onOpenChange={setMenuOpen} onAction={item=>onMenuAction?.(item)}><ButtonIcon aria-label={menuAriaLabel} icon="more-vertical" size="xsmall" iconSize={16} color="neutral" state={menuOpen?'hover':'default'}/></Dropdown>:deletable&&<Tooltip content="Удалить" placement="bottom"><ButtonIcon aria-label="Удалить файл" icon="filled/cross_circle_filled" size="xsmall" iconSize={16} color="neutral" state={disabled?'disabled':'default'} onClick={onDelete}/></Tooltip>)}
     </span></div>{error&&<span className="fdoc-file-row__error">{errorText}</span>}</div>
   </div>;
 }
