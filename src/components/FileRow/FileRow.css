@@ -3,9 +3,9 @@
 .fdoc-file-row__drag{cursor:grab}.fdoc-file-row--disabled .fdoc-file-row__drag{cursor:default;color:var(--icon-base-secondary-disabled)}
 .fdoc-file-row__content{display:flex;flex:1 1 auto;min-width:0;min-height:24px;flex-direction:column;gap:var(--space-4)}
 .fdoc-file-row__line{display:flex;align-items:flex-start;min-width:0;gap:var(--space-16)}
-.fdoc-file-row__name{flex:1 1 auto;min-width:0;font-family:var(--subtitle-family);font-size:var(--subtitle-size);font-weight:var(--subtitle-weight-base);line-height:var(--subtitle-line-height);overflow-wrap:anywhere;word-break:normal}
-.fdoc-file-row__meta{display:flex;flex:0 0 auto;align-items:center;justify-content:flex-end;gap:var(--space-8);color:var(--text-base-secondary);font-family:var(--body-family);font-size:var(--body-size);font-weight:var(--body-weight-base);line-height:var(--body-line-height)}
-.fdoc-file-row__error{width:100%;color:var(--text-error-secondary);font-family:var(--caption-family);font-size:var(--caption-size);font-weight:var(--caption-weight-base);line-height:var(--caption-line-height);overflow-wrap:anywhere;word-break:normal}
+.fdoc-file-row__name{flex:1 1 auto;min-width:0;font-family:var(--page-subtitle-family);font-size:var(--page-subtitle-size);font-weight:var(--page-subtitle-weight-base);line-height:var(--page-subtitle-line-height);overflow-wrap:anywhere;word-break:normal}
+.fdoc-file-row__meta{display:flex;flex:0 0 auto;align-items:center;justify-content:flex-end;gap:var(--space-8);color:var(--text-base-secondary);font-family:var(--page-body-family);font-size:var(--page-body-size);font-weight:var(--page-body-weight-base);line-height:var(--page-body-line-height)}
+.fdoc-file-row__error{width:100%;color:var(--text-error-secondary);font-family:var(--page-caption-family);font-size:var(--page-caption-size);font-weight:var(--page-caption-weight-base);line-height:var(--page-caption-line-height);overflow-wrap:anywhere;word-break:normal}
 .fdoc-file-row--loading .fdoc-file-row__name{color:var(--text-base-secondary)}
 .fdoc-file-row--error:not(.fdoc-file-row--loading):not(.fdoc-file-row--uploaded-preview) .fdoc-file-row__leading{color:var(--icon-error-secondary)}
 .fdoc-file-row--disabled{color:var(--text-base-default-disabled)}
