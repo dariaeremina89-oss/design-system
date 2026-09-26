@@ -54,6 +54,9 @@ describe('File upload visual contract', () => {
   it('keeps MultipleFileInput and Group FileRow gaps from Figma', () => {
     render(<MultipleFileInput files={[]} />);
     expectRuleValue('.fdoc-multiple-file-input', 'gap', 'var(--space-16)');
+    expectRuleValue('.fdoc-multiple-file-input', 'width', '100%');
+    expectRuleValue('.fdoc-multiple-file-input', 'max-width', '100%');
+    expectRuleValue('.fdoc-multiple-file-input__control', 'align-items', 'stretch');
     expectRuleValue('.fdoc-multiple-file-input__control', 'gap', 'var(--space-24)');
     expectRuleValue('.fdoc-multiple-file-input__list', 'gap', 'var(--space-4)');
     expectRuleValue('.fdoc-multiple-file-input__group', 'gap', 'var(--space-16)');
