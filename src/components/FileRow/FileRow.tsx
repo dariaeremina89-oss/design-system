@@ -25,13 +25,13 @@ export function FileRow({type='uploaded',fileName='File name.png',weight='2,7 М
   const icon:IconName=error?'filled/exclamation_circle_filled':(leadingIcon??defaultLeadingIcon);
   const hasMenu=!!menuItems?.length;
   return <div {...props} draggable={draggable&&!disabled} onDragStart={onDragStart} onDragEnd={onDragEnd} className={`fdoc-file-row fdoc-file-row--${type} ${error?'fdoc-file-row--error':''} ${draggable?'fdoc-file-row--draggable':''} ${className}`} data-testid="file-row">
-    {draggable&&<ButtonIcon aria-label="Изменить порядок" icon="drag-dot" size="xsmall" iconSize={24} color="neutral" disabled={disabled} className="fdoc-file-row__drag"/>}
+    {draggable&&<ButtonIcon aria-label="Изменить порядок" icon="drag-dot" size="xsmall" iconSize={24} color="neutral" disabled={disabled} className="fdoc-file-row__drag fdoc-file-row__button-icon"/>}
     {previewed?<span className="fdoc-file-row__preview">{preview??<span className="fdoc-file-row__preview-placeholder"/>}</span>:<span className="fdoc-file-row__leading">{leadingView??(loading?<ProgressIndicator type="circular" mode="indeterminate" size={20} variant="secondary"/>:<Icon name={icon} size={24}/>)}</span>}
     <div className="fdoc-file-row__content"><div className="fdoc-file-row__line"><span className="fdoc-file-row__name">{fileName}</span><span className="fdoc-file-row__meta">
       {type==='template'&&<span>Шаблон</span>}
       {type==='template-edit'&&<Link href="#" size="medium" color="accent" decoration={null} onClick={e=>{e.preventDefault();if(!disabled)onTemplateEdit?.();}}>Заполнить</Link>}
       {!template&&weight&&<span>{weight}</span>}
-      {trailingView??(hasMenu?<Dropdown items={menuItems!} trigger="hover" placement="bottom-end" open={menuOpen} onOpenChange={setMenuOpen} onAction={item=>onMenuAction?.(item)}><ButtonIcon aria-label={menuAriaLabel} icon="more-vertical" size="xsmall" iconSize={16} color="neutral" state={menuOpen?'hover':'default'}/></Dropdown>:deletable&&<Tooltip content="Удалить" placement="bottom"><ButtonIcon aria-label="Удалить файл" icon="filled/cross_circle_filled" size="xsmall" iconSize={16} color="neutral" state={disabled?'disabled':'default'} onClick={onDelete}/></Tooltip>)}
+      {trailingView??(hasMenu?<Dropdown items={menuItems!} trigger="hover" placement="bottom-end" open={menuOpen} onOpenChange={setMenuOpen} onAction={item=>onMenuAction?.(item)}><ButtonIcon aria-label={menuAriaLabel} icon="more-vertical" size="xsmall" iconSize={24} color="neutral" state={menuOpen?'hover':'default'} className="fdoc-file-row__button-icon"/></Dropdown>:deletable&&<Tooltip content="Удалить" placement="bottom"><ButtonIcon aria-label="Удалить файл" icon="filled/cross_circle_filled" size="xsmall" iconSize={24} color="neutral" state={disabled?'disabled':'default'} className="fdoc-file-row__button-icon" onClick={onDelete}/></Tooltip>)}
     </span></div>{error&&<span className="fdoc-file-row__error">{errorText}</span>}</div>
   </div>;
 }
