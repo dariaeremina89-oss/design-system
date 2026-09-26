@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useState, type DragEvent, type ReactNode } from 'react';
 import { Button } from '../Button/Button';
 import { Dropzone, type DropzoneProps } from '../Dropzone/Dropzone';
 import { FileRow, type FileRowProps } from '../FileRow/FileRow';
@@ -22,6 +22,7 @@ export interface MultipleFileInputProps {
   onDeleteAll?: () => void;
   onToggleCollapse?: () => void;
   onChooseFiles?: () => void;
+  onReorder?: (fromIndex: number, toIndex: number) => void;
   className?: string;
 }
 
@@ -41,9 +42,16 @@ export function MultipleFileInput({
   onDeleteAll,
   onToggleCollapse,
   onChooseFiles,
+  onReorder,
   className = '',
 }: MultipleFileInputProps) {
   const count = files.length;
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const reorder = (toIndex: number) => {
+    if (dragIndex === null || dragIndex === toIndex) return;
+    onReorder?.(dragIndex, toIndex);
+    setDragIndex(null);
+  };
 
   return (
     <div className={`fdoc-multiple-file-input ${className}`} data-testid="multiple-file-input">
@@ -77,7 +85,19 @@ export function MultipleFileInput({
             </div>
           )}
           <div className="fdoc-multiple-file-input__list">
-            {files.map((file, index) => <FileRow key={`${file.fileName ?? 'file'}-${index}`} {...file} draggable={reorderable || file.draggable} />)}
+            {files.map((file, index) => (
+              <div
+                key={`${file.fileName ?? 'file'}-${index}`}
+                className="fdoc-multiple-file-input__item"
+                draggable={reorderable}
+                onDragStart={(e: DragEvent<HTMLDivElement>) => { if (reorderable) { setDragIndex(index); e.dataTransfer.effectAllowed = 'move'; } }}
+                onDragOver={(e: DragEvent<HTMLDivElement>) => { if (reorderable) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; } }}
+                onDrop={(e: DragEvent<HTMLDivElement>) => { if (reorderable) { e.preventDefault(); reorder(index); } }}
+                onDragEnd={() => setDragIndex(null)}
+              >
+                <FileRow {...file} draggable={reorderable || file.draggable} />
+              </div>
+            ))}
           </div>
           {totalSize && <div className="fdoc-multiple-file-input__total">Общий объем: {totalSize}</div>}
         </div>
