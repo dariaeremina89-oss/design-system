@@ -30,7 +30,7 @@ export function FileRow({
   error = false,
   errorText = 'Error text',
   draggable = false,
-  leadingIcon = 'doc-paper',
+  leadingIcon,
   leadingView,
   trailingView,
   deletable = true,
@@ -46,7 +46,8 @@ export function FileRow({
   const loading = type === 'loading';
   const template = type === 'template' || type === 'template-edit';
   const previewed = type === 'uploaded-preview';
-  const icon = error ? 'filled/exclamation_circle_filled' : leadingIcon;
+  const defaultLeadingIcon: IconName = type === 'template-edit' ? 'pencil-paper' : 'doc-paper';
+  const icon: IconName = error ? 'filled/exclamation_circle_filled' : (leadingIcon ?? defaultLeadingIcon);
 
   return (
     <div {...props} className={`fdoc-file-row fdoc-file-row--${type} ${error ? 'fdoc-file-row--error' : ''} ${className}`} data-testid="file-row">
