@@ -5,3 +5,6 @@
 .fdoc-single-file-input__error{width:100%;color:var(--text-error-secondary);font-family:var(--page-caption-family);font-size:var(--page-caption-size);font-weight:var(--page-caption-weight-base);line-height:var(--page-caption-line-height)}
 .fdoc-single-file-input__pick{position:relative;flex:0 0 auto;cursor:pointer}.fdoc-single-file-input__pick>input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 .fdoc-single-file-input--disabled{color:var(--text-base-secondary-disabled)}.fdoc-single-file-input--disabled .fdoc-single-file-input__icon{color:var(--icon-base-secondary-disabled)}.fdoc-single-file-input--disabled .fdoc-single-file-input__error{color:var(--text-error-secondary-disabled)}
+
+.fdoc-single-file-input__label{display:block;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fdoc-single-file-input--mobile .fdoc-single-file-input__pick{width:32px;height:32px}
