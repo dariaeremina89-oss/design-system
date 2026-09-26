@@ -48,10 +48,12 @@ export function MultipleFileInput({
   const count = files.length;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dropIndex, setDropIndex] = useState<number | null>(null);
   const reorder = (toIndex: number) => {
     if (dragIndex === null || dragIndex === toIndex) return;
     onReorder?.(dragIndex, toIndex);
     setDragIndex(null);
+    setDropIndex(null);
   };
 
   return (
@@ -90,12 +92,12 @@ export function MultipleFileInput({
             {files.map((file, index) => (
               <div
                 key={`${file.fileName ?? 'file'}-${index}`}
-                className="fdoc-multiple-file-input__item"
+                className={`fdoc-multiple-file-input__item ${dropIndex === index && dragIndex !== index ? 'fdoc-multiple-file-input__item--drop-before' : ''}`}
                 draggable={reorderable}
                 onDragStart={(e: DragEvent<HTMLDivElement>) => { if (reorderable) { setDragIndex(index); e.dataTransfer.effectAllowed = 'move'; } }}
-                onDragOver={(e: DragEvent<HTMLDivElement>) => { if (reorderable) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; } }}
+                onDragOver={(e: DragEvent<HTMLDivElement>) => { if (reorderable) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; setDropIndex(index); } }}
                 onDrop={(e: DragEvent<HTMLDivElement>) => { if (reorderable) { e.preventDefault(); reorder(index); } }}
-                onDragEnd={() => setDragIndex(null)}
+                onDragEnd={() => { setDragIndex(null); setDropIndex(null); }}
               >
                 <FileRow {...file} draggable={reorderable || file.draggable} />
               </div>
