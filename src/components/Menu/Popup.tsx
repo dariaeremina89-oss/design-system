@@ -40,11 +40,11 @@ export function Popup({ anchor, children, onDismiss, placement = 'auto', matchWi
       setPosition(previous => JSON.stringify(previous) === JSON.stringify(next) ? previous : next);
     };
     update();
-    const observer = new ResizeObserver(update);
-    if (anchor.current) observer.observe(anchor.current);
-    if (popup.current) observer.observe(popup.current);
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update);
+    if (anchor.current) observer?.observe(anchor.current);
+    if (popup.current) observer?.observe(popup.current);
     window.addEventListener('resize', update); window.addEventListener('scroll', update, true);
-    return () => { observer.disconnect(); window.removeEventListener('resize', update); window.removeEventListener('scroll', update, true); };
+    return () => { observer?.disconnect(); window.removeEventListener('resize', update); window.removeEventListener('scroll', update, true); };
   }, [anchor, placement, matchWidth, gap, maxHeight]);
   useEffect(() => {
     const outside = (event: Event) => {
