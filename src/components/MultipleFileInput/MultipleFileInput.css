@@ -7,5 +7,5 @@
 .fdoc-multiple-file-input__group{display:flex;width:100%;min-width:0;flex-direction:column;align-items:flex-start;gap:var(--space-16)}
 .fdoc-multiple-file-input__group-error{display:flex;width:100%;min-width:0;align-items:center;gap:var(--space-8);color:var(--text-error-secondary);font-family:var(--page-body-family);font-size:var(--page-body-size);font-weight:var(--page-body-weight-base);line-height:var(--page-body-line-height);overflow-wrap:anywhere;word-break:normal}
 .fdoc-multiple-file-input__group-error>.fdoc-icon{flex:0 0 var(--elements-24)}
-.fdoc-multiple-file-input__list{display:flex;width:100%;min-width:0;flex-direction:column;align-items:flex-start;gap:var(--space-4)}
+.fdoc-multiple-file-input__list{display:flex;width:100%;min-width:0;flex-direction:column;align-items:flex-start;gap:var(--space-4)}\n.fdoc-multiple-file-input__item{width:100%;min-width:0}
 .fdoc-multiple-file-input__total{width:100%;color:var(--text-base-secondary);font-family:var(--page-caption-family);font-size:var(--page-caption-size);font-weight:var(--page-caption-weight-base);line-height:var(--page-caption-line-height);text-align:right}
