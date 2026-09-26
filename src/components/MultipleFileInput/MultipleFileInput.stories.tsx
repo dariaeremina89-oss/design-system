@@ -6,11 +6,12 @@ const files = [
   { fileName: 'Анкета.docx', type: 'template' as const },
   { fileName: 'Очень-длинное-название-файла-которое-должно-корректно-переноситься-без-поломки-верстки.pdf', weight: '4,1 МБ', type: 'uploaded' as const },
 ];
+
 const meta = {
   title: 'Components/Inputs/MultipleFileInput',
   component: MultipleFileInput,
   tags: ['autodocs', 'ready'],
-  args: { files, showButtons: false, showDropzone: true, collapsed: false, errorCount: 0, totalSize: '6,8 МБ', reorderable: false },
+  args: { files, showButtons: false, showDropzone: false, showCollapse: true, collapsed: false, errorCount: 0, totalSize: undefined, reorderable: false },
 } satisfies Meta<typeof MultipleFileInput>;
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -18,5 +19,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 export const Reorderable: Story = { args: { reorderable: true } };
 export const WithErrors: Story = { args: { errorCount: 1, files: [{ ...files[0], error: true, errorText: 'Файл слишком большой' }, ...files.slice(1)] } };
+export const GroupError: Story = { args: { groupErrorText: 'Превышен максимальный общий размер файлов', totalSize: '8,1 МБ' } };
+export const WithDropzone: Story = { args: { showDropzone: true } };
 export const Collapsed: Story = { args: { collapsed: true } };
 export const Buttons: Story = { args: { showButtons: true, showDropzone: false } };
