@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MultipleFileInput } from './MultipleFileInput';
 
@@ -17,7 +18,18 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
-export const Reorderable: Story = { args: { reorderable: true } };
+export const Reorderable: Story = {
+  args: { reorderable: true },
+  render: args => {
+    const [orderedFiles, setOrderedFiles] = useState(args.files ?? []);
+    return <MultipleFileInput {...args} files={orderedFiles} onReorder={(from, to) => setOrderedFiles(current => {
+      const next = [...current];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      return next;
+    })} />;
+  },
+};
 export const WithErrors: Story = { args: { errorCount: 1, files: [{ ...files[0], error: true, errorText: 'Файл слишком большой' }, ...files.slice(1)] } };
 export const GroupError: Story = { args: { groupErrorText: 'Превышен максимальный общий размер файлов', totalSize: '8,1 МБ' } };
 export const WithDropzone: Story = { args: { showDropzone: true } };
