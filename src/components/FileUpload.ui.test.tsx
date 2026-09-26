@@ -45,7 +45,7 @@ describe('File upload visual contract', () => {
     expectRuleValue('.fdoc-dropzone', 'padding', 'var(--space-8) var(--space-16)');
     expectRuleValue('.fdoc-dropzone', 'border', 'var(--border-middle) dashed var(--border-primary-default)');
     expectRuleValue('.fdoc-dropzone', 'border-radius', 'var(--radius-small)');
-    expectRuleValue('.fdoc-dropzone--hover,.fdoc-dropzone--drag-over', 'background', 'var(--background-primary-secondary-hover)');
+    expectRuleValue('.fdoc-dropzone--hover, .fdoc-dropzone--drag-over', 'background', 'var(--background-primary-secondary-hover)');
     expectRuleValue('.fdoc-dropzone--pressed', 'background', 'var(--transparent-background-primary-pressed)');
   });
 
