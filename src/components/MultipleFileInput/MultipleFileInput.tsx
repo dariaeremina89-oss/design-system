@@ -55,7 +55,8 @@ export function MultipleFileInput({
   };
 
   return (
-    <div className={`fdoc-multiple-file-input ${className}`} data-testid="multiple-file-input">\n      <input ref={fileInputRef} hidden type="file" multiple onChange={e => { const selected = Array.from(e.target.files ?? []); if (selected.length) onAddFiles?.(selected); e.currentTarget.value = ''; }} />
+    <div className={`fdoc-multiple-file-input ${className}`} data-testid="multiple-file-input">
+      <input ref={fileInputRef} hidden type="file" multiple onChange={e => { const selected = Array.from(e.target.files ?? []); if (selected.length) onAddFiles?.(selected); e.currentTarget.value = ''; }} />
       {(showButtons || showDropzone || showCollapse) && (
         <div className="fdoc-multiple-file-input__control">
           {showButtons && (actions ?? (
