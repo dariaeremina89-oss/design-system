@@ -108,7 +108,10 @@
   background: var(--background-error-secondary);
 }
 
-.fdoc-dropzone--error .fdoc-dropzone__icon,
+.fdoc-dropzone--error .fdoc-dropzone__icon {
+  color: var(--icon-error-secondary);
+}
+
 .fdoc-dropzone--error strong {
   color: var(--text-error-secondary);
 }
@@ -157,4 +160,5 @@
   display: block;
   width: 100%;
   height: 100%;
+  border-radius: var(--radius-small);
 }
