@@ -30,13 +30,15 @@ describe('File upload visual contract', () => {
     expectRuleValue('.fdoc-single-file-input', 'background', 'var(--background-base-secondary)');
   });
 
-  it('keeps FileRow dimensions, spacing and typography on Figma tokens', () => {
+  it('keeps FileRow dimensions, spacing and inset Figma border', () => {
     render(<FileRow />);
     expectRuleValue('.fdoc-file-row', 'min-height', '48px');
     expectRuleValue('.fdoc-file-row', 'padding', 'var(--space-12) var(--space-8)');
     expectRuleValue('.fdoc-file-row', 'gap', 'var(--space-8)');
-    expectRuleValue('.fdoc-file-row', 'border', 'var(--border-small) solid var(--border-base-light)');
+    expectRuleValue('.fdoc-file-row', 'border', '0px');
     expectRuleValue('.fdoc-file-row', 'border-radius', 'var(--radius-middle)');
+    expectRuleValue('.fdoc-file-row::before', 'inset', '0');
+    expectRuleValue('.fdoc-file-row::before', 'border', 'var(--border-small) solid var(--border-base-light)');
     expectRuleValue('.fdoc-file-row__line', 'gap', 'var(--space-16)');
   });
 
