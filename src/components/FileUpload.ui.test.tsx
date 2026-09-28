@@ -42,12 +42,12 @@ describe('File upload visual contract', () => {
 
   it('keeps Dropzone border, radius and state tokens from Figma', () => {
     render(<Dropzone />);
-    expectRuleValue('.fdoc-dropzone', 'padding', 'var(--space-8) var(--space-16)');
+    expectRuleValue('.fdoc-dropzone', 'padding', 'var(--space-12) var(--space-16)');
     expectRuleValue('.fdoc-dropzone', 'border', 'var(--border-middle) dashed var(--border-primary-default)');
     expectRuleValue('.fdoc-dropzone', 'border-radius', 'var(--radius-small)');
     expectRuleValue('.fdoc-dropzone--hover, .fdoc-dropzone--drag-over', 'background', 'var(--background-primary-secondary-hover)');
     expectRuleValue('.fdoc-dropzone--pressed', 'background', 'var(--transparent-background-primary-pressed)');
-    expectRuleValue('.fdoc-dropzone-skeleton', 'height', '108px');
+    expectRuleValue('.fdoc-dropzone-skeleton', 'height', '132px');
     expectRuleValue('.fdoc-dropzone-skeleton--center', 'height', '152px');
   });
 
@@ -59,6 +59,7 @@ describe('File upload visual contract', () => {
     expectRuleValue('.fdoc-multiple-file-input__control', 'align-items', 'stretch');
     expectRuleValue('.fdoc-multiple-file-input__control', 'gap', 'var(--space-24)');
     expectRuleValue('.fdoc-multiple-file-input__list', 'gap', 'var(--space-4)');
+    expectRuleValue('.fdoc-multiple-file-input__files', 'gap', 'var(--space-4)');
     expectRuleValue('.fdoc-multiple-file-input__group', 'gap', 'var(--space-16)');
   });
 });
