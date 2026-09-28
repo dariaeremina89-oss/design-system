@@ -3,9 +3,12 @@ import { describe, expect, it, vi } from 'vitest';
 import { FileRow } from './FileRow';
 
 describe('FileRow', () => {
-  it('keeps delete available while loading', () => {
+  it('keeps delete available while loading and uses the Figma spinner', () => {
     const onDelete = vi.fn();
     render(<FileRow type="loading" onDelete={onDelete} />);
+    const progress = screen.getByRole('progressbar', { name: 'Загрузка' });
+    expect(progress).toHaveAttribute('data-progress-color', 'primary');
+    expect(progress).toHaveStyle({ '--fdoc-progress-duration': '2000ms' });
     fireEvent.click(screen.getByRole('button', { name: 'Удалить файл' }));
     expect(onDelete).toHaveBeenCalledOnce();
   });
@@ -14,6 +17,11 @@ describe('FileRow', () => {
     render(<FileRow type="disabled" draggable />);
     expect(document.querySelector('[data-icon="drag-dot"]')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Удалить файл' })).toBeDisabled();
+  });
+
+  it('uses the disabled error icon in Disabled + Error', () => {
+    render(<FileRow type="disabled" error />);
+    expect(document.querySelector('[data-icon="filled/exclamation_circle_filled"]')).toBeInTheDocument();
   });
 
   it('renders template metadata and edit action', () => {
