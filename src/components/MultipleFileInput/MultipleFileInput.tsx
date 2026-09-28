@@ -49,6 +49,7 @@ export function MultipleFileInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
+
   const reorder = (toIndex: number) => {
     if (dragIndex === null || dragIndex === toIndex) return;
     onReorder?.(dragIndex, toIndex);
@@ -58,23 +59,60 @@ export function MultipleFileInput({
 
   return (
     <div className={`fdoc-multiple-file-input ${className}`} data-testid="multiple-file-input">
-      <input ref={fileInputRef} hidden type="file" multiple onChange={e => { const selected = Array.from(e.target.files ?? []); if (selected.length) onAddFiles?.(selected); e.currentTarget.value = ''; }} />
+      <input
+        ref={fileInputRef}
+        hidden
+        type="file"
+        multiple
+        onChange={event => {
+          const selected = Array.from(event.target.files ?? []);
+          if (selected.length) onAddFiles?.(selected);
+          event.currentTarget.value = '';
+        }}
+      />
+
       {(showButtons || showDropzone || showCollapse) && (
         <div className="fdoc-multiple-file-input__control">
           {showButtons && (actions ?? (
             <div className="fdoc-multiple-file-input__buttons">
-              <Button size="large" iconLeft="plus" onClick={() => onChooseFiles ? onChooseFiles() : fileInputRef.current?.click()}>Выбрать файл</Button>
-              <Button size="large" color="base" onClick={onDeleteAll}>Удалить все</Button>
+              <Button
+                size="large"
+                color="primary"
+                iconLeft="arrow-upload"
+                onClick={() => onChooseFiles ? onChooseFiles() : fileInputRef.current?.click()}
+              >
+                Выбрать файл
+              </Button>
+              <Button size="large" color="secondary" iconLeft="trash-can" onClick={onDeleteAll}>
+                Удалить все
+              </Button>
             </div>
           ))}
-          {showDropzone && <Dropzone {...dropzoneProps} onFiles={onAddFiles} />}
+
+          {showDropzone && (
+            <Dropzone
+              showFormats
+              showMaxQuantity
+              showMaxFileSize
+              showMaxTotalSize
+              {...dropzoneProps}
+              onFiles={onAddFiles}
+            />
+          )}
+
           {showCollapse && (
             <div className="fdoc-multiple-file-input__summary">
               <div className="fdoc-multiple-file-input__summary-main">
-                <ButtonLink color="accent" size="medium" decoration="dashed" onClick={onToggleCollapse}>{count} файлов</ButtonLink>
+                <ButtonLink color="accent" size="medium" decoration="dashed" onClick={onToggleCollapse}>
+                  {count} файлов
+                </ButtonLink>
                 {errorCount > 0 && <span className="fdoc-multiple-file-input__error">Ошибки в файлах ({errorCount})</span>}
               </div>
-              {count > 0 && <ButtonLink color="accent" size="medium" decoration="dashed" onClick={onDeleteAll}>Удалить все</ButtonLink>}
+              {count > 0 && (
+                <ButtonLink color="accent" size="medium" decoration="dashed" onClick={onDeleteAll}>
+                  Удалить все
+                </ButtonLink>
+              )}
             </div>
           )}
         </div>
@@ -88,22 +126,44 @@ export function MultipleFileInput({
               <span>{groupErrorText}</span>
             </div>
           )}
-          <div className="fdoc-multiple-file-input__list">
-            {files.map((file, index) => (
-              <div
-                key={`${file.fileName ?? 'file'}-${index}`}
-                className={`fdoc-multiple-file-input__item ${dropIndex === index && dragIndex !== index ? 'fdoc-multiple-file-input__item--drop-before' : ''}`}
-                draggable={reorderable}
-                onDragStart={(e: DragEvent<HTMLDivElement>) => { if (reorderable) { setDragIndex(index); e.dataTransfer.effectAllowed = 'move'; } }}
-                onDragOver={(e: DragEvent<HTMLDivElement>) => { if (reorderable) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; setDropIndex(index); } }}
-                onDrop={(e: DragEvent<HTMLDivElement>) => { if (reorderable) { e.preventDefault(); reorder(index); } }}
-                onDragEnd={() => { setDragIndex(null); setDropIndex(null); }}
-              >
-                <FileRow {...file} draggable={reorderable || file.draggable} />
-              </div>
-            ))}
+
+          <div className="fdoc-multiple-file-input__files">
+            <div className="fdoc-multiple-file-input__list">
+              {files.map((file, index) => (
+                <div
+                  key={`${file.fileName ?? 'file'}-${index}`}
+                  className={`fdoc-multiple-file-input__item ${dropIndex === index && dragIndex !== index ? 'fdoc-multiple-file-input__item--drop-before' : ''}`}
+                  draggable={reorderable}
+                  onDragStart={(event: DragEvent<HTMLDivElement>) => {
+                    if (reorderable) {
+                      setDragIndex(index);
+                      event.dataTransfer.effectAllowed = 'move';
+                    }
+                  }}
+                  onDragOver={(event: DragEvent<HTMLDivElement>) => {
+                    if (reorderable) {
+                      event.preventDefault();
+                      event.dataTransfer.dropEffect = 'move';
+                      setDropIndex(index);
+                    }
+                  }}
+                  onDrop={(event: DragEvent<HTMLDivElement>) => {
+                    if (reorderable) {
+                      event.preventDefault();
+                      reorder(index);
+                    }
+                  }}
+                  onDragEnd={() => {
+                    setDragIndex(null);
+                    setDropIndex(null);
+                  }}
+                >
+                  <FileRow {...file} draggable={reorderable || file.draggable} />
+                </div>
+              ))}
+            </div>
+            {totalSize && <div className="fdoc-multiple-file-input__total">Общий объем: {totalSize}</div>}
           </div>
-          {totalSize && <div className="fdoc-multiple-file-input__total">Общий объем: {totalSize}</div>}
         </div>
       )}
     </div>
