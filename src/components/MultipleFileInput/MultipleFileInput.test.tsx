@@ -26,6 +26,21 @@ describe('MultipleFileInput', () => {
     expect(screen.getByText('Общий объем: 8,1 МБ')).toBeInTheDocument();
   });
 
+  it('shows all Dropzone constraints in the MultipleFileInput Dropzone variant', () => {
+    render(<MultipleFileInput files={files} showDropzone />);
+    expect(screen.getByText('Максимальное количество файлов — 10')).toBeInTheDocument();
+    expect(screen.getByText('Максимальный общий размер файлов — 50 МБ')).toBeInTheDocument();
+  });
+
+  it('uses the updated Figma action buttons', () => {
+    render(<MultipleFileInput files={files} showButtons />);
+    const choose = screen.getByRole('button', { name: 'Выбрать файл' });
+    const remove = screen.getByRole('button', { name: 'Удалить все' });
+    expect(choose.querySelector('[data-icon="arrow-upload"]')).toBeInTheDocument();
+    expect(remove.querySelector('[data-icon="trash-can"]')).toBeInTheDocument();
+    expect(remove).toHaveClass('fdoc-button--secondary');
+  });
+
   it('hides the file group when collapsed', () => {
     render(<MultipleFileInput files={files} collapsed />);
     expect(screen.queryByText('Первый.pdf')).not.toBeInTheDocument();
