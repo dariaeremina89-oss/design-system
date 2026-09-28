@@ -8,7 +8,7 @@ describe('FileRow', () => {
     render(<FileRow type="loading" onDelete={onDelete} />);
     const progress = screen.getByRole('progressbar', { name: 'Загрузка' });
     expect(progress).toHaveAttribute('data-progress-color', 'primary');
-    expect(progress).toHaveStyle({ '--fdoc-progress-duration': '2000ms' });
+    expect(progress.style.getPropertyValue('--fdoc-progress-duration')).toBe('2000ms');
     fireEvent.click(screen.getByRole('button', { name: 'Удалить файл' }));
     expect(onDelete).toHaveBeenCalledOnce();
   });
