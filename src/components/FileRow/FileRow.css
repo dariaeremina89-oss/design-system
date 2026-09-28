@@ -1,5 +1,6 @@
 .fdoc-file-row {
   box-sizing: border-box;
+  position: relative;
   display: flex;
   align-items: flex-start;
   width: 100%;
@@ -7,10 +8,20 @@
   min-height: 48px;
   padding: var(--space-12) var(--space-8);
   gap: var(--space-8);
-  border: var(--border-small) solid var(--border-base-light);
+  border: 0;
   border-radius: var(--radius-middle);
   background: var(--background-base-secondary);
   color: var(--text-base-default);
+}
+
+.fdoc-file-row::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border: var(--border-small) solid var(--border-base-light);
+  border-radius: inherit;
+  pointer-events: none;
 }
 
 .fdoc-file-row__drag,
