@@ -23,15 +23,19 @@ export interface DropzoneProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onD
   onFiles?: (files: File[]) => void;
 }
 
+const DEFAULT_FORMATS = '.doc, .docx, .xls, .xlsx, .pdf, .jpg, .jpeg, .png';
+const DEFAULT_MAX_FILE_SIZE = '15 МБ';
+const DEFAULT_MAX_TOTAL_SIZE = '50 МБ';
+
 export function Dropzone({
   state = 'default',
   align = 'left',
   accept,
   multiple = true,
-  formats = '.doc, .docx, .xls, .xlsx, .pdf, .jpg, .jpeg, .png',
+  formats = DEFAULT_FORMATS,
   maxQuantity = 10,
-  maxFileSize = '15 МБ',
-  maxTotalSize = '50 МБ',
+  maxFileSize = DEFAULT_MAX_FILE_SIZE,
+  maxTotalSize = DEFAULT_MAX_TOTAL_SIZE,
   showFormats = true,
   showMaxQuantity = false,
   showMaxFileSize = true,
@@ -169,9 +173,9 @@ export function Dropzone({
               <Requirements
                 {...{
                   align,
-                  formats: formats === '.doc, .docx, .xls, .xlsx, .pdf, .jpg, .jpeg, .png' ? '.docx, xlsx' : formats,
+                  formats: formats === DEFAULT_FORMATS ? '.docx, xlsx' : formats,
                   maxQuantity,
-                  maxFileSize: maxFileSize === '15 МБ' ? '5 МБ' : maxFileSize,
+                  maxFileSize: maxFileSize === DEFAULT_MAX_FILE_SIZE ? '5 МБ' : maxFileSize,
                   maxTotalSize,
                   showFormats,
                   showMaxQuantity,
