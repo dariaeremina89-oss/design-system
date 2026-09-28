@@ -102,13 +102,3 @@
   width: 32px;
   height: 32px;
 }
-
-@media (max-width: 767px) {
-  .fdoc-single-file-input__label {
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
-    overflow-wrap: anywhere;
-    word-break: normal;
-  }
-}
