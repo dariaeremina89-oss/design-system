@@ -8,14 +8,20 @@ const files = [
   { fileName: 'Очень-длинное-название-файла-которое-должно-корректно-переноситься-без-поломки-верстки.pdf', weight: '4,1 МБ', type: 'uploaded' as const },
 ];
 
+const formatFileSize = (bytes: number) => {
+  if (bytes < 1024) return `${bytes} Б`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} КБ`;
+  return `${(bytes / (1024 * 1024)).toFixed(1).replace('.', ',')} МБ`;
+};
+
 function Interactive(args: any) {
   const [currentFiles, setCurrentFiles] = useState(args.files ?? files);
   const [collapsed, setCollapsed] = useState(args.collapsed ?? false);
   const inputRef = useRef<HTMLInputElement>(null);
   const removeAt = (index: number) => setCurrentFiles((current: any[]) => current.filter((_, i) => i !== index));
   const wired = currentFiles.map((file: any, index: number) => ({ ...file, onDelete: () => removeAt(index), ...(args.withMenu && index === 0 ? { deletable: false, menuItems: [{ id: 'rename', title: 'Переименовать', leftIcon: 'pencil' }, { id: 'delete', title: 'Удалить', leftIcon: 'trash', onAction: () => removeAt(index) }] } : {}) }));
-  const add = (added: File[]) => setCurrentFiles((current: any[]) => [...current, ...added.map(file => ({ fileName: file.name, type: 'uploaded' as const }))]);
-  return <><input ref={inputRef} hidden type="file" multiple onChange={e => { add(Array.from(e.target.files ?? [])); e.currentTarget.value = ''; }} /><MultipleFileInput {...args} files={wired} collapsed={collapsed} onToggleCollapse={() => setCollapsed(v => !v)} onDeleteAll={() => setCurrentFiles([])} onChooseFiles={() => inputRef.current?.click()} onAddFiles={add} onReorder={(from: number, to: number) => setCurrentFiles((current: any[]) => { const next = [...current]; const [moved] = next.splice(from, 1); next.splice(to, 0, moved); return next; })} /></>;
+  const add = (added: File[]) => setCurrentFiles((current: any[]) => [...current, ...added.map(file => ({ fileName: file.name, weight: formatFileSize(file.size), type: 'uploaded' as const }))]);
+  return <div className="fdoc-multiple-file-input-story"><input ref={inputRef} hidden type="file" multiple onChange={e => { add(Array.from(e.target.files ?? [])); e.currentTarget.value = ''; }} /><MultipleFileInput {...args} files={wired} collapsed={collapsed} onToggleCollapse={() => setCollapsed(v => !v)} onDeleteAll={() => setCurrentFiles([])} onChooseFiles={() => inputRef.current?.click()} onAddFiles={add} onReorder={(from: number, to: number) => setCurrentFiles((current: any[]) => { const next = [...current]; const [moved] = next.splice(from, 1); next.splice(to, 0, moved); return next; })} /></div>;
 }
 
 const meta = {
