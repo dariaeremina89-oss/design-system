@@ -19,14 +19,14 @@ describe('SingleFileInput', () => {
     expect(document.querySelector('[data-icon="filled/exclamation_circle_filled"]')).toBeInTheDocument();
   });
 
-  it('keeps the disabled anatomy and does not render the upload button', () => {
+  it('keeps the disabled error anatomy and does not render the upload button', () => {
     render(<SingleFileInput type="disabled" error errorText="Ошибка файла" />);
     expect(screen.getByText('Загрузка файлов недоступна')).toBeInTheDocument();
-    expect(document.querySelector('[data-icon="doc-paper"]')).toBeInTheDocument();
+    expect(document.querySelector('[data-icon="filled/exclamation_circle_filled"]')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Загрузить' })).not.toBeInTheDocument();
   });
 
-  it('uses ButtonIcon on mobile', () => {
+  it('uses a 32px ButtonIcon on mobile', () => {
     render(<SingleFileInput size="mobile" />);
     expect(screen.getByRole('button', { name: 'Загрузить' })).toHaveAttribute('data-button-icon-size', '32');
   });
