@@ -35,10 +35,13 @@ describe('MultipleFileInput', () => {
   it('uses the updated Figma action buttons', () => {
     render(<MultipleFileInput files={files} showButtons />);
     const choose = screen.getByRole('button', { name: 'Выбрать файл' });
-    const remove = screen.getByRole('button', { name: 'Удалить все' });
+    const remove = screen
+      .getAllByRole('button', { name: 'Удалить все' })
+      .find(button => button.querySelector('[data-icon="trash-can"]'));
+
     expect(choose.querySelector('[data-icon="arrow-upload"]')).toBeInTheDocument();
-    expect(remove.querySelector('[data-icon="trash-can"]')).toBeInTheDocument();
-    expect(remove).toHaveClass('fdoc-button--secondary');
+    expect(remove).toBeDefined();
+    expect(remove!).toHaveClass('fdoc-button--secondary');
   });
 
   it('hides the file group when collapsed', () => {
