@@ -24,6 +24,20 @@ describe('FileRow', () => {
     expect(document.querySelector('[data-icon="filled/exclamation_circle_filled"]')).toBeInTheDocument();
   });
 
+  it('renders warning with the Figma warning icon and text', () => {
+    render(<FileRow warning warningText="Warning text" />);
+    expect(document.querySelector('[data-icon="exclamation_triangle"]')).toBeInTheDocument();
+    expect(screen.getByText('Warning text')).toBeInTheDocument();
+  });
+
+  it('keeps Error as the higher-priority status when Error and Warning are both passed', () => {
+    render(<FileRow error errorText="Error text" warning warningText="Warning text" />);
+    expect(document.querySelector('[data-icon="filled/exclamation_circle_filled"]')).toBeInTheDocument();
+    expect(document.querySelector('[data-icon="exclamation_triangle"]')).not.toBeInTheDocument();
+    expect(screen.getByText('Error text')).toBeInTheDocument();
+    expect(screen.queryByText('Warning text')).not.toBeInTheDocument();
+  });
+
   it('renders template metadata and edit action', () => {
     const onTemplateEdit = vi.fn();
     const { rerender } = render(<FileRow type="template" fileName="Шаблон договора" />);
