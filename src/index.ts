@@ -112,7 +112,12 @@ export type {
 } from './components/fileUploadValidation';
 
 export { SingleFileInput } from './components/SingleFileInput/SingleFileInput';
-export type { SingleFileInputProps, SingleFileInputType } from './components/SingleFileInput/SingleFileInput';
+export type {
+  SingleFileInputFileRowProps,
+  SingleFileInputProps,
+  SingleFileInputSize,
+  SingleFileInputType,
+} from './components/SingleFileInput/SingleFileInput';
 export { FileRow } from './components/FileRow/FileRow';
 export type {
   FileRowMessage,
