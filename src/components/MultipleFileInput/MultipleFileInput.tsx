@@ -158,7 +158,7 @@ export function MultipleFileInput({
                     setDropIndex(null);
                   }}
                 >
-                  <FileRow {...file} draggable={reorderable || file.draggable} />
+                  <FileRow {...file} reorderable={reorderable || file.reorderable} />
                 </div>
               ))}
             </div>
