@@ -49,6 +49,14 @@ describe('File upload visual contract', () => {
     expectRuleValue('.fdoc-file-row--message-error .fdoc-file-row__leading--semantic', 'color', 'var(--icon-error-secondary)');
   });
 
+  it('keeps the FileRow reorder insertion indicator from Figma', () => {
+    render(<FileRow />);
+    expectRuleValue('.fdoc-file-row-drop-indicator', 'width', '100%');
+    expectRuleValue('.fdoc-file-row-drop-indicator', 'height', '2px');
+    expectRuleValue('.fdoc-file-row-drop-indicator', 'border-radius', 'var(--radius-smallest)');
+    expectRuleValue('.fdoc-file-row-drop-indicator', 'background', 'var(--border-accent-default)');
+  });
+
   it('keeps Dropzone border, radius and state tokens from Figma', () => {
     render(<Dropzone />);
     expectRuleValue('.fdoc-dropzone', 'padding', 'var(--space-12) var(--space-16)');
