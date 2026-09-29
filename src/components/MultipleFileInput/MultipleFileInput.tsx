@@ -118,6 +118,8 @@ export function MultipleFileInput({
               showMaxQuantity
               showMaxFileSize
               showMaxTotalSize
+              currentQuantity={count}
+              currentTotalSize={totalSize}
               {...dropzoneProps}
               onFiles={onAddFiles}
             />
