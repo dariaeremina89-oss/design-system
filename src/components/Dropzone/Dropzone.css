@@ -1,14 +1,26 @@
 .fdoc-dropzone {
+  --fdoc-dropzone-border-color: var(--border-primary-default);
   box-sizing: border-box;
+  position: relative;
   display: flex;
   width: 100%;
   min-width: 0;
   gap: var(--space-8);
   padding: var(--space-12) var(--space-16);
-  border: var(--border-middle) dashed var(--border-primary-default);
+  border: 0;
   border-radius: var(--radius-small);
   cursor: pointer;
   color: var(--text-base-default-light);
+}
+
+.fdoc-dropzone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border: var(--border-middle) dashed var(--fdoc-dropzone-border-color);
+  border-radius: inherit;
+  pointer-events: none;
 }
 
 .fdoc-dropzone__input {
@@ -104,7 +116,7 @@
 }
 
 .fdoc-dropzone--error {
-  border-color: var(--border-error-default);
+  --fdoc-dropzone-border-color: var(--border-error-default);
   background: var(--background-error-secondary);
 }
 
@@ -117,7 +129,7 @@
 }
 
 .fdoc-dropzone--success {
-  border-color: var(--border-success-default);
+  --fdoc-dropzone-border-color: var(--border-success-default);
   background: var(--background-success-secondary);
 }
 
@@ -127,7 +139,7 @@
 }
 
 .fdoc-dropzone--disabled {
-  border-color: var(--border-base-default-disabled);
+  --fdoc-dropzone-border-color: var(--border-base-default-disabled);
   color: var(--text-base-default-light-disabled);
   cursor: not-allowed;
 }
