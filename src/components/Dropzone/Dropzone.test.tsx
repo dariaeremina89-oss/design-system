@@ -118,9 +118,10 @@ describe('Dropzone', () => {
     const { container } = render(<Dropzone align="center" onFiles={onFiles} onValidationError={onValidationError} />);
     const input = container.querySelector('input[type="file"]') as HTMLInputElement;
     const invalid = new File(['x'], 'document.pdf', { type: 'application/pdf' });
+    const requirements = container.querySelector('.fdoc-dropzone__requirements');
 
-    expect(screen.getByText('Допустимые форматы: .docx, xlsx')).toBeInTheDocument();
-    expect(screen.getByText('Максимальный размер — 5 МБ')).toBeInTheDocument();
+    expect(requirements).toHaveTextContent('Допустимые форматы: .docx, xlsx');
+    expect(requirements).toHaveTextContent('Максимальный размер — 5 МБ');
 
     fireEvent.change(input, { target: { files: [invalid] } });
     expect(onFiles).not.toHaveBeenCalled();
