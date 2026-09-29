@@ -13,8 +13,8 @@ describe('FileRow', () => {
     expect(onDelete).toHaveBeenCalledOnce();
   });
 
-  it('renders drag control and disabled delete in Disabled', () => {
-    render(<FileRow type="disabled" draggable />);
+  it('renders reorder control and disabled delete in Disabled', () => {
+    render(<FileRow type="disabled" reorderable />);
     expect(document.querySelector('[data-icon="drag-dot"]')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Удалить файл' })).toBeDisabled();
   });
