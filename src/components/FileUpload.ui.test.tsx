@@ -21,13 +21,17 @@ function expectRuleValue(selector: string, property: string, value: string) {
 }
 
 describe('File upload visual contract', () => {
-  it('keeps SingleFileInput Figma spacing and foundation tokens', () => {
+  it('keeps SingleFileInput Figma spacing and inset stroke', () => {
     render(<SingleFileInput />);
     expectRuleValue('.fdoc-single-file-input', 'min-height', '48px');
     expectRuleValue('.fdoc-single-file-input', 'padding', 'var(--space-8)');
     expectRuleValue('.fdoc-single-file-input', 'gap', 'var(--space-8)');
+    expectRuleValue('.fdoc-single-file-input', 'border', '0px');
     expectRuleValue('.fdoc-single-file-input', 'border-radius', 'var(--radius-middle)');
     expectRuleValue('.fdoc-single-file-input', 'background', 'var(--background-base-secondary)');
+    expectRuleValue('.fdoc-single-file-input::before', 'inset', '0');
+    expectRuleValue('.fdoc-single-file-input::before', 'border', 'var(--border-small) solid var(--border-base-light)');
+    expectRuleValue('.fdoc-single-file-input--error', 'align-items', 'flex-start');
   });
 
   it('keeps FileRow dimensions, spacing, inset border and semantic Message tokens from Figma', () => {
@@ -57,15 +61,19 @@ describe('File upload visual contract', () => {
     expectRuleValue('.fdoc-file-row-drop-indicator', 'background', 'var(--border-accent-default)');
   });
 
-  it('keeps Dropzone border, radius and state tokens from Figma', () => {
+  it('keeps Dropzone inset border, radius and state tokens from Figma', () => {
     render(<Dropzone />);
     expectRuleValue('.fdoc-dropzone', 'padding', 'var(--space-12) var(--space-16)');
-    expectRuleValue('.fdoc-dropzone', 'border', 'var(--border-middle) dashed var(--border-primary-default)');
+    expectRuleValue('.fdoc-dropzone', 'border', '0px');
     expectRuleValue('.fdoc-dropzone', 'border-radius', 'var(--radius-small)');
+    expectRuleValue('.fdoc-dropzone::before', 'inset', '0');
+    expectRuleValue('.fdoc-dropzone::before', 'border', 'var(--border-middle) dashed var(--fdoc-dropzone-border-color)');
     expectRuleValue('.fdoc-dropzone--hover, .fdoc-dropzone--drag-over', 'background', 'var(--background-primary-secondary-hover)');
     expectRuleValue('.fdoc-dropzone--pressed', 'background', 'var(--transparent-background-primary-pressed)');
+    expectRuleValue('.fdoc-dropzone--error', '--fdoc-dropzone-border-color', 'var(--border-error-default)');
     expectRuleValue('.fdoc-dropzone--error .fdoc-dropzone__icon', 'color', 'var(--icon-error-secondary)');
     expectRuleValue('.fdoc-dropzone--error strong', 'color', 'var(--text-error-secondary)');
+    expectRuleValue('.fdoc-dropzone--disabled', '--fdoc-dropzone-border-color', 'var(--border-base-default-disabled)');
     expectRuleValue('.fdoc-dropzone--disabled .fdoc-dropzone__icon', 'color', 'var(--icon-base-default-light-disabled)');
     expectRuleValue('.fdoc-dropzone--center.fdoc-dropzone--disabled', 'min-height', '116px');
     expectRuleValue('.fdoc-dropzone-skeleton', 'height', '132px');
