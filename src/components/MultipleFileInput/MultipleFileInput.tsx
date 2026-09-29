@@ -36,6 +36,7 @@ export interface MultipleFileInputProps {
   onValidationError?: (issues: FileUploadValidationIssue[]) => void;
   onDeleteAll?: () => void;
   onToggleCollapse?: () => void;
+  /** Вызывается при клике на стандартную кнопку перед открытием системного picker. */
   onChooseFiles?: () => void;
   onReorder?: (fromIndex: number, toIndex: number) => void;
   className?: string;
@@ -97,6 +98,11 @@ export function MultipleFileInput({
     onAddFiles?.(selected);
   };
 
+  const chooseFiles = () => {
+    onChooseFiles?.();
+    fileInputRef.current?.click();
+  };
+
   const reorderFrom = (fromIndex: number, toIndex: number) => {
     if (fromIndex === toIndex || toIndex < 0 || toIndex >= files.length) return;
     onReorder?.(fromIndex, toIndex);
@@ -149,7 +155,7 @@ export function MultipleFileInput({
                 size="large"
                 color="primary"
                 iconLeft="arrow-upload"
-                onClick={() => onChooseFiles ? onChooseFiles() : fileInputRef.current?.click()}
+                onClick={chooseFiles}
               >
                 Выбрать файл
               </Button>
