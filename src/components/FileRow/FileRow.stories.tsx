@@ -1,4 +1,4 @@
-import { useState, type DragEvent } from 'react';
+import { useState, type ComponentProps, type DragEvent } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { FileRow } from './FileRow';
 
@@ -7,14 +7,14 @@ const menuItems = [
   { id: 'delete', title: 'Удалить', leftIcon: 'trash' as const },
 ];
 
-const draggableRows = [
+const reorderableRows = [
   { id: 'contract', fileName: 'Договор.pdf', weight: '2,7 МБ' },
   { id: 'application', fileName: 'Заявление.pdf', weight: '1,3 МБ' },
   { id: 'agreement', fileName: 'Согласие.pdf', weight: '1,4 МБ' },
 ];
 
-function DraggableFileRows(args: React.ComponentProps<typeof FileRow>) {
-  const [rows, setRows] = useState(draggableRows);
+function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
+  const [rows, setRows] = useState(reorderableRows);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
 
   const moveRow = (toIndex: number) => {
@@ -35,7 +35,7 @@ function DraggableFileRows(args: React.ComponentProps<typeof FileRow>) {
           {...args}
           key={row.id}
           type="uploaded"
-          draggable
+          reorderable
           fileName={row.fileName}
           weight={row.weight}
           onDragStart={(event: DragEvent<HTMLDivElement>) => {
@@ -67,7 +67,7 @@ const meta = {
     weight: '2,7 МБ',
     error: false,
     errorText: 'Ошибка в файле',
-    draggable: false,
+    reorderable: false,
     deletable: true,
   },
   argTypes: {
@@ -86,8 +86,8 @@ export const Uploaded: Story = {};
 export const Loading: Story = { args: { type: 'loading' } };
 export const LoadingError: Story = { args: { type: 'loading', error: true } };
 export const Error: Story = { args: { error: true } };
-export const Draggable: Story = { render: args => <DraggableFileRows {...args} /> };
-export const Menu: Story = { args: { draggable: true, deletable: false, menuItems } };
+export const Reorderable: Story = { render: args => <ReorderableFileRows {...args} /> };
+export const Menu: Story = { args: { reorderable: true, deletable: false, menuItems } };
 export const UploadedPreview: Story = { args: { type: 'uploaded-preview' } };
 export const Template: Story = { args: { type: 'template', fileName: 'File name' } };
 export const TemplateEdit: Story = { args: { type: 'template-edit', fileName: 'File name' } };
