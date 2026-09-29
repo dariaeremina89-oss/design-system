@@ -1,4 +1,4 @@
-import { useRef, useState, type DragEvent, type ReactNode } from 'react';
+import { Fragment, useRef, useState, type DragEvent, type ReactNode } from 'react';
 import { Button } from '../Button/Button';
 import { Dropzone, type DropzoneProps } from '../Dropzone/Dropzone';
 import { FileRow, type FileRowProps, type FileRowReorderDirection } from '../FileRow/FileRow';
@@ -48,22 +48,37 @@ export function MultipleFileInput({
   const count = files.length;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
-  const [dropIndex, setDropIndex] = useState<number | null>(null);
+  const [dropSlot, setDropSlot] = useState<number | null>(null);
 
   const reorderFrom = (fromIndex: number, toIndex: number) => {
     if (fromIndex === toIndex || toIndex < 0 || toIndex >= files.length) return;
     onReorder?.(fromIndex, toIndex);
   };
 
-  const reorderDragged = (toIndex: number) => {
+  const reorderDragged = (slot: number) => {
     if (dragIndex === null) return;
+    const toIndex = dragIndex < slot ? slot - 1 : slot;
     reorderFrom(dragIndex, toIndex);
     setDragIndex(null);
-    setDropIndex(null);
+    setDropSlot(null);
+  };
+
+  const getDropSlot = (event: DragEvent<HTMLDivElement>, index: number) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    return event.clientY < rect.top + rect.height / 2 ? index : index + 1;
   };
 
   const keyboardTarget = (index: number, direction: FileRowReorderDirection) =>
     direction === 'up' ? index - 1 : index + 1;
+
+  const dropIndicator = (slot: number) =>
+    dragIndex !== null && dropSlot === slot ? (
+      <div
+        className="fdoc-file-row-drop-indicator"
+        data-testid="file-row-drop-indicator"
+        aria-hidden="true"
+      />
+    ) : null;
 
   return (
     <div className={`fdoc-multiple-file-input ${className}`} data-testid="multiple-file-input">
@@ -137,46 +152,50 @@ export function MultipleFileInput({
 
           <div className="fdoc-multiple-file-input__files">
             <div className="fdoc-multiple-file-input__list">
+              {dropIndicator(0)}
               {files.map((file, index) => {
                 const rowReorderable = reorderable || file.reorderable;
                 return (
-                  <div
-                    key={file.id ?? `${file.fileName ?? 'file'}-${index}`}
-                    className={`fdoc-multiple-file-input__item ${dropIndex === index && dragIndex !== index ? 'fdoc-multiple-file-input__item--drop-before' : ''}`}
-                    onDragOver={(event: DragEvent<HTMLDivElement>) => {
-                      if (rowReorderable && dragIndex !== null) {
-                        event.preventDefault();
-                        event.dataTransfer.dropEffect = 'move';
-                        setDropIndex(index);
-                      }
-                    }}
-                    onDrop={(event: DragEvent<HTMLDivElement>) => {
-                      if (rowReorderable && dragIndex !== null) {
-                        event.preventDefault();
-                        reorderDragged(index);
-                      }
-                    }}
-                  >
-                    <FileRow
-                      {...file}
-                      reorderable={rowReorderable}
-                      onReorderDragStart={event => {
-                        file.onReorderDragStart?.(event);
-                        if (!rowReorderable) return;
-                        setDragIndex(index);
-                        event.dataTransfer.effectAllowed = 'move';
+                  <Fragment key={file.id ?? `${file.fileName ?? 'file'}-${index}`}>
+                    <div
+                      className="fdoc-multiple-file-input__item"
+                      onDragOver={(event: DragEvent<HTMLDivElement>) => {
+                        if (rowReorderable && dragIndex !== null) {
+                          event.preventDefault();
+                          event.dataTransfer.dropEffect = 'move';
+                          setDropSlot(getDropSlot(event, index));
+                        }
                       }}
-                      onReorderDragEnd={event => {
-                        file.onReorderDragEnd?.(event);
-                        setDragIndex(null);
-                        setDropIndex(null);
+                      onDrop={(event: DragEvent<HTMLDivElement>) => {
+                        if (rowReorderable && dragIndex !== null) {
+                          event.preventDefault();
+                          reorderDragged(getDropSlot(event, index));
+                        }
                       }}
-                      onReorderKey={direction => {
-                        file.onReorderKey?.(direction);
-                        if (rowReorderable) reorderFrom(index, keyboardTarget(index, direction));
-                      }}
-                    />
-                  </div>
+                    >
+                      <FileRow
+                        {...file}
+                        reorderable={rowReorderable}
+                        onReorderDragStart={event => {
+                          file.onReorderDragStart?.(event);
+                          if (!rowReorderable) return;
+                          setDragIndex(index);
+                          setDropSlot(null);
+                          event.dataTransfer.effectAllowed = 'move';
+                        }}
+                        onReorderDragEnd={event => {
+                          file.onReorderDragEnd?.(event);
+                          setDragIndex(null);
+                          setDropSlot(null);
+                        }}
+                        onReorderKey={direction => {
+                          file.onReorderKey?.(direction);
+                          if (rowReorderable) reorderFrom(index, keyboardTarget(index, direction));
+                        }}
+                      />
+                    </div>
+                    {dropIndicator(index + 1)}
+                  </Fragment>
                 );
               })}
             </div>
