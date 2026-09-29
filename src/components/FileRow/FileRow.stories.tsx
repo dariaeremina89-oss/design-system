@@ -93,6 +93,7 @@ const meta = {
   tags: ['autodocs', 'ready'],
   args: {
     state: 'default',
+    disabled: false,
     fileName: 'File name.png',
     weight: '2,7 МБ',
     reorderable: false,
@@ -112,6 +113,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 export const Loading: Story = { args: { state: 'loading' } };
+export const LoadingDisabled: Story = { args: { state: 'loading', disabled: true } };
 export const LoadingWithError: Story = {
   args: { state: 'loading', message: { type: 'error', text: 'Error text' } },
 };
@@ -131,6 +133,7 @@ export const AdditionalText: Story = { args: { weight: undefined, additionalCont
 export const AdditionalAction: Story = {
   args: {
     weight: undefined,
+    leadingIcon: 'pencil-paper',
     additionalContent: ({ disabled }) => (
       <Link href="#" size="medium" color="accent" decoration={null} disabled={disabled}>
         Заполнить
@@ -140,8 +143,8 @@ export const AdditionalAction: Story = {
 };
 export const Reorderable: Story = { render: args => <ReorderableFileRows {...args} /> };
 export const Menu: Story = { args: { reorderable: true, deletable: false, menuItems } };
-export const Disabled: Story = { args: { state: 'disabled' } };
+export const Disabled: Story = { args: { disabled: true } };
 export const DisabledWithMessage: Story = {
-  args: { state: 'disabled', message: { type: 'error', text: 'Error text' } },
+  args: { disabled: true, message: { type: 'error', text: 'Error text' } },
 };
 export const Skeleton: Story = { args: { state: 'skeleton' } };
