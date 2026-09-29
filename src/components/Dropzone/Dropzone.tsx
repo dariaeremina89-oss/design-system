@@ -23,6 +23,10 @@ export interface DropzoneProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onD
   maxQuantity?: number;
   maxFileSize?: string;
   maxTotalSize?: string;
+  /** Уже добавленные файлы. Учитываются при проверке общего количества. */
+  currentQuantity?: number;
+  /** Уже добавленный общий размер. Учитывается при проверке общего размера. */
+  currentTotalSize?: string;
   /** Только видимость строки требования. На саму валидацию не влияет. */
   showFormats?: boolean;
   /** Только видимость строки требования. На саму валидацию не влияет. */
@@ -35,8 +39,10 @@ export interface DropzoneProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onD
   onValidationError?: (issues: DropzoneValidationIssue[]) => void;
 }
 
-const DEFAULT_FORMATS = '.doc, .docx, .xls, .xlsx, .pdf, .jpg, .jpeg, .png';
-const DEFAULT_MAX_FILE_SIZE = '15 МБ';
+const DEFAULT_LEFT_FORMATS = '.doc, .docx, .xls, .xlsx, .pdf, .jpg, .jpeg, .png';
+const DEFAULT_CENTER_FORMATS = '.docx, xlsx';
+const DEFAULT_LEFT_MAX_FILE_SIZE = '15 МБ';
+const DEFAULT_CENTER_MAX_FILE_SIZE = '5 МБ';
 const DEFAULT_MAX_TOTAL_SIZE = '50 МБ';
 
 function isFileDrag(event: DragEvent) {
@@ -72,7 +78,8 @@ function fileMatchesFormats(file: File, formats: string[]) {
   });
 }
 
-function parseSizeToBytes(value: string) {
+function parseSizeToBytes(value?: string) {
+  if (!value) return 0;
   const normalized = value
     .replace(/\u00a0/g, ' ')
     .replace(',', '.')
@@ -101,10 +108,12 @@ export function Dropzone({
   align = 'left',
   accept,
   multiple = true,
-  formats = DEFAULT_FORMATS,
+  formats,
   maxQuantity = 10,
-  maxFileSize = DEFAULT_MAX_FILE_SIZE,
+  maxFileSize,
   maxTotalSize = DEFAULT_MAX_TOTAL_SIZE,
+  currentQuantity = 0,
+  currentTotalSize,
   showFormats = true,
   showMaxQuantity = false,
   showMaxFileSize = true,
@@ -122,9 +131,12 @@ export function Dropzone({
   const [validationError, setValidationError] = useState(false);
   const disabled = state === 'disabled';
   const interactive = state === 'default';
-  const allowedFormats = useMemo(() => parseFormats(formats), [formats]);
-  const maxFileSizeBytes = useMemo(() => parseSizeToBytes(maxFileSize), [maxFileSize]);
+  const effectiveFormats = formats ?? (align === 'center' ? DEFAULT_CENTER_FORMATS : DEFAULT_LEFT_FORMATS);
+  const effectiveMaxFileSize = maxFileSize ?? (align === 'center' ? DEFAULT_CENTER_MAX_FILE_SIZE : DEFAULT_LEFT_MAX_FILE_SIZE);
+  const allowedFormats = useMemo(() => parseFormats(effectiveFormats), [effectiveFormats]);
+  const maxFileSizeBytes = useMemo(() => parseSizeToBytes(effectiveMaxFileSize), [effectiveMaxFileSize]);
   const maxTotalSizeBytes = useMemo(() => parseSizeToBytes(maxTotalSize), [maxTotalSize]);
+  const currentTotalSizeBytes = useMemo(() => parseSizeToBytes(currentTotalSize) ?? 0, [currentTotalSize]);
   const inputAccept = accept ?? allowedFormats.join(',');
 
   const activeState: DropzoneState | 'drag-over' = interactive && validationError
@@ -143,20 +155,21 @@ export function Dropzone({
     const issues: DropzoneValidationIssue[] = [];
     const quantityLimit = multiple ? maxQuantity : Math.min(maxQuantity, 1);
 
-    if (files.length > quantityLimit) {
+    if (currentQuantity + files.length > quantityLimit) {
       issues.push({ reason: 'quantity', limit: quantityLimit });
     }
 
     for (const file of files) {
       if (!fileMatchesFormats(file, allowedFormats)) {
-        issues.push({ reason: 'format', fileName: file.name, limit: formats });
+        issues.push({ reason: 'format', fileName: file.name, limit: effectiveFormats });
       }
       if (maxFileSizeBytes !== undefined && file.size > maxFileSizeBytes) {
-        issues.push({ reason: 'file-size', fileName: file.name, limit: maxFileSize });
+        issues.push({ reason: 'file-size', fileName: file.name, limit: effectiveMaxFileSize });
       }
     }
 
-    if (maxTotalSizeBytes !== undefined && files.reduce((sum, file) => sum + file.size, 0) > maxTotalSizeBytes) {
+    const selectedSize = files.reduce((sum, file) => sum + file.size, 0);
+    if (maxTotalSizeBytes !== undefined && currentTotalSizeBytes + selectedSize > maxTotalSizeBytes) {
       issues.push({ reason: 'total-size', limit: maxTotalSize });
     }
 
@@ -250,7 +263,10 @@ export function Dropzone({
         accept={inputAccept || undefined}
         multiple={multiple}
         disabled={disabled}
-        onChange={event => emit(event.target.files)}
+        onChange={event => {
+          emit(event.target.files);
+          event.currentTarget.value = '';
+        }}
       />
 
       {align === 'left' ? (
@@ -262,17 +278,15 @@ export function Dropzone({
             <strong>{title}</strong>
             {!disabled && (
               <Requirements
-                {...{
-                  align,
-                  formats,
-                  maxQuantity,
-                  maxFileSize,
-                  maxTotalSize,
-                  showFormats,
-                  showMaxQuantity,
-                  showMaxFileSize,
-                  showMaxTotalSize,
-                }}
+                align={align}
+                formats={effectiveFormats}
+                maxQuantity={maxQuantity}
+                maxFileSize={effectiveMaxFileSize}
+                maxTotalSize={maxTotalSize}
+                showFormats={showFormats}
+                showMaxQuantity={showMaxQuantity}
+                showMaxFileSize={showMaxFileSize}
+                showMaxTotalSize={showMaxTotalSize}
               />
             )}
           </div>
@@ -286,17 +300,15 @@ export function Dropzone({
             <strong>{title}</strong>
             {!disabled && (
               <Requirements
-                {...{
-                  align,
-                  formats: formats === DEFAULT_FORMATS ? '.docx, xlsx' : formats,
-                  maxQuantity,
-                  maxFileSize: maxFileSize === DEFAULT_MAX_FILE_SIZE ? '5 МБ' : maxFileSize,
-                  maxTotalSize,
-                  showFormats,
-                  showMaxQuantity,
-                  showMaxFileSize,
-                  showMaxTotalSize,
-                }}
+                align={align}
+                formats={effectiveFormats}
+                maxQuantity={maxQuantity}
+                maxFileSize={effectiveMaxFileSize}
+                maxTotalSize={maxTotalSize}
+                showFormats={showFormats}
+                showMaxQuantity={showMaxQuantity}
+                showMaxFileSize={showMaxFileSize}
+                showMaxTotalSize={showMaxTotalSize}
               />
             )}
           </div>
