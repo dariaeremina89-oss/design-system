@@ -1,18 +1,19 @@
-import { useMemo, useRef, useState, type DragEvent, type HTMLAttributes } from 'react';
+import { useRef, useState, type DragEvent, type HTMLAttributes } from 'react';
 import { Button } from '../Button/Button';
 import { Icon } from '../Icon/Icon';
 import { Skeleton } from '../Skeleton/Skeleton';
+import {
+  formatsToAccept,
+  validateFileSelection,
+  type FileUploadValidationIssue,
+  type FileUploadValidationReason,
+} from '../fileUploadValidation';
 import './Dropzone.css';
 
 export type DropzoneState = 'default' | 'hover' | 'focused' | 'pressed' | 'disabled' | 'error' | 'success' | 'skeleton';
 export type DropzoneAlign = 'left' | 'center';
-export type DropzoneValidationReason = 'format' | 'quantity' | 'file-size' | 'total-size';
-
-export interface DropzoneValidationIssue {
-  reason: DropzoneValidationReason;
-  fileName?: string;
-  limit?: number | string;
-}
+export type DropzoneValidationReason = FileUploadValidationReason;
+export type DropzoneValidationIssue = FileUploadValidationIssue;
 
 export interface DropzoneProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onDrop'> {
   state?: DropzoneState;
@@ -49,60 +50,6 @@ function isFileDrag(event: DragEvent) {
   return Array.from(event.dataTransfer.types ?? []).includes('Files');
 }
 
-function normalizeFormatToken(token: string) {
-  const trimmed = token.trim().toLowerCase();
-  if (!trimmed) return '';
-  if (trimmed.includes('/')) return trimmed;
-  return trimmed.startsWith('.') ? trimmed : `.${trimmed}`;
-}
-
-function parseFormats(formats: string) {
-  return formats
-    .split(',')
-    .flatMap(part => part.trim().split(/\s+/))
-    .map(normalizeFormatToken)
-    .filter(Boolean);
-}
-
-function fileMatchesFormats(file: File, formats: string[]) {
-  if (!formats.length) return true;
-  const name = file.name.toLowerCase();
-  const type = file.type.toLowerCase();
-
-  return formats.some(format => {
-    if (format.includes('/')) {
-      if (format.endsWith('/*')) return type.startsWith(format.slice(0, -1));
-      return type === format;
-    }
-    return name.endsWith(format);
-  });
-}
-
-function parseSizeToBytes(value?: string) {
-  if (!value) return 0;
-  const normalized = value
-    .replace(/\u00a0/g, ' ')
-    .replace(',', '.')
-    .trim()
-    .toLowerCase();
-  const match = normalized.match(/([\d.]+)\s*(гб|gb|мб|mb|кб|kb|б|b)?/i);
-  if (!match) return undefined;
-
-  const amount = Number(match[1]);
-  if (!Number.isFinite(amount)) return undefined;
-
-  const unit = match[2]?.toLowerCase() ?? 'b';
-  const multiplier = unit === 'гб' || unit === 'gb'
-    ? 1024 ** 3
-    : unit === 'мб' || unit === 'mb'
-      ? 1024 ** 2
-      : unit === 'кб' || unit === 'kb'
-        ? 1024
-        : 1;
-
-  return amount * multiplier;
-}
-
 export function Dropzone({
   state = 'default',
   align = 'left',
@@ -133,11 +80,7 @@ export function Dropzone({
   const interactive = state === 'default';
   const effectiveFormats = formats ?? (align === 'center' ? DEFAULT_CENTER_FORMATS : DEFAULT_LEFT_FORMATS);
   const effectiveMaxFileSize = maxFileSize ?? (align === 'center' ? DEFAULT_CENTER_MAX_FILE_SIZE : DEFAULT_LEFT_MAX_FILE_SIZE);
-  const allowedFormats = useMemo(() => parseFormats(effectiveFormats), [effectiveFormats]);
-  const maxFileSizeBytes = useMemo(() => parseSizeToBytes(effectiveMaxFileSize), [effectiveMaxFileSize]);
-  const maxTotalSizeBytes = useMemo(() => parseSizeToBytes(maxTotalSize), [maxTotalSize]);
-  const currentTotalSizeBytes = useMemo(() => parseSizeToBytes(currentTotalSize) ?? 0, [currentTotalSize]);
-  const inputAccept = accept ?? allowedFormats.join(',');
+  const inputAccept = accept ?? formatsToAccept(effectiveFormats);
 
   const activeState: DropzoneState | 'drag-over' = interactive && validationError
     ? 'error'
@@ -151,35 +94,19 @@ export function Dropzone({
             ? 'hover'
             : state;
 
-  const validate = (files: File[]) => {
-    const issues: DropzoneValidationIssue[] = [];
-    const quantityLimit = multiple ? maxQuantity : Math.min(maxQuantity, 1);
-
-    if (currentQuantity + files.length > quantityLimit) {
-      issues.push({ reason: 'quantity', limit: quantityLimit });
-    }
-
-    for (const file of files) {
-      if (!fileMatchesFormats(file, allowedFormats)) {
-        issues.push({ reason: 'format', fileName: file.name, limit: effectiveFormats });
-      }
-      if (maxFileSizeBytes !== undefined && file.size > maxFileSizeBytes) {
-        issues.push({ reason: 'file-size', fileName: file.name, limit: effectiveMaxFileSize });
-      }
-    }
-
-    const selectedSize = files.reduce((sum, file) => sum + file.size, 0);
-    if (maxTotalSizeBytes !== undefined && currentTotalSizeBytes + selectedSize > maxTotalSizeBytes) {
-      issues.push({ reason: 'total-size', limit: maxTotalSize });
-    }
-
-    return issues;
-  };
-
   const emit = (list: FileList | null) => {
     if (disabled || !list) return;
     const files = Array.from(list);
-    const issues = validate(files);
+    const issues = validateFileSelection(files, {
+      formats: effectiveFormats,
+      maxQuantity,
+      maxFileSize: effectiveMaxFileSize,
+      maxTotalSize,
+      currentQuantity,
+      currentTotalSize,
+      multiple,
+    });
+
     if (issues.length) {
       setValidationError(true);
       onValidationError?.(issues);
@@ -260,7 +187,7 @@ export function Dropzone({
         ref={input}
         className="fdoc-dropzone__input"
         type="file"
-        accept={inputAccept || undefined}
+        accept={inputAccept}
         multiple={multiple}
         disabled={disabled}
         onChange={event => {
