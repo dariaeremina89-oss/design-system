@@ -101,7 +101,6 @@
   display: flex;
   flex: 0 1 auto;
   min-width: 0;
-  max-width: 60%;
   align-items: center;
   justify-content: flex-end;
   gap: var(--space-8);
