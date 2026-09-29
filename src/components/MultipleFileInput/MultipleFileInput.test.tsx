@@ -40,6 +40,18 @@ describe('MultipleFileInput', () => {
     expect(screen.getByText('Максимальный общий размер файлов — 50 МБ')).toBeInTheDocument();
   });
 
+  it('opens the internal picker from the standard button and keeps onChooseFiles as notification only', () => {
+    const click = vi.spyOn(HTMLInputElement.prototype, 'click').mockImplementation(() => undefined);
+    const onChooseFiles = vi.fn();
+    render(<MultipleFileInput files={files} showButtons onChooseFiles={onChooseFiles} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Выбрать файл' }));
+
+    expect(onChooseFiles).toHaveBeenCalledOnce();
+    expect(click).toHaveBeenCalledOnce();
+    click.mockRestore();
+  });
+
   it('uses the updated Figma action buttons', () => {
     render(<MultipleFileInput files={files} showButtons />);
     const choose = screen.getByRole('button', { name: 'Выбрать файл' });
@@ -52,14 +64,34 @@ describe('MultipleFileInput', () => {
     expect(remove!).toHaveClass('fdoc-button--secondary');
   });
 
+  it('adds valid files selected from the button', () => {
+    const onAddFiles = vi.fn();
+    const { container } = render(
+      <MultipleFileInput
+        files={[]}
+        showButtons
+        validation={{ formats: '.pdf', maxFileSize: '10 Б' }}
+        onAddFiles={onAddFiles}
+      />,
+    );
+    const picker = container.querySelector('input[type="file"]') as HTMLInputElement;
+    const valid = new File(['x'], 'document.pdf', { type: 'application/pdf' });
+
+    fireEvent.change(picker, { target: { files: [valid] } });
+
+    expect(onAddFiles).toHaveBeenCalledWith([valid]);
+  });
+
   it('validates files selected from the button before onAddFiles', () => {
     const onAddFiles = vi.fn();
     const onValidationError = vi.fn();
+    const dropzoneValidationError = vi.fn();
     const { container } = render(
       <MultipleFileInput
         files={[]}
         showButtons
         validation={{ formats: '.pdf', maxFileSize: '1 Б' }}
+        dropzoneProps={{ onValidationError: dropzoneValidationError }}
         onAddFiles={onAddFiles}
         onValidationError={onValidationError}
       />,
@@ -74,11 +106,13 @@ describe('MultipleFileInput', () => {
       expect.objectContaining({ reason: 'format', fileName: 'document.txt' }),
       expect.objectContaining({ reason: 'file-size', fileName: 'document.txt' }),
     ]));
+    expect(dropzoneValidationError).not.toHaveBeenCalled();
   });
 
   it('uses the same validation rules for Dropzone and button flows', () => {
     const onAddFiles = vi.fn();
     const onValidationError = vi.fn();
+    const dropzoneValidationError = vi.fn();
     const { container } = render(
       <MultipleFileInput
         files={[files[0]]}
@@ -86,6 +120,7 @@ describe('MultipleFileInput', () => {
         showDropzone
         totalSize="2 Б"
         validation={{ formats: '.pdf', maxQuantity: 1, maxFileSize: '10 Б', maxTotalSize: '2 Б' }}
+        dropzoneProps={{ onValidationError: dropzoneValidationError }}
         onAddFiles={onAddFiles}
         onValidationError={onValidationError}
       />,
@@ -98,6 +133,7 @@ describe('MultipleFileInput', () => {
 
     expect(onAddFiles).not.toHaveBeenCalled();
     expect(onValidationError).toHaveBeenCalledTimes(2);
+    expect(dropzoneValidationError).toHaveBeenCalledTimes(1);
     expect(onValidationError).toHaveBeenNthCalledWith(1, expect.arrayContaining([
       expect.objectContaining({ reason: 'quantity', limit: 1 }),
       expect.objectContaining({ reason: 'total-size', limit: '2 Б' }),
