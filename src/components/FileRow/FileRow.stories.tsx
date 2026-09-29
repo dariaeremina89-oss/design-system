@@ -66,7 +66,9 @@ const meta = {
     fileName: 'File name.png',
     weight: '2,7 МБ',
     error: false,
-    errorText: 'Ошибка в файле',
+    errorText: 'Error text',
+    warning: false,
+    warningText: 'Warning text',
     reorderable: false,
     deletable: true,
   },
@@ -86,6 +88,7 @@ export const Uploaded: Story = {};
 export const Loading: Story = { args: { type: 'loading' } };
 export const LoadingError: Story = { args: { type: 'loading', error: true } };
 export const Error: Story = { args: { error: true } };
+export const Warning: Story = { args: { warning: true } };
 export const Reorderable: Story = { render: args => <ReorderableFileRows {...args} /> };
 export const Menu: Story = { args: { reorderable: true, deletable: false, menuItems } };
 export const UploadedPreview: Story = { args: { type: 'uploaded-preview' } };
