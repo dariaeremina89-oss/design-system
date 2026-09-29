@@ -109,7 +109,15 @@ export type { InfoBlockProps, InfoBlockColor } from './components/InfoBlock/Info
 export { SingleFileInput } from './components/SingleFileInput/SingleFileInput';
 export type { SingleFileInputProps, SingleFileInputType } from './components/SingleFileInput/SingleFileInput';
 export { FileRow } from './components/FileRow/FileRow';
-export type { FileRowProps, FileRowType } from './components/FileRow/FileRow';
+export type {
+  FileRowMessage,
+  FileRowMessageType,
+  FileRowProps,
+  FileRowReorderDirection,
+  FileRowSlot,
+  FileRowSlotContext,
+  FileRowState,
+} from './components/FileRow/FileRow';
 export { Dropzone } from './components/Dropzone/Dropzone';
 export type { DropzoneProps, DropzoneState, DropzoneAlign } from './components/Dropzone/Dropzone';
 export { MultipleFileInput } from './components/MultipleFileInput/MultipleFileInput';
