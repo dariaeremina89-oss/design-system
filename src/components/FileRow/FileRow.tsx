@@ -190,7 +190,7 @@ export function FileRow({
       );
     } else if (deletable || onDelete) {
       resolvedTrailing = (
-        <Tooltip content={`Удалить ${fileName}`} placement="bottom" disabled={disabled}>
+        <Tooltip content="Удалить" placement="bottom" disabled={disabled}>
           <ButtonIcon
             aria-label={`Удалить файл ${fileName}`}
             icon="filled/cross_circle_filled"
