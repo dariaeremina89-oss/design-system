@@ -105,6 +105,11 @@ export type { HighlightProps } from './components/Highlight/Highlight';
 export { InfoBlock } from './components/InfoBlock/InfoBlock';
 export type { InfoBlockProps, InfoBlockColor } from './components/InfoBlock/InfoBlock';
 
+export type {
+  FileUploadValidationConfig,
+  FileUploadValidationIssue,
+  FileUploadValidationReason,
+} from './components/fileUploadValidation';
 
 export { SingleFileInput } from './components/SingleFileInput/SingleFileInput';
 export type { SingleFileInputProps, SingleFileInputType } from './components/SingleFileInput/SingleFileInput';
@@ -127,4 +132,7 @@ export type {
   DropzoneValidationReason,
 } from './components/Dropzone/Dropzone';
 export { MultipleFileInput } from './components/MultipleFileInput/MultipleFileInput';
-export type { MultipleFileInputProps } from './components/MultipleFileInput/MultipleFileInput';
+export type {
+  MultipleFileInputProps,
+  MultipleFileInputValidation,
+} from './components/MultipleFileInput/MultipleFileInput';
