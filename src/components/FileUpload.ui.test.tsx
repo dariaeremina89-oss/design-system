@@ -30,7 +30,7 @@ describe('File upload visual contract', () => {
     expectRuleValue('.fdoc-single-file-input', 'background', 'var(--background-base-secondary)');
   });
 
-  it('keeps FileRow dimensions, spacing and inset Figma border', () => {
+  it('keeps FileRow dimensions, spacing, inset border and semantic statuses from Figma', () => {
     render(<FileRow />);
     expectRuleValue('.fdoc-file-row', 'min-height', '48px');
     expectRuleValue('.fdoc-file-row', 'padding', 'var(--space-12) var(--space-8)');
@@ -40,6 +40,8 @@ describe('File upload visual contract', () => {
     expectRuleValue('.fdoc-file-row::before', 'inset', '0');
     expectRuleValue('.fdoc-file-row::before', 'border', 'var(--border-small) solid var(--border-base-light)');
     expectRuleValue('.fdoc-file-row__line', 'gap', 'var(--space-16)');
+    expectRuleValue('.fdoc-file-row__warning', 'color', 'var(--text-warning-secondary)');
+    expectRuleValue('.fdoc-file-row--warning:not(.fdoc-file-row--loading):not(.fdoc-file-row--uploaded-preview) .fdoc-file-row__leading', 'color', 'var(--icon-warning-secondary)');
   });
 
   it('keeps Dropzone border, radius and state tokens from Figma', () => {
