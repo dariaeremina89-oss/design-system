@@ -95,9 +95,9 @@
   line-height: var(--page-body-line-height);
 }
 
-.fdoc-file-row__error {
+.fdoc-file-row__error,
+.fdoc-file-row__warning {
   width: 100%;
-  color: var(--text-error-secondary);
   font-family: var(--page-caption-family);
   font-size: var(--page-caption-size);
   font-weight: var(--page-caption-weight-base);
@@ -106,12 +106,24 @@
   word-break: normal;
 }
 
+.fdoc-file-row__error {
+  color: var(--text-error-secondary);
+}
+
+.fdoc-file-row__warning {
+  color: var(--text-warning-secondary);
+}
+
 .fdoc-file-row--loading .fdoc-file-row__name {
   color: var(--text-base-secondary);
 }
 
 .fdoc-file-row--error:not(.fdoc-file-row--loading):not(.fdoc-file-row--uploaded-preview) .fdoc-file-row__leading {
   color: var(--icon-error-secondary);
+}
+
+.fdoc-file-row--warning:not(.fdoc-file-row--loading):not(.fdoc-file-row--uploaded-preview) .fdoc-file-row__leading {
+  color: var(--icon-warning-secondary);
 }
 
 .fdoc-file-row--disabled {
@@ -127,8 +139,16 @@
   color: var(--icon-error-secondary-disabled);
 }
 
+.fdoc-file-row--disabled.fdoc-file-row--warning .fdoc-file-row__leading {
+  color: var(--icon-warning-secondary-disabled);
+}
+
 .fdoc-file-row--disabled .fdoc-file-row__error {
   color: var(--text-error-secondary-disabled);
+}
+
+.fdoc-file-row--disabled .fdoc-file-row__warning {
+  color: var(--text-warning-secondary-disabled);
 }
 
 .fdoc-file-row__preview {
