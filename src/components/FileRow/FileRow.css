@@ -149,6 +149,10 @@
   color: var(--text-base-secondary);
 }
 
+.fdoc-file-row--loading.fdoc-file-row--disabled .fdoc-file-row__name {
+  color: var(--text-base-default-disabled);
+}
+
 .fdoc-file-row--message-error .fdoc-file-row__leading--semantic {
   color: var(--icon-error-secondary);
 }
