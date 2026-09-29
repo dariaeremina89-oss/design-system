@@ -1,5 +1,6 @@
 import { useState, type ComponentProps, type DragEvent } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Link } from '../Link/Link';
 import { FileRow } from './FileRow';
 
 const menuItems = [
@@ -17,41 +18,48 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
   const [rows, setRows] = useState(reorderableRows);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
 
-  const moveRow = (toIndex: number) => {
-    if (dragIndex === null || dragIndex === toIndex) return;
+  const moveRow = (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex || toIndex < 0 || toIndex >= rows.length) return;
     setRows(current => {
       const next = [...current];
-      const [moved] = next.splice(dragIndex, 1);
+      const [moved] = next.splice(fromIndex, 1);
       next.splice(toIndex, 0, moved);
       return next;
     });
-    setDragIndex(null);
   };
 
   return (
     <div style={{ display: 'flex', width: '100%', minWidth: 0, flexDirection: 'column', gap: 4 }}>
       {rows.map((row, index) => (
-        <FileRow
-          {...args}
+        <div
           key={row.id}
-          type="uploaded"
-          reorderable
-          fileName={row.fileName}
-          weight={row.weight}
-          onDragStart={(event: DragEvent<HTMLDivElement>) => {
-            setDragIndex(index);
-            event.dataTransfer.effectAllowed = 'move';
+          onDragOver={(event: DragEvent<HTMLDivElement>) => {
+            if (dragIndex !== null) {
+              event.preventDefault();
+              event.dataTransfer.dropEffect = 'move';
+            }
           }}
-          onDragOver={event => {
-            event.preventDefault();
-            event.dataTransfer.dropEffect = 'move';
+          onDrop={(event: DragEvent<HTMLDivElement>) => {
+            if (dragIndex !== null) {
+              event.preventDefault();
+              moveRow(dragIndex, index);
+              setDragIndex(null);
+            }
           }}
-          onDrop={event => {
-            event.preventDefault();
-            moveRow(index);
-          }}
-          onDragEnd={() => setDragIndex(null)}
-        />
+        >
+          <FileRow
+            {...args}
+            reorderable
+            fileName={row.fileName}
+            weight={row.weight}
+            onReorderDragStart={event => {
+              setDragIndex(index);
+              event.dataTransfer.effectAllowed = 'move';
+            }}
+            onReorderDragEnd={() => setDragIndex(null)}
+            onReorderKey={direction => moveRow(index, direction === 'up' ? index - 1 : index + 1)}
+          />
+        </div>
       ))}
     </div>
   );
@@ -62,20 +70,16 @@ const meta = {
   component: FileRow,
   tags: ['autodocs', 'ready'],
   args: {
-    type: 'uploaded',
+    state: 'default',
     fileName: 'File name.png',
     weight: '2,7 МБ',
-    error: false,
-    errorText: 'Error text',
-    warning: false,
-    warningText: 'Warning text',
     reorderable: false,
     deletable: true,
   },
   argTypes: {
-    type: {
+    state: {
       control: 'select',
-      options: ['loading', 'uploaded', 'uploaded-preview', 'disabled', 'template', 'template-edit', 'skeleton'],
+      options: ['default', 'loading', 'disabled', 'skeleton'],
     },
   },
   decorators: [Story => <div style={{ width: '100%', minWidth: 0 }}><Story /></div>],
@@ -84,16 +88,38 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Uploaded: Story = {};
-export const Loading: Story = { args: { type: 'loading' } };
-export const LoadingError: Story = { args: { type: 'loading', error: true } };
-export const Error: Story = { args: { error: true } };
-export const Warning: Story = { args: { warning: true } };
+export const Default: Story = {};
+export const Loading: Story = { args: { state: 'loading' } };
+export const LoadingWithError: Story = {
+  args: { state: 'loading', message: { type: 'error', text: 'Error text' } },
+};
+export const Error: Story = { args: { message: { type: 'error', text: 'Error text' } } };
+export const Warning: Story = { args: { message: { type: 'warning', text: 'Warning text' } } };
+export const Preview: Story = {
+  args: { preview: <span style={{ display: 'block', width: '100%', height: '100%', background: 'var(--background-base-skeleton)' }} /> },
+};
+export const PreviewWithWarning: Story = {
+  args: {
+    preview: <span style={{ display: 'block', width: '100%', height: '100%', background: 'var(--background-base-skeleton)' }} />,
+    message: { type: 'warning', text: 'Warning text' },
+  },
+};
+export const WithoutLeading: Story = { args: { leading: false } };
+export const AdditionalText: Story = { args: { weight: undefined, additionalContent: 'Шаблон' } };
+export const AdditionalAction: Story = {
+  args: {
+    weight: undefined,
+    additionalContent: ({ disabled }) => (
+      <Link href="#" size="medium" color="accent" decoration={null} disabled={disabled}>
+        Заполнить
+      </Link>
+    ),
+  },
+};
 export const Reorderable: Story = { render: args => <ReorderableFileRows {...args} /> };
 export const Menu: Story = { args: { reorderable: true, deletable: false, menuItems } };
-export const UploadedPreview: Story = { args: { type: 'uploaded-preview' } };
-export const Template: Story = { args: { type: 'template', fileName: 'File name' } };
-export const TemplateEdit: Story = { args: { type: 'template-edit', fileName: 'File name' } };
-export const Disabled: Story = { args: { type: 'disabled' } };
-export const DisabledError: Story = { args: { type: 'disabled', error: true } };
-export const Skeleton: Story = { args: { type: 'skeleton' } };
+export const Disabled: Story = { args: { state: 'disabled' } };
+export const DisabledWithMessage: Story = {
+  args: { state: 'disabled', message: { type: 'error', text: 'Error text' } },
+};
+export const Skeleton: Story = { args: { state: 'skeleton' } };
