@@ -68,7 +68,7 @@ describe('MultipleFileInput', () => {
     expect(onDeleteAll).toHaveBeenCalledOnce();
   });
 
-  it('reorders only from the handle and keeps per-row delete independent', () => {
+  it('reorders only from the handle and shows the Figma insertion indicator', () => {
     const onReorder = vi.fn();
     const onDelete = vi.fn();
     const { container } = render(
@@ -84,9 +84,11 @@ describe('MultipleFileInput', () => {
     expect(firstHandle).toHaveAttribute('draggable', 'true');
 
     fireEvent.dragStart(firstHandle, { dataTransfer: { effectAllowed: '', setData: vi.fn() } });
-    fireEvent.dragOver(items[1], { dataTransfer: { dropEffect: '' } });
-    fireEvent.drop(items[1], { dataTransfer: { dropEffect: '' } });
+    fireEvent.dragOver(items[1], { clientY: 1, dataTransfer: { dropEffect: '' } });
+    expect(screen.getByTestId('file-row-drop-indicator')).toBeInTheDocument();
+    fireEvent.drop(items[1], { clientY: 1, dataTransfer: { dropEffect: '' } });
     expect(onReorder).toHaveBeenCalledWith(0, 1);
+    expect(screen.queryByTestId('file-row-drop-indicator')).not.toBeInTheDocument();
   });
 
   it('supports keyboard reorder from the handle', () => {
