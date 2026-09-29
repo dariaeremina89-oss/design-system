@@ -27,6 +27,10 @@ const DEFAULT_FORMATS = '.doc, .docx, .xls, .xlsx, .pdf, .jpg, .jpeg, .png';
 const DEFAULT_MAX_FILE_SIZE = '15 МБ';
 const DEFAULT_MAX_TOTAL_SIZE = '50 МБ';
 
+function isFileDrag(event: DragEvent) {
+  return Array.from(event.dataTransfer.types ?? []).includes('Files');
+}
+
 export function Dropzone({
   state = 'default',
   align = 'left',
@@ -66,6 +70,7 @@ export function Dropzone({
   };
 
   const drop = (event: DragEvent) => {
+    if (!isFileDrag(event)) return;
     event.preventDefault();
     setDrag(false);
     emit(event.dataTransfer.files);
@@ -120,6 +125,7 @@ export function Dropzone({
       }}
       onClick={() => !disabled && input.current?.click()}
       onDragOver={event => {
+        if (!isFileDrag(event)) return;
         event.preventDefault();
         if (!disabled) setDrag(true);
       }}
