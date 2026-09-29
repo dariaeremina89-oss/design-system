@@ -1,4 +1,4 @@
-import { useState, type ComponentProps, type DragEvent } from 'react';
+import { Fragment, useState, type ComponentProps, type DragEvent } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Link } from '../Link/Link';
 import { FileRow } from './FileRow';
@@ -17,6 +17,7 @@ const reorderableRows = [
 function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
   const [rows, setRows] = useState(reorderableRows);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dropSlot, setDropSlot] = useState<number | null>(null);
 
   const moveRow = (fromIndex: number, toIndex: number) => {
     if (fromIndex === toIndex || toIndex < 0 || toIndex >= rows.length) return;
@@ -28,38 +29,59 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
     });
   };
 
+  const getDropSlot = (event: DragEvent<HTMLDivElement>, index: number) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    return event.clientY < rect.top + rect.height / 2 ? index : index + 1;
+  };
+
+  const dropIndicator = (slot: number) =>
+    dragIndex !== null && dropSlot === slot ? (
+      <div className="fdoc-file-row-drop-indicator" aria-hidden="true" />
+    ) : null;
+
   return (
     <div style={{ display: 'flex', width: '100%', minWidth: 0, flexDirection: 'column', gap: 4 }}>
+      {dropIndicator(0)}
       {rows.map((row, index) => (
-        <div
-          key={row.id}
-          onDragOver={(event: DragEvent<HTMLDivElement>) => {
-            if (dragIndex !== null) {
-              event.preventDefault();
-              event.dataTransfer.dropEffect = 'move';
-            }
-          }}
-          onDrop={(event: DragEvent<HTMLDivElement>) => {
-            if (dragIndex !== null) {
-              event.preventDefault();
-              moveRow(dragIndex, index);
-              setDragIndex(null);
-            }
-          }}
-        >
-          <FileRow
-            {...args}
-            reorderable
-            fileName={row.fileName}
-            weight={row.weight}
-            onReorderDragStart={event => {
-              setDragIndex(index);
-              event.dataTransfer.effectAllowed = 'move';
+        <Fragment key={row.id}>
+          <div
+            onDragOver={(event: DragEvent<HTMLDivElement>) => {
+              if (dragIndex !== null) {
+                event.preventDefault();
+                event.dataTransfer.dropEffect = 'move';
+                setDropSlot(getDropSlot(event, index));
+              }
             }}
-            onReorderDragEnd={() => setDragIndex(null)}
-            onReorderKey={direction => moveRow(index, direction === 'up' ? index - 1 : index + 1)}
-          />
-        </div>
+            onDrop={(event: DragEvent<HTMLDivElement>) => {
+              if (dragIndex !== null) {
+                event.preventDefault();
+                const slot = getDropSlot(event, index);
+                const toIndex = dragIndex < slot ? slot - 1 : slot;
+                moveRow(dragIndex, toIndex);
+                setDragIndex(null);
+                setDropSlot(null);
+              }
+            }}
+          >
+            <FileRow
+              {...args}
+              reorderable
+              fileName={row.fileName}
+              weight={row.weight}
+              onReorderDragStart={event => {
+                setDragIndex(index);
+                setDropSlot(null);
+                event.dataTransfer.effectAllowed = 'move';
+              }}
+              onReorderDragEnd={() => {
+                setDragIndex(null);
+                setDropSlot(null);
+              }}
+              onReorderKey={direction => moveRow(index, direction === 'up' ? index - 1 : index + 1)}
+            />
+          </div>
+          {dropIndicator(index + 1)}
+        </Fragment>
       ))}
     </div>
   );
