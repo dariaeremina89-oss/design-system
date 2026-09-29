@@ -4,7 +4,19 @@ import { Dropzone, type DropzoneProps } from '../Dropzone/Dropzone';
 import { FileRow, type FileRowProps, type FileRowReorderDirection } from '../FileRow/FileRow';
 import { Icon } from '../Icon/Icon';
 import { ButtonLink } from '../Link/Link';
+import {
+  FILE_UPLOAD_DEFAULTS,
+  formatsToAccept,
+  validateFileSelection,
+  type FileUploadValidationConfig,
+  type FileUploadValidationIssue,
+} from '../fileUploadValidation';
 import './MultipleFileInput.css';
+
+export type MultipleFileInputValidation = Pick<
+  FileUploadValidationConfig,
+  'formats' | 'maxQuantity' | 'maxFileSize' | 'maxTotalSize'
+>;
 
 export interface MultipleFileInputProps {
   files?: FileRowProps[];
@@ -18,7 +30,10 @@ export interface MultipleFileInputProps {
   reorderable?: boolean;
   actions?: ReactNode;
   dropzoneProps?: DropzoneProps;
+  /** Единые правила добавления файлов для Dropzone и кнопки выбора. */
+  validation?: MultipleFileInputValidation;
   onAddFiles?: (files: File[]) => void;
+  onValidationError?: (issues: FileUploadValidationIssue[]) => void;
   onDeleteAll?: () => void;
   onToggleCollapse?: () => void;
   onChooseFiles?: () => void;
@@ -38,7 +53,9 @@ export function MultipleFileInput({
   reorderable = false,
   actions,
   dropzoneProps,
+  validation,
   onAddFiles,
+  onValidationError,
   onDeleteAll,
   onToggleCollapse,
   onChooseFiles,
@@ -49,6 +66,36 @@ export function MultipleFileInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dropSlot, setDropSlot] = useState<number | null>(null);
+
+  const defaultValidation = showDropzone ? FILE_UPLOAD_DEFAULTS.left : undefined;
+  const effectiveValidation: MultipleFileInputValidation = {
+    formats: validation?.formats ?? dropzoneProps?.formats ?? defaultValidation?.formats,
+    maxQuantity: validation?.maxQuantity ?? dropzoneProps?.maxQuantity ?? defaultValidation?.maxQuantity,
+    maxFileSize: validation?.maxFileSize ?? dropzoneProps?.maxFileSize ?? defaultValidation?.maxFileSize,
+    maxTotalSize: validation?.maxTotalSize ?? dropzoneProps?.maxTotalSize ?? defaultValidation?.maxTotalSize,
+  };
+
+  const reportValidationError = (issues: FileUploadValidationIssue[]) => {
+    dropzoneProps?.onValidationError?.(issues);
+    onValidationError?.(issues);
+  };
+
+  const addFiles = (selected: File[]) => {
+    if (!selected.length) return;
+    const issues = validateFileSelection(selected, {
+      ...effectiveValidation,
+      currentQuantity: count,
+      currentTotalSize: totalSize,
+      multiple: true,
+    });
+
+    if (issues.length) {
+      reportValidationError(issues);
+      return;
+    }
+
+    onAddFiles?.(selected);
+  };
 
   const reorderFrom = (fromIndex: number, toIndex: number) => {
     if (fromIndex === toIndex || toIndex < 0 || toIndex >= files.length) return;
@@ -87,9 +134,9 @@ export function MultipleFileInput({
         hidden
         type="file"
         multiple
+        accept={formatsToAccept(effectiveValidation.formats)}
         onChange={event => {
-          const selected = Array.from(event.target.files ?? []);
-          if (selected.length) onAddFiles?.(selected);
+          addFiles(Array.from(event.target.files ?? []));
           event.currentTarget.value = '';
         }}
       />
@@ -118,10 +165,15 @@ export function MultipleFileInput({
               showMaxQuantity
               showMaxFileSize
               showMaxTotalSize
+              {...dropzoneProps}
+              formats={effectiveValidation.formats}
+              maxQuantity={effectiveValidation.maxQuantity}
+              maxFileSize={effectiveValidation.maxFileSize}
+              maxTotalSize={effectiveValidation.maxTotalSize}
               currentQuantity={count}
               currentTotalSize={totalSize}
-              {...dropzoneProps}
-              onFiles={onAddFiles}
+              onFiles={addFiles}
+              onValidationError={reportValidationError}
             />
           )}
 
