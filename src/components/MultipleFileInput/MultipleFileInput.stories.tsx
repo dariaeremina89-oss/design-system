@@ -3,10 +3,10 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MultipleFileInput } from './MultipleFileInput';
 
 const files = [
-  { fileName: 'Договор.pdf', weight: '2,7 МБ', type: 'uploaded' as const },
-  { fileName: 'Анкета.docx', type: 'template' as const },
-  { fileName: 'Заявление.pdf', weight: '1,3 МБ', type: 'uploaded' as const },
-  { fileName: 'Согласие.pdf', weight: '1,4 МБ', type: 'uploaded' as const },
+  { id: 'contract', fileName: 'Договор.pdf', weight: '2,7 МБ' },
+  { id: 'form', fileName: 'Анкета.docx', additionalContent: 'Шаблон' },
+  { id: 'application', fileName: 'Заявление.pdf', weight: '1,3 МБ' },
+  { id: 'agreement', fileName: 'Согласие.pdf', weight: '1,4 МБ' },
 ];
 
 const formatFileSize = (bytes: number) => {
@@ -34,7 +34,7 @@ function Interactive(args: any) {
   }));
   const add = (added: File[]) => setCurrentFiles((current: any[]) => [
     ...current,
-    ...added.map(file => ({ fileName: file.name, weight: formatFileSize(file.size), type: 'uploaded' as const })),
+    ...added.map(file => ({ id: `${file.name}-${file.lastModified}`, fileName: file.name, weight: formatFileSize(file.size) })),
   ]);
 
   return (
@@ -94,7 +94,12 @@ export const WithMenu: Story = { args: { reorderable: true, withMenu: true } as 
 export const WithErrors: Story = {
   args: {
     errorCount: 1,
-    files: [{ ...files[0], error: true, errorText: 'Файл слишком большой' }, ...files.slice(1)],
+    files: [{ ...files[0], message: { type: 'error' as const, text: 'Файл слишком большой' } }, ...files.slice(1)],
+  },
+};
+export const WithWarnings: Story = {
+  args: {
+    files: [{ ...files[0], message: { type: 'warning' as const, text: 'Проверьте содержимое файла' } }, ...files.slice(1)],
   },
 };
 export const GroupError: Story = { args: { groupErrorText: 'Превышен максимальный общий размер файлов' } };
