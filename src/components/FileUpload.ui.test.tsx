@@ -21,7 +21,7 @@ function expectRuleValue(selector: string, property: string, value: string) {
 }
 
 describe('File upload visual contract', () => {
-  it('keeps SingleFileInput Figma spacing and inset stroke', () => {
+  it('keeps SingleFileInput Figma spacing, validation geometry and inset stroke', () => {
     render(<SingleFileInput />);
     expectRuleValue('.fdoc-single-file-input', 'min-height', '48px');
     expectRuleValue('.fdoc-single-file-input', 'padding', 'var(--space-8)');
@@ -31,7 +31,10 @@ describe('File upload visual contract', () => {
     expectRuleValue('.fdoc-single-file-input', 'background', 'var(--background-base-secondary)');
     expectRuleValue('.fdoc-single-file-input::before', 'inset', '0');
     expectRuleValue('.fdoc-single-file-input::before', 'border', 'var(--border-small) solid var(--border-base-light)');
-    expectRuleValue('.fdoc-single-file-input--error', 'align-items', 'flex-start');
+    expectRuleValue('.fdoc-single-file-input--validation-error', 'align-items', 'flex-start');
+    expectRuleValue('.fdoc-single-file-input__content', 'gap', 'var(--space-4)');
+    expectRuleValue('.fdoc-single-file-input__validation-message', 'line-height', 'var(--page-caption-line-height)');
+    expectRuleValue('.fdoc-single-file-input__pick', 'flex', '0 0 auto');
   });
 
   it('keeps FileRow dimensions, spacing, inset border and semantic Message tokens from Figma', () => {
