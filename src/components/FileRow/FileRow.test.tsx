@@ -15,6 +15,15 @@ describe('FileRow', () => {
     expect(onDelete).toHaveBeenCalledOnce();
   });
 
+  it('combines Loading with Disabled without replacing the loader', () => {
+    render(<FileRow state="loading" disabled fileName="Договор.pdf" deletable reorderable />);
+    expect(screen.getByRole('progressbar', { name: 'Загрузка' })).toBeInTheDocument();
+    expect(screen.getByTestId('file-row')).toHaveAttribute('aria-busy', 'true');
+    expect(screen.getByTestId('file-row')).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByRole('button', { name: 'Изменить порядок файла Договор.pdf' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Удалить файл Договор.pdf' })).toBeDisabled();
+  });
+
   it('renders Error and Warning as one semantic Message API', () => {
     const { rerender } = render(<FileRow message={{ type: 'error', text: 'Ошибка файла' }} />);
     expect(document.querySelector('[data-icon="filled/exclamation_circle_filled"]')).toBeInTheDocument();
@@ -47,7 +56,7 @@ describe('FileRow', () => {
 
     rerender(
       <FileRow
-        state="disabled"
+        disabled
         additionalContent={({ disabled }) => <Link href="#" disabled={disabled}>Заполнить</Link>}
       />,
     );
@@ -70,9 +79,15 @@ describe('FileRow', () => {
     expect(container.querySelector('[data-icon="drag-dot"]')).toBeInTheDocument();
   });
 
-  it('disables reorder and standard actions in Disabled', () => {
-    render(<FileRow state="disabled" fileName="Договор.pdf" reorderable deletable />);
+  it('disables reorder and standard actions independently from row content', () => {
+    render(<FileRow disabled fileName="Договор.pdf" reorderable deletable />);
     expect(screen.getByRole('button', { name: 'Изменить порядок файла Договор.pdf' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Удалить файл Договор.pdf' })).toBeDisabled();
+  });
+
+  it('keeps state="disabled" as a backward-compatible alias', () => {
+    render(<FileRow state="disabled" fileName="Договор.pdf" deletable />);
+    expect(screen.getByTestId('file-row')).toHaveAttribute('aria-disabled', 'true');
     expect(screen.getByRole('button', { name: 'Удалить файл Договор.pdf' })).toBeDisabled();
   });
 
