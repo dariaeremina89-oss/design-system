@@ -3,6 +3,26 @@ import { describe, expect, it, vi } from 'vitest';
 import { SingleFileInput } from './SingleFileInput';
 
 describe('SingleFileInput', () => {
+  it('opens the native file picker from the desktop button', () => {
+    const click = vi.spyOn(HTMLInputElement.prototype, 'click').mockImplementation(() => undefined);
+    render(<SingleFileInput />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Загрузить' }));
+
+    expect(click).toHaveBeenCalledOnce();
+    click.mockRestore();
+  });
+
+  it('opens the native file picker from the mobile ButtonIcon', () => {
+    const click = vi.spyOn(HTMLInputElement.prototype, 'click').mockImplementation(() => undefined);
+    render(<SingleFileInput size="mobile" />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Загрузить' }));
+
+    expect(click).toHaveBeenCalledOnce();
+    click.mockRestore();
+  });
+
   it('switches from the picker to FileRow after selecting a file', () => {
     const onFileChange = vi.fn();
     const { container } = render(<SingleFileInput onFileChange={onFileChange} />);
@@ -57,11 +77,10 @@ describe('SingleFileInput', () => {
     expect(screen.getByRole('button', { name: 'Удалить файл document.pdf' })).toBeDisabled();
   });
 
-  it('maps selected-file Error to FileRow Message', () => {
+  it('maps a selected-file validation message to FileRow Message', () => {
     render(
       <SingleFileInput
-        error
-        errorText="Ошибка файла"
+        validationMessage="Ошибка файла"
         fileRowProps={{ fileName: 'document.pdf', weight: '2,7 МБ' }}
       />,
     );
@@ -70,15 +89,17 @@ describe('SingleFileInput', () => {
     expect(document.querySelector('[data-icon="filled/exclamation_circle_filled"]')).toBeInTheDocument();
   });
 
-  it('shows error content and the error icon in the empty Default state', () => {
-    render(<SingleFileInput error errorText="Ошибка файла" />);
+  it('shows validation content and semantic icon in the empty state', () => {
+    render(<SingleFileInput validationMessage="Ошибка файла" />);
     expect(screen.getByText('Ошибка файла')).toBeInTheDocument();
+    expect(screen.getByTestId('single-file-input')).toHaveAttribute('aria-invalid', 'true');
     expect(document.querySelector('[data-icon="filled/exclamation_circle_filled"]')).toBeInTheDocument();
   });
 
-  it('keeps the disabled empty error anatomy and does not render the upload button', () => {
-    render(<SingleFileInput type="disabled" error errorText="Ошибка файла" />);
+  it('keeps disabled validation anatomy and does not render the upload button', () => {
+    render(<SingleFileInput type="disabled" validationMessage="Ошибка файла" />);
     expect(screen.getByText('Загрузка файлов недоступна')).toBeInTheDocument();
+    expect(screen.getByText('Ошибка файла')).toBeInTheDocument();
     expect(document.querySelector('[data-icon="filled/exclamation_circle_filled"]')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Загрузить' })).not.toBeInTheDocument();
   });
