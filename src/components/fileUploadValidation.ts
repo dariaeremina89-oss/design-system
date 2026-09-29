@@ -16,6 +16,21 @@ export interface FileUploadValidationConfig {
   multiple?: boolean;
 }
 
+export const FILE_UPLOAD_DEFAULTS = {
+  left: {
+    formats: '.doc, .docx, .xls, .xlsx, .pdf, .jpg, .jpeg, .png',
+    maxQuantity: 10,
+    maxFileSize: '15 МБ',
+    maxTotalSize: '50 МБ',
+  },
+  center: {
+    formats: '.docx, xlsx',
+    maxQuantity: 10,
+    maxFileSize: '5 МБ',
+    maxTotalSize: '50 МБ',
+  },
+} as const;
+
 function normalizeFormatToken(token: string) {
   const trimmed = token.trim().toLowerCase();
   if (!trimmed) return '';
