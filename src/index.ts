@@ -119,6 +119,12 @@ export type {
   FileRowState,
 } from './components/FileRow/FileRow';
 export { Dropzone } from './components/Dropzone/Dropzone';
-export type { DropzoneProps, DropzoneState, DropzoneAlign } from './components/Dropzone/Dropzone';
+export type {
+  DropzoneProps,
+  DropzoneState,
+  DropzoneAlign,
+  DropzoneValidationIssue,
+  DropzoneValidationReason,
+} from './components/Dropzone/Dropzone';
 export { MultipleFileInput } from './components/MultipleFileInput/MultipleFileInput';
 export type { MultipleFileInputProps } from './components/MultipleFileInput/MultipleFileInput';
