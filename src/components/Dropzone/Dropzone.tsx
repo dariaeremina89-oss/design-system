@@ -3,6 +3,7 @@ import { Button } from '../Button/Button';
 import { Icon } from '../Icon/Icon';
 import { Skeleton } from '../Skeleton/Skeleton';
 import {
+  FILE_UPLOAD_DEFAULTS,
   formatsToAccept,
   validateFileSelection,
   type FileUploadValidationIssue,
@@ -40,12 +41,6 @@ export interface DropzoneProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onD
   onValidationError?: (issues: DropzoneValidationIssue[]) => void;
 }
 
-const DEFAULT_LEFT_FORMATS = '.doc, .docx, .xls, .xlsx, .pdf, .jpg, .jpeg, .png';
-const DEFAULT_CENTER_FORMATS = '.docx, xlsx';
-const DEFAULT_LEFT_MAX_FILE_SIZE = '15 МБ';
-const DEFAULT_CENTER_MAX_FILE_SIZE = '5 МБ';
-const DEFAULT_MAX_TOTAL_SIZE = '50 МБ';
-
 function isFileDrag(event: DragEvent) {
   return Array.from(event.dataTransfer.types ?? []).includes('Files');
 }
@@ -56,9 +51,9 @@ export function Dropzone({
   accept,
   multiple = true,
   formats,
-  maxQuantity = 10,
+  maxQuantity,
   maxFileSize,
-  maxTotalSize = DEFAULT_MAX_TOTAL_SIZE,
+  maxTotalSize,
   currentQuantity = 0,
   currentTotalSize,
   showFormats = true,
@@ -78,8 +73,11 @@ export function Dropzone({
   const [validationError, setValidationError] = useState(false);
   const disabled = state === 'disabled';
   const interactive = state === 'default';
-  const effectiveFormats = formats ?? (align === 'center' ? DEFAULT_CENTER_FORMATS : DEFAULT_LEFT_FORMATS);
-  const effectiveMaxFileSize = maxFileSize ?? (align === 'center' ? DEFAULT_CENTER_MAX_FILE_SIZE : DEFAULT_LEFT_MAX_FILE_SIZE);
+  const defaults = FILE_UPLOAD_DEFAULTS[align];
+  const effectiveFormats = formats ?? defaults.formats;
+  const effectiveMaxQuantity = maxQuantity ?? defaults.maxQuantity;
+  const effectiveMaxFileSize = maxFileSize ?? defaults.maxFileSize;
+  const effectiveMaxTotalSize = maxTotalSize ?? defaults.maxTotalSize;
   const inputAccept = accept ?? formatsToAccept(effectiveFormats);
 
   const activeState: DropzoneState | 'drag-over' = interactive && validationError
@@ -99,9 +97,9 @@ export function Dropzone({
     const files = Array.from(list);
     const issues = validateFileSelection(files, {
       formats: effectiveFormats,
-      maxQuantity,
+      maxQuantity: effectiveMaxQuantity,
       maxFileSize: effectiveMaxFileSize,
-      maxTotalSize,
+      maxTotalSize: effectiveMaxTotalSize,
       currentQuantity,
       currentTotalSize,
       multiple,
@@ -207,9 +205,9 @@ export function Dropzone({
               <Requirements
                 align={align}
                 formats={effectiveFormats}
-                maxQuantity={maxQuantity}
+                maxQuantity={effectiveMaxQuantity}
                 maxFileSize={effectiveMaxFileSize}
-                maxTotalSize={maxTotalSize}
+                maxTotalSize={effectiveMaxTotalSize}
                 showFormats={showFormats}
                 showMaxQuantity={showMaxQuantity}
                 showMaxFileSize={showMaxFileSize}
@@ -229,9 +227,9 @@ export function Dropzone({
               <Requirements
                 align={align}
                 formats={effectiveFormats}
-                maxQuantity={maxQuantity}
+                maxQuantity={effectiveMaxQuantity}
                 maxFileSize={effectiveMaxFileSize}
-                maxTotalSize={maxTotalSize}
+                maxTotalSize={effectiveMaxTotalSize}
                 showFormats={showFormats}
                 showMaxQuantity={showMaxQuantity}
                 showMaxFileSize={showMaxFileSize}
