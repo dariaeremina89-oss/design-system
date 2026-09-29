@@ -16,6 +16,7 @@ import { Skeleton } from '../Skeleton/Skeleton';
 import { Tooltip } from '../Tooltip/Tooltip';
 import './FileRow.css';
 
+/** `disabled` в state оставлен как совместимый алиас; для сочетаний используйте отдельный prop disabled. */
 export type FileRowState = 'default' | 'loading' | 'disabled' | 'skeleton';
 export type FileRowMessageType = 'error' | 'warning';
 export type FileRowReorderDirection = 'up' | 'down';
@@ -33,8 +34,10 @@ export type FileRowSlot = ReactNode | ((context: FileRowSlotContext) => ReactNod
 
 export interface FileRowProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'draggable' | 'onDragStart' | 'onDragEnd'> {
-  /** Состояние строки. Содержимое Leading и Additional content на состояние не завязано. */
+  /** Состояние содержимого строки. `disabled` лучше передавать отдельным prop. */
   state?: FileRowState;
+  /** Отключает действия и применяет Disabled-оформление независимо от Loading/Message/preview. */
+  disabled?: boolean;
   fileName?: string;
   /** Удобный shortcut для размера файла. Не отображается, если передан additionalContent. */
   weight?: string;
@@ -93,6 +96,7 @@ function FileName({ fileName }: { fileName: string }) {
 
 export function FileRow({
   state = 'default',
+  disabled: disabledProp = false,
   fileName = 'File name.png',
   weight,
   additionalContent,
@@ -120,8 +124,9 @@ export function FileRow({
     return <Skeleton className={className} width="100%" height={48} shape="rounded" data-testid="file-row-skeleton" />;
   }
 
-  const disabled = state === 'disabled';
-  const loading = state === 'loading';
+  const disabled = disabledProp || state === 'disabled';
+  const visualState = state === 'disabled' ? 'default' : state;
+  const loading = visualState === 'loading';
   const hasMenu = !!menuItems?.length;
   const semanticIcon: IconName | undefined = message?.type === 'error'
     ? 'filled/exclamation_circle_filled'
@@ -216,7 +221,8 @@ export function FileRow({
       aria-label={props['aria-label'] ?? fileName}
       aria-describedby={describedBy}
       aria-busy={loading || undefined}
-      className={`fdoc-file-row fdoc-file-row--${state} ${message ? `fdoc-file-row--message-${message.type}` : ''} ${reorderable ? 'fdoc-file-row--reorderable' : ''} ${className}`}
+      aria-disabled={disabled || undefined}
+      className={`fdoc-file-row fdoc-file-row--${visualState} ${disabled ? 'fdoc-file-row--disabled' : ''} ${message ? `fdoc-file-row--message-${message.type}` : ''} ${reorderable ? 'fdoc-file-row--reorderable' : ''} ${className}`}
       data-testid="file-row"
     >
       {reorderable && (
