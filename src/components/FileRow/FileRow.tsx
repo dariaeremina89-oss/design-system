@@ -11,13 +11,13 @@ import './FileRow.css';
 
 export type FileRowType = 'loading' | 'uploaded' | 'uploaded-preview' | 'disabled' | 'template' | 'template-edit' | 'skeleton';
 
-export interface FileRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'onDragStart' | 'onDragEnd'> {
+export interface FileRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'draggable' | 'onDragStart' | 'onDragEnd'> {
   type?: FileRowType;
   fileName?: string;
   weight?: string;
   error?: boolean;
   errorText?: string;
-  draggable?: boolean;
+  reorderable?: boolean;
   leadingIcon?: IconName;
   leadingView?: ReactNode;
   trailingView?: ReactNode;
@@ -38,7 +38,7 @@ export function FileRow({
   weight = '2,7 МБ',
   error = false,
   errorText = 'Error text',
-  draggable = false,
+  reorderable = false,
   leadingIcon,
   leadingView,
   trailingView,
@@ -71,13 +71,13 @@ export function FileRow({
   return (
     <div
       {...props}
-      draggable={draggable && !disabled}
+      draggable={reorderable && !disabled}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
-      className={`fdoc-file-row fdoc-file-row--${type} ${error ? 'fdoc-file-row--error' : ''} ${draggable ? 'fdoc-file-row--draggable' : ''} ${className}`}
+      className={`fdoc-file-row fdoc-file-row--${type} ${error ? 'fdoc-file-row--error' : ''} ${reorderable ? 'fdoc-file-row--reorderable' : ''} ${className}`}
       data-testid="file-row"
     >
-      {draggable && (
+      {reorderable && (
         <ButtonIcon
           aria-label="Изменить порядок"
           icon="drag-dot"
