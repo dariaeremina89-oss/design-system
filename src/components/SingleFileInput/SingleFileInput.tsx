@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type HTMLAttributes } from 'react';
+import { useRef, useState, type ChangeEvent, type HTMLAttributes, type ReactNode } from 'react';
 import { Button } from '../Button/Button';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { FileRow, type FileRowProps } from '../FileRow/FileRow';
@@ -16,8 +16,8 @@ export type SingleFileInputFileRowProps = Omit<
 export interface SingleFileInputProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   type?: SingleFileInputType;
   size?: SingleFileInputSize;
-  error?: boolean;
-  errorText?: string;
+  /** Ошибка валидации. Наличие сообщения включает Error-оформление. */
+  validationMessage?: ReactNode;
   accept?: string;
   buttonText?: string;
   placeholder?: string;
@@ -37,8 +37,7 @@ function formatFileSize(bytes: number) {
 export function SingleFileInput({
   type = 'default',
   size = 'desktop',
-  error = false,
-  errorText = 'Error text',
+  validationMessage,
   accept,
   buttonText = 'Загрузить',
   placeholder = 'Выберите файл',
@@ -49,6 +48,7 @@ export function SingleFileInput({
   ...props
 }: SingleFileInputProps) {
   const [internalFile, setInternalFile] = useState<File | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const controlled = file !== undefined;
   const selectedFile = controlled ? file : internalFile;
 
@@ -57,6 +57,7 @@ export function SingleFileInput({
   }
 
   const disabled = type === 'disabled';
+  const invalid = validationMessage !== undefined && validationMessage !== null && validationMessage !== false && validationMessage !== '';
   const hasFilledState = selectedFile !== null || !!fileRowProps?.fileName;
 
   if (hasFilledState) {
@@ -74,7 +75,7 @@ export function SingleFileInput({
 
     const fileName = fileRowFileName ?? selectedFile?.name ?? 'File name.png';
     const weight = fileRowWeight ?? (selectedFile ? formatFileSize(selectedFile.size) : undefined);
-    const message = fileRowMessage ?? (error ? { type: 'error' as const, text: errorText } : undefined);
+    const message = fileRowMessage ?? (invalid ? { type: 'error' as const, text: validationMessage } : undefined);
 
     const removeFile = () => {
       fileRowOnDelete?.();
@@ -105,30 +106,42 @@ export function SingleFileInput({
     onFileChange?.(nextFile);
     event.currentTarget.value = '';
   };
-  const input = <input type="file" accept={accept} onChange={change} />;
+
+  const openPicker = () => {
+    if (!disabled) inputRef.current?.click();
+  };
 
   return (
     <div
       {...props}
-      className={`fdoc-single-file-input fdoc-single-file-input--${size} ${error ? 'fdoc-single-file-input--error' : ''} ${disabled ? 'fdoc-single-file-input--disabled' : ''} ${className}`}
+      className={`fdoc-single-file-input fdoc-single-file-input--${size} ${invalid ? 'fdoc-single-file-input--validation-error' : ''} ${disabled ? 'fdoc-single-file-input--disabled' : ''} ${className}`}
       data-testid="single-file-input"
+      aria-invalid={invalid || undefined}
     >
+      <input
+        ref={inputRef}
+        className="fdoc-single-file-input__input"
+        type="file"
+        accept={accept}
+        disabled={disabled}
+        onChange={change}
+      />
+
       <span className="fdoc-single-file-input__icon">
-        <Icon name={error ? 'filled/exclamation_circle_filled' : 'doc-paper'} size={24} />
+        <Icon name={invalid ? 'filled/exclamation_circle_filled' : 'doc-paper'} size={24} />
       </span>
       <span className="fdoc-single-file-input__content">
         <span className="fdoc-single-file-input__label">{disabled ? 'Загрузка файлов недоступна' : placeholder}</span>
-        {error && <span className="fdoc-single-file-input__error">{errorText}</span>}
+        {invalid && <span className="fdoc-single-file-input__validation-message">{validationMessage}</span>}
       </span>
       {!disabled && (
-        <label className="fdoc-single-file-input__pick">
-          {input}
+        <span className="fdoc-single-file-input__pick">
           {size === 'mobile' ? (
-            <ButtonIcon aria-label={buttonText} icon="plus" size="small" color="primary" tabIndex={-1} />
+            <ButtonIcon aria-label={buttonText} icon="plus" size="small" color="primary" onClick={openPicker} />
           ) : (
-            <Button size="small" color="primary" tabIndex={-1}>{buttonText}</Button>
+            <Button size="small" color="primary" onClick={openPicker}>{buttonText}</Button>
           )}
-        </label>
+        </span>
       )}
     </div>
   );
