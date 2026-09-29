@@ -109,18 +109,6 @@
   overflow: hidden;
 }
 
-.fdoc-multiple-file-input__item--drop-before::before {
-  content: '';
-  position: absolute;
-  z-index: 2;
-  left: 0;
-  right: 0;
-  top: -3px;
-  height: 2px;
-  border-radius: var(--radius-full);
-  background: var(--border-accent-default);
-}
-
 .fdoc-multiple-file-input__total {
   width: 100%;
   color: var(--text-base-secondary);
