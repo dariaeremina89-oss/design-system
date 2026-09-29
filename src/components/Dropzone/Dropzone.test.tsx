@@ -13,12 +13,26 @@ describe('Dropzone', () => {
     expect(onFiles).toHaveBeenCalledWith([file]);
   });
 
-  it('uses hover visual state while dragging over', () => {
+  it('uses drag-over visual state only for actual file drags', () => {
     render(<Dropzone />);
     const root = screen.getByTestId('dropzone');
-    fireEvent.dragOver(root);
+
+    fireEvent.dragOver(root, { dataTransfer: { types: [], files: [] } });
+    expect(root).toHaveClass('fdoc-dropzone--default');
+
+    fireEvent.dragOver(root, { dataTransfer: { types: ['Files'], files: [] } });
     expect(root).toHaveClass('fdoc-dropzone--drag-over');
     fireEvent.dragLeave(root);
+    expect(root).toHaveClass('fdoc-dropzone--default');
+  });
+
+  it('ignores internal reorder drops instead of treating them as file adding', () => {
+    const onFiles = vi.fn();
+    render(<Dropzone onFiles={onFiles} />);
+    const root = screen.getByTestId('dropzone');
+
+    fireEvent.drop(root, { dataTransfer: { types: ['text/plain'], files: [] } });
+    expect(onFiles).not.toHaveBeenCalled();
     expect(root).toHaveClass('fdoc-dropzone--default');
   });
 
