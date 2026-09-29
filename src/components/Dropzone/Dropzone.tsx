@@ -1,4 +1,4 @@
-import { useRef, useState, type DragEvent, type HTMLAttributes } from 'react';
+import { useRef, useState, type DragEvent, type HTMLAttributes, type MouseEvent } from 'react';
 import { Button } from '../Button/Button';
 import { Icon } from '../Icon/Icon';
 import { Skeleton } from '../Skeleton/Skeleton';
@@ -115,6 +115,10 @@ export function Dropzone({
     onFiles?.(files);
   };
 
+  const openPicker = () => {
+    if (!disabled) input.current?.click();
+  };
+
   const drop = (event: DragEvent) => {
     if (!isFileDrag(event)) return;
     event.preventDefault();
@@ -166,10 +170,13 @@ export function Dropzone({
         if (!disabled && (event.key === 'Enter' || event.key === ' ')) {
           event.preventDefault();
           setPressed(false);
-          input.current?.click();
+          openPicker();
         }
       }}
-      onClick={() => !disabled && input.current?.click()}
+      onClick={event => {
+        if (event.target === input.current) return;
+        openPicker();
+      }}
       onDragOver={event => {
         if (!isFileDrag(event)) return;
         event.preventDefault();
@@ -188,6 +195,7 @@ export function Dropzone({
         accept={inputAccept}
         multiple={multiple}
         disabled={disabled}
+        onClick={(event: MouseEvent<HTMLInputElement>) => event.stopPropagation()}
         onChange={event => {
           emit(event.target.files);
           event.currentTarget.value = '';
