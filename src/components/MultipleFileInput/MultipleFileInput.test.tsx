@@ -35,9 +35,11 @@ describe('MultipleFileInput', () => {
   });
 
   it('shows all Dropzone constraints in the MultipleFileInput Dropzone variant', () => {
-    render(<MultipleFileInput files={files} showDropzone />);
-    expect(screen.getByText('Максимальное количество файлов — 10')).toBeInTheDocument();
-    expect(screen.getByText('Максимальный общий размер файлов — 50 МБ')).toBeInTheDocument();
+    const { container } = render(<MultipleFileInput files={files} showDropzone />);
+    const requirements = container.querySelector('.fdoc-dropzone__requirements');
+
+    expect(requirements).toHaveTextContent('Максимальное количество файлов — 10');
+    expect(requirements).toHaveTextContent('Максимальный общий размер файлов — 50 МБ');
   });
 
   it('opens the internal picker from the standard button and keeps onChooseFiles as notification only', () => {
