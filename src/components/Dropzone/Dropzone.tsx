@@ -1,4 +1,4 @@
-import { useRef, useState, type DragEvent, type HTMLAttributes } from 'react';
+import { useMemo, useRef, useState, type DragEvent, type HTMLAttributes } from 'react';
 import { Button } from '../Button/Button';
 import { Icon } from '../Icon/Icon';
 import { Skeleton } from '../Skeleton/Skeleton';
@@ -6,6 +6,13 @@ import './Dropzone.css';
 
 export type DropzoneState = 'default' | 'hover' | 'focused' | 'pressed' | 'disabled' | 'error' | 'success' | 'skeleton';
 export type DropzoneAlign = 'left' | 'center';
+export type DropzoneValidationReason = 'format' | 'quantity' | 'file-size' | 'total-size';
+
+export interface DropzoneValidationIssue {
+  reason: DropzoneValidationReason;
+  fileName?: string;
+  limit?: number | string;
+}
 
 export interface DropzoneProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onDrop'> {
   state?: DropzoneState;
@@ -16,11 +23,16 @@ export interface DropzoneProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onD
   maxQuantity?: number;
   maxFileSize?: string;
   maxTotalSize?: string;
+  /** Только видимость строки требования. На саму валидацию не влияет. */
   showFormats?: boolean;
+  /** Только видимость строки требования. На саму валидацию не влияет. */
   showMaxQuantity?: boolean;
+  /** Только видимость строки требования. На саму валидацию не влияет. */
   showMaxFileSize?: boolean;
+  /** Только видимость строки требования. На саму валидацию не влияет. */
   showMaxTotalSize?: boolean;
   onFiles?: (files: File[]) => void;
+  onValidationError?: (issues: DropzoneValidationIssue[]) => void;
 }
 
 const DEFAULT_FORMATS = '.doc, .docx, .xls, .xlsx, .pdf, .jpg, .jpeg, .png';
@@ -29,6 +41,59 @@ const DEFAULT_MAX_TOTAL_SIZE = '50 МБ';
 
 function isFileDrag(event: DragEvent) {
   return Array.from(event.dataTransfer.types ?? []).includes('Files');
+}
+
+function normalizeFormatToken(token: string) {
+  const trimmed = token.trim().toLowerCase();
+  if (!trimmed) return '';
+  if (trimmed.includes('/')) return trimmed;
+  return trimmed.startsWith('.') ? trimmed : `.${trimmed}`;
+}
+
+function parseFormats(formats: string) {
+  return formats
+    .split(',')
+    .flatMap(part => part.trim().split(/\s+/))
+    .map(normalizeFormatToken)
+    .filter(Boolean);
+}
+
+function fileMatchesFormats(file: File, formats: string[]) {
+  if (!formats.length) return true;
+  const name = file.name.toLowerCase();
+  const type = file.type.toLowerCase();
+
+  return formats.some(format => {
+    if (format.includes('/')) {
+      if (format.endsWith('/*')) return type.startsWith(format.slice(0, -1));
+      return type === format;
+    }
+    return name.endsWith(format);
+  });
+}
+
+function parseSizeToBytes(value: string) {
+  const normalized = value
+    .replace(/\u00a0/g, ' ')
+    .replace(',', '.')
+    .trim()
+    .toLowerCase();
+  const match = normalized.match(/([\d.]+)\s*(гб|gb|мб|mb|кб|kb|б|b)?/i);
+  if (!match) return undefined;
+
+  const amount = Number(match[1]);
+  if (!Number.isFinite(amount)) return undefined;
+
+  const unit = match[2]?.toLowerCase() ?? 'b';
+  const multiplier = unit === 'гб' || unit === 'gb'
+    ? 1024 ** 3
+    : unit === 'мб' || unit === 'mb'
+      ? 1024 ** 2
+      : unit === 'кб' || unit === 'kb'
+        ? 1024
+        : 1;
+
+  return amount * multiplier;
 }
 
 export function Dropzone({
@@ -45,6 +110,7 @@ export function Dropzone({
   showMaxFileSize = true,
   showMaxTotalSize = false,
   onFiles,
+  onValidationError,
   className = '',
   ...props
 }: DropzoneProps) {
@@ -53,20 +119,62 @@ export function Dropzone({
   const [hovered, setHovered] = useState(false);
   const [pressed, setPressed] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [validationError, setValidationError] = useState(false);
   const disabled = state === 'disabled';
   const interactive = state === 'default';
-  const activeState: DropzoneState | 'drag-over' = drag
-    ? 'drag-over'
-    : interactive && pressed
-      ? 'pressed'
-      : interactive && focused
-        ? 'focused'
-        : interactive && hovered
-          ? 'hover'
-          : state;
+  const allowedFormats = useMemo(() => parseFormats(formats), [formats]);
+  const maxFileSizeBytes = useMemo(() => parseSizeToBytes(maxFileSize), [maxFileSize]);
+  const maxTotalSizeBytes = useMemo(() => parseSizeToBytes(maxTotalSize), [maxTotalSize]);
+  const inputAccept = accept ?? allowedFormats.join(',');
+
+  const activeState: DropzoneState | 'drag-over' = interactive && validationError
+    ? 'error'
+    : drag
+      ? 'drag-over'
+      : interactive && pressed
+        ? 'pressed'
+        : interactive && focused
+          ? 'focused'
+          : interactive && hovered
+            ? 'hover'
+            : state;
+
+  const validate = (files: File[]) => {
+    const issues: DropzoneValidationIssue[] = [];
+    const quantityLimit = multiple ? maxQuantity : Math.min(maxQuantity, 1);
+
+    if (files.length > quantityLimit) {
+      issues.push({ reason: 'quantity', limit: quantityLimit });
+    }
+
+    for (const file of files) {
+      if (!fileMatchesFormats(file, allowedFormats)) {
+        issues.push({ reason: 'format', fileName: file.name, limit: formats });
+      }
+      if (maxFileSizeBytes !== undefined && file.size > maxFileSizeBytes) {
+        issues.push({ reason: 'file-size', fileName: file.name, limit: maxFileSize });
+      }
+    }
+
+    if (maxTotalSizeBytes !== undefined && files.reduce((sum, file) => sum + file.size, 0) > maxTotalSizeBytes) {
+      issues.push({ reason: 'total-size', limit: maxTotalSize });
+    }
+
+    return issues;
+  };
 
   const emit = (list: FileList | null) => {
-    if (!disabled && list) onFiles?.(Array.from(list));
+    if (disabled || !list) return;
+    const files = Array.from(list);
+    const issues = validate(files);
+    if (issues.length) {
+      setValidationError(true);
+      onValidationError?.(issues);
+      return;
+    }
+
+    setValidationError(false);
+    onFiles?.(files);
   };
 
   const drop = (event: DragEvent) => {
@@ -133,12 +241,13 @@ export function Dropzone({
       onDrop={drop}
       data-testid="dropzone"
       aria-disabled={disabled}
+      aria-invalid={isError || undefined}
     >
       <input
         ref={input}
         className="fdoc-dropzone__input"
         type="file"
-        accept={accept}
+        accept={inputAccept || undefined}
         multiple={multiple}
         disabled={disabled}
         onChange={event => emit(event.target.files)}
