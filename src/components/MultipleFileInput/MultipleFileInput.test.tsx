@@ -37,7 +37,7 @@ describe('MultipleFileInput', () => {
   it('shows all Dropzone constraints in the MultipleFileInput Dropzone variant', () => {
     render(<MultipleFileInput files={files} showDropzone />);
     expect(screen.getByText('Максимальное количество файлов — 10')).toBeInTheDocument();
-    expect(screen.getByText('Максимальный общий размер файлов — 50 МБ')).toBeInTheDocument();
+    expect(screen.getByText('Максимальный общий размер файлов — 50 МБ')).toBeInTheDocument();
   });
 
   it('uses the updated Figma action buttons', () => {
@@ -50,6 +50,62 @@ describe('MultipleFileInput', () => {
     expect(choose.querySelector('[data-icon="arrow-upload"]')).toBeInTheDocument();
     expect(remove).toBeDefined();
     expect(remove!).toHaveClass('fdoc-button--secondary');
+  });
+
+  it('validates files selected from the button before onAddFiles', () => {
+    const onAddFiles = vi.fn();
+    const onValidationError = vi.fn();
+    const { container } = render(
+      <MultipleFileInput
+        files={[]}
+        showButtons
+        validation={{ formats: '.pdf', maxFileSize: '1 Б' }}
+        onAddFiles={onAddFiles}
+        onValidationError={onValidationError}
+      />,
+    );
+    const picker = container.querySelector('input[type="file"]') as HTMLInputElement;
+    const invalid = new File(['xx'], 'document.txt', { type: 'text/plain' });
+
+    fireEvent.change(picker, { target: { files: [invalid] } });
+
+    expect(onAddFiles).not.toHaveBeenCalled();
+    expect(onValidationError).toHaveBeenCalledWith(expect.arrayContaining([
+      expect.objectContaining({ reason: 'format', fileName: 'document.txt' }),
+      expect.objectContaining({ reason: 'file-size', fileName: 'document.txt' }),
+    ]));
+  });
+
+  it('uses the same validation rules for Dropzone and button flows', () => {
+    const onAddFiles = vi.fn();
+    const onValidationError = vi.fn();
+    const { container } = render(
+      <MultipleFileInput
+        files={[files[0]]}
+        showButtons
+        showDropzone
+        totalSize="2 Б"
+        validation={{ formats: '.pdf', maxQuantity: 1, maxFileSize: '10 Б', maxTotalSize: '2 Б' }}
+        onAddFiles={onAddFiles}
+        onValidationError={onValidationError}
+      />,
+    );
+    const pickers = container.querySelectorAll('input[type="file"]');
+    const nextFile = new File(['x'], 'next.pdf', { type: 'application/pdf' });
+
+    fireEvent.change(pickers[0], { target: { files: [nextFile] } });
+    fireEvent.change(pickers[1], { target: { files: [nextFile] } });
+
+    expect(onAddFiles).not.toHaveBeenCalled();
+    expect(onValidationError).toHaveBeenCalledTimes(2);
+    expect(onValidationError).toHaveBeenNthCalledWith(1, expect.arrayContaining([
+      expect.objectContaining({ reason: 'quantity', limit: 1 }),
+      expect.objectContaining({ reason: 'total-size', limit: '2 Б' }),
+    ]));
+    expect(onValidationError).toHaveBeenNthCalledWith(2, expect.arrayContaining([
+      expect.objectContaining({ reason: 'quantity', limit: 1 }),
+      expect.objectContaining({ reason: 'total-size', limit: '2 Б' }),
+    ]));
   });
 
   it('hides the file group when collapsed', () => {
