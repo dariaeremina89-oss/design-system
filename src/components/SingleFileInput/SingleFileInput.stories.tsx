@@ -19,8 +19,6 @@ const meta = {
   args: {
     type: 'default',
     size: 'desktop',
-    error: false,
-    errorText: 'Файл не соответствует требованиям',
   },
   argTypes: {
     type: { control: 'select', options: ['default', 'disabled', 'skeleton'] },
@@ -35,10 +33,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 export const Mobile: Story = { args: { size: 'mobile' } };
-export const Error: Story = { args: { error: true } };
-export const MobileError: Story = { args: { size: 'mobile', error: true } };
+export const ValidationError: Story = { args: { validationMessage: 'Файл не соответствует требованиям' } };
+export const MobileValidationError: Story = { args: { size: 'mobile', validationMessage: 'Файл не соответствует требованиям' } };
 export const Disabled: Story = { args: { type: 'disabled' } };
-export const DisabledError: Story = { args: { type: 'disabled', error: true } };
+export const DisabledValidationError: Story = { args: { type: 'disabled', validationMessage: 'Файл не соответствует требованиям' } };
 
 export const Loading: Story = {
   args: {
@@ -67,9 +65,9 @@ export const FilledFile: Story = {
     },
   },
 };
-export const FilledFileError: Story = {
+export const FilledFileValidationError: Story = {
   args: {
-    error: true,
+    validationMessage: 'Файл не соответствует требованиям',
     fileRowProps: {
       fileName: 'File name.png',
       weight: '2,7 МБ',
