@@ -3,6 +3,38 @@ import { describe, expect, it, vi } from 'vitest';
 import { Dropzone } from './Dropzone';
 
 describe('Dropzone', () => {
+  it('opens the native picker from the whole Dropzone without recursive input clicks', () => {
+    const click = vi.spyOn(HTMLInputElement.prototype, 'click').mockImplementation(() => undefined);
+    render(<Dropzone />);
+
+    fireEvent.click(screen.getByTestId('dropzone'));
+
+    expect(click).toHaveBeenCalledOnce();
+    click.mockRestore();
+  });
+
+  it('opens the native picker from the Center button', () => {
+    const click = vi.spyOn(HTMLInputElement.prototype, 'click').mockImplementation(() => undefined);
+    render(<Dropzone align="center" />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Выбрать файл' }));
+
+    expect(click).toHaveBeenCalledOnce();
+    click.mockRestore();
+  });
+
+  it('opens the native picker from keyboard', () => {
+    const click = vi.spyOn(HTMLInputElement.prototype, 'click').mockImplementation(() => undefined);
+    render(<Dropzone />);
+    const root = screen.getByTestId('dropzone');
+
+    fireEvent.keyDown(root, { key: 'Enter' });
+    fireEvent.keyUp(root, { key: 'Enter' });
+
+    expect(click).toHaveBeenCalledOnce();
+    click.mockRestore();
+  });
+
   it('passes selected files to onFiles', () => {
     const onFiles = vi.fn();
     const { container } = render(<Dropzone onFiles={onFiles} />);
@@ -10,6 +42,18 @@ describe('Dropzone', () => {
     const file = new File(['content'], 'document.pdf', { type: 'application/pdf' });
 
     fireEvent.change(input, { target: { files: [file] } });
+    expect(onFiles).toHaveBeenCalledWith([file]);
+  });
+
+  it('passes valid dropped files to onFiles', () => {
+    const onFiles = vi.fn();
+    render(<Dropzone formats=".pdf" maxFileSize="10 Б" onFiles={onFiles} />);
+    const file = new File(['x'], 'document.pdf', { type: 'application/pdf' });
+
+    fireEvent.drop(screen.getByTestId('dropzone'), {
+      dataTransfer: { types: ['Files'], files: [file] },
+    });
+
     expect(onFiles).toHaveBeenCalledWith([file]);
   });
 
@@ -108,11 +152,22 @@ describe('Dropzone', () => {
     expect(root).toHaveClass('fdoc-dropzone--default');
   });
 
-  it('disables file selection and hides requirements in Disabled', () => {
-    const { container } = render(<Dropzone state="disabled" />);
-    expect((container.querySelector('input[type="file"]') as HTMLInputElement)).toBeDisabled();
+  it('does not open picker or accept files in Disabled', () => {
+    const click = vi.spyOn(HTMLInputElement.prototype, 'click').mockImplementation(() => undefined);
+    const onFiles = vi.fn();
+    const { container } = render(<Dropzone state="disabled" onFiles={onFiles} />);
+    const root = screen.getByTestId('dropzone');
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+
+    fireEvent.click(root);
+    fireEvent.change(input, { target: { files: [new File(['x'], 'document.pdf', { type: 'application/pdf' })] } });
+
+    expect(click).not.toHaveBeenCalled();
+    expect(onFiles).not.toHaveBeenCalled();
+    expect(input).toBeDisabled();
     expect(screen.getByText('Загрузка файлов недоступна')).toBeInTheDocument();
     expect(screen.queryByText(/Допустимые форматы/)).not.toBeInTheDocument();
+    click.mockRestore();
   });
 
   it('supports Focused and Error states from Figma', () => {
