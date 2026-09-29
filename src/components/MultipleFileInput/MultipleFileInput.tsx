@@ -33,6 +33,7 @@ export interface MultipleFileInputProps {
   /** Единые правила добавления файлов для Dropzone и кнопки выбора. */
   validation?: MultipleFileInputValidation;
   onAddFiles?: (files: File[]) => void;
+  /** Получает ошибки добавления независимо от источника: кнопка или Dropzone. */
   onValidationError?: (issues: FileUploadValidationIssue[]) => void;
   onDeleteAll?: () => void;
   onToggleCollapse?: () => void;
@@ -77,6 +78,10 @@ export function MultipleFileInput({
   };
 
   const reportValidationError = (issues: FileUploadValidationIssue[]) => {
+    onValidationError?.(issues);
+  };
+
+  const reportDropzoneValidationError = (issues: FileUploadValidationIssue[]) => {
     dropzoneProps?.onValidationError?.(issues);
     onValidationError?.(issues);
   };
@@ -179,7 +184,7 @@ export function MultipleFileInput({
               currentQuantity={count}
               currentTotalSize={totalSize}
               onFiles={addFiles}
-              onValidationError={reportValidationError}
+              onValidationError={reportDropzoneValidationError}
             />
           )}
 
