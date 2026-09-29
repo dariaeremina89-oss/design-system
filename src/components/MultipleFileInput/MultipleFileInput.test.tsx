@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { MultipleFileInput } from './MultipleFileInput';
 
 const files = [
-  { fileName: 'Первый.pdf', weight: '2,7 МБ', type: 'uploaded' as const },
-  { fileName: 'Второй.docx', type: 'template' as const },
+  { id: 'first', fileName: 'Первый.pdf', weight: '2,7 МБ' },
+  { id: 'second', fileName: 'Второй.docx', additionalContent: 'Шаблон' },
 ];
 
 describe('MultipleFileInput', () => {
@@ -13,6 +13,7 @@ describe('MultipleFileInput', () => {
     expect(screen.getByText('2 файлов')).toBeInTheDocument();
     expect(screen.getByText('Первый.pdf')).toBeInTheDocument();
     expect(screen.getByText('Второй.docx')).toBeInTheDocument();
+    expect(screen.getByText('Шаблон')).toBeInTheDocument();
   });
 
   it('renders file error count under the file count link', () => {
@@ -20,8 +21,15 @@ describe('MultipleFileInput', () => {
     expect(screen.getByText('Ошибки в файлах (1)')).toBeInTheDocument();
   });
 
-  it('renders group-level error and total size in Group FileRow structure', () => {
-    render(<MultipleFileInput files={files} groupErrorText="Превышен максимальный общий размер файлов" totalSize="8,1 МБ" />);
+  it('renders per-file Message independently from Group FileRow error', () => {
+    render(
+      <MultipleFileInput
+        files={[{ ...files[0], message: { type: 'warning', text: 'Проверьте файл' } }, files[1]]}
+        groupErrorText="Превышен максимальный общий размер файлов"
+        totalSize="8,1 МБ"
+      />,
+    );
+    expect(screen.getByRole('status')).toHaveTextContent('Проверьте файл');
     expect(screen.getByTestId('multiple-file-input-group-error')).toHaveTextContent('Превышен максимальный общий размер файлов');
     expect(screen.getByText('Общий объем: 8,1 МБ')).toBeInTheDocument();
   });
@@ -60,16 +68,31 @@ describe('MultipleFileInput', () => {
     expect(onDeleteAll).toHaveBeenCalledOnce();
   });
 
-  it('calls reorder and per-row delete actions', () => {
+  it('reorders only from the handle and keeps per-row delete independent', () => {
     const onReorder = vi.fn();
     const onDelete = vi.fn();
-    const { container } = render(<MultipleFileInput files={[{ ...files[0], onDelete }, files[1]]} reorderable onReorder={onReorder} />);
-    fireEvent.click(screen.getAllByRole('button', { name: 'Удалить файл' })[0]);
+    const { container } = render(
+      <MultipleFileInput files={[{ ...files[0], onDelete }, files[1]]} reorderable onReorder={onReorder} />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Удалить файл Первый.pdf' }));
     expect(onDelete).toHaveBeenCalledOnce();
+
     const items = container.querySelectorAll('.fdoc-multiple-file-input__item');
-    fireEvent.dragStart(items[0], { dataTransfer: { effectAllowed: '', setData: vi.fn() } });
+    const firstHandle = screen.getByRole('button', { name: 'Изменить порядок файла Первый.pdf' });
+    expect(items[0]).not.toHaveAttribute('draggable', 'true');
+    expect(firstHandle).toHaveAttribute('draggable', 'true');
+
+    fireEvent.dragStart(firstHandle, { dataTransfer: { effectAllowed: '', setData: vi.fn() } });
     fireEvent.dragOver(items[1], { dataTransfer: { dropEffect: '' } });
     fireEvent.drop(items[1], { dataTransfer: { dropEffect: '' } });
+    expect(onReorder).toHaveBeenCalledWith(0, 1);
+  });
+
+  it('supports keyboard reorder from the handle', () => {
+    const onReorder = vi.fn();
+    render(<MultipleFileInput files={files} reorderable onReorder={onReorder} />);
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Изменить порядок файла Первый.pdf' }), { key: 'ArrowDown' });
     expect(onReorder).toHaveBeenCalledWith(0, 1);
   });
 });
