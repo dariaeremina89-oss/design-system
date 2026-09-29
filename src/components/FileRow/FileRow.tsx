@@ -17,6 +17,8 @@ export interface FileRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'chil
   weight?: string;
   error?: boolean;
   errorText?: string;
+  warning?: boolean;
+  warningText?: string;
   reorderable?: boolean;
   leadingIcon?: IconName;
   leadingView?: ReactNode;
@@ -38,6 +40,8 @@ export function FileRow({
   weight = '2,7 МБ',
   error = false,
   errorText = 'Error text',
+  warning = false,
+  warningText = 'Warning text',
   reorderable = false,
   leadingIcon,
   leadingView,
@@ -64,8 +68,14 @@ export function FileRow({
   const loading = type === 'loading';
   const template = type === 'template' || type === 'template-edit';
   const previewed = type === 'uploaded-preview';
+  const hasError = error;
+  const hasWarning = warning && !hasError;
   const defaultLeadingIcon: IconName = type === 'template-edit' ? 'pencil-paper' : 'doc-paper';
-  const icon: IconName = error ? 'filled/exclamation_circle_filled' : (leadingIcon ?? defaultLeadingIcon);
+  const icon: IconName = hasError
+    ? 'filled/exclamation_circle_filled'
+    : hasWarning
+      ? 'exclamation_triangle'
+      : (leadingIcon ?? defaultLeadingIcon);
   const hasMenu = !!menuItems?.length;
 
   return (
@@ -74,7 +84,7 @@ export function FileRow({
       draggable={reorderable && !disabled}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
-      className={`fdoc-file-row fdoc-file-row--${type} ${error ? 'fdoc-file-row--error' : ''} ${reorderable ? 'fdoc-file-row--reorderable' : ''} ${className}`}
+      className={`fdoc-file-row fdoc-file-row--${type} ${hasError ? 'fdoc-file-row--error' : ''} ${hasWarning ? 'fdoc-file-row--warning' : ''} ${reorderable ? 'fdoc-file-row--reorderable' : ''} ${className}`}
       data-testid="file-row"
     >
       {reorderable && (
@@ -160,7 +170,8 @@ export function FileRow({
             )}
           </span>
         </div>
-        {error && <span className="fdoc-file-row__error">{errorText}</span>}
+        {hasError && <span className="fdoc-file-row__error">{errorText}</span>}
+        {hasWarning && <span className="fdoc-file-row__warning">{warningText}</span>}
       </div>
     </div>
   );
