@@ -114,7 +114,6 @@ export type {
 export { SingleFileInput } from './components/SingleFileInput/SingleFileInput';
 export type {
   SingleFileInputFileProps,
-  SingleFileInputFileRowProps,
   SingleFileInputFileState,
   SingleFileInputProps,
   SingleFileInputSize,
