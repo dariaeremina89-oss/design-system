@@ -6,7 +6,7 @@ function Interactive(args: React.ComponentProps<typeof SingleFileInput>) {
   const referenceWidth = args.size === 'mobile' ? 256 : 456;
 
   return (
-    <div style={{ width: referenceWidth, maxWidth: '100%' }}>
+    <div style={{ width: `min(${referenceWidth}px, calc(100vw - 32px))`, maxWidth: '100%' }}>
       <SingleFileInput {...args} />
     </div>
   );
