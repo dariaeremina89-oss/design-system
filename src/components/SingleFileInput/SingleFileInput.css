@@ -1,3 +1,10 @@
+.fdoc-single-file-input {
+  width: 100%;
+  min-width: 0;
+  container-name: fdoc-single-file-input;
+  container-type: inline-size;
+}
+
 .fdoc-single-file-input--empty {
   box-sizing: border-box;
   position: relative;
@@ -73,6 +80,7 @@
 .fdoc-single-file-input__label {
   display: block;
   width: 100%;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -80,6 +88,7 @@
 
 .fdoc-single-file-input__validation-message {
   width: 100%;
+  min-width: 0;
   color: var(--text-error-secondary);
   font-family: var(--page-caption-family);
   font-size: var(--page-caption-size);
@@ -89,9 +98,25 @@
   word-break: normal;
 }
 
-.fdoc-single-file-input__pick {
+.fdoc-single-file-input__pick,
+.fdoc-single-file-input__pick-desktop,
+.fdoc-single-file-input__pick-mobile {
   display: flex;
   flex: 0 0 auto;
+}
+
+.fdoc-single-file-input__pick-mobile {
+  display: none;
+  width: 32px;
+  height: 32px;
+}
+
+.fdoc-single-file-input--mobile .fdoc-single-file-input__pick-desktop {
+  display: none;
+}
+
+.fdoc-single-file-input--mobile .fdoc-single-file-input__pick-mobile {
+  display: flex;
 }
 
 .fdoc-single-file-input--empty.fdoc-single-file-input--disabled {
@@ -110,11 +135,16 @@
   color: var(--text-error-secondary-disabled);
 }
 
-.fdoc-single-file-input--mobile .fdoc-single-file-input__pick {
-  width: 32px;
-  height: 32px;
-}
-
 .fdoc-single-file-input__delete {
   --fdoc-button-icon-padding: 0px;
+}
+
+@container fdoc-single-file-input (max-width: 455px) {
+  .fdoc-single-file-input--desktop .fdoc-single-file-input__pick-desktop {
+    display: none;
+  }
+
+  .fdoc-single-file-input--desktop .fdoc-single-file-input__pick-mobile {
+    display: flex;
+  }
 }
