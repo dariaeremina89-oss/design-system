@@ -23,7 +23,8 @@ const meta = {
   argTypes: {
     type: { control: 'select', options: ['default', 'disabled', 'skeleton'] },
     size: { control: 'select', options: ['desktop', 'mobile'] },
-    fileRowProps: { control: false },
+    fileProps: { control: false },
+    fileRowProps: { table: { disable: true } },
   },
   render: args => <Interactive {...args} />,
 } satisfies Meta<typeof SingleFileInput>;
@@ -40,7 +41,7 @@ export const DisabledValidationError: Story = { args: { type: 'disabled', valida
 
 export const Loading: Story = {
   args: {
-    fileRowProps: {
+    fileProps: {
       fileName: 'File name.png',
       weight: '2,7 МБ',
       state: 'loading',
@@ -50,7 +51,7 @@ export const Loading: Story = {
 export const LoadingDisabled: Story = {
   args: {
     type: 'disabled',
-    fileRowProps: {
+    fileProps: {
       fileName: 'File name.png',
       weight: '2,7 МБ',
       state: 'loading',
@@ -59,7 +60,7 @@ export const LoadingDisabled: Story = {
 };
 export const FilledFile: Story = {
   args: {
-    fileRowProps: {
+    fileProps: {
       fileName: 'File name.png',
       weight: '2,7 МБ',
     },
@@ -67,7 +68,7 @@ export const FilledFile: Story = {
 };
 export const LongFileName: Story = {
   args: {
-    fileRowProps: {
+    fileProps: {
       fileName: 'Очень длинное название файла с большим количеством символов которое должно сокращаться многоточием.pdf',
       weight: '2,7 МБ',
     },
@@ -76,7 +77,7 @@ export const LongFileName: Story = {
 export const FilledFileValidationError: Story = {
   args: {
     validationMessage: 'Файл не соответствует требованиям',
-    fileRowProps: {
+    fileProps: {
       fileName: 'File name.png',
       weight: '2,7 МБ',
     },
@@ -84,7 +85,7 @@ export const FilledFileValidationError: Story = {
 };
 export const FilledTemplate: Story = {
   args: {
-    fileRowProps: {
+    fileProps: {
       fileName: 'File name',
       additionalContent: 'Шаблон',
     },
@@ -92,7 +93,7 @@ export const FilledTemplate: Story = {
 };
 export const FilledTemplateEdit: Story = {
   args: {
-    fileRowProps: {
+    fileProps: {
       fileName: 'File name.png',
       leadingIcon: 'pencil-paper',
       additionalContent: ({ disabled }) => (
@@ -106,7 +107,7 @@ export const FilledTemplateEdit: Story = {
 export const FilledDisabled: Story = {
   args: {
     type: 'disabled',
-    fileRowProps: {
+    fileProps: {
       fileName: 'File name.png',
       weight: '2,7 МБ',
     },
@@ -114,7 +115,7 @@ export const FilledDisabled: Story = {
 };
 export const FilledWarning: Story = {
   args: {
-    fileRowProps: {
+    fileProps: {
       fileName: 'File name.png',
       weight: '2,7 МБ',
       message: { type: 'warning', text: 'Warning text' },
