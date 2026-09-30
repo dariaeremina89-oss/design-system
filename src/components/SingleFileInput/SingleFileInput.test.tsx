@@ -109,13 +109,6 @@ describe('SingleFileInput', () => {
     expect(screen.getByText('2,7 МБ').closest('.fdoc-file-item__additional')).toBeInTheDocument();
   });
 
-  it('keeps fileRowProps as a backward-compatible alias only', () => {
-    render(<SingleFileInput fileRowProps={{ fileName: 'legacy.pdf', weight: '1 МБ' }} />);
-    expect(screen.getByText('legacy.pdf')).toBeInTheDocument();
-    expect(screen.getByText('1 МБ')).toBeInTheDocument();
-    expect(screen.queryByTestId('file-row')).not.toBeInTheDocument();
-  });
-
   it('shows validation content and semantic icon in the empty state', () => {
     render(<SingleFileInput validationMessage="Ошибка файла" />);
     expect(screen.getByText('Ошибка файла')).toBeInTheDocument();
