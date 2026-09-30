@@ -65,6 +65,14 @@ export const FilledFile: Story = {
     },
   },
 };
+export const LongFileName: Story = {
+  args: {
+    fileRowProps: {
+      fileName: 'Очень длинное название файла с большим количеством символов которое должно сокращаться многоточием.pdf',
+      weight: '2,7 МБ',
+    },
+  },
+};
 export const FilledFileValidationError: Story = {
   args: {
     validationMessage: 'Файл не соответствует требованиям',
