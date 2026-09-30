@@ -143,7 +143,7 @@
   --fdoc-button-icon-padding: 0px;
 }
 
-@container fdoc-single-file-input (max-width: 455px) {
+@container fdoc-single-file-input (max-width: 439px) {
   .fdoc-single-file-input--desktop .fdoc-single-file-input__pick-desktop {
     display: none;
   }
