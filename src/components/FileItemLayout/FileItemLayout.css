@@ -51,11 +51,15 @@
   gap: var(--space-16);
 }
 
-.fdoc-file-item__line > .fdoc-tooltip-anchor {
-  flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: 0;
-  width: 0;
+.fdoc-file-item__name-slot {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.fdoc-file-item__name-slot > .fdoc-tooltip-anchor {
+  display: flex;
+  width: 100%;
   min-width: 0;
 }
 
