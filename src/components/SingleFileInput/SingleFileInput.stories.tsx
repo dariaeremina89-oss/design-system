@@ -24,7 +24,6 @@ const meta = {
     type: { control: 'select', options: ['default', 'disabled', 'skeleton'] },
     size: { control: 'select', options: ['desktop', 'mobile'] },
     fileProps: { control: false },
-    fileRowProps: { table: { disable: true } },
   },
   render: args => <Interactive {...args} />,
 } satisfies Meta<typeof SingleFileInput>;
