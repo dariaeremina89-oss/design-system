@@ -70,13 +70,13 @@ describe('File upload visual contract', () => {
     expectRuleValue('.fdoc-file-item__name-slot', 'flex-grow', '1');
     expectRuleValue('.fdoc-file-item__name-slot', 'flex-shrink', '1');
     expectRuleValue('.fdoc-file-item__name-slot', 'flex-basis', '0px');
-    expectRuleValue('.fdoc-file-item__name-slot', 'min-width', '0px');
+    expectRuleValue('.fdoc-file-item__name-slot', 'min-width', '0');
     expectRuleValue('.fdoc-file-item__name-slot > .fdoc-tooltip-anchor', 'width', '100%');
     expectRuleValue('.fdoc-file-item__right', 'flex-shrink', '1');
     expectRuleValue('.fdoc-file-item__right', 'max-width', '100%');
     expectRuleValue('.fdoc-file-item__right--fixed', 'flex-shrink', '0');
     expectRuleValue('.fdoc-file-item__right--fixed', 'min-width', 'max-content');
-    expectRuleValue('.fdoc-file-item__additional', 'min-width', '0px');
+    expectRuleValue('.fdoc-file-item__additional', 'min-width', '0');
     expectRuleValue('.fdoc-file-item__additional', 'max-width', '100%');
     expectRuleValue('.fdoc-file-item__additional-text', 'white-space', 'nowrap');
     expectRuleValue('.fdoc-file-item__additional-text', 'color', 'var(--text-base-secondary)');
