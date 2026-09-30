@@ -98,7 +98,11 @@
   word-break: normal;
 }
 
-.fdoc-single-file-input__pick,
+.fdoc-single-file-input__pick {
+  display: flex;
+  flex: 0 0 auto;
+}
+
 .fdoc-single-file-input__pick-desktop,
 .fdoc-single-file-input__pick-mobile {
   display: flex;
