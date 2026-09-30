@@ -60,9 +60,11 @@ function FileName({ fileName }: { fileName: string }) {
   }, [fileName]);
 
   return (
-    <Tooltip content={fileName} placement="bottom" disabled={!truncated}>
-      <span ref={ref} className="fdoc-file-item__name">{fileName}</span>
-    </Tooltip>
+    <span className="fdoc-file-item__name-slot">
+      <Tooltip content={fileName} placement="bottom" disabled={!truncated}>
+        <span ref={ref} className="fdoc-file-item__name">{fileName}</span>
+      </Tooltip>
+    </span>
   );
 }
 
