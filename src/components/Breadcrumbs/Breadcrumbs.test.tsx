@@ -4,6 +4,7 @@ import { axe } from 'jest-axe';
 import { Breadcrumbs } from './Breadcrumbs';
 
 beforeEach(() => {
+  vi.stubGlobal('ResizeObserver', undefined);
   vi.stubGlobal('matchMedia', () => ({
     matches: true,
     addEventListener() {},
