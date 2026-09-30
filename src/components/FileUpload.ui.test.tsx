@@ -21,49 +21,58 @@ function expectRuleValue(selector: string, property: string, value: string) {
 }
 
 describe('File upload visual contract', () => {
-  it('keeps SingleFileInput Figma spacing, validation geometry and inset stroke', () => {
+  it('keeps SingleFileInput empty-state Figma spacing, validation geometry and inset stroke', () => {
     render(<SingleFileInput />);
-    expectRuleValue('.fdoc-single-file-input', 'min-height', '48px');
-    expectRuleValue('.fdoc-single-file-input', 'padding', 'var(--space-8)');
-    expectRuleValue('.fdoc-single-file-input', 'gap', 'var(--space-8)');
-    expectRuleValue('.fdoc-single-file-input', 'border', '0px');
-    expectRuleValue('.fdoc-single-file-input', 'border-radius', 'var(--radius-middle)');
-    expectRuleValue('.fdoc-single-file-input', 'background', 'var(--background-base-secondary)');
-    expectRuleValue('.fdoc-single-file-input::before', 'inset', '0');
-    expectRuleValue('.fdoc-single-file-input::before', 'border', 'var(--border-small) solid var(--border-base-light)');
-    expectRuleValue('.fdoc-single-file-input--validation-error', 'align-items', 'flex-start');
+    expectRuleValue('.fdoc-single-file-input--empty', 'min-height', '48px');
+    expectRuleValue('.fdoc-single-file-input--empty', 'padding', 'var(--space-8)');
+    expectRuleValue('.fdoc-single-file-input--empty', 'gap', 'var(--space-8)');
+    expectRuleValue('.fdoc-single-file-input--empty', 'border', '0px');
+    expectRuleValue('.fdoc-single-file-input--empty', 'border-radius', 'var(--radius-middle)');
+    expectRuleValue('.fdoc-single-file-input--empty', 'background', 'var(--background-base-secondary)');
+    expectRuleValue('.fdoc-single-file-input--empty::before', 'inset', '0');
+    expectRuleValue('.fdoc-single-file-input--empty::before', 'border', 'var(--border-small) solid var(--border-base-light)');
+    expectRuleValue('.fdoc-single-file-input--empty.fdoc-single-file-input--validation-error', 'align-items', 'flex-start');
     expectRuleValue('.fdoc-single-file-input__content', 'gap', 'var(--space-4)');
     expectRuleValue('.fdoc-single-file-input__validation-message', 'line-height', 'var(--page-caption-line-height)');
     expectRuleValue('.fdoc-single-file-input__pick', 'flex', '0 0 auto');
   });
 
-  it('keeps FileRow dimensions, spacing, inset border and semantic Message tokens from Figma', () => {
+  it('keeps shared filled-file dimensions, spacing, inset border and semantic Message tokens', () => {
     render(<FileRow />);
-    expectRuleValue('.fdoc-file-row', 'width', '100%');
-    expectRuleValue('.fdoc-file-row', 'min-height', '48px');
-    expectRuleValue('.fdoc-file-row', 'padding', 'var(--space-12) var(--space-8)');
-    expectRuleValue('.fdoc-file-row', 'gap', 'var(--space-8)');
-    expectRuleValue('.fdoc-file-row', 'border', '0px');
-    expectRuleValue('.fdoc-file-row', 'border-radius', 'var(--radius-middle)');
-    expectRuleValue('.fdoc-file-row::before', 'inset', '0');
-    expectRuleValue('.fdoc-file-row::before', 'border', 'var(--border-small) solid var(--border-base-light)');
-    expectRuleValue('.fdoc-file-row__line', 'gap', 'var(--space-16)');
-    expectRuleValue('.fdoc-file-row__right', 'gap', 'var(--space-8)');
-    expectRuleValue('.fdoc-file-row__message', 'overflow-wrap', 'anywhere');
-    expectRuleValue('.fdoc-file-row__message--warning', 'color', 'var(--text-warning-secondary)');
-    expectRuleValue('.fdoc-file-row__message--error', 'color', 'var(--text-error-secondary)');
-    expectRuleValue('.fdoc-file-row--message-warning .fdoc-file-row__leading--semantic', 'color', 'var(--icon-warning-secondary)');
-    expectRuleValue('.fdoc-file-row--message-error .fdoc-file-row__leading--semantic', 'color', 'var(--icon-error-secondary)');
+    expectRuleValue('.fdoc-file-item', 'width', '100%');
+    expectRuleValue('.fdoc-file-item', 'min-height', '48px');
+    expectRuleValue('.fdoc-file-item', 'padding', 'var(--space-12) var(--space-8)');
+    expectRuleValue('.fdoc-file-item', 'gap', 'var(--space-8)');
+    expectRuleValue('.fdoc-file-item', 'border', '0px');
+    expectRuleValue('.fdoc-file-item', 'border-radius', 'var(--radius-middle)');
+    expectRuleValue('.fdoc-file-item::before', 'inset', '0');
+    expectRuleValue('.fdoc-file-item::before', 'border', 'var(--border-small) solid var(--border-base-light)');
+    expectRuleValue('.fdoc-file-item__line', 'gap', 'var(--space-16)');
+    expectRuleValue('.fdoc-file-item__right', 'gap', 'var(--space-8)');
+    expectRuleValue('.fdoc-file-item__message', 'overflow-wrap', 'anywhere');
+    expectRuleValue('.fdoc-file-item__message--warning', 'color', 'var(--text-warning-secondary)');
+    expectRuleValue('.fdoc-file-item__message--error', 'color', 'var(--text-error-secondary)');
+    expectRuleValue('.fdoc-file-item--message-warning .fdoc-file-item__leading--semantic', 'color', 'var(--icon-warning-secondary)');
+    expectRuleValue('.fdoc-file-item--message-error .fdoc-file-item__leading--semantic', 'color', 'var(--icon-error-secondary)');
   });
 
-  it('preserves FileRow additional content when file name is long', () => {
+  it('uses the same shared filled-file layout in SingleFileInput without rendering FileRow', () => {
+    const { queryByTestId, getByTestId } = render(
+      <SingleFileInput fileProps={{ fileName: 'document.pdf', weight: '2,7 МБ' }} />,
+    );
+    expect(getByTestId('single-file-input')).toHaveClass('fdoc-file-item');
+    expect(getByTestId('single-file-input')).toHaveClass('fdoc-single-file-input--filled');
+    expect(queryByTestId('file-row')).not.toBeInTheDocument();
+  });
+
+  it('preserves additional content when file name is long for both file components', () => {
     render(<FileRow fileName="Очень длинное название файла которое должно сокращаться.pdf" weight="2,7 МБ" />);
-    expectRuleValue('.fdoc-file-row__line > .fdoc-tooltip-anchor', 'flex', '1 1 0');
-    expectRuleValue('.fdoc-file-row__line > .fdoc-tooltip-anchor', 'width', '0px');
-    expectRuleValue('.fdoc-file-row__right', 'flex', '0 0 auto');
-    expectRuleValue('.fdoc-file-row__right', 'min-width', 'max-content');
-    expectRuleValue('.fdoc-file-row__additional', 'flex', '0 0 auto');
-    expectRuleValue('.fdoc-file-row__additional', 'white-space', 'nowrap');
+    expectRuleValue('.fdoc-file-item__line > .fdoc-tooltip-anchor', 'flex', '1 1 0');
+    expectRuleValue('.fdoc-file-item__line > .fdoc-tooltip-anchor', 'width', '0px');
+    expectRuleValue('.fdoc-file-item__right', 'flex', '0 0 auto');
+    expectRuleValue('.fdoc-file-item__right', 'min-width', 'max-content');
+    expectRuleValue('.fdoc-file-item__additional', 'flex', '0 0 auto');
+    expectRuleValue('.fdoc-file-item__additional', 'white-space', 'nowrap');
   });
 
   it('keeps the FileRow reorder insertion indicator from Figma', () => {
