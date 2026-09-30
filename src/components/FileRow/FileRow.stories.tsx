@@ -1,5 +1,9 @@
 import { Fragment, useState, type ComponentProps, type DragEvent } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Badge } from '../Badge/Badge';
+import { Button } from '../Button/Button';
+import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
+import { Chips } from '../Chips/Chips';
 import { Link } from '../Link/Link';
 import { FileRow } from './FileRow';
 
@@ -130,7 +134,7 @@ export const PreviewWithWarning: Story = {
 };
 export const WithoutLeading: Story = { args: { leading: false } };
 export const AdditionalText: Story = { args: { weight: undefined, additionalContent: 'Шаблон' } };
-export const AdditionalAction: Story = {
+export const AdditionalLink: Story = {
   args: {
     weight: undefined,
     leadingIcon: 'pencil-paper',
@@ -138,6 +142,59 @@ export const AdditionalAction: Story = {
       <Link href="#" size="medium" color="accent" decoration={null} disabled={disabled}>
         Заполнить
       </Link>
+    ),
+  },
+};
+export const AdditionalComponents: Story = {
+  render: args => (
+    <div style={{ display: 'grid', width: '100%', minWidth: 0, gap: 8 }}>
+      <FileRow {...args} weight={undefined} additionalContent="Шаблон" />
+      <FileRow
+        {...args}
+        weight={undefined}
+        additionalContent={({ disabled }) => (
+          <Link href="#" size="medium" color="accent" decoration={null} disabled={disabled}>Заполнить</Link>
+        )}
+      />
+      <FileRow
+        {...args}
+        weight={undefined}
+        additionalContent={({ disabled }) => (
+          <Button size="small" color="secondary" disabled={disabled}>Открыть</Button>
+        )}
+      />
+      <FileRow
+        {...args}
+        weight={undefined}
+        additionalContent={({ disabled }) => (
+          <ButtonIcon aria-label="Подробнее" icon="more-vertical" size="xsmall" color="neutral" disabled={disabled} />
+        )}
+      />
+      <FileRow {...args} weight={undefined} additionalContent={<Badge size="medium" color="secondary">PDF</Badge>} />
+      <FileRow
+        {...args}
+        weight={undefined}
+        additionalContent={({ disabled }) => (
+          <Chips text="На подпись" size="small" color="secondary" state={disabled ? 'disabled' : 'default'} />
+        )}
+      />
+    </div>
+  ),
+};
+export const TrailingCustomAction: Story = {
+  args: {
+    deletable: false,
+    trailingAction: ({ disabled }) => (
+      <ButtonIcon aria-label="Открыть действия файла" icon="more-vertical" size="xsmall" color="neutral" disabled={disabled} />
+    ),
+  },
+};
+export const LongFileNameWithChips: Story = {
+  args: {
+    fileName: 'Очень длинное название документа с приложениями и дополнительными материалами.pdf',
+    weight: undefined,
+    additionalContent: ({ disabled }) => (
+      <Chips text="Требует ознакомления" size="small" color="warning" state={disabled ? 'disabled' : 'default'} />
     ),
   },
 };
