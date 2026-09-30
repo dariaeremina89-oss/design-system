@@ -80,7 +80,8 @@
 }
 
 .fdoc-file-row__line > .fdoc-tooltip-anchor {
-  flex: 1 1 auto;
+  flex: 1 1 0;
+  width: 0;
   min-width: 0;
 }
 
@@ -99,23 +100,21 @@
 
 .fdoc-file-row__right {
   display: flex;
-  flex: 0 1 auto;
-  min-width: 0;
+  flex: 0 0 auto;
+  min-width: max-content;
   align-items: center;
   justify-content: flex-end;
   gap: var(--space-8);
 }
 
 .fdoc-file-row__additional {
-  min-width: 0;
-  max-width: 100%;
-  overflow: hidden;
+  flex: 0 0 auto;
+  min-width: max-content;
   color: var(--text-base-secondary);
   font-family: var(--page-body-family);
   font-size: var(--page-body-size);
   font-weight: var(--page-body-weight-base);
   line-height: var(--page-body-line-height);
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
