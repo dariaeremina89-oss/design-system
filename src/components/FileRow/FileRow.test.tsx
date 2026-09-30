@@ -47,7 +47,7 @@ describe('FileRow', () => {
 
   it('supports optional Leading without reserving its slot', () => {
     const { container } = render(<FileRow leading={false} />);
-    expect(container.querySelector('.fdoc-file-row__leading')).not.toBeInTheDocument();
+    expect(container.querySelector('.fdoc-file-item__leading')).not.toBeInTheDocument();
   });
 
   it('keeps Additional content independent from state and disables state-aware actions', () => {
