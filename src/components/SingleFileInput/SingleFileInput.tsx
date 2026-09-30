@@ -30,9 +30,6 @@ export interface SingleFileInputFileProps {
   onDelete?: () => void;
 }
 
-/** @deprecated Используйте SingleFileInputFileProps и prop fileProps. */
-export type SingleFileInputFileRowProps = SingleFileInputFileProps;
-
 export interface SingleFileInputProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   type?: SingleFileInputType;
   size?: SingleFileInputSize;
@@ -45,8 +42,6 @@ export interface SingleFileInputProps extends Omit<HTMLAttributes<HTMLDivElement
   file?: File | null;
   /** Настройка загруженного состояния SingleFileInput. */
   fileProps?: SingleFileInputFileProps;
-  /** @deprecated Используйте fileProps. */
-  fileRowProps?: SingleFileInputFileProps;
   onFileChange?: (file: File | null) => void;
 }
 
@@ -65,7 +60,6 @@ export function SingleFileInput({
   placeholder = 'Выберите файл',
   file,
   fileProps,
-  fileRowProps,
   onFileChange,
   className = '',
   ...props
@@ -74,7 +68,6 @@ export function SingleFileInput({
   const inputRef = useRef<HTMLInputElement>(null);
   const controlled = file !== undefined;
   const selectedFile = controlled ? file : internalFile;
-  const filledProps = fileProps ?? fileRowProps;
 
   if (type === 'skeleton') {
     return <Skeleton className={className} width="100%" height={48} shape="rounded" data-testid="single-file-input-skeleton" />;
@@ -82,24 +75,24 @@ export function SingleFileInput({
 
   const disabled = type === 'disabled';
   const invalid = validationMessage !== undefined && validationMessage !== null && validationMessage !== false && validationMessage !== '';
-  const hasFilledState = selectedFile !== null || !!filledProps?.fileName;
+  const hasFilledState = selectedFile !== null || !!fileProps?.fileName;
 
   if (hasFilledState) {
-    const fileName = filledProps?.fileName ?? selectedFile?.name ?? 'File name.png';
-    const weight = filledProps?.weight ?? (selectedFile ? formatFileSize(selectedFile.size) : undefined);
-    const fileDisabled = disabled || !!filledProps?.disabled;
-    const loading = filledProps?.state === 'loading';
-    const message = filledProps?.message ?? (invalid ? { type: 'error' as const, text: validationMessage } : undefined);
-    const deletable = filledProps?.deletable ?? true;
+    const fileName = fileProps?.fileName ?? selectedFile?.name ?? 'File name.png';
+    const weight = fileProps?.weight ?? (selectedFile ? formatFileSize(selectedFile.size) : undefined);
+    const fileDisabled = disabled || !!fileProps?.disabled;
+    const loading = fileProps?.state === 'loading';
+    const message = fileProps?.message ?? (invalid ? { type: 'error' as const, text: validationMessage } : undefined);
+    const deletable = fileProps?.deletable ?? true;
 
     const removeFile = () => {
-      filledProps?.onDelete?.();
+      fileProps?.onDelete?.();
       if (!controlled) setInternalFile(null);
       onFileChange?.(null);
     };
 
-    const trailingAction = filledProps?.trailingAction !== undefined
-      ? filledProps.trailingAction
+    const trailingAction = fileProps?.trailingAction !== undefined
+      ? fileProps.trailingAction
       : deletable
         ? (
           <Tooltip content="Удалить" placement="bottom" disabled={fileDisabled}>
@@ -122,12 +115,12 @@ export function SingleFileInput({
         {...props}
         fileName={fileName}
         weight={weight}
-        additionalContent={filledProps?.additionalContent}
+        additionalContent={fileProps?.additionalContent}
         trailingAction={trailingAction}
         message={message}
-        leading={filledProps?.leading}
-        leadingIcon={filledProps?.leadingIcon ?? 'doc-paper'}
-        preview={filledProps?.preview}
+        leading={fileProps?.leading}
+        leadingIcon={fileProps?.leadingIcon ?? 'doc-paper'}
+        preview={fileProps?.preview}
         loading={loading}
         disabled={fileDisabled}
         className={`fdoc-single-file-input fdoc-single-file-input--filled fdoc-single-file-input--${size} ${className}`}
