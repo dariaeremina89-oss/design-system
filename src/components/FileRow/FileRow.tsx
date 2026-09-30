@@ -1,36 +1,27 @@
-import {
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type DragEvent,
-  type HTMLAttributes,
-  type ReactNode,
-} from 'react';
+import { useState, type DragEvent, type HTMLAttributes, type ReactNode } from 'react';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
-import { Icon, type IconName } from '../Icon/Icon';
+import {
+  FileItemLayout,
+  resolveFileItemSlot,
+  type FileItemMessage,
+  type FileItemMessageType,
+  type FileItemSlot,
+  type FileItemSlotContext,
+} from '../FileItemLayout/FileItemLayout';
+import { type IconName } from '../Icon/Icon';
 import { type MenuItem } from '../Menu/Menu';
 import { Dropdown } from '../Menu/Dropdown';
-import { ProgressIndicator } from '../ProgressIndicator/ProgressIndicator';
 import { Skeleton } from '../Skeleton/Skeleton';
 import { Tooltip } from '../Tooltip/Tooltip';
 import './FileRow.css';
 
 /** `disabled` в state оставлен как совместимый алиас; для сочетаний используйте отдельный prop disabled. */
 export type FileRowState = 'default' | 'loading' | 'disabled' | 'skeleton';
-export type FileRowMessageType = 'error' | 'warning';
+export type FileRowMessageType = FileItemMessageType;
 export type FileRowReorderDirection = 'up' | 'down';
-
-export interface FileRowMessage {
-  type: FileRowMessageType;
-  text: ReactNode;
-}
-
-export interface FileRowSlotContext {
-  disabled: boolean;
-}
-
-export type FileRowSlot = ReactNode | ((context: FileRowSlotContext) => ReactNode);
+export type FileRowMessage = FileItemMessage;
+export type FileRowSlotContext = FileItemSlotContext;
+export type FileRowSlot = FileItemSlot;
 
 export interface FileRowProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'children' | 'draggable' | 'onDragStart' | 'onDragEnd'> {
@@ -66,34 +57,6 @@ export interface FileRowProps
   onReorderKey?: (direction: FileRowReorderDirection) => void;
 }
 
-function resolveSlot(slot: FileRowSlot | undefined, disabled: boolean) {
-  return typeof slot === 'function' ? slot({ disabled }) : slot;
-}
-
-function FileName({ fileName }: { fileName: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [truncated, setTruncated] = useState(false);
-
-  useLayoutEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-
-    const update = () => setTruncated(node.scrollWidth > node.clientWidth);
-    update();
-
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(update);
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [fileName]);
-
-  return (
-    <Tooltip content={fileName} placement="bottom" disabled={!truncated}>
-      <span ref={ref} className="fdoc-file-row__name">{fileName}</span>
-    </Tooltip>
-  );
-}
-
 export function FileRow({
   state = 'default',
   disabled: disabledProp = false,
@@ -118,49 +81,16 @@ export function FileRow({
   ...props
 }: FileRowProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const messageId = useId();
 
   if (state === 'skeleton') {
     return <Skeleton className={className} width="100%" height={48} shape="rounded" data-testid="file-row-skeleton" />;
   }
 
   const disabled = disabledProp || state === 'disabled';
-  const visualState = state === 'disabled' ? 'default' : state;
-  const loading = visualState === 'loading';
+  const loading = state === 'loading';
   const hasMenu = !!menuItems?.length;
-  const semanticIcon: IconName | undefined = message?.type === 'error'
-    ? 'filled/exclamation_circle_filled'
-    : message?.type === 'warning'
-      ? 'exclamation_triangle'
-      : undefined;
 
-  let leadingContent: ReactNode = null;
-  let leadingClassName = 'fdoc-file-row__leading';
-  if (leading !== false) {
-    if (loading) {
-      leadingContent = <ProgressIndicator type="circular" mode="indeterminate" size={20} variant="primary" duration={2000} />;
-    } else if (preview !== undefined) {
-      leadingContent = (
-        <span className="fdoc-file-row__preview">
-          {preview ?? <span className="fdoc-file-row__preview-placeholder" />}
-        </span>
-      );
-    } else if (leading !== undefined) {
-      leadingContent = leading;
-    } else {
-      leadingContent = <Icon name={semanticIcon ?? leadingIcon} size={24} />;
-      if (semanticIcon) leadingClassName += ' fdoc-file-row__leading--semantic';
-    }
-  }
-
-  const resolvedAdditional = additionalContent !== undefined
-    ? resolveSlot(additionalContent, disabled)
-    : weight
-      ? <span>{weight}</span>
-      : null;
-  const hasAdditional = resolvedAdditional !== null && resolvedAdditional !== undefined && resolvedAdditional !== false;
-
-  let resolvedTrailing = resolveSlot(trailingAction, disabled);
+  let resolvedTrailing = resolveFileItemSlot(trailingAction, disabled);
   if (trailingAction === undefined) {
     if (hasMenu) {
       resolvedTrailing = disabled ? (
@@ -210,68 +140,45 @@ export function FileRow({
       );
     }
   }
-  const hasTrailing = resolvedTrailing !== null && resolvedTrailing !== undefined && resolvedTrailing !== false;
 
-  const describedBy = [props['aria-describedby'], message ? messageId : undefined].filter(Boolean).join(' ') || undefined;
+  const reorderHandle = reorderable ? (
+    <ButtonIcon
+      aria-label={`Изменить порядок файла ${fileName}`}
+      aria-keyshortcuts="ArrowUp ArrowDown"
+      icon="drag-dot"
+      size="xsmall"
+      iconSize={24}
+      color="neutral"
+      disabled={disabled}
+      draggable={!disabled}
+      className="fdoc-file-row__drag fdoc-file-row__button-icon"
+      onDragStart={onReorderDragStart}
+      onDragEnd={onReorderDragEnd}
+      onKeyDown={event => {
+        if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+          event.preventDefault();
+          onReorderKey?.(event.key === 'ArrowUp' ? 'up' : 'down');
+        }
+      }}
+    />
+  ) : undefined;
 
   return (
-    <div
+    <FileItemLayout
       {...props}
-      role={props.role ?? 'group'}
-      aria-label={props['aria-label'] ?? fileName}
-      aria-describedby={describedBy}
-      aria-busy={loading || undefined}
-      aria-disabled={disabled || undefined}
-      className={`fdoc-file-row fdoc-file-row--${visualState} ${disabled ? 'fdoc-file-row--disabled' : ''} ${message ? `fdoc-file-row--message-${message.type}` : ''} ${reorderable ? 'fdoc-file-row--reorderable' : ''} ${className}`}
+      fileName={fileName}
+      weight={weight}
+      additionalContent={additionalContent}
+      trailingAction={resolvedTrailing}
+      message={message}
+      leading={leading}
+      leadingIcon={leadingIcon}
+      preview={preview}
+      loading={loading}
+      disabled={disabled}
+      beforeLeading={reorderHandle}
+      className={`fdoc-file-row ${reorderable ? 'fdoc-file-row--reorderable' : ''} ${className}`}
       data-testid="file-row"
-    >
-      {reorderable && (
-        <ButtonIcon
-          aria-label={`Изменить порядок файла ${fileName}`}
-          aria-keyshortcuts="ArrowUp ArrowDown"
-          icon="drag-dot"
-          size="xsmall"
-          iconSize={24}
-          color="neutral"
-          disabled={disabled}
-          draggable={!disabled}
-          className="fdoc-file-row__drag fdoc-file-row__button-icon"
-          onDragStart={onReorderDragStart}
-          onDragEnd={onReorderDragEnd}
-          onKeyDown={event => {
-            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-              event.preventDefault();
-              onReorderKey?.(event.key === 'ArrowUp' ? 'up' : 'down');
-            }
-          }}
-        />
-      )}
-
-      {leading !== false && leadingContent !== null && (
-        <span className={leadingClassName}>{leadingContent}</span>
-      )}
-
-      <div className="fdoc-file-row__content">
-        <div className="fdoc-file-row__line">
-          <FileName fileName={fileName} />
-          {(hasAdditional || hasTrailing) && (
-            <span className="fdoc-file-row__right">
-              {hasAdditional && <span className="fdoc-file-row__additional">{resolvedAdditional}</span>}
-              {hasTrailing && <span className="fdoc-file-row__trailing">{resolvedTrailing}</span>}
-            </span>
-          )}
-        </div>
-
-        {message && (
-          <span
-            id={messageId}
-            className={`fdoc-file-row__message fdoc-file-row__message--${message.type}`}
-            role={message.type === 'error' ? 'alert' : 'status'}
-          >
-            {message.text}
-          </span>
-        )}
-      </div>
-    </div>
+    />
   );
 }
