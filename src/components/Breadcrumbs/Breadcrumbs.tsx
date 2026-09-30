@@ -56,7 +56,7 @@ export function Breadcrumbs({
     const onChange = () => update();
     media.addEventListener?.('change', onChange);
     return () => media.removeEventListener?.('change', onChange);
-  }, []);
+  }, [items.length]);
 
   if (items.length < 2) return null;
 
