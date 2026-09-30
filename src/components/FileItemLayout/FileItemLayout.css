@@ -80,20 +80,32 @@
 
 .fdoc-file-item__right {
   display: flex;
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: auto;
-  min-width: max-content;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
   align-items: center;
   justify-content: flex-end;
   gap: var(--space-8);
 }
 
-.fdoc-file-item__additional {
-  flex-grow: 0;
+.fdoc-file-item__right--fixed {
   flex-shrink: 0;
-  flex-basis: auto;
   min-width: max-content;
+}
+
+.fdoc-file-item__additional {
+  display: flex;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  align-items: center;
+}
+
+.fdoc-file-item__additional > * {
+  max-width: 100%;
+}
+
+.fdoc-file-item__additional-text {
   color: var(--text-base-secondary);
   font-family: var(--page-body-family);
   font-size: var(--page-body-size);
@@ -148,7 +160,7 @@
 }
 
 .fdoc-file-item--disabled .fdoc-file-item__leading,
-.fdoc-file-item--disabled .fdoc-file-item__additional {
+.fdoc-file-item--disabled .fdoc-file-item__additional-text {
   color: var(--text-base-secondary-disabled);
 }
 
