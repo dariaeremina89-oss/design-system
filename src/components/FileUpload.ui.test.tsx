@@ -56,6 +56,16 @@ describe('File upload visual contract', () => {
     expectRuleValue('.fdoc-file-row--message-error .fdoc-file-row__leading--semantic', 'color', 'var(--icon-error-secondary)');
   });
 
+  it('preserves FileRow additional content when file name is long', () => {
+    render(<FileRow fileName="Очень длинное название файла которое должно сокращаться.pdf" weight="2,7 МБ" />);
+    expectRuleValue('.fdoc-file-row__line > .fdoc-tooltip-anchor', 'flex', '1 1 0');
+    expectRuleValue('.fdoc-file-row__line > .fdoc-tooltip-anchor', 'width', '0px');
+    expectRuleValue('.fdoc-file-row__right', 'flex', '0 0 auto');
+    expectRuleValue('.fdoc-file-row__right', 'min-width', 'max-content');
+    expectRuleValue('.fdoc-file-row__additional', 'flex', '0 0 auto');
+    expectRuleValue('.fdoc-file-row__additional', 'white-space', 'nowrap');
+  });
+
   it('keeps the FileRow reorder insertion indicator from Figma', () => {
     render(<FileRow />);
     expectRuleValue('.fdoc-file-row-drop-indicator', 'width', '100%');
