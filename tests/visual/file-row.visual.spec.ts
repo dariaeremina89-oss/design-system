@@ -1,15 +1,16 @@
 import { expect, test } from '@playwright/test';
 
-const storyUrl = '/iframe.html?id=components-elements-filerow--default&viewMode=story';
+const defaultStoryUrl = '/iframe.html?id=components-elements-filerow--default&viewMode=story';
+const chipsStoryUrl = '/iframe.html?id=components-elements-filerow--long-file-name-with-chips&viewMode=story';
 
 for (const width of [456, 320]) {
   test(`FileRow keeps filename and weight visible at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 400 });
-    await page.goto(storyUrl);
+    await page.goto(defaultStoryUrl);
 
     const row = page.getByTestId('file-row');
     const name = row.locator('.fdoc-file-item__name');
-    const weight = row.locator('.fdoc-file-item__additional');
+    const weight = row.locator('.fdoc-file-item__additional-text');
 
     await expect(row).toBeVisible();
     await expect(name).toBeVisible();
@@ -22,3 +23,19 @@ for (const width of [456, 320]) {
     expect(await row.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
   });
 }
+
+test('FileRow keeps long filename, Chips and trailing action inside a 320px row', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 400 });
+  await page.goto(chipsStoryUrl);
+
+  const row = page.getByTestId('file-row');
+  const name = row.locator('.fdoc-file-item__name');
+  const chips = row.getByTestId('chips');
+
+  await expect(row).toBeVisible();
+  await expect(name).toBeVisible();
+  await expect(chips).toBeVisible();
+  expect(await name.evaluate(element => element.getBoundingClientRect().width)).toBeGreaterThan(0);
+  expect(await row.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  expect(await chips.evaluate(element => element.getBoundingClientRect().right <= element.closest('.fdoc-file-item')!.getBoundingClientRect().right + 0.5)).toBe(true);
+});
