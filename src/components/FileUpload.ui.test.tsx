@@ -69,7 +69,7 @@ describe('File upload visual contract', () => {
     render(<FileRow fileName="Очень длинное название файла которое должно сокращаться.pdf" weight="2,7 МБ" />);
     expectRuleValue('.fdoc-file-item__line > .fdoc-tooltip-anchor', 'flex-grow', '1');
     expectRuleValue('.fdoc-file-item__line > .fdoc-tooltip-anchor', 'flex-shrink', '1');
-    expectRuleValue('.fdoc-file-item__line > .fdoc-tooltip-anchor', 'flex-basis', '0');
+    expectRuleValue('.fdoc-file-item__line > .fdoc-tooltip-anchor', 'flex-basis', '0px');
     expectRuleValue('.fdoc-file-item__line > .fdoc-tooltip-anchor', 'width', '0px');
     expectRuleValue('.fdoc-file-item__right', 'flex-grow', '0');
     expectRuleValue('.fdoc-file-item__right', 'flex-shrink', '0');
