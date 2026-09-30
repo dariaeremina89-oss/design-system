@@ -31,8 +31,9 @@ export interface SingleFileInputFileProps {
 }
 
 export interface SingleFileInputProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
-  type?: SingleFileInputType;
+  /** Desktop is desktop-first and automatically switches to the mobile action below 456px container width. */
   size?: SingleFileInputSize;
+  type?: SingleFileInputType;
   /** Ошибка валидации. Наличие сообщения включает Error-оформление. */
   validationMessage?: ReactNode;
   accept?: string;
@@ -166,11 +167,12 @@ export function SingleFileInput({
       </span>
       {!disabled && (
         <span className="fdoc-single-file-input__pick">
-          {size === 'mobile' ? (
-            <ButtonIcon aria-label={buttonText} icon="plus" size="small" color="primary" onClick={openPicker} />
-          ) : (
+          <span className="fdoc-single-file-input__pick-desktop">
             <Button size="small" color="primary" onClick={openPicker}>{buttonText}</Button>
-          )}
+          </span>
+          <span className="fdoc-single-file-input__pick-mobile">
+            <ButtonIcon aria-label={buttonText} icon="plus" size="small" color="primary" onClick={openPicker} />
+          </span>
         </span>
       )}
     </div>
