@@ -23,7 +23,7 @@ describe('SingleFileInput', () => {
     click.mockRestore();
   });
 
-  it('switches from the picker to FileRow after selecting a file', () => {
+  it('keeps SingleFileInput as the component after selecting a file and reuses shared file-item layout', () => {
     const onFileChange = vi.fn();
     const { container } = render(<SingleFileInput onFileChange={onFileChange} />);
     const input = container.querySelector('input[type="file"]') as HTMLInputElement;
@@ -32,13 +32,17 @@ describe('SingleFileInput', () => {
     fireEvent.change(input, { target: { files: [file] } });
 
     expect(onFileChange).toHaveBeenCalledWith(file);
-    expect(screen.getByTestId('file-row')).toBeInTheDocument();
+    const root = screen.getByTestId('single-file-input');
+    expect(root).toHaveClass('fdoc-single-file-input--filled');
+    expect(root).toHaveClass('fdoc-file-item');
+    expect(root).not.toHaveClass('fdoc-file-row');
+    expect(screen.queryByTestId('file-row')).not.toBeInTheDocument();
     expect(screen.getByText('document.pdf')).toBeInTheDocument();
     expect(screen.getByText('7 Б')).toBeInTheDocument();
     expect(screen.queryByText('Выберите файл')).not.toBeInTheDocument();
   });
 
-  it('clears an uncontrolled selected file through the FileRow delete action', () => {
+  it('clears an uncontrolled selected file through SingleFileInput delete logic', () => {
     const onFileChange = vi.fn();
     const { container } = render(<SingleFileInput onFileChange={onFileChange} />);
     const input = container.querySelector('input[type="file"]') as HTMLInputElement;
@@ -49,44 +53,67 @@ describe('SingleFileInput', () => {
 
     expect(onFileChange).toHaveBeenLastCalledWith(null);
     expect(screen.getByText('Выберите файл')).toBeInTheDocument();
-    expect(screen.queryByTestId('file-row')).not.toBeInTheDocument();
+    expect(screen.getByTestId('single-file-input')).toHaveClass('fdoc-single-file-input--empty');
   });
 
-  it('uses FileRow Loading for the selected-file loading state', () => {
+  it('uses its own loaded-state props with the shared loading visual', () => {
     render(
       <SingleFileInput
-        fileRowProps={{ fileName: 'document.pdf', weight: '2,7 МБ', state: 'loading' }}
+        fileProps={{ fileName: 'document.pdf', weight: '2,7 МБ', state: 'loading' }}
       />,
     );
 
     expect(screen.getByRole('progressbar', { name: 'Загрузка' })).toBeInTheDocument();
     expect(screen.getByText('document.pdf')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Удалить файл document.pdf' })).toBeInTheDocument();
+    expect(screen.getByTestId('single-file-input')).toHaveAttribute('aria-busy', 'true');
   });
 
-  it('combines a selected FileRow with Disabled', () => {
+  it('combines its loaded state with Disabled', () => {
     render(
       <SingleFileInput
         type="disabled"
-        fileRowProps={{ fileName: 'document.pdf', weight: '2,7 МБ', state: 'loading' }}
+        fileProps={{ fileName: 'document.pdf', weight: '2,7 МБ', state: 'loading' }}
       />,
     );
 
     expect(screen.getByRole('progressbar', { name: 'Загрузка' })).toBeInTheDocument();
-    expect(screen.getByTestId('file-row')).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByTestId('single-file-input')).toHaveAttribute('aria-disabled', 'true');
     expect(screen.getByRole('button', { name: 'Удалить файл document.pdf' })).toBeDisabled();
   });
 
-  it('maps a selected-file validation message to FileRow Message', () => {
+  it('maps selected-file validation to the shared Message anatomy without becoming FileRow', () => {
     render(
       <SingleFileInput
         validationMessage="Ошибка файла"
-        fileRowProps={{ fileName: 'document.pdf', weight: '2,7 МБ' }}
+        fileProps={{ fileName: 'document.pdf', weight: '2,7 МБ' }}
       />,
     );
 
     expect(screen.getByRole('alert')).toHaveTextContent('Ошибка файла');
     expect(document.querySelector('[data-icon="filled/exclamation_circle_filled"]')).toBeInTheDocument();
+    expect(screen.queryByTestId('file-row')).not.toBeInTheDocument();
+  });
+
+  it('keeps weight visible as non-shrinking additional content for a long filename', () => {
+    render(
+      <SingleFileInput
+        fileProps={{
+          fileName: 'Очень длинное название файла которое должно сокращаться многоточием.pdf',
+          weight: '2,7 МБ',
+        }}
+      />,
+    );
+
+    expect(screen.getByText('2,7 МБ')).toBeInTheDocument();
+    expect(screen.getByText('2,7 МБ').closest('.fdoc-file-item__additional')).toBeInTheDocument();
+  });
+
+  it('keeps fileRowProps as a backward-compatible alias only', () => {
+    render(<SingleFileInput fileRowProps={{ fileName: 'legacy.pdf', weight: '1 МБ' }} />);
+    expect(screen.getByText('legacy.pdf')).toBeInTheDocument();
+    expect(screen.getByText('1 МБ')).toBeInTheDocument();
+    expect(screen.queryByTestId('file-row')).not.toBeInTheDocument();
   });
 
   it('shows validation content and semantic icon in the empty state', () => {
@@ -96,7 +123,7 @@ describe('SingleFileInput', () => {
     expect(document.querySelector('[data-icon="filled/exclamation_circle_filled"]')).toBeInTheDocument();
   });
 
-  it('keeps disabled validation anatomy and does not render the upload button', () => {
+  it('keeps disabled empty validation anatomy and does not render the upload button', () => {
     render(<SingleFileInput type="disabled" validationMessage="Ошибка файла" />);
     expect(screen.getByText('Загрузка файлов недоступна')).toBeInTheDocument();
     expect(screen.getByText('Ошибка файла')).toBeInTheDocument();
