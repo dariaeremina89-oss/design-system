@@ -1,5 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
+import { Chips } from '../Chips/Chips';
 import { Link } from '../Link/Link';
 import { FileRow } from './FileRow';
 
@@ -61,6 +63,42 @@ describe('FileRow', () => {
       />,
     );
     expect(screen.getByRole('link', { name: 'Заполнить' })).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('accepts Chips and other child components without turning them into FileRow text', () => {
+    render(
+      <FileRow
+        fileName="Договор.pdf"
+        additionalContent={({ disabled }) => (
+          <Chips text="На подпись" interactive state={disabled ? 'disabled' : 'default'} />
+        )}
+        trailingAction={({ disabled }) => (
+          <ButtonIcon aria-label="Открыть действия файла" icon="more-vertical" size="xsmall" color="neutral" disabled={disabled} />
+        )}
+      />,
+    );
+
+    expect(screen.getByTestId('chips')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'На подпись' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Открыть действия файла' })).toBeEnabled();
+    expect(screen.getByTestId('chips').closest('.fdoc-file-item__additional')).toBeInTheDocument();
+  });
+
+  it('passes Disabled to arbitrary interactive child slots', () => {
+    render(
+      <FileRow
+        disabled
+        additionalContent={({ disabled }) => (
+          <Chips text="На подпись" interactive state={disabled ? 'disabled' : 'default'} />
+        )}
+        trailingAction={({ disabled }) => (
+          <ButtonIcon aria-label="Открыть действия файла" icon="more-vertical" size="xsmall" color="neutral" disabled={disabled} />
+        )}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'На подпись' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Открыть действия файла' })).toBeDisabled();
   });
 
   it('drags only by the reorder handle and supports keyboard reorder', () => {
