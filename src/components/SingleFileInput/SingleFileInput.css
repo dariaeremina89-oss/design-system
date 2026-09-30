@@ -1,4 +1,4 @@
-.fdoc-single-file-input {
+.fdoc-single-file-input--empty {
   box-sizing: border-box;
   position: relative;
   display: flex;
@@ -14,7 +14,7 @@
   color: var(--text-base-secondary);
 }
 
-.fdoc-single-file-input::before {
+.fdoc-single-file-input--empty::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -24,11 +24,11 @@
   pointer-events: none;
 }
 
-.fdoc-single-file-input--validation-error {
+.fdoc-single-file-input--empty.fdoc-single-file-input--validation-error {
   align-items: flex-start;
 }
 
-.fdoc-single-file-input--validation-error:not(.fdoc-single-file-input--disabled) {
+.fdoc-single-file-input--empty.fdoc-single-file-input--validation-error:not(.fdoc-single-file-input--disabled) {
   color: var(--text-base-default);
 }
 
@@ -50,7 +50,7 @@
   color: var(--icon-base-secondary);
 }
 
-.fdoc-single-file-input--validation-error:not(.fdoc-single-file-input--disabled) .fdoc-single-file-input__icon {
+.fdoc-single-file-input--empty.fdoc-single-file-input--validation-error:not(.fdoc-single-file-input--disabled) .fdoc-single-file-input__icon {
   color: var(--icon-error-secondary);
 }
 
@@ -94,23 +94,27 @@
   flex: 0 0 auto;
 }
 
-.fdoc-single-file-input--disabled {
+.fdoc-single-file-input--empty.fdoc-single-file-input--disabled {
   color: var(--text-base-secondary-disabled);
 }
 
-.fdoc-single-file-input--disabled .fdoc-single-file-input__icon {
+.fdoc-single-file-input--empty.fdoc-single-file-input--disabled .fdoc-single-file-input__icon {
   color: var(--icon-base-secondary-disabled);
 }
 
-.fdoc-single-file-input--disabled.fdoc-single-file-input--validation-error .fdoc-single-file-input__icon {
+.fdoc-single-file-input--empty.fdoc-single-file-input--disabled.fdoc-single-file-input--validation-error .fdoc-single-file-input__icon {
   color: var(--icon-error-secondary-disabled);
 }
 
-.fdoc-single-file-input--disabled .fdoc-single-file-input__validation-message {
+.fdoc-single-file-input--empty.fdoc-single-file-input--disabled .fdoc-single-file-input__validation-message {
   color: var(--text-error-secondary-disabled);
 }
 
 .fdoc-single-file-input--mobile .fdoc-single-file-input__pick {
   width: 32px;
   height: 32px;
+}
+
+.fdoc-single-file-input__delete {
+  --fdoc-button-icon-padding: 0px;
 }
