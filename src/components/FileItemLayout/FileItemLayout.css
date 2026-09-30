@@ -52,7 +52,9 @@
 }
 
 .fdoc-file-item__line > .fdoc-tooltip-anchor {
-  flex: 1 1 0;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0;
   width: 0;
   min-width: 0;
 }
@@ -72,7 +74,9 @@
 
 .fdoc-file-item__right {
   display: flex;
-  flex: 0 0 auto;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
   min-width: max-content;
   align-items: center;
   justify-content: flex-end;
@@ -80,7 +84,9 @@
 }
 
 .fdoc-file-item__additional {
-  flex: 0 0 auto;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
   min-width: max-content;
   color: var(--text-base-secondary);
   font-family: var(--page-body-family);
