@@ -65,12 +65,14 @@ describe('File upload visual contract', () => {
     expect(queryByTestId('file-row')).not.toBeInTheDocument();
   });
 
-  it('preserves additional content when file name is long for both file components', () => {
+  it('preserves the filename and additional content when space is limited', () => {
     render(<FileRow fileName="Очень длинное название файла которое должно сокращаться.pdf" weight="2,7 МБ" />);
-    expectRuleValue('.fdoc-file-item__line > .fdoc-tooltip-anchor', 'flex-grow', '1');
-    expectRuleValue('.fdoc-file-item__line > .fdoc-tooltip-anchor', 'flex-shrink', '1');
-    expectRuleValue('.fdoc-file-item__line > .fdoc-tooltip-anchor', 'flex-basis', '0px');
-    expectRuleValue('.fdoc-file-item__line > .fdoc-tooltip-anchor', 'width', '0px');
+    expectRuleValue('.fdoc-file-item__name-slot', 'flex-grow', '1');
+    expectRuleValue('.fdoc-file-item__name-slot', 'flex-shrink', '1');
+    expectRuleValue('.fdoc-file-item__name-slot', 'flex-basis', '0px');
+    expectRuleValue('.fdoc-file-item__name-slot', 'min-width', '0px');
+    expectRuleValue('.fdoc-file-item__name-slot > .fdoc-tooltip-anchor', 'width', '100%');
+    expectRuleValue('.fdoc-file-item__name-slot > .fdoc-tooltip-anchor', 'min-width', '0px');
     expectRuleValue('.fdoc-file-item__right', 'flex-grow', '0');
     expectRuleValue('.fdoc-file-item__right', 'flex-shrink', '0');
     expectRuleValue('.fdoc-file-item__right', 'min-width', 'max-content');
