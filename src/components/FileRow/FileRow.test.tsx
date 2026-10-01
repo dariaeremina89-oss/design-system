@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { Badge } from '../Badge/Badge';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { Chips } from '../Chips/Chips';
 import { Link } from '../Link/Link';
@@ -65,12 +66,43 @@ describe('FileRow', () => {
     expect(screen.getByRole('link', { name: 'Заполнить' })).toHaveAttribute('aria-disabled', 'true');
   });
 
-  it('accepts Chips and other child components without turning them into FileRow text', () => {
+  it('keeps Badge and Chips as their own components inside Additional content', () => {
+    const { rerender } = render(
+      <FileRow
+        fileName="Договор.pdf"
+        additionalContent={({ disabled }) => (
+          <Badge size="medium" color="secondary" state={disabled ? 'disabled' : 'default'} text="PDF" />
+        )}
+      />,
+    );
+
+    const badge = screen.getByTestId('badge');
+    expect(badge).toHaveAttribute('data-badge-size', 'medium');
+    expect(badge).toHaveAttribute('data-badge-state', 'default');
+    expect(badge.closest('.fdoc-file-item__additional')).toBeInTheDocument();
+
+    rerender(
+      <FileRow
+        disabled
+        fileName="Договор.pdf"
+        additionalContent={({ disabled }) => (
+          <Chips text="На подпись" size="small" color="secondary" disabled={disabled} interactive />
+        )}
+      />,
+    );
+
+    const chips = screen.getByTestId('chips');
+    expect(chips).toHaveClass('fdoc-chips--small');
+    expect(screen.getByRole('button', { name: 'На подпись' })).toBeDisabled();
+    expect(chips.closest('.fdoc-file-item__additional')).toBeInTheDocument();
+  });
+
+  it('accepts arbitrary child components in Additional and Trailing slots', () => {
     render(
       <FileRow
         fileName="Договор.pdf"
         additionalContent={({ disabled }) => (
-          <Chips text="На подпись" interactive state={disabled ? 'disabled' : 'default'} />
+          <Chips text="На подпись" interactive disabled={disabled} />
         )}
         trailingAction={({ disabled }) => (
           <ButtonIcon aria-label="Открыть действия файла" icon="more-vertical" size="xsmall" color="neutral" disabled={disabled} />
@@ -78,38 +110,49 @@ describe('FileRow', () => {
       />,
     );
 
-    expect(screen.getByTestId('chips')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'На подпись' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Открыть действия файла' })).toBeEnabled();
-    expect(screen.getByTestId('chips').closest('.fdoc-file-item__additional')).toBeInTheDocument();
   });
 
-  it('passes Disabled to arbitrary interactive child slots', () => {
-    render(
+  it('drags only by the reorder handle, uses the whole row as drag image and supports keyboard reorder', () => {
+    const onReorderKey = vi.fn();
+    const onReorderDragStart = vi.fn();
+    const onReorderDragEnd = vi.fn();
+    const setDragImage = vi.fn();
+    const setData = vi.fn();
+    const dataTransfer = {
+      effectAllowed: 'none',
+      setDragImage,
+      setData,
+    } as unknown as DataTransfer;
+
+    const { container } = render(
       <FileRow
-        disabled
-        additionalContent={({ disabled }) => (
-          <Chips text="На подпись" interactive state={disabled ? 'disabled' : 'default'} />
-        )}
-        trailingAction={({ disabled }) => (
-          <ButtonIcon aria-label="Открыть действия файла" icon="more-vertical" size="xsmall" color="neutral" disabled={disabled} />
-        )}
+        fileName="Договор.pdf"
+        reorderable
+        onReorderKey={onReorderKey}
+        onReorderDragStart={onReorderDragStart}
+        onReorderDragEnd={onReorderDragEnd}
       />,
     );
-
-    expect(screen.getByRole('button', { name: 'На подпись' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Открыть действия файла' })).toBeDisabled();
-  });
-
-  it('drags only by the reorder handle and supports keyboard reorder', () => {
-    const onReorderKey = vi.fn();
-    const { container } = render(<FileRow fileName="Договор.pdf" reorderable onReorderKey={onReorderKey} />);
     const row = screen.getByTestId('file-row');
-    const handle = screen.getByRole('button', { name: 'Изменить порядок файла Договор.pdf' });
+    const handle = screen.getByTestId('file-row-reorder-handle');
 
     expect(row).not.toHaveAttribute('draggable', 'true');
     expect(handle).toHaveAttribute('draggable', 'true');
     expect(handle).toHaveAttribute('aria-keyshortcuts', 'ArrowUp ArrowDown');
+
+    fireEvent.dragStart(handle, { dataTransfer, clientX: 10, clientY: 10 });
+    expect(setDragImage).toHaveBeenCalledOnce();
+    expect(setDragImage.mock.calls[0][0]).toHaveClass('fdoc-file-row__drag-preview');
+    expect(setData).toHaveBeenCalledWith('text/plain', 'Договор.pdf');
+    expect(onReorderDragStart).toHaveBeenCalledOnce();
+    expect(row).toHaveAttribute('data-file-row-dragging', 'true');
+
+    fireEvent.dragEnd(handle, { dataTransfer });
+    expect(onReorderDragEnd).toHaveBeenCalledOnce();
+    expect(row).not.toHaveAttribute('data-file-row-dragging');
+
     fireEvent.keyDown(handle, { key: 'ArrowUp' });
     fireEvent.keyDown(handle, { key: 'ArrowDown' });
     expect(onReorderKey).toHaveBeenNthCalledWith(1, 'up');
@@ -119,7 +162,7 @@ describe('FileRow', () => {
 
   it('disables reorder and standard actions independently from row content', () => {
     render(<FileRow disabled fileName="Договор.pdf" reorderable deletable />);
-    expect(screen.getByRole('button', { name: 'Изменить порядок файла Договор.pdf' })).toBeDisabled();
+    expect(screen.getByTestId('file-row-reorder-handle')).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Удалить файл Договор.pdf' })).toBeDisabled();
   });
 
