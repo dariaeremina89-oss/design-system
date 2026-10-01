@@ -109,7 +109,11 @@ const meta = {
       options: ['default', 'loading', 'disabled', 'skeleton'],
     },
   },
-  decorators: [Story => <div style={{ width: '100%', minWidth: 0 }}><Story /></div>],
+  decorators: [Story => (
+    <div style={{ width: 'min(456px, calc(100vw - 32px))', maxWidth: '100%', minWidth: 0 }}>
+      <Story />
+    </div>
+  )],
 } satisfies Meta<typeof FileRow>;
 
 export default meta;
