@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ChipsGroup } from './ChipsGroup';
 import { chipsGroupDocs } from '../../docs/chips';
+import { qualityDocs } from '../../docs/quality';
 const options=[{value:'all',text:'Все документы'},{value:'waiting',text:'Ожидают подписи'},{value:'signed',text:'Подписанные'},{value:'archive',text:'Архив',disabled:true}];
-const meta={title:'Components/Selection/ChipsGroup',component:ChipsGroup,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:chipsGroupDocs}}},args:{options,defaultValue:['signed'],selectionMode:'multiple','aria-label':'Статусы документов'},argTypes:{selectionMode:{control:'radio',options:['single','multiple']},color:{control:'radio',options:['secondary','base']},size:{control:'radio',options:['small','medium']},shape:{control:'radio',options:['round','square']},onValueChange:{action:'selection changed'}}} satisfies Meta<typeof ChipsGroup>;
+const meta={title:'Components/Selection/ChipsGroup',component:ChipsGroup,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:chipsGroupDocs+qualityDocs('ChipsGroup')}}},args:{options,defaultValue:['signed'],selectionMode:'multiple','aria-label':'Статусы документов'},argTypes:{options:{control:'object'},selectionMode:{control:'radio',options:['single','multiple']},color:{control:'radio',options:['secondary','base']},size:{control:'radio',options:['small','medium']},shape:{control:'radio',options:['round','square']},disabled:{control:'boolean'},isLoading:{control:'boolean'},onValueChange:{action:'selection changed'}}} satisfies Meta<typeof ChipsGroup>;
 export default meta;type Story=StoryObj<typeof meta>;
 export const Default:Story={};
 export const SingleSelection:Story={args:{selectionMode:'single',defaultValue:['all']}};
