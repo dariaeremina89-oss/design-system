@@ -3,10 +3,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Chips, type ChipsColor, type ChipsState } from './Chips';
 import { iconNames } from '../Icon/Icon';
 import { chipsDocs } from '../../docs/chips';
+import { qualityDocs } from '../../docs/quality';
 
 const colors:ChipsColor[]=['secondary','base','primary','success','accent','warning','error','inverse'];
 const states:ChipsState[]=['default','hover','pressed','focused','disabled','skeleton'];
-const meta={title:'Components/Selection/Chips',component:Chips,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:chipsDocs}}},args:{text:'Chips',color:'secondary',size:'medium',shape:'round',state:'default'},argTypes:{color:{control:'select',options:colors},size:{control:'radio',options:['small','medium']},shape:{control:'radio',options:['round','square']},state:{control:'select',options:states},iconLeft:{control:'select',options:[undefined,...iconNames]},iconRight:{control:'select',options:[undefined,...iconNames]},selected:{control:'boolean'},defaultSelected:{control:'boolean'},interactive:{control:'boolean'},onClick:{control:false},onSelectedChange:{control:false},onRemove:{control:false}}} satisfies Meta<typeof Chips>;
+const meta={title:'Components/Selection/Chips',component:Chips,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:chipsDocs+qualityDocs('Chips')}}},args:{text:'Chips',color:'secondary',size:'medium',shape:'round',state:'default'},argTypes:{color:{control:'select',options:colors},size:{control:'radio',options:['small','medium']},shape:{control:'radio',options:['round','square']},state:{control:'select',options:states},iconLeft:{control:'select',options:[undefined,...iconNames]},iconRight:{control:'select',options:[undefined,...iconNames]},selected:{control:'boolean'},defaultSelected:{control:'boolean'},interactive:{control:'boolean'},onClick:{control:false},onSelectedChange:{control:false},onRemove:{control:false}}} satisfies Meta<typeof Chips>;
 export default meta;
 type Story=StoryObj<typeof meta>;
 export const Default:Story={};
