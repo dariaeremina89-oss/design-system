@@ -95,7 +95,7 @@ export function FileItemLayout({
 
   if (leading !== false) {
     if (loading) {
-      leadingContent = <ProgressIndicator type="circular" mode="indeterminate" size={20} variant="primary" duration={2000} />;
+      leadingContent = <ProgressIndicator type="circular" mode="indeterminate" size={20} variant="primary" />;
     } else if (preview !== undefined) {
       leadingContent = (
         <span className="fdoc-file-item__preview">
