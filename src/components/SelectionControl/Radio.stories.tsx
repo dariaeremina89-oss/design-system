@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Radio } from './SelectionControl';
 import { componentDocs } from '../../docs/bulk-components';
-const meta={title:'Components/Selection/Radio',component:Radio,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('Radio')}}},args:{label:'Получать уведомления',description:'Сообщения о новых документах'},argTypes:{state:{control:'select',options:['default','hover','focused','pressed','disabled','skeleton']},checked:{control:'boolean'},disabled:{control:'boolean'},error:{control:'boolean'}}} satisfies Meta<typeof Radio>;
+import { qualityDocs } from '../../docs/quality';
+const meta={title:'Components/Selection/Radio',component:Radio,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('Radio')+qualityDocs('Radio')}}},args:{label:'Получать уведомления',description:'Сообщения о новых документах'},argTypes:{state:{control:'select',options:['default','hover','focused','pressed','disabled','skeleton']},checked:{control:'boolean'},disabled:{control:'boolean'},error:{control:'boolean'}}} satisfies Meta<typeof Radio>;
 export default meta;type Story=StoryObj<typeof meta>;
 export const Default:Story={};
 export const Control:Story={args:{label:undefined,description:undefined,'aria-label':'Выбрать документ'}};
