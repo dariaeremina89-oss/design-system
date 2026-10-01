@@ -1,10 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { dropzoneDocs } from '../../docs/file-upload';
 import { Dropzone } from './Dropzone';
 
 const meta = {
   title: 'Components/Inputs/Dropzone',
   component: Dropzone,
   tags: ['autodocs', 'ready'],
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component: dropzoneDocs } },
+  },
   args: {
     state: 'default',
     align: 'left',
@@ -16,6 +21,19 @@ const meta = {
   argTypes: {
     state: { control: 'select', options: ['default', 'hover', 'focused', 'pressed', 'disabled', 'error', 'success', 'skeleton'] },
     align: { control: 'select', options: ['left', 'center'] },
+    formats: { control: 'text' },
+    maxQuantity: { control: 'number' },
+    maxFileSize: { control: 'text' },
+    maxTotalSize: { control: 'text' },
+    currentQuantity: { control: 'number' },
+    currentTotalSize: { control: 'text' },
+    showFormats: { control: 'boolean' },
+    showMaxQuantity: { control: 'boolean' },
+    showMaxFileSize: { control: 'boolean' },
+    showMaxTotalSize: { control: 'boolean' },
+    multiple: { control: 'boolean' },
+    onFiles: { action: 'files' },
+    onValidationError: { action: 'validationError' },
   },
   decorators: [Story => <div style={{ width: 456, maxWidth: '100%' }}><Story /></div>],
 } satisfies Meta<typeof Dropzone>;
