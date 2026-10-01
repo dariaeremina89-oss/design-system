@@ -74,8 +74,16 @@
   transform-origin: center;
 }
 
+/* MUI-style indeterminate motion: the ring rotates while the visible arc grows and shrinks. */
+.fdoc-progress--circular.fdoc-progress--indeterminate .fdoc-progress__circular-svg {
+  transform-origin: center;
+  animation: fdoc-progress-circular-rotate var(--fdoc-progress-duration) var(--fdoc-progress-animation) infinite;
+}
+
 .fdoc-progress--circular.fdoc-progress--indeterminate .fdoc-progress__indicator {
-  animation: fdoc-progress-circular-indeterminate var(--fdoc-progress-duration) var(--fdoc-progress-animation) infinite;
+  stroke-dasharray: var(--fdoc-progress-dash-initial) var(--fdoc-progress-dash-gap);
+  stroke-dashoffset: 0;
+  animation: fdoc-progress-circular-dash var(--fdoc-progress-duration) ease-in-out infinite;
 }
 
 /* Figma Secondary: light track and dark indicator. */
@@ -96,13 +104,30 @@
   100% { transform: translateX(179.17%); }
 }
 
-@keyframes fdoc-progress-circular-indeterminate {
-  from { transform: rotate(-360deg); }
-  to { transform: rotate(0deg); }
+@keyframes fdoc-progress-circular-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fdoc-progress-circular-dash {
+  0% {
+    stroke-dasharray: 1px var(--fdoc-progress-dash-gap);
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: var(--fdoc-progress-dash-long) var(--fdoc-progress-dash-gap);
+    stroke-dashoffset: var(--fdoc-progress-dash-mid-offset);
+  }
+  100% {
+    stroke-dasharray: 1px var(--fdoc-progress-dash-gap);
+    stroke-dashoffset: var(--fdoc-progress-dash-end-offset);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fdoc-progress--indeterminate .fdoc-progress__indicator {
+  .fdoc-progress--linear.fdoc-progress--indeterminate .fdoc-progress__indicator,
+  .fdoc-progress--circular.fdoc-progress--indeterminate .fdoc-progress__circular-svg,
+  .fdoc-progress--circular.fdoc-progress--indeterminate .fdoc-progress__indicator {
     animation: none;
   }
 }
