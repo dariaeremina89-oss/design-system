@@ -2,8 +2,9 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { Pagination,type PaginationProps,ButtonPagination } from './Pagination';
 import { componentDocs } from '../../docs/bulk-components';
+import { qualityDocs } from '../../docs/quality';
 function Example(args:PaginationProps){const [page,setPage]=useState(args.page);return <Pagination {...args} page={page} onChangePage={setPage}/>;}
-const meta={title:'Components/Navigation/Pagination',component:Pagination,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('Pagination')}}},args:{totalElements:400,size:10,page:1},argTypes:{direction:{control:'radio',options:['horizontal','vertical']},color:{control:'radio',options:['base','inverse']}}} satisfies Meta<typeof Pagination>;
+const meta={title:'Components/Navigation/Pagination',component:Pagination,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('Pagination')+qualityDocs('Pagination')}}},args:{totalElements:400,size:10,page:1},argTypes:{totalElements:{control:'number'},size:{control:'number'},page:{control:'number'},direction:{control:'radio',options:['horizontal','vertical']},color:{control:'radio',options:['base','inverse']},isLoading:{control:'boolean'},onChangePage:{action:'changePage'}}} satisfies Meta<typeof Pagination>;
 export default meta;type Story=StoryObj<typeof meta>;
 export const Default:Story={};
 export const Interactive:Story={render:args=><Example {...args}/>};
