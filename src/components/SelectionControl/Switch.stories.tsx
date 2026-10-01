@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Switch } from './SelectionControl';
 import { componentDocs } from '../../docs/bulk-components';
-const meta={title:'Components/Selection/Switch',component:Switch,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('Switch')}}},args:{label:'Получать уведомления',description:'Сообщения о новых документах'},argTypes:{state:{control:'select',options:['default','hover','focused','pressed','disabled','skeleton']},checked:{control:'boolean'},disabled:{control:'boolean'},error:{control:'boolean'}}} satisfies Meta<typeof Switch>;
+import { qualityDocs } from '../../docs/quality';
+const meta={title:'Components/Selection/Switch',component:Switch,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('Switch')+qualityDocs('Switch')}}},args:{label:'Получать уведомления',description:'Сообщения о новых документах'},argTypes:{state:{control:'select',options:['default','hover','focused','pressed','disabled','skeleton']},checked:{control:'boolean'},disabled:{control:'boolean'},error:{control:'boolean'}}} satisfies Meta<typeof Switch>;
 export default meta;type Story=StoryObj<typeof meta>;
 export const Default:Story={};
 export const Control:Story={args:{label:undefined,description:undefined,'aria-label':'Выбрать документ'}};
