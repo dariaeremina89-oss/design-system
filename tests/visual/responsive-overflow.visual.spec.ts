@@ -40,45 +40,97 @@ for (let shard = 0; shard < SHARD_COUNT; shard += 1) {
         continue;
       }
 
-      const overflow = await page.evaluate(() => {
+      const audit = await page.evaluate(() => {
         const viewportWidth = window.innerWidth;
         const documentWidth = Math.max(
           document.documentElement.scrollWidth,
           document.body?.scrollWidth ?? 0,
         );
 
-        if (documentWidth <= viewportWidth + 1) {
-          return null;
-        }
+        const overflow = documentWidth > viewportWidth + 1
+          ? Array.from(document.querySelectorAll<HTMLElement>('body *'))
+              .filter(element => {
+                const style = getComputedStyle(element);
+                const rect = element.getBoundingClientRect();
+                return (
+                  style.display !== 'none' &&
+                  style.visibility !== 'hidden' &&
+                  rect.width > 0 &&
+                  (rect.right > viewportWidth + 1 || rect.left < -1)
+                );
+              })
+              .slice(0, 5)
+              .map(element => {
+                const rect = element.getBoundingClientRect();
+                const name = element.className
+                  ? `${element.tagName.toLowerCase()}.${String(element.className).trim().replace(/\s+/g, '.')}`
+                  : element.tagName.toLowerCase();
+                return `${name} [left=${Math.round(rect.left)}, right=${Math.round(rect.right)}, width=${Math.round(rect.width)}]`;
+              })
+          : [];
 
-        const offenders = Array.from(document.querySelectorAll<HTMLElement>('body *'))
-          .filter(element => {
-            const style = getComputedStyle(element);
+        const isFixedDimension = (value: string) => Boolean(value)
+          && !/(%|vw|vh|vmin|vmax|calc\(|clamp\(|min\(|max\(|auto|fit-content|stretch)/i.test(value);
+
+        const skeletonIssues = Array.from(document.querySelectorAll<HTMLElement>('.fdoc-skeleton'))
+          .flatMap((element, index) => {
+            const computed = getComputedStyle(element);
+            if (computed.display === 'none' || computed.visibility === 'hidden') return [];
+
             const rect = element.getBoundingClientRect();
-            return (
-              style.display !== 'none' &&
-              style.visibility !== 'hidden' &&
-              rect.width > 0 &&
-              (rect.right > viewportWidth + 1 || rect.left < -1)
-            );
-          })
-          .slice(0, 5)
-          .map(element => {
-            const rect = element.getBoundingClientRect();
-            const name = element.className
-              ? `${element.tagName.toLowerCase()}.${String(element.className).trim().replace(/\s+/g, '.')}`
-              : element.tagName.toLowerCase();
-            return `${name} [left=${Math.round(rect.left)}, right=${Math.round(rect.right)}, width=${Math.round(rect.width)}]`;
+            const issues: string[] = [];
+            const label = `${element.className || 'fdoc-skeleton'}#${index}`;
+
+            if (rect.width <= 0.5 || rect.height <= 0.5) {
+              issues.push(`${label} collapsed to ${rect.width.toFixed(1)}×${rect.height.toFixed(1)}`);
+              return issues;
+            }
+
+            const clone = element.cloneNode(false) as HTMLElement;
+            clone.removeAttribute('id');
+            clone.style.position = 'fixed';
+            clone.style.left = '-10000px';
+            clone.style.top = '-10000px';
+            clone.style.visibility = 'hidden';
+            clone.style.flex = 'none';
+            clone.style.maxWidth = 'none';
+            clone.style.maxHeight = 'none';
+            clone.style.font = computed.font;
+            clone.style.lineHeight = computed.lineHeight;
+            document.body.appendChild(clone);
+            const natural = clone.getBoundingClientRect();
+            clone.remove();
+
+            if (
+              isFixedDimension(element.style.width)
+              && natural.width <= viewportWidth
+              && rect.width + 1 < natural.width
+            ) {
+              issues.push(`${label} width shrank ${natural.width.toFixed(1)}→${rect.width.toFixed(1)}`);
+            }
+
+            if (
+              isFixedDimension(element.style.height)
+              && rect.height + 1 < natural.height
+            ) {
+              issues.push(`${label} height shrank ${natural.height.toFixed(1)}→${rect.height.toFixed(1)}`);
+            }
+
+            return issues;
           });
 
-        return { viewportWidth, documentWidth, offenders };
+        return { viewportWidth, documentWidth, overflow, skeletonIssues };
       });
 
-      if (overflow) {
+      if (audit.overflow.length) {
         failures.push(
-          `${story.id} (${story.title ?? ''} / ${story.name ?? ''}): viewport ${overflow.viewportWidth}px, document ${overflow.documentWidth}px${
-            overflow.offenders.length ? `; ${overflow.offenders.join(' | ')}` : ''
-          }`,
+          `${story.id} (${story.title ?? ''} / ${story.name ?? ''}): viewport ${audit.viewportWidth}px, document ${audit.documentWidth}px; ${audit.overflow.join(' | ')}`,
+        );
+      }
+
+      if (audit.skeletonIssues.length) {
+        failures.push(
+          `${story.id} (${story.title ?? ''} / ${story.name ?? ''}) skeleton: ${audit.skeletonIssues.join(' | ')}`,
         );
       }
     }
