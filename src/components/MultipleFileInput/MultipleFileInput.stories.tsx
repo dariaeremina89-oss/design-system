@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { multipleFileInputDocs } from '../../docs/file-upload';
 import { MultipleFileInput } from './MultipleFileInput';
 
 const MB = 1024 * 1024;
@@ -74,6 +75,10 @@ const meta = {
   title: 'Components/Inputs/MultipleFileInput',
   component: MultipleFileInput,
   tags: ['autodocs', 'ready'],
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component: multipleFileInputDocs } },
+  },
   args: {
     files,
     showButtons: false,
@@ -82,6 +87,26 @@ const meta = {
     collapsed: false,
     errorCount: 0,
     reorderable: false,
+  },
+  argTypes: {
+    files: { control: false },
+    showButtons: { control: 'boolean' },
+    showDropzone: { control: 'boolean' },
+    showCollapse: { control: 'boolean' },
+    collapsed: { control: 'boolean' },
+    errorCount: { control: 'number' },
+    groupErrorText: { control: 'text' },
+    totalSize: { control: 'text' },
+    reorderable: { control: 'boolean' },
+    actions: { control: false },
+    dropzoneProps: { control: false },
+    validation: { control: 'object' },
+    onAddFiles: { action: 'addFiles' },
+    onValidationError: { action: 'validationError' },
+    onDeleteAll: { action: 'deleteAll' },
+    onToggleCollapse: { action: 'toggleCollapse' },
+    onChooseFiles: { action: 'chooseFiles' },
+    onReorder: { action: 'reorder' },
   },
   render: args => <Interactive {...args} />,
 } satisfies Meta<typeof MultipleFileInput>;
