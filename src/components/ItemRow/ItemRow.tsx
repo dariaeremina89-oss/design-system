@@ -27,42 +27,43 @@ export interface ItemRowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'titl
   linkProps?: Omit<LinkProps, 'children' | 'href'>;
   searchProps?: SearchProps;
   ref?: Ref<HTMLDivElement>;
+  'data-testid'?: string;
 }
 
 export function ItemRow({ title, description, helper, variant = 'item', leadingIcon, logo, trailingIcon,
   selection, selectionPosition = 'right', selected = false, selectionIndeterminate = false,
   divider = false, disabled = false, state = 'default', href, linkProps, searchProps,
-  className = '', onClick, onKeyDown, role, tabIndex, ref, ...props }: ItemRowProps) {
+  className = '', onClick, onKeyDown, role, tabIndex, ref, 'data-testid':testId, ...props }: ItemRowProps) {
   const loading = state === 'skeleton';
   const inactive = disabled || state === 'disabled';
   const interactive = variant === 'item' && (!!onClick || !!role);
   const indicator = selection === 'checkbox'
-    ? <span className="fdoc-item-row__checkbox" inert aria-hidden="true"><Checkbox checked={selected} indeterminate={selectionIndeterminate} readOnly disabled={inactive} tabIndex={-1} aria-label="Выбор" /></span>
-    : selection === 'check' ? <span className="fdoc-item-row__check" data-selected={selected}><Icon name="filled/check_circle_filled" size={24}/></span> : null;
+    ? <span className="fdoc-item-row__checkbox" data-testid="item-row-selection" inert aria-hidden="true"><Checkbox checked={selected} indeterminate={selectionIndeterminate} readOnly disabled={inactive} tabIndex={-1} aria-label="Выбор" /></span>
+    : selection === 'check' ? <span className="fdoc-item-row__check" data-testid="item-row-selection" data-selected={selected}><Icon name="filled/check_circle_filled" size={24}/></span> : null;
   const slot = (side: 'left' | 'right') => {
     const content = selection && selectionPosition === side ? indicator
       : side === 'left' ? logo ? <img src={logo} alt="" className="fdoc-item-row__logo"/> : leadingIcon && <Icon name={leadingIcon} size={24}/>
       : trailingIcon && <Icon name={trailingIcon} size={24}/>;
     if (!content) return null;
-    return <span className="fdoc-item-row__slot" aria-hidden="true">{loading ? <Skeleton shape="icon" width={side === 'left' && logo ? 32 : 24} height={side === 'left' && logo ? 32 : 24}/> : content}</span>;
+    return <span className="fdoc-item-row__slot" data-testid={`item-row-${side}-slot`} aria-hidden="true">{loading ? <Skeleton shape="icon" width={side === 'left' && logo ? 32 : 24} height={side === 'left' && logo ? 32 : 24}/> : content}</span>;
   };
-  return <div {...props} ref={ref} className={`fdoc-item-row ${className}`} data-variant={variant}
+  return <div {...props} ref={ref} className={`fdoc-item-row ${className}`} data-testid={testId??'item-row'} data-variant={variant}
     data-state={inactive ? 'disabled' : state} inert={loading || undefined} data-interactive={interactive} aria-hidden={loading || undefined}
     role={loading ? undefined : role ?? (interactive ? 'button' : undefined)} tabIndex={loading || inactive ? undefined : tabIndex ?? (interactive ? 0 : undefined)}
     aria-disabled={inactive || undefined} onClick={inactive || loading ? undefined : onClick}
     onKeyDown={event => { onKeyDown?.(event); if (!event.defaultPrevented && interactive && !inactive && !loading && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); event.currentTarget.click(); } }}>
-    <div className="fdoc-item-row__container">
+    <div className="fdoc-item-row__container" data-testid="item-row-container">
       {variant === 'search' ? <Search {...searchProps} disabled={inactive || searchProps?.disabled} skeleton={loading} />
         : variant === 'link' ? <Link {...linkProps} color="accent" href={href} disabled={inactive} state={loading ? 'skeleton' : state} size="medium">{title}</Link>
         : <>
           <span className="fdoc-item-row__main">{slot('left')}<span className="fdoc-item-row__text">
-            <span className="fdoc-item-row__title">{loading ? <Skeleton shape="text" textSize={variant === 'header' ? 'subtitle' : 'body'} width="min(120px, 100%)"/> : title}</span>
-            {description != null && <span className="fdoc-item-row__description">{loading ? <Skeleton shape="text" textSize="caption" width="min(160px, 100%)"/> : description}</span>}
+            <span className="fdoc-item-row__title" data-testid="item-row-title">{loading ? <Skeleton shape="text" textSize={variant === 'header' ? 'subtitle' : 'body'} width="min(120px, 100%)"/> : title}</span>
+            {description != null && <span className="fdoc-item-row__description" data-testid="item-row-description">{loading ? <Skeleton shape="text" textSize="caption" width="min(160px, 100%)"/> : description}</span>}
           </span></span>
-          {helper != null && <span className="fdoc-item-row__helper">{loading ? <Skeleton shape="text" textSize="body" width={64}/> : helper}</span>}
+          {helper != null && <span className="fdoc-item-row__helper" data-testid="item-row-helper">{loading ? <Skeleton shape="text" textSize="body" width={64}/> : helper}</span>}
           {slot('right')}
         </>}
     </div>
-    {divider && <Divider/>}
+    {divider && <Divider data-testid="item-row-divider"/>}
   </div>;
 }
