@@ -57,6 +57,26 @@ export interface FileRowProps
   onReorderKey?: (direction: FileRowReorderDirection) => void;
 }
 
+function createRowDragPreview(event: DragEvent<HTMLButtonElement>, fileName: string) {
+  const row = event.currentTarget.closest('.fdoc-file-row') as HTMLElement | null;
+  if (!row) return;
+
+  const rect = row.getBoundingClientRect();
+  const preview = row.cloneNode(true) as HTMLElement;
+  preview.classList.add('fdoc-file-row__drag-preview');
+  preview.style.width = `${rect.width}px`;
+  preview.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(preview);
+
+  const offsetX = Math.max(0, Math.min(rect.width, event.clientX - rect.left));
+  const offsetY = Math.max(0, Math.min(rect.height, event.clientY - rect.top));
+  event.dataTransfer.setDragImage(preview, offsetX, offsetY);
+  event.dataTransfer.setData('text/plain', fileName);
+  event.dataTransfer.effectAllowed = 'move';
+
+  requestAnimationFrame(() => preview.remove());
+}
+
 export function FileRow({
   state = 'default',
   disabled: disabledProp = false,
@@ -81,6 +101,7 @@ export function FileRow({
   ...props
 }: FileRowProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dragging, setDragging] = useState(false);
 
   if (state === 'skeleton') {
     return <Skeleton className={className} width="100%" height={48} shape="rounded" data-testid="file-row-skeleton" />;
@@ -151,9 +172,18 @@ export function FileRow({
       color="neutral"
       disabled={disabled}
       draggable={!disabled}
+      data-testid="file-row-reorder-handle"
       className="fdoc-file-row__drag fdoc-file-row__button-icon"
-      onDragStart={onReorderDragStart}
-      onDragEnd={onReorderDragEnd}
+      onDragStart={event => {
+        if (disabled) return;
+        setDragging(true);
+        createRowDragPreview(event, fileName);
+        onReorderDragStart?.(event);
+      }}
+      onDragEnd={event => {
+        setDragging(false);
+        onReorderDragEnd?.(event);
+      }}
       onKeyDown={event => {
         if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
           event.preventDefault();
@@ -177,7 +207,8 @@ export function FileRow({
       loading={loading}
       disabled={disabled}
       beforeLeading={reorderHandle}
-      className={`fdoc-file-row ${reorderable ? 'fdoc-file-row--reorderable' : ''} ${className}`}
+      className={`fdoc-file-row ${reorderable ? 'fdoc-file-row--reorderable' : ''} ${dragging ? 'fdoc-file-row--dragging' : ''} ${className}`}
+      data-file-row-dragging={dragging || undefined}
       data-testid="file-row"
     />
   );
