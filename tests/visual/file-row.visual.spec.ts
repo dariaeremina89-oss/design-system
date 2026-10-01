@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 
 const defaultStoryUrl = '/iframe.html?id=components-elements-filerow--default&viewMode=story';
 const chipsStoryUrl = '/iframe.html?id=components-elements-filerow--long-file-name-with-chips&viewMode=story';
+const skeletonStoryUrl = '/iframe.html?id=components-elements-filerow--skeleton&viewMode=story';
 
 for (const width of [456, 320]) {
   test(`FileRow keeps filename and weight visible at ${width}px`, async ({ page }) => {
@@ -39,3 +40,15 @@ test('FileRow keeps long filename, Chips and trailing action inside a 320px row'
   expect(await row.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
   expect(await chips.evaluate(element => element.getBoundingClientRect().right <= element.closest('.fdoc-file-item')!.getBoundingClientRect().right + 0.5)).toBe(true);
 });
+
+for (const [viewport, expectedWidth] of [[1280, 456], [320, 288]] as const) {
+  test(`FileRow skeleton keeps the story reference width at ${viewport}px`, async ({ page }) => {
+    await page.setViewportSize({ width: viewport, height: 400 });
+    await page.goto(skeletonStoryUrl);
+
+    const skeleton = page.getByTestId('file-row-skeleton');
+    await expect(skeleton).toBeVisible();
+    await expect(skeleton).toHaveCSS('height', '48px');
+    expect(Math.round((await skeleton.boundingBox())!.width)).toBe(expectedWidth);
+  });
+}
