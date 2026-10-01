@@ -10,7 +10,10 @@ const options = [
   { value: 'c', label: 'Месяц' },
 ];
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.restoreAllMocks();
+});
 
 describe('ButtonToggle', () => {
   it('keeps one selected and skips disabled with arrows', async () => {
@@ -53,6 +56,22 @@ describe('ButtonToggle', () => {
       disconnect() {}
     });
 
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      const element = this as HTMLElement;
+      const width = element.classList.contains('fdoc-button-toggle') && element.style.position === 'fixed' ? 640 : 0;
+      return {
+        x: 0,
+        y: 0,
+        top: 0,
+        left: 0,
+        right: width,
+        bottom: 40,
+        width,
+        height: 40,
+        toJSON: () => ({}),
+      } as DOMRect;
+    });
+
     const longOptions = [
       { value: 'medical', label: 'Медицинская организация' },
       { value: 'business', label: 'Другой тип бизнеса' },
@@ -61,8 +80,6 @@ describe('ButtonToggle', () => {
     const { container } = render(
       <form><ButtonToggle aria-label="Тип организации" name="kind" options={longOptions} /></form>,
     );
-    const toggle = container.querySelector('.fdoc-button-toggle') as HTMLElement;
-    Object.defineProperty(toggle, 'scrollWidth', { configurable: true, value: 640 });
 
     act(() => resize?.([{ contentRect: { width: 280 } }]));
 
