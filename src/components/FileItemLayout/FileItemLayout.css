@@ -47,6 +47,7 @@
   display: flex;
   width: 100%;
   min-width: 0;
+  min-height: var(--elements-24);
   align-items: flex-start;
   gap: var(--space-16);
 }
@@ -82,6 +83,7 @@
   display: flex;
   flex: 0 1 auto;
   min-width: 0;
+  min-height: var(--elements-24);
   max-width: 100%;
   align-items: center;
   justify-content: flex-end;
@@ -97,6 +99,7 @@
   display: flex;
   flex: 0 1 auto;
   min-width: 0;
+  min-height: var(--elements-24);
   max-width: 100%;
   align-items: center;
 }
@@ -117,6 +120,7 @@
 .fdoc-file-item__trailing {
   display: flex;
   flex: 0 0 auto;
+  min-height: var(--elements-24);
   align-items: center;
   justify-content: flex-end;
 }
