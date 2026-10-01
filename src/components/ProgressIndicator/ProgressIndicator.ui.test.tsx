@@ -24,9 +24,13 @@ describe('ProgressIndicator visual contract', () => {
     );
   });
 
-  it('centralizes the two Figma motion loops and reduced-motion fallback', () => {
+  it('uses MUI-style Circular rotate and dash loops with reduced-motion fallback', () => {
     expect(css).toContain('@keyframes fdoc-progress-linear-indeterminate');
-    expect(css).toContain('@keyframes fdoc-progress-circular-indeterminate');
+    expect(css).toContain('@keyframes fdoc-progress-circular-rotate');
+    expect(css).toContain('@keyframes fdoc-progress-circular-dash');
+    expect(css).toContain('stroke-dasharray: 1px var(--fdoc-progress-dash-gap)');
+    expect(css).toContain('stroke-dasharray: var(--fdoc-progress-dash-long) var(--fdoc-progress-dash-gap)');
+    expect(css).toContain('animation: fdoc-progress-circular-dash var(--fdoc-progress-duration) ease-in-out infinite');
     expect(css).toContain('prefers-reduced-motion: reduce');
   });
 });
