@@ -13,8 +13,9 @@ export interface ChipsGroupProps extends Omit<HTMLAttributes<HTMLDivElement>,'on
   shape?:ChipsProps['shape'];
   disabled?:boolean;
   isLoading?:boolean;
+  'data-testid'?:string;
 }
-export function ChipsGroup({options,value,defaultValue=[],onValueChange,selectionMode='multiple',color='secondary',size='medium',shape='round',disabled=false,isLoading=false,className='',onKeyDown,...props}:ChipsGroupProps) {
+export function ChipsGroup({options,value,defaultValue=[],onValueChange,selectionMode='multiple',color='secondary',size='medium',shape='round',disabled=false,isLoading=false,className='',onKeyDown,'data-testid':testId,...props}:ChipsGroupProps) {
   const [local,setLocal]=useState(defaultValue);
   const [focusValue,setFocusValue]=useState<string>();
   const root=useRef<HTMLDivElement>(null);
@@ -22,7 +23,9 @@ export function ChipsGroup({options,value,defaultValue=[],onValueChange,selectio
   const selected=selectionMode==='single'?values.slice(0,1):values;
   const available=options.filter(o=>!o.disabled&&!disabled);
   const tabValue=available.some(o=>o.value===focusValue)?focusValue:available.find(o=>selected.includes(o.value))?.value??available[0]?.value;
-  return <div {...props} ref={root} role="group" aria-disabled={disabled||undefined} aria-busy={isLoading||undefined} className={`fdoc-chips-group ${className}`} onKeyDown={event=>{
+  return <div {...props} ref={root} role="group" aria-disabled={disabled||undefined} aria-busy={isLoading||undefined}
+    className={`fdoc-chips-group ${className}`} data-testid={testId??'chips-group'} data-selection-mode={selectionMode}
+    data-size={size} data-shape={shape} data-loading={isLoading||undefined} onKeyDown={event=>{
     onKeyDown?.(event);
     if(event.defaultPrevented||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
     const buttons=Array.from(root.current?.querySelectorAll<HTMLButtonElement>('.fdoc-chips__main:not(:disabled)')??[]);
