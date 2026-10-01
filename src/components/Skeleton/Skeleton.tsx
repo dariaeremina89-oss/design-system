@@ -31,6 +31,21 @@ function joinClassNames(...classes: Array<string | false | undefined>) {
   return classes.filter(Boolean).join(' ');
 }
 
+function isFixedDimension(value: CSSProperties['width'] | CSSProperties['height']) {
+  if (typeof value === 'number') return true;
+  if (typeof value !== 'string') return false;
+
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) return false;
+
+  return !(
+    normalized.includes('%')
+    || /(?:^|\W)(?:auto|inherit|initial|unset|fit-content|max-content|min-content|stretch)(?:$|\W)/.test(normalized)
+    || /(?:calc|clamp|min|max)\(/.test(normalized)
+    || /(?:^|[^a-z])(?:vw|vh|vmin|vmax|svw|svh|lvw|lvh|dvw|dvh)(?:$|[^a-z])/.test(normalized)
+  );
+}
+
 export function Skeleton({
   width,
   height,
@@ -41,10 +56,14 @@ export function Skeleton({
   'data-testid': testId,
   ...props
 }: SkeletonProps) {
+  const fixedWidth = isFixedDimension(width);
+  const fixedHeight = isFixedDimension(height);
   const skeletonStyle = {
     ...style,
     ...(width !== undefined ? { width } : {}),
     ...(height !== undefined ? { height } : {}),
+    ...(fixedWidth && style?.minWidth === undefined ? { minWidth: width } : {}),
+    ...(fixedHeight && style?.minHeight === undefined ? { minHeight: height } : {}),
   };
 
   return (
