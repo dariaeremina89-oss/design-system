@@ -25,23 +25,34 @@ test('Circular indeterminate uses the shared animation and is accessible', async
   await expect(circular.locator('.fdoc-progress__indicator')).toHaveCSS('stroke-width', '2px');
 });
 
-test('Circular defaults to 24px and paints one moving arc on a static track', async ({ page }) => {
+test('Circular defaults to 24px and uses MUI-style rotate and dash motion', async ({ page }) => {
   const root = await openStory(page, 'components-progress-indicators-progressindicator--circular-props');
   const circular = root.getByRole('progressbar');
-  await expect(circular).toHaveCSS('width', '24px');
-  await expect(circular).toHaveCSS('height', '24px');
+  const svg = circular.locator('.fdoc-progress__circular-svg');
   const track = circular.locator('.fdoc-progress__track');
   const arc = circular.locator('.fdoc-progress__indicator');
+
+  await expect(circular).toHaveCSS('width', '24px');
+  await expect(circular).toHaveCSS('height', '24px');
   await expect(track).toHaveCSS('animation-name', 'none');
-  await expect(arc).toHaveCSS('animation-name', 'fdoc-progress-circular-indeterminate');
-  await expect(arc).toHaveCSS('vector-effect', 'none');
-  const geometry = await arc.evaluate((el) => {
-    const length = (el as SVGCircleElement).getTotalLength();
-    const [dash, gap] = el.getAttribute('stroke-dasharray')!.split(' ').map(Number);
-    return { length, dash, gap };
+  await expect(svg).toHaveCSS('animation-name', 'fdoc-progress-circular-rotate');
+  await expect(svg).toHaveCSS('animation-duration', '1.4s');
+  await expect(svg).toHaveCSS('animation-timing-function', 'linear');
+  await expect(arc).toHaveCSS('animation-name', 'fdoc-progress-circular-dash');
+  await expect(arc).toHaveCSS('animation-duration', '1.4s');
+  await expect(arc).toHaveCSS('animation-timing-function', 'ease-in-out');
+
+  const dashMotion = await circular.evaluate((element) => {
+    const styles = getComputedStyle(element as HTMLElement);
+    return {
+      initial: styles.getPropertyValue('--fdoc-progress-dash-initial').trim(),
+      long: styles.getPropertyValue('--fdoc-progress-dash-long').trim(),
+      gap: styles.getPropertyValue('--fdoc-progress-dash-gap').trim(),
+    };
   });
-  expect(geometry.dash / geometry.length).toBeCloseTo(0.25, 2);
-  expect(geometry.dash + geometry.gap).toBeGreaterThan(geometry.length);
+
+  expect(parseFloat(dashMotion.long)).toBeGreaterThan(parseFloat(dashMotion.initial));
+  expect(parseFloat(dashMotion.gap)).toBeGreaterThan(parseFloat(dashMotion.long));
 });
 
 test('Circular Secondary and Tertiary resolve the Figma colors', async ({ page }) => {
