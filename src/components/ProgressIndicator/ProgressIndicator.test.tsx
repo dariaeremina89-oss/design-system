@@ -84,6 +84,24 @@ describe('ProgressIndicator', () => {
     expect(screen.getByRole('progressbar').querySelector('.fdoc-progress__indicator')).toHaveAttribute('r', '11');
   });
 
+  it('uses the MUI-style 1400ms motion by default for Circular indeterminate', () => {
+    render(<ProgressIndicator type="circular" mode="indeterminate" />);
+    const progress = screen.getByRole('progressbar');
+
+    expect(progress).toHaveStyle({
+      '--fdoc-progress-duration': '1400ms',
+      '--fdoc-progress-animation': 'linear',
+    });
+    expect(progress.style.getPropertyValue('--fdoc-progress-dash-initial')).not.toBe('');
+    expect(progress.style.getPropertyValue('--fdoc-progress-dash-long')).not.toBe('');
+    expect(progress.style.getPropertyValue('--fdoc-progress-dash-gap')).not.toBe('');
+  });
+
+  it('keeps the Linear default duration at 1500ms', () => {
+    render(<ProgressIndicator type="linear" mode="indeterminate" />);
+    expect(screen.getByRole('progressbar')).toHaveStyle({ '--fdoc-progress-duration': '1500ms' });
+  });
+
   it('applies Circular size, stroke width, duration and animation props', () => {
     render(
       <ProgressIndicator
