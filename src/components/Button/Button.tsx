@@ -135,7 +135,6 @@ export function Button({
     '--fdoc-button-padding-y': `${dimensions.paddingY}px`,
     '--fdoc-button-padding-x': `${dimensions.paddingX}px`,
     '--fdoc-button-gap': `${dimensions.gap}px`,
-    ...(skeletonWidth !== undefined ? { '--fdoc-button-skeleton-width': skeletonWidth } : {}),
   } as CSSProperties;
   const classes = joinClassNames(
     'fdoc-button',
@@ -151,7 +150,7 @@ export function Button({
       <Skeleton
         className={joinClassNames('fdoc-button__skeleton', `fdoc-button__skeleton--${size}`, className)}
         shape="rounded"
-        width={skeletonWidth ?? 'var(--fdoc-button-skeleton-width)'}
+        width={skeletonWidth ?? (fullWidth ? '100%' : 108)}
         height={dimensions.button}
         data-button-state="skeleton"
         data-button-size={dimensions.button}
