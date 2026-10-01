@@ -30,6 +30,31 @@ export interface ButtonToggleProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   name?: string;
 }
 
+function measureIntrinsicWidth(node: HTMLDivElement) {
+  const clone = node.cloneNode(true) as HTMLDivElement;
+  clone.removeAttribute('role');
+  clone.removeAttribute('aria-label');
+  clone.setAttribute('aria-hidden', 'true');
+  Object.assign(clone.style, {
+    position: 'fixed',
+    left: '-100000px',
+    top: '0',
+    width: 'max-content',
+    maxWidth: 'none',
+    visibility: 'hidden',
+    pointerEvents: 'none',
+  });
+  clone.querySelectorAll<HTMLElement>('.fdoc-button').forEach(button => {
+    button.style.maxWidth = 'none';
+  });
+  clone.querySelectorAll<HTMLElement>('[id]').forEach(element => element.removeAttribute('id'));
+
+  document.body.append(clone);
+  const width = clone.getBoundingClientRect().width;
+  clone.remove();
+  return width;
+}
+
 export function ButtonToggle({
   options,
   value,
@@ -50,12 +75,14 @@ export function ButtonToggle({
   const hostRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLDivElement>(null);
   const requiredWidthRef = useRef(0);
+  const measurementKeyRef = useRef('');
   const items = options;
   const selectedValue = value ?? local;
   const active = items.some(option => option.value === selectedValue)
     ? selectedValue
     : items.find(option => !option.disabled)?.value;
   const canUseSelect = items.every(option => typeof option.label === 'string');
+  const measurementKey = `${size}|${items.map(option => `${option.value}:${String(option.label)}:${option.iconLeft ?? ''}`).join('|')}`;
 
   function select(next: string) {
     if (next === active) return;
@@ -66,8 +93,19 @@ export function ButtonToggle({
   useLayoutEffect(() => {
     const host = hostRef.current;
     if (!host || isLoading || !canUseSelect) {
+      requiredWidthRef.current = 0;
+      measurementKeyRef.current = measurementKey;
       setUseSelect(false);
       return;
+    }
+
+    if (measurementKeyRef.current !== measurementKey) {
+      measurementKeyRef.current = measurementKey;
+      requiredWidthRef.current = 0;
+      if (useSelect) {
+        setUseSelect(false);
+        return;
+      }
     }
 
     const update = (width?: number) => {
@@ -77,8 +115,8 @@ export function ButtonToggle({
       if (!useSelect) {
         const toggle = toggleRef.current;
         if (!toggle) return;
-        const requiredWidth = toggle.scrollWidth;
-        requiredWidthRef.current = Math.max(requiredWidthRef.current, requiredWidth);
+        const requiredWidth = measureIntrinsicWidth(toggle);
+        requiredWidthRef.current = requiredWidth;
         if (requiredWidth > availableWidth + 1) setUseSelect(true);
         return;
       }
@@ -94,7 +132,7 @@ export function ButtonToggle({
     const observer = new ResizeObserver(entries => update(entries[0]?.contentRect.width));
     observer.observe(host);
     return () => observer.disconnect();
-  }, [canUseSelect, isLoading, items, size, useSelect]);
+  }, [canUseSelect, isLoading, measurementKey, useSelect]);
 
   if (isLoading) {
     return (
