@@ -86,6 +86,14 @@ for (let shard = 0; shard < SHARD_COUNT; shard += 1) {
               return issues;
             }
 
+            if (element.style.width.trim() === '100%' && rect.width <= 24) {
+              issues.push(`${label} fill width collapsed to ${rect.width.toFixed(1)}px`);
+            }
+
+            if (element.style.height.trim() === '100%' && rect.height <= 24) {
+              issues.push(`${label} fill height collapsed to ${rect.height.toFixed(1)}px`);
+            }
+
             const clone = element.cloneNode(false) as HTMLElement;
             clone.removeAttribute('id');
             clone.style.position = 'fixed';
