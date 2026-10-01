@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Breadcrumbs } from './Breadcrumbs';
 import { componentDocs } from '../../docs/bulk-components';
+import { qualityDocs } from '../../docs/quality';
 
 const deepItems = [
   { label: 'Главная', href: '#home' },
@@ -14,13 +15,18 @@ const meta = {
   title: 'Components/Navigation/Breadcrumbs',
   component: Breadcrumbs,
   tags: ['autodocs', 'ready'],
-  parameters: { layout: 'padded', docs: { description: { component: componentDocs('Breadcrumbs') } } },
+  parameters: { layout: 'padded', docs: { description: { component: componentDocs('Breadcrumbs') + qualityDocs('Breadcrumbs') } } },
   args: {
     items: [
       { label: 'Документы', href: '#documents' },
       { label: 'Шаблоны', href: '#templates' },
       { label: 'Создание шаблона' },
     ],
+  },
+  argTypes: {
+    items: { control: 'object' },
+    isLoading: { control: 'boolean' },
+    collapseAt: { control: 'number' },
   },
 } satisfies Meta<typeof Breadcrumbs>;
 
