@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Link } from '../Link/Link';
+import { singleFileInputDocs } from '../../docs/file-upload';
 import { SingleFileInput } from './SingleFileInput';
 
 function Interactive(args: React.ComponentProps<typeof SingleFileInput>) {
@@ -16,6 +17,10 @@ const meta = {
   title: 'Components/Inputs/SingleFileInput',
   component: SingleFileInput,
   tags: ['autodocs', 'ready'],
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component: singleFileInputDocs } },
+  },
   args: {
     type: 'default',
     size: 'desktop',
@@ -23,7 +28,13 @@ const meta = {
   argTypes: {
     type: { control: 'select', options: ['default', 'disabled', 'skeleton'] },
     size: { control: 'select', options: ['desktop', 'mobile'] },
+    validationMessage: { control: 'text' },
+    accept: { control: 'text' },
+    buttonText: { control: 'text' },
+    placeholder: { control: 'text' },
+    file: { control: false },
     fileProps: { control: false },
+    onFileChange: { action: 'fileChange' },
   },
   render: args => <Interactive {...args} />,
 } satisfies Meta<typeof SingleFileInput>;
