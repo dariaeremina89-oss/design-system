@@ -21,9 +21,27 @@
   justify-content: center;
   color: var(--icon-base-secondary);
   cursor: grab;
+  touch-action: none;
 }
 
 .fdoc-file-row__drag:active {
+  cursor: grabbing;
+}
+
+.fdoc-file-row--dragging {
+  opacity: 0.56;
+}
+
+.fdoc-file-row__drag-preview {
+  position: fixed !important;
+  top: -10000px !important;
+  left: -10000px !important;
+  z-index: 2147483647;
+  opacity: 1 !important;
+  pointer-events: none !important;
+}
+
+.fdoc-file-row__drag-preview .fdoc-file-row__drag {
   cursor: grabbing;
 }
 
