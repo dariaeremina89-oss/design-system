@@ -6,12 +6,12 @@ import { Link } from '../Link/Link';
 import { FileRow } from './FileRow';
 
 describe('FileRow', () => {
-  it('keeps delete available while loading and uses the Figma spinner', () => {
+  it('keeps delete available while loading and uses the shared spinner', () => {
     const onDelete = vi.fn();
     render(<FileRow state="loading" fileName="Договор.pdf" onDelete={onDelete} />);
     const progress = screen.getByRole('progressbar', { name: 'Загрузка' });
     expect(progress).toHaveAttribute('data-progress-color', 'primary');
-    expect(progress.style.getPropertyValue('--fdoc-progress-duration')).toBe('2000ms');
+    expect(progress.style.getPropertyValue('--fdoc-progress-duration')).toBe('1400ms');
     expect(screen.getByTestId('file-row')).toHaveAttribute('aria-busy', 'true');
     fireEvent.click(screen.getByRole('button', { name: 'Удалить файл Договор.pdf' }));
     expect(onDelete).toHaveBeenCalledOnce();
