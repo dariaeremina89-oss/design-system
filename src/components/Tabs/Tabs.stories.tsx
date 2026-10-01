@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Tabs, Tab, type TabsProps } from './Tabs';
 import { componentDocs } from '../../docs/bulk-components';
+import { qualityDocs } from '../../docs/quality';
 
 const defaultItems: TabsProps['items'] = [
   { value: 'info', label: 'Информация', content: 'Данные компании' },
@@ -25,11 +26,18 @@ const meta = {
   tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
-    docs: { description: { component: componentDocs('Tabs') } },
+    docs: { description: { component: componentDocs('Tabs') + qualityDocs('Tabs') } },
   },
   args: {
     'aria-label': 'Разделы компании',
     items: defaultItems,
+  },
+  argTypes: {
+    items: { control: 'object' },
+    value: { control: 'text' },
+    defaultValue: { control: 'text' },
+    isLoading: { control: 'boolean' },
+    onValueChange: { action: 'valueChange' },
   },
 } satisfies Meta<typeof Tabs>;
 
