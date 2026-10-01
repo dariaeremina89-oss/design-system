@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ButtonToggle } from './ButtonToggle';
 import { componentDocs } from '../../docs/bulk-components';
+import { qualityDocs } from '../../docs/quality';
 
 const longOptions = [
   { value: 'medical', label: 'Медицинская организация' },
@@ -12,7 +13,7 @@ const meta = {
   title: 'Components/Actions/ButtonToggle',
   component: ButtonToggle,
   tags: ['autodocs', 'ready'],
-  parameters: { layout: 'padded', docs: { description: { component: componentDocs('ButtonToggle') } } },
+  parameters: { layout: 'padded', docs: { description: { component: componentDocs('ButtonToggle') + qualityDocs('ButtonToggle') } } },
   args: {
     'aria-label': 'Период отчета',
     options: [
@@ -22,8 +23,14 @@ const meta = {
     ],
   },
   argTypes: {
+    options: { control: 'object' },
     color: { control: 'select', options: ['primary', 'base', 'inverse'] },
     size: { control: 'radio', options: ['small', 'medium'] },
+    value: { control: 'text' },
+    defaultValue: { control: 'text' },
+    disabled: { control: 'boolean' },
+    isLoading: { control: 'boolean' },
+    onValueChange: { action: 'valueChange' },
   },
 } satisfies Meta<typeof ButtonToggle>;
 
