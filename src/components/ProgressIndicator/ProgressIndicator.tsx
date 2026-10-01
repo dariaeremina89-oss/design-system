@@ -25,16 +25,21 @@ export interface ProgressIndicatorProps extends Omit<HTMLAttributes<HTMLDivEleme
   variant?: ProgressIndicatorVariant;
   /** Алиас variant для обратной совместимости. */
   color?: ProgressIndicatorColor;
-  /** Продолжительность одного цикла indeterminate в миллисекундах. */
+  /** Продолжительность одного цикла indeterminate. Circular по умолчанию 1400 мс, Linear — 1500 мс. */
   duration?: number;
-  /** Функция анимации indeterminate. */
+  /** Easing вращения/линейного движения. Дуга Circular всегда меняет длину через ease-in-out, как в MUI. */
   animation?: ProgressIndicatorAnimation;
 }
 
 const DEFAULT_SIZE = 24;
 const DEFAULT_STROKE_WIDTH = 2;
-const DEFAULT_DURATION = 1500;
+const DEFAULT_LINEAR_DURATION = 1500;
+const DEFAULT_CIRCULAR_DURATION = 1400;
 const DEFAULT_MAX = 100;
+
+// MUI animates an indeterminate circle in a 44px viewBox with a 3.6px stroke.
+// Scale the same dash motion to our F.Doc circle geometry instead of hardcoding px values.
+const MUI_REFERENCE_CIRCUMFERENCE = 2 * Math.PI * ((44 - 3.6) / 2);
 
 function joinClassNames(...classes: Array<string | false | undefined>) {
   return classes.filter(Boolean).join(' ');
@@ -57,7 +62,7 @@ export function ProgressIndicator({
   strokeWidth = DEFAULT_STROKE_WIDTH,
   variant,
   color,
-  duration = DEFAULT_DURATION,
+  duration,
   animation = 'linear',
   className,
   style,
@@ -68,9 +73,11 @@ export function ProgressIndicator({
   const normalizedValue = clampValue(value, normalizedMax);
   const normalizedSize = normalizePositiveNumber(size, DEFAULT_SIZE);
   const normalizedStrokeWidth = Math.min(normalizedSize / 2, 8, normalizePositiveNumber(strokeWidth, DEFAULT_STROKE_WIDTH));
-  const normalizedDuration = normalizePositiveNumber(duration, DEFAULT_DURATION);
+  const defaultDuration = type === 'circular' ? DEFAULT_CIRCULAR_DURATION : DEFAULT_LINEAR_DURATION;
+  const normalizedDuration = normalizePositiveNumber(duration, defaultDuration);
   const circularRadius = (normalizedSize - normalizedStrokeWidth) / 2;
   const circumference = 2 * Math.PI * circularRadius;
+  const muiMotionScale = circumference / MUI_REFERENCE_CIRCUMFERENCE;
   const isDeterminate = mode === 'determinate';
   const effectiveColor = type === 'circular' ? (variant ?? color ?? 'primary') : 'primary';
   const normalizedPercent = (normalizedValue / normalizedMax) * 100;
@@ -86,6 +93,11 @@ export function ProgressIndicator({
     ...(type === 'circular' ? {
       width: `${normalizedSize}px`,
       height: `${normalizedSize}px`,
+      '--fdoc-progress-dash-initial': `${80 * muiMotionScale}px`,
+      '--fdoc-progress-dash-long': `${100 * muiMotionScale}px`,
+      '--fdoc-progress-dash-gap': `${200 * muiMotionScale}px`,
+      '--fdoc-progress-dash-mid-offset': `${-15 * muiMotionScale}px`,
+      '--fdoc-progress-dash-end-offset': `${-126 * muiMotionScale}px`,
     } : {}),
     '--fdoc-progress-value': `${normalizedPercent}%`,
     '--fdoc-progress-duration': `${normalizedDuration}ms`,
@@ -126,7 +138,7 @@ export function ProgressIndicator({
             cy={normalizedSize / 2}
             r={circularRadius}
             strokeWidth={normalizedStrokeWidth}
-            strokeDasharray={isDeterminate ? `${circumference}` : `${circumference / 4} ${circumference}`}
+            strokeDasharray={isDeterminate ? `${circumference}` : undefined}
             strokeDashoffset={isDeterminate ? dashOffset : undefined}
           />
         </svg>
