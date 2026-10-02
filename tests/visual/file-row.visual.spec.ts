@@ -58,15 +58,17 @@ test('FileRow additional components preserve their own geometry', async ({ page 
   await page.setViewportSize({ width: 456, height: 900 });
   await page.goto('/iframe.html?id=components-elements-filerow--additional-content&viewMode=story');
 
-  const badgeExample = page.getByText('Badge', { exact: true }).locator('..');
-  const chipsExample = page.getByText('Chips / status', { exact: true }).locator('..');
-  const badge = badgeExample.getByTestId('badge');
-  const chips = chipsExample.getByTestId('chips');
+  const badgeExample = page.getByTestId('file-row-example-badge');
+  const chipsExample = page.getByTestId('file-row-example-chips');
+  const badge = page.getByTestId('file-row-additional-badge');
+  const chips = page.getByTestId('file-row-additional-chips');
 
   await expect(badge).toBeVisible();
   await expect(chips).toBeVisible();
   await expect(badge).toHaveCSS('height', '20px');
   await expect(chips).toHaveCSS('height', '24px');
+  await expect(badge).toHaveAttribute('data-badge-color', 'primary');
+  await expect(chips).toHaveAttribute('data-color', 'base');
 
   for (const example of [badgeExample, chipsExample]) {
     const row = example.getByTestId('file-row');
