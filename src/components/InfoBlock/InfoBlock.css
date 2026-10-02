@@ -30,5 +30,3 @@
 .fdoc-info-block__actions { display:flex; flex:0 0 auto; flex-wrap:wrap; align-items:flex-start; justify-content:flex-start; gap:var(--space-8); padding:var(--space-8) var(--space-8) var(--space-8) 0; }
 .fdoc-info-block__close { flex:0 0 auto; }
 
-/* A single copy slot is centered against the taller action row. */
-.fdoc-info-block__copy:has(> :only-child) { align-self:center; }
