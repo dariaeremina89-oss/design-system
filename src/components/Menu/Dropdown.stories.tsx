@@ -1,3 +1,4 @@
+import { qualityDocs } from '../../docs/quality';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Dropdown } from './Dropdown';
@@ -6,7 +7,7 @@ import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { documentActions } from './menu-examples';
 import { selectionDocs } from '../../docs/selection-components';
 import { HoverActionExample } from './dropdown-examples';
-const meta={title:'Components/Selection/Dropdown',component:Dropdown,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:selectionDocs('Dropdown')}}},args:{items:documentActions,children:<Button>Действия</Button>},argTypes:{placement:{control:'select',options:['auto','top','bottom']},matchWidth:{control:'boolean'},searchable:{control:'boolean'},closeOnSelect:{control:'boolean'}}} satisfies Meta<typeof Dropdown>;
+const meta={title:'Components/Selection/Dropdown',component:Dropdown,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description: { component: (selectionDocs('Dropdown')) + qualityDocs('Dropdown') }}},args:{items:documentActions,children:<Button>Действия</Button>},argTypes:{placement:{control:'select',options:['auto','top','bottom']},matchWidth:{control:'boolean'},searchable:{control:'boolean'},closeOnSelect:{control:'boolean'}}} satisfies Meta<typeof Dropdown>;
 export default meta;type Story=StoryObj<typeof meta>;
 export const Default:Story={render:function Demo(args){const [result,setResult]=useState('');return <><Dropdown {...args} onAction={item=>setResult(String(item.title))}/><p role="status">{result&&`Действие: ${result}`}</p><Button color="secondary">Следующая кнопка</Button></>;}};
 export const IconTrigger:Story={args:{children:<ButtonIcon icon="more-horisontal" aria-label="Действия с документом"/>}};
