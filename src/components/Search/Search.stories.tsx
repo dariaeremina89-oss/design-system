@@ -1,3 +1,4 @@
+import { qualityDocs } from '../../docs/quality';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Search } from './Search';
@@ -17,7 +18,7 @@ const meta = {
   parameters: {
     layout: 'padded',
     controls: controlsParameters(controlOrder),
-    docs: { description: { component: selectionDocs('Search') } },
+    docs: { description: { component: (selectionDocs('Search')) + qualityDocs('Search') } },
   },
   args: { label: 'Поиск документов', placeholder: 'Название или номер', caption: 'Нажмите Enter или «Найти»' },
   decorators: [Story => <div style={{ width: '100%', maxWidth: 456 }}><Story /></div>],
