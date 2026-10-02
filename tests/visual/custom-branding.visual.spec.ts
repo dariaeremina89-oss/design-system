@@ -22,6 +22,16 @@ test('F.Doc has its own Dark theme without a client HEX; switching preserves pri
   await page.getByRole('radio',{name:'Light',exact:true}).click();await expect(page.locator('html')).toHaveAttribute('data-color-mode','light');
 });
 
+test('baseline Light semantic table uses the published F.Doc tokens',async({page})=>{
+  await page.goto(branding);
+  const row=page.getByRole('row').filter({hasText:'--border-primary-focused'});
+  const light=row.locator('td').first();
+  await expect(light).toContainText('--primary-transparent-16');
+  await expect(light).toContainText('#FFDC0029');
+  const runtime=await page.locator('html').evaluate(el=>getComputedStyle(el).getPropertyValue('--border-primary-focused').trim().toUpperCase());
+  expect(runtime).toBe('#FFDC0029');
+});
+
 test('HEX entry is stable, invalid input keeps the last theme, and the same seed persists across stories',async({page})=>{
   await page.goto(branding);const input=page.getByRole('textbox',{name:'Primary 500 HEX'});
   await input.fill('');await input.pressSequentially('#2f26ff');await expect(input).toHaveValue('#2f26ff');
@@ -32,8 +42,10 @@ test('HEX entry is stable, invalid input keeps the last theme, and the same seed
   await page.goto(buttonStory);await expect(page.locator('#storybook-root .fdoc-button').first()).toHaveCSS('background-color','rgb(47, 38, 255)');
   await expect(page.locator('html')).toHaveAttribute('data-color-mode','dark');
   await page.goto(branding);await expect(page.getByRole('textbox',{name:'Primary 500 HEX'})).toHaveValue('#2f26ff');
-  await page.getByRole('button',{name:'Сбросить к F.Doc'}).click();await expect(page.locator('html')).toHaveAttribute('data-color-mode','light');
+  await page.getByRole('button',{name:'Сбросить к F.Doc'}).click();await expect(page.locator('html')).toHaveAttribute('data-color-mode','dark');
   await expect(page.getByTestId('brand-button-default')).toHaveCSS('background-color','rgb(255, 220, 0)');
+  await expect(page.locator('body')).toHaveCSS('background-color','rgb(24, 25, 28)');
+  await page.getByRole('radio',{name:'Light',exact:true}).click();
   await page.reload();await expect(page.getByTestId('brand-button-default')).toHaveCSS('color','rgb(71, 62, 0)');
 });
 
