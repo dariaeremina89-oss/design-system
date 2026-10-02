@@ -1,3 +1,4 @@
+import { qualityDocs } from '../../docs/quality';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Multiselect, type MultiselectOption } from './Multiselect';
@@ -26,8 +27,7 @@ const meta = {
     layout: 'padded',
     controls: controlsParameters(controlOrder),
     docs: {
-      description: {
-        component: `
+      description: { component: (`
 **Multiselect** выбирает несколько значений из списка и поддерживает разные способы показа выбранного.
 
 ### Display
@@ -59,8 +59,7 @@ Menu использует ItemRow с Checkbox и остается открыты
 - required использует общий FieldLabel и aria-required.
 
 Это компонент тестовой дизайн-системы и личного плейбука, а не официальный production-пакет F.Doc.
-        `,
-      },
+        `,) + qualityDocs('Multiselect') },
     },
   },
   decorators: [Story => <div style={{ width: '100%', maxWidth: 456 }}><Story /></div>],
