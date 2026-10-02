@@ -70,8 +70,12 @@ function createRowDragPreview(event: DragEvent<HTMLButtonElement>, fileName: str
 
   const offsetX = Math.max(0, Math.min(rect.width, event.clientX - rect.left));
   const offsetY = Math.max(0, Math.min(rect.height, event.clientY - rect.top));
-  event.dataTransfer.setDragImage(preview, offsetX, offsetY);
-  event.dataTransfer.setData('text/plain', fileName);
+  if (typeof event.dataTransfer.setDragImage === 'function') {
+    event.dataTransfer.setDragImage(preview, offsetX, offsetY);
+  }
+  if (typeof event.dataTransfer.setData === 'function') {
+    event.dataTransfer.setData('text/plain', fileName);
+  }
   event.dataTransfer.effectAllowed = 'move';
 
   requestAnimationFrame(() => preview.remove());
