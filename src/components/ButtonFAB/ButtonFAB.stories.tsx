@@ -1,7 +1,7 @@
+import { qualityDocs } from '../../docs/quality';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { iconNames } from '../Icon/Icon';
-import { testingDocs } from '../../docs/testing';
 import { ButtonFAB, type ButtonFABProps } from './ButtonFAB';
 
 const meta = {
@@ -52,7 +52,7 @@ Skeleton из макета — общий неинтерактивный кру�
 ### Доступность
 
 \`aria-label\` и \`icon\` обязательны. Используется нативный button с \`type="button"\` по умолчанию. Tab переводит фокус, Enter и Space вызывают действие. Disabled блокирует действие и исключает кнопку из Tab-порядка. Иконка декоративна для экранного диктора, имя действия берется из aria-label.
-` + testingDocs('ButtonFAB') } },
+` + qualityDocs('ButtonFAB') } },
   },
   args: { icon: 'plus', 'aria-label': 'Создать документ', position: 'inline' },
   argTypes: {
