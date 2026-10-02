@@ -71,6 +71,25 @@ test('InfoBlock actions stay at the top when there is enough width', async ({ pa
   expect(Math.abs(actionsBox!.y - copyBox!.y)).toBeLessThanOrEqual(6);
 });
 
+test('InfoBlock copy does not jump when actions wrap from horizontal to vertical', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 700 });
+  await page.goto('/iframe.html?id=components-elements-infoblock--wide-container&viewMode=story&args=text:;title:Title');
+  const host = page.locator('body > #storybook-root > div').first();
+  const block = page.getByTestId('info-block');
+  const line = block.locator('.fdoc-info-block__title');
+  const relativeTop = async () => {
+    const blockBox = (await block.boundingBox())!;
+    const lineBox = (await line.boundingBox())!;
+    return lineBox.y - blockBox.y;
+  };
+  const wideTop = await relativeTop();
+  await host.evaluate(el => { (el as HTMLElement).style.width = '288px'; });
+  const actionsBox = (await block.locator('.fdoc-info-block__actions').boundingBox())!;
+  const copyBox = (await block.locator('.fdoc-info-block__copy').boundingBox())!;
+  expect(actionsBox.y).toBeGreaterThanOrEqual(copyBox.y + copyBox.height - 0.5);
+  expect(await relativeTop()).toBeCloseTo(wideTop, 1);
+});
+
 for (const [story, visible, absent] of [
   ['title-only', 'title', 'text'],
   ['text-only', 'text', 'title'],
@@ -100,12 +119,11 @@ for (const [story, visible, absent] of [
     const actions = block.locator('.fdoc-info-block__actions');
     expect((await main.boundingBox())!.height).toBe((await actions.boundingBox())!.height);
     const mainBox = (await main.boundingBox())!;
-    for (const part of [copy]) {
-      const box = (await part.boundingBox())!;
-      const top = box.y - mainBox.y;
-      const bottom = mainBox.y + mainBox.height - box.y - box.height;
-      expect(Math.abs(top - bottom)).toBeLessThanOrEqual(0.5);
-    }
+    const copyBox = (await copy.boundingBox())!;
+    expect(copyBox.y - mainBox.y).toBeCloseTo(0, 1);
+    const lineBox = (await block.locator(`.fdoc-info-block__${visible}`).boundingBox())!;
+    const iconBox = (await block.getByTestId('info-block-icon').boundingBox())!;
+    expect(Math.abs((lineBox.y + lineBox.height / 2) - (iconBox.y + iconBox.height / 2))).toBeLessThanOrEqual(0.5);
     // Without actions, only the visible row and the existing copy/root padding remain.
     await page.goto(`/iframe.html?id=components-elements-infoblock--${story}&viewMode=story&args=actionsCount:none`);
     await expect(block.locator('.fdoc-info-block__actions')).toHaveCount(0);
