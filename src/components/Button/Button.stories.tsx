@@ -1,4 +1,4 @@
-import { testingDocs } from '../../docs/testing';
+import { qualityDocs } from '../../docs/quality';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Badge, type BadgeSize } from '../Badge/Badge';
 import { iconNames } from '../Icon/Icon';
@@ -46,7 +46,7 @@ const meta = {
 Hover и Pressed меняют только фон. Focused добавляет внешнюю рамку. Disabled использует disabled-токены и нативный \`disabled\`; подсказки о причине недоступности остаются на уровне продукта. Loading использует Circular Progress Indicator и не допускает повторного действия.
 
 Для кнопки только с иконкой обязательно задавать \`aria-label\`. Используется нативный \`button\`, поэтому Enter, Space и Tab работают без дополнительной имитации.
-        ` + testingDocs('Button'),
+        ` + qualityDocs('Button'),
       },
     },
   },
