@@ -1,3 +1,4 @@
+import { qualityDocs } from '../../docs/quality';
 import type { ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from '../Button/Button';
@@ -16,7 +17,7 @@ const meta = {
   tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
-    docs: { description: { component: 'Контекстный информационный блок внутри интерфейса. Поддерживает Title, Text, левую иконку, Close и до двух Actions. Actions автоматически остаются справа при достаточной ширине и переносятся вниз, когда места не хватает. Длинные слова и ссылки не ломают ширину компонента.' } },
+    docs: { description: { component: ('Контекстный информационный блок внутри интерфейса. Поддерживает Title, Text, левую иконку, Close и до двух Actions. Actions автоматически остаются справа при достаточной ширине и переносятся вниз, когда места не хватает. Длинные слова и ссылки не ломают ширину компонента.') + qualityDocs('InfoBlock') } },
   },
   args: { color: 'neutral', title: 'Title', text: 'Notification text', showLeftIcon: true, closable: true, actionsCount: 'two' },
   argTypes: {
