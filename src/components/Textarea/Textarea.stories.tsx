@@ -1,7 +1,7 @@
+import { qualityDocs } from '../../docs/quality';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Textarea } from './Textarea';
-import { testingDocs } from '../../docs/testing';
 import { controlsParameters, pickFieldControls } from '../../docs/story-controls';
 
 const controlOrder = [
@@ -47,7 +47,7 @@ Label связан с полем через htmlFor/id; Error, Caption, Counter 
 Skeleton использует общий компонент Skeleton и сохраняет состав: Label/Helper по наличию, полоска значения — только у заполненного поля. Поле Skeleton не интерактивно и скрыто от дерева доступности.
 
 Это компонент тестовой дизайн-системы и личного плейбука, а не официальный production-пакет F.Doc.
-` + testingDocs('Textarea') } },
+` + qualityDocs('Textarea') } },
   },
   decorators: [(Story, context) => <div style={{ width: context.name === 'States' ? 'min(960px, 100%)' : 'min(456px, 100%)' }}><Story /></div>],
   args: { label: 'Label text', placeholder: 'Placeholder', caption: 'Caption text' },
