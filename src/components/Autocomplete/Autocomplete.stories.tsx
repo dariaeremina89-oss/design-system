@@ -31,7 +31,7 @@ const meta = {
     layout: 'padded',
     controls: controlsParameters(controlOrder),
     docs: {
-      description: { component: ('Autocomplete выбирает одно значение из списка через поиск. Визуально наследует Input, Select и Menu: без полученного списка работает как Input, при наличии вариантов — как Select. Произвольное значение сохранить нельзя. required показывает обязательность через Label и передает aria-required полю.',) + qualityDocs('Autocomplete') },
+      description: { component: 'Autocomplete выбирает одно значение из списка через поиск. Визуально наследует Input, Select и Menu: без полученного списка работает как Input, при наличии вариантов — как Select. Произвольное значение сохранить нельзя. required показывает обязательность через Label и передает aria-required полю.' + qualityDocs('Autocomplete') },
     },
   },
   decorators: [Story => <div style={{ width: '100%', maxWidth: 456 }}><Story /></div>],
