@@ -12,7 +12,24 @@ function walk(directory: string): string[] {
   });
 }
 
+function publicComponentExports(): string[] {
+  const source = readFileSync(join(root, 'src/index.ts'), 'utf8');
+  const names = [...source.matchAll(/export\s*\{([^}]+)\}\s*from/g)]
+    .flatMap(match => match[1].split(','))
+    .map(item => item.trim().split(/\s+as\s+/).at(-1) ?? '')
+    .filter(name => /^[A-Z][A-Za-z0-9]+$/.test(name));
+
+  return [...new Set(names)].sort();
+}
+
 describe('component quality documentation', () => {
+  it('covers every public component exported from src/index.ts', () => {
+    const registered = Object.keys(componentQuality);
+    const missing = publicComponentExports().filter(name => !registered.includes(name));
+
+    expect(missing, `Public components without quality docs: ${missing.join(', ')}`).toEqual([]);
+  });
+
   it('keeps every quality contract connected to real tests and selectors', () => {
     for (const [name, item] of Object.entries(componentQuality) as Array<[string, { unit: string; browser?: string; selectors: Array<[string, string]> }]>) {
       expect(item.selectors.length, `${name}: selectors`).toBeGreaterThan(0);
