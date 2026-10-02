@@ -29,6 +29,7 @@ export const componentQuality = {
   SwitchGroup: { unit: 'src/components/SelectionControl/SelectionControl.test.tsx', browser: 'tests/visual/bulk-components.visual.spec.ts', selectors: [['fieldset', 'Корень группы'], ['role="switch"', 'Опции']] },
   Tooltip: { unit: 'src/components/Tooltip/Tooltip.test.tsx', browser: 'tests/visual/bulk-components.visual.spec.ts', selectors: [['role="tooltip"', 'Portal подсказки'], ['aria-describedby', 'Связь с trigger']] },
   Accordion: { unit: 'src/components/Accordion/Accordion.test.tsx', browser: 'tests/visual/bulk-components.visual.spec.ts', selectors: [['button[aria-expanded]', 'Header'], ['role="region"', 'Раскрытый Content']] },
+  AccordionGroup: { unit: 'src/components/Accordion/Accordion.test.tsx', browser: 'tests/visual/bulk-components.visual.spec.ts', selectors: [['role="button"', 'Triggers Accordion внутри группы'], ['role="region"', 'Раскрытые панели']] },
   Breadcrumbs: { unit: 'src/components/Breadcrumbs/Breadcrumbs.test.tsx', browser: 'tests/visual/adaptive-stress.visual.spec.ts', selectors: [['nav', 'Корень навигации'], ['aria-current="page"', 'Текущий уровень']] },
   Tabs: { unit: 'src/components/Tabs/Tabs.test.tsx', browser: 'tests/visual/tabs.visual.spec.ts', selectors: [['role="tablist"', 'Корень'], ['role="tab"', 'Вкладки'], ['role="tabpanel"', 'Активная панель']] },
   Pagination: { unit: 'src/components/Pagination/Pagination.test.tsx', browser: 'tests/visual/bulk-components.visual.spec.ts', selectors: [['nav', 'Корень навигации'], ['aria-current="page"', 'Текущая страница']] },
