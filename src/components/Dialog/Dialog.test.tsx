@@ -27,6 +27,12 @@ describe('Dialog', () => {
     close.mockClear(); rerender(<Dialog open title="Документ" onClose={close} closeOnEscape={false} />);
     fireEvent(screen.getByRole('dialog'), new Event('cancel', {cancelable:true})); expect(close).not.toHaveBeenCalled();
   });
+  it('handles Escape only in the innermost dialog across React portals', () => {
+    const parentClose = vi.fn(), childClose = vi.fn();
+    render(<Dialog open title="Родитель" onClose={parentClose}><Dialog open title="Дочерний" onClose={childClose}/></Dialog>);
+    fireEvent(screen.getByRole('dialog', {name:'Дочерний'}), new Event('cancel', {cancelable:true}));
+    expect(childClose).toHaveBeenCalledWith('escape'); expect(parentClose).not.toHaveBeenCalled();
+  });
   it('keeps nested scroll locks until all modals close', () => {
     const a = render(<Dialog open title="Первый" onClose={() => {}}/>);
     const b = render(<Dialog open title="Второй" onClose={() => {}}/>);

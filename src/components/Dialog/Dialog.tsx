@@ -46,13 +46,15 @@ export function Dialog({ open, onClose, title, children, footer, size = 'small',
     const previousFocus = document.activeElement as HTMLElement | null;
     node.showModal();
     if (locks++ === 0) { previousOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden'; }
-    (initialFocus.current?.current ?? node.querySelector<HTMLElement>('[data-dialog-title]'))?.focus();
     return () => {
       node.close();
       if (--locks === 0) document.body.style.overflow = previousOverflow;
       if (previousFocus?.isConnected) previousFocus.focus();
     };
   }, [open]);
+  useLayoutEffect(() => {
+    if (open && portal) (initialFocus.current?.current ?? ref.current?.querySelector<HTMLElement>('[data-dialog-title]'))?.focus();
+  }, [open, portal]);
   if (!open || typeof document === 'undefined') return null;
   const outside = (x: number, y: number) => {
     const box = ref.current!.getBoundingClientRect();
@@ -60,11 +62,20 @@ export function Dialog({ open, onClose, title, children, footer, size = 'small',
   };
   return createPortal(<dialog ref={ref} className="fdoc-dialog" data-size={size} data-variant={variant}
     data-testid={testId} aria-modal="true" aria-labelledby={titleId} aria-describedby={describedBy}
-    onCancel={event => { event.preventDefault(); if (closeOnEscape) onClose('escape'); }}
+    onKeyDown={event => {
+      if (event.key !== 'Tab' || event.defaultPrevented || (event.target as Element).closest('dialog') !== event.currentTarget) return;
+      const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button, input, select, textarea, a[href], [tabindex]'))
+        .filter(node => node.tabIndex >= 0 && !node.matches(':disabled') && !node.closest('[inert]') && node.getClientRects().length > 0 && getComputedStyle(node).visibility !== 'hidden');
+      const first = controls[0], last = controls.at(-1), active = document.activeElement;
+      if (!first) { event.preventDefault(); event.currentTarget.querySelector<HTMLElement>('[data-dialog-title]')?.focus(); }
+      else if (event.shiftKey && (active === first || !controls.includes(active as HTMLElement))) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && active === last) { event.preventDefault(); first.focus(); }
+    }}
+    onCancel={event => { event.preventDefault(); event.stopPropagation(); if (event.target === event.currentTarget && closeOnEscape) onClose('escape'); }}
     onPointerDown={event => { pointerOutside.current = event.target === event.currentTarget && outside(event.clientX, event.clientY); }}
     onClick={event => { if (closeOnBackdrop && pointerOutside.current && event.target === event.currentTarget && outside(event.clientX, event.clientY)) onClose('backdrop'); pointerOutside.current = false; }}>
     <PortalContainer.Provider value={portal}>
-      <div className="fdoc-dialog__layout">
+      {portal && <div className="fdoc-dialog__layout">
         <header className="fdoc-dialog__header" data-testid={`${testId}-header`}>
           <Typography as="h2" variant="h3-heading" id={titleId} tabIndex={-1} data-dialog-title="" className="fdoc-dialog__title">{title}</Typography>
           <ButtonIcon icon="cross" size="medium" color="neutral" aria-label={closeLabel} data-testid={`${testId}-close`} onClick={() => onClose('close-button')} />
@@ -75,7 +86,7 @@ export function Dialog({ open, onClose, title, children, footer, size = 'small',
           {children}
         </div>
         {footer && <footer className="fdoc-dialog__footer" data-align={footerAlign} data-testid={`${testId}-footer`}>{footer}</footer>}
-      </div>
+      </div>}
       <div ref={setPortal} className="fdoc-dialog__portals" />
     </PortalContainer.Provider>
   </dialog>, document.body);

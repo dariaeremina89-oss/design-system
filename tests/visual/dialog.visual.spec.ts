@@ -7,6 +7,7 @@ for (const width of [1280, 320]) {
     const dialog = page.getByRole('dialog'); await expect(dialog).toBeVisible();
     const box = await dialog.boundingBox(); expect(box!.width).toBe(width===1280?480:288);
     await expect(dialog.getByRole('heading')).toBeFocused();
+    await page.keyboard.press('Shift+Tab'); await expect(dialog.getByRole('button',{name:'Отмена',exact:true})).toBeFocused();
     for(let i=0;i<7;i++) { await page.keyboard.press('Tab'); expect(await page.evaluate(()=>!!document.activeElement?.closest('dialog'))).toBe(true); }
     await page.keyboard.press('Escape'); await expect(dialog).toHaveCount(0); await expect(trigger).toBeFocused();
   });
@@ -28,4 +29,13 @@ test('scrolling content preserves header/footer and backdrop closing is configur
   await page.goto(story('explicit-close')); await page.getByRole('button',{name:'Открыть диалог'}).click();
   await page.mouse.click(2,2); await page.keyboard.press('Escape'); await expect(page.getByRole('dialog')).toBeVisible();
   await page.getByTestId('dialog-close').click(); await expect(page.getByRole('dialog')).toHaveCount(0);
+});
+test('initially open nested dialogs preserve top layer and close independently', async ({page}) => {
+  await page.goto(story('nested')); await page.getByRole('button',{name:'Открыть вложенные диалоги'}).click();
+  await expect(page.getByRole('heading',{name:'Подтверждение',exact:true})).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog',{name:'Подтверждение',exact:true})).toHaveCount(0);
+  await expect(page.getByRole('dialog',{name:'Редактирование',exact:true})).toBeVisible();
+  await page.keyboard.press('Escape'); await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('button',{name:'Открыть вложенные диалоги'})).toBeFocused();
 });

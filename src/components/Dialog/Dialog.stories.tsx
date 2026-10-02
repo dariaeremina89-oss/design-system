@@ -49,3 +49,15 @@ export const Large: Story = { args: { size: 'large' } };
 export const Form: Story = { args: { variant: 'module', title: 'Данные документа', children: <><Input label="Название" defaultValue="Договор"/><Select label="Статус" options={[{value:'draft',label:'Черновик'},{value:'ready',label:'Готов'}]} /></> } };
 export const Scroll: Story = { args: { variant: 'scroll', title: 'Условия отправки', children: Array.from({length:12},(_,i)=><Typography key={i}>Раздел {i+1}. Проверьте данные получателя и вложенные документы перед отправкой.</Typography>) } };
 export const ExplicitClose: Story = { args: { closeOnBackdrop: false, closeOnEscape: false, title: 'Требуется решение', children: <Typography>Закройте окно кнопкой или выберите действие. Клик по фону и Escape отключены.</Typography> } };
+
+function NestedExample() {
+  const [parent, setParent] = useState(false), [child, setChild] = useState(false);
+  return <><Typography variant="caption">Вложенное подтверждение: Escape закрывает только верхний Dialog.</Typography>
+    <Button onClick={() => { setParent(true); setChild(true); }}>Открыть вложенные диалоги</Button>
+    <Dialog open={parent} onClose={() => setParent(false)} title="Редактирование" footer={<Button onClick={() => setChild(true)}>Открыть подтверждение</Button>}>
+      <Typography>Основная задача остается открытой после закрытия подтверждения.</Typography>
+      <Dialog open={child} onClose={() => setChild(false)} title="Подтверждение" footer={<Button onClick={() => setChild(false)}>Подтвердить</Button>}><Typography>Подтвердите изменение.</Typography></Dialog>
+    </Dialog>
+  </>;
+}
+export const Nested: Story = { render: () => <NestedExample/> };
