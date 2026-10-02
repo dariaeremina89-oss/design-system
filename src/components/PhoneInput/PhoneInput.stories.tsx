@@ -1,3 +1,4 @@
+import { qualityDocs } from '../../docs/quality';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PhoneInput, PHONE_INPUT_FORMAT_ERROR, PHONE_INPUT_REQUIRED_ERROR, type PhoneInputType } from './PhoneInput';
@@ -17,8 +18,7 @@ const meta = {
     layout: 'padded',
     controls: controlsParameters(controlOrder),
     docs: {
-      description: {
-        component: `
+      description: { component: (`
 **PhoneInput** — специализированное поле для одного телефонного номера. Компонент собирается из Input и Menu и поддерживает российский и иностранный формат.
 
 **Russian** используется по умолчанию. В пустом поле отображаются постоянный префикс \`+7\` и маска \`(000) 000-00-00\`. Значение форматируется как \`+7 (999) 999-99-99\`. Номера из 10 цифр, начинающиеся с 9, а также 11 цифр с \`79\` или \`89\`, распознаются как российские; \`8\` преобразуется в \`7\`.
@@ -30,8 +30,7 @@ Type selector — отдельный фокусируемый элемент в 
 При вставке удаляются символы форматирования, определяется тип номера и применяется нужное отображение. Ввод букв и других недопустимых символов не сохраняется.
 
 Внешнее \`value\` нормализовано до \`+\` и цифр. Валидационные тексты по спецификации: «${PHONE_INPUT_REQUIRED_ERROR}» и «${PHONE_INPUT_FORMAT_ERROR}». Само отображение ошибки управляется prop \`error\`, как у базового Input.
-        `.trim(),
-      },
+        `.trim(),) + qualityDocs('PhoneInput') },
     },
   },
   decorators: [Story => <div style={{ width: '100%', maxWidth: 456 }}><Story /></div>],
