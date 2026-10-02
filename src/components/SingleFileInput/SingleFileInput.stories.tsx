@@ -1,3 +1,4 @@
+import { qualityDocs } from '../../docs/quality';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Link } from '../Link/Link';
 import { singleFileInputDocs } from '../../docs/file-upload';
@@ -19,7 +20,7 @@ const meta = {
   tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
-    docs: { description: { component: singleFileInputDocs } },
+    docs: { description: { component: (singleFileInputDocs) + qualityDocs('SingleFileInput') } },
   },
   args: {
     type: 'default',
