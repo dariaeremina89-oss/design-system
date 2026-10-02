@@ -45,20 +45,4 @@ FileRow не переопределяет типографику, цвет ил�
 
 Базовая высота — 48 px, padding Y 12 / X 8, gap между основными слотами 8, между именем и правой группой 16. Border рисуется внутри и не увеличивает размер. Компонент занимает ширину родителя, не меняет размер шрифта на мобильном; фиксированные controls сохраняют размер, имя файла отдает ширину первым.
 
-### Автотесты
-
-Unit-тесты проверяют Loading/Disabled, Message, preview, универсальные slots, disabled для вложенных действий, delete/menu, reorder с клавиатуры и drag contract, Skeleton. Browser UI проверяет имя + вес на узкой ширине, Chips без overflow, drag feedback/DropIndicator и геометрию Skeleton.
-
-### Селекторы для тестирования
-
-| Селектор | Элемент |
-| --- | --- |
-| \`data-testid="file-row"\` | Корень обычной строки. |
-| \`data-testid="file-row-skeleton"\` | Skeleton вместо строки. |
-| \`data-testid="file-row-reorder-handle"\` | Reorder handle. |
-| \`data-file-row-dragging="true"\` | Исходная строка во время drag. |
-| \`.fdoc-file-item__name\` | Имя файла; для продуктовых тестов предпочтительнее доступное имя строки. |
-| \`.fdoc-file-row-drop-indicator\` | Линия целевой позиции reorder. |
-| \`role="alert" / role="status"\` | Error / Warning Message. |
-| \`role="progressbar"\` | Circular Progress в Loading. |
 `;
