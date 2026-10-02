@@ -1,3 +1,4 @@
+import { qualityDocs } from '../../docs/quality';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Highlight } from './Highlight';
 import { Typography } from '../Typography/Typography';
@@ -6,7 +7,7 @@ const meta = {
   title: 'Components/Elements/Highlight',
   component: Highlight,
   tags: ['autodocs', 'ready'],
-  parameters: { layout: 'padded', docs: { description: { component: 'Подсвечивает все совпадающие подстроки нативным <mark>. Наследует типографику окружающего текста, в том числе его адаптив. Цвета Accent переключаются вместе с Light / Dark и не зависят от кастомного Primary. Поиск буквальный, поддерживает кириллицу. Во вложенной разметке совпадения ищутся внутри каждого текстового узла, без объединения текста через границы тегов.' } } },
+  parameters: { layout: 'padded', docs: { description: { component: ('Подсвечивает все совпадающие подстроки нативным <mark>. Наследует типографику окружающего текста, в том числе его адаптив. Цвета Accent переключаются вместе с Light / Dark и не зависят от кастомного Primary. Поиск буквальный, поддерживает кириллицу. Во вложенной разметке совпадения ищутся внутри каждого текстового узла, без объединения текста через границы тегов.') + qualityDocs('Highlight') } } },
   args: { children: 'Ищи в этой строке', highlight: 'Этой', matchWholeWord: false, isCaseInsensitive: true },
   argTypes: {
     children: { control: 'text' },
