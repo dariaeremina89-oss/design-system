@@ -19,7 +19,13 @@ export function normalizeHex(value: string): string | null {
   return /^[\da-f]{6}$/i.test(hex)?'#'+hex.toLowerCase():null;
 }
 function rgb(hex:string) { return [1,3,5].map(index=>parseInt(hex.slice(index,index+2),16)); }
-/** Existing F.Doc ramp: interpolate encoded sRGB channels toward white or black. */
+// Light preserves the original F.Doc ramp. Dark separates tints from the seed
+// more strongly and lowers shade luminance for subdued surfaces on dark Base.
+const rampAmounts: Record<ColorMode, Record<PrimaryStep, number>> = {
+  light: {25:.96,50:.80,100:.72,200:.56,300:.32,400:.16,500:0,600:.16,700:.32,800:.56,900:.72},
+  dark: {25:.98,50:.88,100:.80,200:.68,300:.50,400:.28,500:0,600:.28,700:.50,800:.76,900:.88},
+};
+/** Interpolate encoded sRGB channels toward white or black. */
 function mix(hex:string, target:number, amount:number) {
   return '#'+rgb(hex).map(channel=>Math.round(channel+(target-channel)*amount).toString(16).padStart(2,'0')).join('');
 }
@@ -35,7 +41,7 @@ export function contrastRatio(first:string,second:string):number {
 }
 export function createPrimaryTheme(input:string,mode:ColorMode='light'):PrimaryTheme {
   const seed=normalizeHex(input); if(!seed) throw new Error('Введите HEX из 3 или 6 символов');
-  const amounts:Record<PrimaryStep,number>={25:.96,50:.80,100:.72,200:.56,300:.32,400:.16,500:0,600:.16,700:.32,800:.56,900:.72};
+  const amounts=rampAmounts[mode];
   const palette=Object.fromEntries(primarySteps.map(step=>[step,mix(seed,step<500?255:0,amounts[step])])) as Record<PrimaryStep,string>;
   const variables:Record<string,string>={'--primary-0':'#ffffff','--primary-1000':'#000000'};
   const references:Record<string,string>={};

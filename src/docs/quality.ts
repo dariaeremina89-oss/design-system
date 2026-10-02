@@ -7,6 +7,7 @@ type QualityInfo = {
 const sharedResponsive = 'tests/visual/responsive-overflow.visual.spec.ts';
 
 export const componentQuality = {
+  Dialog: { unit: 'src/components/Dialog/Dialog.test.tsx', browser: 'tests/visual/dialog.visual.spec.ts', selectors: [['role="dialog"', 'Модальное окно с доступным названием'], ['data-testid="dialog-header / dialog-content / dialog-footer / dialog-close"', 'Части Dialog; префикс задается data-testid']] },
   Icon: { unit: 'src/components/Icon/Icon.test.tsx', browser: 'tests/visual/atoms.visual.spec.ts', selectors: [['data-icon', 'Имя библиотечной иконки'], ['data-testid', 'Опциональный пользовательский ID']] },
   Skeleton: { unit: 'src/components/Skeleton/Skeleton.test.tsx', browser: 'tests/visual/text-skeleton.visual.spec.ts', selectors: [['data-testid="skeleton"', 'Корень Skeleton'], ['data-text-size', 'Типографический размер текстового Skeleton']] },
   Badge: { unit: 'src/components/Badge/Badge.test.tsx', browser: 'tests/visual/badge.visual.spec.ts', selectors: [['data-testid="badge"', 'Корень Badge'], ['data-badge-size / color / state', 'Размер, цвет и состояние']] },

@@ -142,3 +142,6 @@ export type {
   MultipleFileInputProps,
   MultipleFileInputValidation,
 } from './components/MultipleFileInput/MultipleFileInput';
+
+export { Dialog } from './components/Dialog/Dialog';
+export type { DialogProps } from './components/Dialog/Dialog';

@@ -57,8 +57,8 @@ export function CustomBranding() {
     <Typography responsive data-testid="brand-highlight"><Highlight highlight="договор">Найденный договор подсвечен цветом Accent.</Highlight></Typography>
 
     <section>{title('Палитра Primary')}
-      <div className="fdoc-branding__palette">{primarySteps.map(step=>{const color=value(`--primary-${step}`);const foreground=contrastRatio(color,'#000000')>=contrastRatio(color,'#ffffff')?'#000000':'#ffffff';return <div key={step} className="fdoc-branding__swatch" style={{background:color,color:foreground}} data-primary-step={step}><Typography as="span" variant="body" strong>{step}</Typography><Typography as="span" variant="caption">{color.toUpperCase()}</Typography></div>;})}</div>
-      <Typography variant="caption" responsive>500 сохраняет введенный HEX точно. 25–400 — смесь с белым, 600–900 — с черным. Primary отделен от Yellow: предупреждения и другие палитры от клиентского цвета не меняются.</Typography>
+      <div className="fdoc-branding__palette" role="group" data-color-mode={mode} aria-label={`Палитра Primary · ${mode === 'dark' ? 'Dark' : 'Light'}`}>{primarySteps.map(step=>{const color=value(`--primary-${step}`);const foreground=contrastRatio(color,'#000000')>=contrastRatio(color,'#ffffff')?'#000000':'#ffffff';return <div key={step} className="fdoc-branding__swatch" style={{background:color,color:foreground}} data-primary-step={step}><Typography as="span" variant="body" strong>{step}</Typography><Typography as="span" variant="caption">{color.toUpperCase()}</Typography></div>;})}</div>
+      <Typography variant="caption" responsive>500 сохраняет введенный HEX точно. 25–400 — смесь с белым, 600–900 — с черным. В Dark светлые ступени становятся светлее для содержимого, а темные — глубже для подложек; растяжка пересчитывается при переключении темы. Primary отделен от Yellow: предупреждения и другие палитры от клиентского цвета не меняются.</Typography>
     </section>
 
     <section>{title('Состояния компонентов')}
@@ -107,7 +107,7 @@ export function CustomBranding() {
     </section>
 
     <section>{title('Как устроен расчет')}
-      <Typography responsive>Для каждого RGB-канала: светлый оттенок = round(C500 + (255 − C500) × k), темный = round(C500 × (1 − k)). Коэффициенты для 25, 50, 100, 200, 300, 400: 96%, 80%, 72%, 56%, 32%, 16%; для 600, 700, 800, 900: 16%, 32%, 56%, 72%.</Typography>
+      <Typography responsive>Для каждого RGB-канала: светлый оттенок = round(C500 + (255 − C500) × k), темный = round(C500 × (1 − k)). Коэффициенты Light для 25, 50, 100, 200, 300, 400: 96%, 80%, 72%, 56%, 32%, 16%; для 600, 700, 800, 900: 16%, 32%, 56%, 72%. В Dark соответственно: 98%, 88%, 80%, 68%, 50%, 28% и 28%, 50%, 76%, 88%. Эти коэффициенты задают растяжку; пригодность каждой ступени для конкретной роли проверяется отдельно по контрасту.</Typography>
       <Typography responsive>Для семантики действует одно правило: берем номинальную ступень роли, проверяем все ее пары с фонами и выбираем ближайшую ступень, которая проходит порог контраста. Близость — минимальная разница номеров ступеней; при равенстве выбирается меньший номер. Белый 0 и черный 1000 служат крайними точками. Отдельных поправок под Button, Chips или другие компоненты нет.</Typography>
       <div className="fdoc-branding__scroll"><table className="fdoc-branding__table" aria-label="Единые правила цветовых ролей">
         <thead><tr><th scope="col">Роль</th><th scope="col">Номинальная ступень</th><th scope="col">Проверка</th></tr></thead>
@@ -122,7 +122,7 @@ export function CustomBranding() {
       </table></div>
       <Typography responsive>Заливка Default всегда остается 500. При светлом содержимом Hover / Pressed идут к 600 / 700, при темном — к 400 / 300. Так цвет текста не скачет между состояниями. Если номинальный фон другого варианта нарушает контраст, к нему применяется то же правило ближайшей допустимой ступени.</Typography>
       <Typography responsive>Семантические названия сохраняются. Текст на Primary и его активных состояниях подбирается с контрастом не ниже 4.5:1, иконки — 3:1. Считается фактический контраст конечных HEX, без округления порога. Disabled проверяется отдельно от активных состояний. Это проверка заданных пар цветов, а не всех возможных наложений компонентов.</Typography>
-      <Typography responsive>Light и Dark используют один Primary 500. В Dark меняются семантические соответствия фонов, текста, иконок и обводок; исходные Neutral, Success, Error, Warning и Accent не пересчитываются.</Typography>
+      <Typography responsive>Light и Dark используют один Primary 500. В Dark пересчитывается растяжка Primary, затем подбираются семантические соответствия фонов, текста, иконок и обводок; исходные Neutral, Success, Error, Warning и Accent не пересчитываются.</Typography>
       <Button color="secondary" onClick={()=>setExported(!exported)}>{exported?'Скрыть CSS':'Показать CSS темы'}</Button>
       {exported&&<pre className="fdoc-branding__code" tabIndex={0} aria-label="CSS темы">{theme?primaryThemeCss(theme):'/* Исходная Light-тема: подключите styles/tokens.css без переопределений. */'}</pre>}
       <Typography variant="caption" responsive>Для интеграции: createColorTheme(hex, mode) возвращает палитру, значения и связи токенов; primaryThemeCss(theme) формирует CSS для корня приложения, включая портальные меню. Для Dark F.Doc используется #FFDC00 без клиентского переопределения.</Typography>

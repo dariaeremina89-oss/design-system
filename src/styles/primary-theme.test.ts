@@ -21,7 +21,7 @@ describe('Primary color theme',()=>{
     for(const [token,reference] of Object.entries(theme.references)) expect(theme.variables[token]).toBe(theme.variables[reference]);
   });
   it('keeps the seed exact and contrast safe across saturated, pale, dark and intermediate colors in both modes',()=>{
-    const colors=['#000000','#ffffff','#ff0000','#00ff00','#0000ff','#777777','#ffdc00','#2f26ff','#171329','#f4e5fa'];
+    const colors=['#000000','#ffffff','#ff0000','#00ff00','#0000ff','#777777','#ffdc00','#2f26ff','#171329','#f4e5fa','#008567','#8b1245'];
     let random=321;
     for(let i=0;i<300;i++){random=(Math.imul(random,1664525)+1013904223)>>>0;colors.push('#'+(random&0xffffff).toString(16).padStart(6,'0'));}
     for(const seed of colors) for(const mode of ['light','dark'] as const) {
@@ -42,6 +42,28 @@ describe('Primary color theme',()=>{
         expect(contrastRatio(v[`--text-primary-inverse-light${state}`],inverse)).toBeGreaterThanOrEqual(4.5);
       }
       for(const key of Object.keys(v)) expect(key).not.toMatch(/^--(?:neutral|yellow|green|red|purple|orange|client|violet|white|black)-/);
+    }
+  });
+  it('recalculates the ramp for Dark while keeping the seed and restoring Light exactly',()=>{
+    for(const seed of [DEFAULT_PRIMARY,'#2f26ff','#008567','#8b1245','#f4e5fa','#171329']) {
+      const light=createColorTheme(seed,'light'),dark=createColorTheme(seed,'dark');
+      expect(dark.palette[500]).toBe(light.palette[500]);
+      expect(dark.palette).not.toEqual(light.palette);
+      for(const step of primarySteps.filter(step=>step!==500)) {
+        const lightLuminance=relativeLuminance(light.palette[step]);
+        const darkLuminance=relativeLuminance(dark.palette[step]);
+        if(step<500) expect(darkLuminance).toBeGreaterThanOrEqual(lightLuminance);
+        else expect(darkLuminance).toBeLessThanOrEqual(lightLuminance);
+      }
+      applyPrimaryTheme(seed,true,'light');
+      applyColorMode('dark');
+      for(const step of primarySteps) {
+        expect(document.documentElement.style.getPropertyValue(`--primary-${step}`)).toBe(dark.palette[step]);
+        expect(primaryThemeCss(dark)).toContain(`--primary-${step}: ${dark.palette[step]};`);
+      }
+      applyColorMode('light');
+      for(const step of primarySteps) expect(document.documentElement.style.getPropertyValue(`--primary-${step}`)).toBe(light.palette[step]);
+      expect(getPrimarySeed()).toBe(seed);
     }
   });
   it('Dark is available with the F.Doc seed and never changes status values when the brand changes',()=>{

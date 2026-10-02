@@ -97,3 +97,37 @@ test('color mode also switches the Storybook manager and documentation shell',as
   await preview.getByRole('radio',{name:'Light',exact:true}).click();
   await expect(page.locator('html')).toHaveAttribute('data-color-mode','light');
 });
+
+test('Primary swatches, root tokens and CSS export change together between Light and Dark',async({page})=>{
+  await page.goto(branding);
+  const swatches=page.locator('[data-primary-step]');
+  const readRamp=()=>swatches.evaluateAll(elements=>elements.map(element=>({
+    step:Number(element.getAttribute('data-primary-step')),
+    label:element.textContent,
+    background:getComputedStyle(element).backgroundColor,
+    token:getComputedStyle(document.documentElement).getPropertyValue(`--primary-${element.getAttribute('data-primary-step')}`).trim(),
+  })));
+  // Includes the original F.Doc palette, before any custom seed was applied.
+  for(const seed of [null,'#2f26ff','#008567','#8b1245','#f4e5fa','#171329']) {
+    await page.getByRole('radio',{name:'Light',exact:true}).click();
+    if(seed) await page.getByRole('textbox',{name:'Primary 500 HEX'}).fill(seed);
+    await expect(swatches).toHaveCount(11);
+    const light=await readRamp();
+    await page.getByRole('radio',{name:'Dark',exact:true}).click();
+    await expect(page.locator('.fdoc-branding__palette')).toHaveAttribute('data-color-mode','dark');
+    const dark=await readRamp();
+    expect(dark.map(swatch=>swatch.background)).not.toEqual(light.map(swatch=>swatch.background));
+    for(let index=0;index<dark.length;index++) {
+      const swatch=dark[index];
+      expect(hex(swatch.background)).toBe(swatch.token);
+      expect(swatch.label).toContain(swatch.token.toUpperCase());
+      if(swatch.step===500) expect(swatch.background).toBe(light[index].background);
+      // Near white or black, 8-bit rounding can leave an individual endpoint unchanged.
+    }
+    await page.getByRole('button',{name:'Показать CSS темы'}).click();
+    for(const swatch of dark) await expect(page.getByLabel('CSS темы')).toContainText(`--primary-${swatch.step}: ${swatch.token};`);
+    await page.getByRole('button',{name:'Скрыть CSS'}).click();
+    await page.getByRole('radio',{name:'Light',exact:true}).click();
+    expect(await readRamp()).toEqual(light);
+  }
+});

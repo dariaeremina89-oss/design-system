@@ -1,0 +1,30 @@
+.fdoc-dialog { box-sizing:border-box; border:0; padding:0; width:480px; max-width:calc(100vw - var(--space-32)); max-height:calc(100dvh - var(--space-32)); margin:auto; overflow:visible; color:var(--text-base-default); background:var(--background-base-default); border-radius:var(--radius-middle); box-shadow:var(--shadow-l); }
+.fdoc-dialog::backdrop { background:var(--transparent-background-black-scrim); }
+.fdoc-dialog[data-size="medium"] { width:640px; }
+.fdoc-dialog[data-size="large"] { width:1024px; }
+.fdoc-dialog__layout { display:flex; flex-direction:column; max-height:calc(100dvh - var(--space-32)); border-radius:inherit; overflow:hidden; }
+.fdoc-dialog__header { display:flex; align-items:flex-start; gap:var(--space-8); padding:var(--space-16) var(--space-16) var(--space-16) var(--space-24); flex:none; background:var(--background-base-default); }
+.fdoc-dialog__title { flex:1; min-width:0; padding:var(--space-4) var(--space-8) 0 0; overflow-wrap:anywhere; outline:none; }
+.fdoc-dialog__content { min-height:0; overflow:auto; overscroll-behavior:contain; padding:0 var(--space-24); display:flex; flex-direction:column; gap:var(--space-24); overflow-wrap:anywhere; }
+.fdoc-dialog__content:last-child { padding-bottom:var(--space-24); }
+.fdoc-dialog__footer { flex:none; display:flex; align-items:center; flex-wrap:wrap; gap:var(--space-24); padding:var(--space-32) var(--space-24); background:var(--background-base-default); }
+.fdoc-dialog__footer[data-align="center"] { justify-content:center; }
+.fdoc-dialog__footer[data-align="edges"] { justify-content:space-between; }
+.fdoc-dialog[data-variant="scroll"] .fdoc-dialog__content { height:256px; }
+.fdoc-dialog[data-variant="scroll"] .fdoc-dialog__header { box-shadow:var(--shadow-s); z-index:1; }
+.fdoc-dialog[data-variant="scroll"] .fdoc-dialog__footer { box-shadow:var(--shadow-s); z-index:1; }
+.fdoc-dialog[data-variant="image"] .fdoc-dialog__header { justify-content:flex-end; padding-top:var(--space-8); padding-bottom:var(--space-8); }
+.fdoc-dialog[data-variant="image"] .fdoc-dialog__title { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); padding:0; }
+.fdoc-dialog[data-variant="image"] .fdoc-dialog__content { align-items:center; text-align:center; }
+.fdoc-dialog__image { max-width:100%; }
+.fdoc-dialog__image img,.fdoc-dialog__image svg { max-width:100%; height:auto; }
+@media(max-width:767px) {
+ .fdoc-dialog { width:320px; }
+ .fdoc-dialog[data-size="medium"] { width:480px; }
+ .fdoc-dialog[data-size="large"] { width:640px; }
+ .fdoc-dialog__header { padding-left:var(--space-16); padding-right:var(--space-8); }
+ .fdoc-dialog__content { padding-inline:var(--space-16); }
+ .fdoc-dialog__footer { padding:var(--space-24) var(--space-16); gap:var(--space-16); }
+ .fdoc-dialog[data-size="small"] .fdoc-dialog__footer { flex-direction:column; align-items:flex-start; }
+ .fdoc-dialog[data-size="small"] .fdoc-dialog__footer[data-align="center"] { align-items:center; }
+}
