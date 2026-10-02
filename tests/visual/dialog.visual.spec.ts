@@ -6,7 +6,10 @@ for (const width of [1280, 320]) {
     const trigger = page.getByRole('button',{name:'Открыть диалог'}); await trigger.click();
     const dialog = page.getByRole('dialog'); await expect(dialog).toBeVisible();
     const box = await dialog.boundingBox(); expect(box!.width).toBe(width===1280?480:288);
-    expect((await page.getByTestId('dialog-header').boundingBox())!.height).toBe(72);
+    const headerHeight = (await page.getByTestId('dialog-header').boundingBox())!.height;
+    const titleHeight = (await dialog.getByRole('heading').boundingBox())!.height;
+    expect(headerHeight).toBe(Math.max(40, titleHeight) + 32);
+    if (width === 1280) expect(headerHeight).toBe(72);
     expect(await dialog.getByRole('heading').evaluate(n=>getComputedStyle(n).marginTop)).toBe('0px');
     await expect(dialog.getByRole('heading')).toBeFocused();
     await page.keyboard.press('Shift+Tab'); await expect(dialog.getByRole('button',{name:'Отмена',exact:true})).toBeFocused();
