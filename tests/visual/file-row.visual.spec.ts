@@ -52,3 +52,45 @@ for (const [viewport, expectedWidth] of [[1280, 456], [320, 288]] as const) {
     expect(Math.round((await skeleton.boundingBox())!.width)).toBe(expectedWidth);
   });
 }
+
+
+test('FileRow additional components preserve their own geometry', async ({ page }) => {
+  await page.setViewportSize({ width: 456, height: 900 });
+  await page.goto('/iframe.html?id=components-elements-filerow--additional-content&viewMode=story');
+
+  const badgeExample = page.getByText('Badge', { exact: true }).locator('..');
+  const chipsExample = page.getByText('Chips / status', { exact: true }).locator('..');
+  const badge = badgeExample.getByTestId('badge');
+  const chips = chipsExample.getByTestId('chips');
+
+  await expect(badge).toBeVisible();
+  await expect(chips).toBeVisible();
+  await expect(badge).toHaveCSS('height', '20px');
+  await expect(chips).toHaveCSS('height', '24px');
+
+  for (const example of [badgeExample, chipsExample]) {
+    const row = example.getByTestId('file-row');
+    const name = row.locator('.fdoc-file-item__name');
+    expect(await name.evaluate(element => element.getBoundingClientRect().width)).toBeGreaterThan(0);
+    expect(await row.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  }
+
+  await page.setViewportSize({ width: 320, height: 900 });
+  await expect(chips).toBeVisible();
+  await expect(chips).toHaveCSS('height', '24px');
+  expect(await chipsExample.getByTestId('file-row').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+});
+
+test('FileRow reorder moves the actual row, not only the drop indicator', async ({ page }) => {
+  await page.setViewportSize({ width: 600, height: 700 });
+  await page.goto('/iframe.html?id=components-elements-filerow--reorderable&viewMode=story');
+
+  const names = page.locator('[data-testid^="reorder-row-"] .fdoc-file-item__name');
+  await expect(names).toHaveText(['Договор.pdf', 'Заявление.pdf', 'Согласие.pdf']);
+
+  const source = page.getByTestId('file-row-reorder-handle').first();
+  const target = page.getByTestId('reorder-row-agreement');
+  await source.dragTo(target);
+
+  await expect(names).toHaveText(['Заявление.pdf', 'Согласие.pdf', 'Договор.pdf']);
+});
