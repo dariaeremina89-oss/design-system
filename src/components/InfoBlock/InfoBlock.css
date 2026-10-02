@@ -32,4 +32,3 @@
 
 /* A single copy slot is centered against the taller action row. */
 .fdoc-info-block__copy:has(> :only-child) { align-self:center; }
-.fdoc-info-block__main:has(.fdoc-info-block__copy > :only-child) > .fdoc-info-block__icon { align-self:center; margin-top:0; }

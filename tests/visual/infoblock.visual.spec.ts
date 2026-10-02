@@ -75,6 +75,18 @@ for (const [story, visible, absent] of [
   ['title-only', 'title', 'text'],
   ['text-only', 'text', 'title'],
 ] as const) {
+  test(`InfoBlock ${story} keeps its icon beside copy when actions wrap`, async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 700 });
+    await page.goto(`/iframe.html?id=components-elements-infoblock--${story}&viewMode=story`);
+    const block = page.getByTestId('info-block');
+    await expect(block).toBeVisible();
+    const main = (await block.locator('.fdoc-info-block__main').boundingBox())!;
+    const icon = (await block.getByTestId('info-block-icon').boundingBox())!;
+    const copy = (await block.locator('.fdoc-info-block__copy').boundingBox())!;
+    const actions = (await block.locator('.fdoc-info-block__actions').boundingBox())!;
+    expect(icon.y - main.y).toBe(8);
+    expect(actions.y).toBeGreaterThanOrEqual(copy.y + copy.height - 0.5);
+  });
   test(`InfoBlock ${story} has one copy row without a hidden slot`, async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 700 });
     await page.goto(`/iframe.html?id=components-elements-infoblock--${story}&viewMode=story`);
@@ -88,7 +100,7 @@ for (const [story, visible, absent] of [
     const actions = block.locator('.fdoc-info-block__actions');
     expect((await main.boundingBox())!.height).toBe((await actions.boundingBox())!.height);
     const mainBox = (await main.boundingBox())!;
-    for (const part of [copy, block.getByTestId('info-block-icon')]) {
+    for (const part of [copy]) {
       const box = (await part.boundingBox())!;
       const top = box.y - mainBox.y;
       const bottom = mainBox.y + mainBox.height - box.y - box.height;
