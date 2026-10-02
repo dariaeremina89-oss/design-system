@@ -3,6 +3,8 @@ type TestingDocs = {
   browser: string;
   gaps: string;
   selectors: Array<[string, string, string]>;
+  unitFile?: string;
+  browserFile?: string;
 };
 
 const docs: Record<string, TestingDocs> = {
@@ -131,12 +133,376 @@ const docs: Record<string, TestingDocs> = {
       ['data-testid (без дефолта)', 'Корень', 'Можно передать свой ID.'],
     ],
   },
+
+  Accordion: {
+    unit: 'Раскрытие/закрытие с клавиатуры, aria-expanded/aria-controls, скрытие содержимого из Tab-порядка, disabled, single/multiple поведение группы и axe.',
+    browser: 'Геометрия и адаптивные отступы, single-open поведение AccordionGroup; общий viewport-audit на 320 px.',
+    gaps: 'Нет скриншотных эталонов и полного прогона всех сочетаний size × state.',
+    selectors: [
+      ['role=button', 'Заголовок Accordion', 'aria-expanded и aria-controls отражают состояние.'],
+      ['role=region', 'Раскрытая панель', 'Связана с trigger через aria-controls.'],
+      ['.fdoc-accordion', 'Корень', 'CSS-класс для визуальных browser-тестов.'],
+    ],
+    unitFile: 'src/components/Accordion/Accordion.test.tsx',
+    browserFile: 'tests/visual/bulk-components.visual.spec.ts',
+  },
+  AccordionGroup: {
+    unit: 'Single и multiple раскрытие, сохранение состояния элементов и доступная семантика через Accordion.',
+    browser: 'Проверка единственного раскрытого элемента в default-группе и адаптив Accordion внутри группы.',
+    gaps: 'Нет отдельного скриншотного эталона группы.',
+    selectors: [
+      ['role=button', 'Triggers элементов группы', 'Ищите по доступному имени title.'],
+      ['role=region', 'Раскрытые панели', 'Присутствуют только у открытых элементов.'],
+    ],
+    unitFile: 'src/components/Accordion/Accordion.test.tsx',
+    browserFile: 'tests/visual/bulk-components.visual.spec.ts',
+  },
+  Autocomplete: {
+    unit: 'Combobox, фильтрация, выбор option, clear, controlled/uncontrolled input, клавиатура и состояние списка.',
+    browser: 'Геометрия popup, клавиатурная навигация, адаптив и переполнение длинных значений.',
+    gaps: 'Нет проверки экранными дикторами и скриншотных эталонов.',
+    selectors: [
+      ['role=combobox', 'Поле ввода', 'Основной интерактивный селектор.'],
+      ['role=listbox', 'Popup вариантов', 'Только когда список открыт.'],
+      ['role=option', 'Вариант', 'selected/focused состояние через ARIA/data-state.'],
+    ],
+    unitFile: 'src/components/Autocomplete/Autocomplete.test.tsx',
+    browserFile: 'tests/visual/autocomplete.visual.spec.ts',
+  },
+  AsyncAutocomplete: {
+    unit: 'Асинхронная загрузка, debounce/обновление результатов, loading, выбор и клавиатурное управление.',
+    browser: 'Использует те же browser-контракты popup/адаптива, что Autocomplete, плюс общий viewport-audit.',
+    gaps: 'Нет сетевых e2e-сценариев с реальным backend и race-condition матрицы.',
+    selectors: [
+      ['role=combobox', 'Поле ввода', 'Основной интерактивный селектор.'],
+      ['role=listbox / role=option', 'Список и варианты', 'Появляются после загрузки результатов.'],
+      ['role=progressbar', 'Индикатор загрузки', 'При loading.'],
+    ],
+    unitFile: 'src/components/Autocomplete/AsyncAutocomplete.test.tsx',
+    browserFile: 'tests/visual/autocomplete.visual.spec.ts',
+  },
+  Breadcrumbs: {
+    unit: 'Ссылки, current item, compact/collapse логика и реакция на ResizeObserver.',
+    browser: 'Схлопывание по ширине контейнера и viewport, длинный current item без горизонтального overflow.',
+    gaps: 'Нет скриншотных эталонов и тестов очень больших уровней вложенности.',
+    selectors: [
+      ['role=navigation', 'Корень Breadcrumbs', 'Доступное имя: Навигационная цепочка.'],
+      ['role=link', 'Переходы', 'Скрытые уровни удаляются из DOM в compact.'],
+      ['[aria-current=page]', 'Текущий уровень', 'Последний элемент.'],
+      ['data-compact', 'Режим адаптива', 'true в компактном режиме.'],
+    ],
+    unitFile: 'src/components/Breadcrumbs/Breadcrumbs.test.tsx',
+    browserFile: 'tests/visual/adaptive-stress.visual.spec.ts',
+  },
+  ButtonToggle: {
+    unit: 'Выбор значения, controlled/uncontrolled, клавиатурные стрелки и responsive fallback в Select.',
+    browser: 'Длинные значения и узкий контейнер переключаются в Select; геометрия и выбор сохраняются.',
+    gaps: 'Нет скриншотных эталонов для всех значений.',
+    selectors: [
+      ['role=radiogroup / role=radio', 'Desktop ButtonToggle', 'Используется когда сегменты помещаются.'],
+      ['role=combobox', 'Responsive fallback Select', 'Появляется когда сегменты не помещаются.'],
+      ['.fdoc-button-toggle-host', 'Адаптивный контейнер', 'Используется для browser-проверки overflow.'],
+    ],
+    unitFile: 'src/components/ButtonToggle/ButtonToggle.test.tsx',
+    browserFile: 'tests/visual/adaptive-stress.visual.spec.ts',
+  },
+  Chips: {
+    unit: 'Информационный и интерактивный режим, selection, remove, disabled, Skeleton, aria-pressed и события.',
+    browser: 'Размеры/состояния/цвета и адаптивные кейсы; общий viewport-audit.',
+    gaps: 'Нет полной матрицы всех цветов × состояний × иконок.',
+    selectors: [
+      ['chips', 'Корень Chips', 'Заменяется data-testid.'],
+      ['role=button', 'Основное действие', 'Только interactive/selectable Chips.'],
+      ['data-color / data-state / data-interactive', 'Фактическое отображение', 'Стабильные data-атрибуты корня.'],
+    ],
+    unitFile: 'src/components/Chips/Chips.test.tsx',
+    browserFile: 'tests/visual/chips.visual.spec.ts',
+  },
+  ChipsGroup: {
+    unit: 'Single/multiple selection, controlled/uncontrolled, roving focus, disabled, loading и axe.',
+    browser: 'Группа проверяется вместе с Chips и общим 320 px viewport-audit.',
+    gaps: 'Нет отдельного скриншотного эталона длинных наборов.',
+    selectors: [
+      ['chips-group', 'Корень группы', 'Стабильный data-testid.'],
+      ['role=button', 'Chips внутри', 'Ищите по тексту Chips.'],
+      ['data-selection-mode / data-size / data-shape / data-loading', 'Контракт группы', 'Стабильные data-атрибуты.'],
+    ],
+    unitFile: 'src/components/Chips/ChipsGroup.test.tsx',
+    browserFile: 'tests/visual/chips.visual.spec.ts',
+  },
+  Divider: {
+    unit: 'Ориентация, размер/длина и стабильные test IDs.',
+    browser: 'Геометрия horizontal/vertical и токены.',
+    gaps: 'Нет скриншотных эталонов.',
+    selectors: [
+      ['divider', 'Корень Divider', 'Дефолтный test ID.'],
+      ['section-divider', 'Пример Divider в секции', 'Используется в unit/story кейсах.'],
+    ],
+    unitFile: 'src/components/Divider/Divider.test.tsx',
+    browserFile: 'tests/visual/divider.visual.spec.ts',
+  },
+  Dropzone: {
+    unit: 'Picker, keyboard, drag/drop только Files, повторный выбор, валидация форматов/количества/размеров, disabled и Skeleton.',
+    browser: 'Адаптив/overflow всех stories и file-upload visual contract.',
+    gaps: 'Нет e2e-проверки системного файлового диалога и реальных больших файлов.',
+    selectors: [
+      ['dropzone / dropzone-skeleton', 'Корень / Skeleton', 'Стабильные test IDs.'],
+      ['role=button', 'Интерактивная зона', 'В активном состоянии.'],
+      ['data-state', 'Визуальное состояние', 'Если задано компонентом.'],
+    ],
+    unitFile: 'src/components/Dropzone/Dropzone.test.tsx',
+    browserFile: 'tests/visual/responsive-overflow.visual.spec.ts',
+  },
+  FileRow: {
+    unit: 'Loading, Disabled, Error/Warning, preview, Additional/Trailing slots, Badge/Chips, delete/menu, drag handle, drag preview всей строки, keyboard reorder и Skeleton.',
+    browser: 'Геометрия строки/Skeleton, длинное имя, Additional content и reorder feedback.',
+    gaps: 'Нет pointer-based drag e2e на touch-устройствах и скриншотного diff drag-preview.',
+    selectors: [
+      ['file-row / file-row-skeleton', 'Корень строки / Skeleton', 'Стабильные test IDs.'],
+      ['file-row-reorder-handle', 'Drag handle', 'Только reorderable.'],
+      ['file-row-drop-indicator', 'Индикатор места вставки', 'Во время reorder в группе.'],
+      ['data-file-row-dragging', 'Текущая перетаскиваемая строка', 'true только во время drag.'],
+      ['role=alert / role=status', 'Error / Warning message', 'По типу message.'],
+    ],
+    unitFile: 'src/components/FileRow/FileRow.test.tsx',
+    browserFile: 'tests/visual/file-row.visual.spec.ts',
+  },
+  Highlight: {
+    unit: 'Контент, close action, disabled/interaction и базовая семантика.',
+    browser: 'Геометрия, состояния и адаптив.',
+    gaps: 'Нет полной матрицы длинного контента и screen-reader сценариев.',
+    selectors: [
+      ['.fdoc-highlight', 'Корень', 'CSS-класс для browser-тестов.'],
+      ['role=button', 'Закрытие/действие', 'Если действие отображается.'],
+    ],
+    unitFile: 'src/components/Highlight/Highlight.test.tsx',
+    browserFile: 'tests/visual/highlight.visual.spec.ts',
+  },
+  InfoBlock: {
+    unit: 'Иконка, title/text, actions, close, длинный текст и семантика.',
+    browser: 'Геометрия, кнопки, адаптив и состояния.',
+    gaps: 'Нет полной матрицы всех типов контента и скриншотных эталонов.',
+    selectors: [
+      ['info-block', 'Корень', 'Стабильный test ID.'],
+      ['info-block-icon', 'Leading icon', 'Когда иконка отображается.'],
+      ['info-block-close', 'Кнопка закрытия', 'Когда передан close action.'],
+    ],
+    unitFile: 'src/components/InfoBlock/InfoBlock.test.tsx',
+    browserFile: 'tests/visual/infoblock.visual.spec.ts',
+  },
+  ItemRow: {
+    unit: 'Title/description/helper, slots, selection, divider, disabled, focus и Skeleton.',
+    browser: 'Состояния, типографика, selection marks, checkbox и Skeleton.',
+    gaps: 'Нет полной матрицы всех комбинаций slot/content.',
+    selectors: [
+      ['item-row', 'Корень', 'Стабильный test ID.'],
+      ['item-row-title / item-row-description / item-row-helper', 'Текстовые зоны', 'По наличию контента.'],
+      ['item-row-left-slot / item-row-right-slot', 'Слоты', 'По наличию slot.'],
+      ['item-row-selection / item-row-divider', 'Selection / divider', 'По включенным опциям.'],
+    ],
+    unitFile: 'src/components/ItemRow/ItemRow.test.tsx',
+    browserFile: 'tests/visual/selection-menus.visual.spec.ts',
+  },
+  Link: {
+    unit: 'Href, disabled, размеры/цвета, иконки и семантика ссылки.',
+    browser: 'Матрица состояний, focus outline и underline только текста.',
+    gaps: 'Нет отдельного screen-reader прогона внешних ссылок.',
+    selectors: [
+      ['role=link', 'Корень Link', 'Ищите по доступному имени.'],
+      ['data-color / data-state', 'Цвет и принудительное состояние', 'Стабильные data-атрибуты, если заданы компонентом.'],
+      ['.fdoc-link__text', 'Текст', 'Используется для проверки decoration.'],
+    ],
+    unitFile: 'src/components/Link/Link.test.tsx',
+    browserFile: 'tests/visual/bulk-components.visual.spec.ts',
+  },
+  ButtonLink: {
+    unit: 'Проверяется вместе с Link: нативная button-семантика, состояния, иконки и disabled.',
+    browser: 'Общий contract Link/ButtonLink и viewport-audit.',
+    gaps: 'Нет отдельного browser-файла только для ButtonLink.',
+    selectors: [
+      ['role=button', 'Корень ButtonLink', 'Ищите по доступному имени.'],
+      ['.fdoc-link__text', 'Текст', 'Общий layout с Link.'],
+    ],
+    unitFile: 'src/components/Link/Link.test.tsx',
+    browserFile: 'tests/visual/bulk-components.visual.spec.ts',
+  },
+  Menu: {
+    unit: 'menu/menuitem, checkbox items, disabled, search, keyboard navigation и action callbacks.',
+    browser: 'Scroll, фиксированные Search/Footer, размеры строк, pointer/keyboard focus.',
+    gaps: 'Нет screen-reader прогона больших меню и виртуализации.',
+    selectors: [
+      ['role=menu', 'Список', 'Основной контейнер.'],
+      ['role=menuitem / role=menuitemcheckbox', 'Строки', 'По типу item.'],
+      ['role=searchbox', 'Поиск', 'Когда включен search.'],
+      ['.fdoc-menu__footer', 'Footer', 'Когда передан footer.'],
+    ],
+    unitFile: 'src/components/Menu/Menu.test.tsx',
+    browserFile: 'tests/visual/selection-menus.visual.spec.ts',
+  },
+  Dropdown: {
+    unit: 'Открытие/закрытие, trigger, action, keyboard и возврат фокуса.',
+    browser: 'Hover/tap режимы, pointer opening, Escape/Tab и focus management.',
+    gaps: 'Нет touch-device e2e на реальном устройстве.',
+    selectors: [
+      ['trigger role (обычно button)', 'Триггер Dropdown', 'Селектор зависит от переданного child.'],
+      ['role=menu / role=menuitem', 'Popup и строки', 'Присутствуют только когда открыт.'],
+    ],
+    unitFile: 'src/components/Menu/Dropdown.test.tsx',
+    browserFile: 'tests/visual/dropdown-hover.visual.spec.ts',
+  },
+  MultipleFileInput: {
+    unit: 'Общая валидация для кнопки/Dropzone, add/delete, collapse, group error, total size и reorder.',
+    browser: 'Адаптив/overflow, FileRow/reorder contract и file-upload visual contract.',
+    gaps: 'Нет e2e системного picker и больших реальных файлов.',
+    selectors: [
+      ['multiple-file-input', 'Корень', 'Стабильный test ID.'],
+      ['multiple-file-input-group-error', 'Ошибка группы', 'При groupErrorText.'],
+      ['file-row-drop-indicator', 'Место вставки', 'Во время reorder.'],
+      ['file-row', 'Строки файлов', 'По одному на файл.'],
+    ],
+    unitFile: 'src/components/MultipleFileInput/MultipleFileInput.test.tsx',
+    browserFile: 'tests/visual/responsive-overflow.visual.spec.ts',
+  },
+  Multiselect: {
+    unit: 'Выбор нескольких options, clear, chips/display, клавиатура, controlled/uncontrolled и popup.',
+    browser: 'Геометрия поля/popup, selection, адаптив и длинные значения.',
+    gaps: 'Нет performance-тестов больших списков.',
+    selectors: [
+      ['multiselect-field', 'Поле/корень интерактивной части', 'Стабильный test ID.'],
+      ['role=combobox', 'Поле', 'Основной интерактивный селектор.'],
+      ['role=listbox / role=option', 'Popup и варианты', 'При открытом списке.'],
+    ],
+    unitFile: 'src/components/Multiselect/Multiselect.test.tsx',
+    browserFile: 'tests/visual/multiselect.visual.spec.ts',
+  },
+  Pagination: {
+    unit: 'Страницы, prev/next, счетчик и responsive количество элементов.',
+    browser: 'Счетчик, длинные числа и отсутствие overflow.',
+    gaps: 'Нет скриншотных эталонов для всех диапазонов.',
+    selectors: [
+      ['.fdoc-pagination', 'Корень', 'CSS-класс для browser-тестов.'],
+      ['Страница N / Следующая страница / Предыдущая страница', 'Доступные имена кнопок', 'Используйте role=button + name.'],
+      ['.fdoc-pagination__counter', 'Счетчик диапазона', 'Когда отображается.'],
+    ],
+    unitFile: 'src/components/Pagination/Pagination.test.tsx',
+    browserFile: 'tests/visual/bulk-components.visual.spec.ts',
+  },
+  PhoneInput: {
+    unit: 'Форматирование, country selector, required/format validation, clear, paste и Skeleton.',
+    browser: 'Геометрия, popup стран, адаптив и состояния.',
+    gaps: 'Нет e2e с реальной телефонной маской браузера/IME.',
+    selectors: [
+      ['input-control', 'Нативное поле', 'Наследует селекторы Input.'],
+      ['role=listbox / role=option', 'Список стран', 'Когда открыт selector.'],
+      ['input-field / input-skeleton-field', 'Поле / Skeleton поля', 'Стабильные test IDs общей Field-базы.'],
+    ],
+    unitFile: 'src/components/PhoneInput/PhoneInput.test.tsx',
+    browserFile: 'tests/visual/phone-input.visual.spec.ts',
+  },
+  Search: {
+    unit: 'Нативный search input, submit, clear и callbacks.',
+    browser: 'Submit/clear, сохранение размера и фокуса на 320 px.',
+    gaps: 'Нет отдельных тестов всех inherited Input props.',
+    selectors: [
+      ['role=searchbox', 'Поле поиска', 'Основной селектор.'],
+      ['role=button name=Очистить поле', 'Clear', 'При непустом значении.'],
+      ['input-field', 'Обертка поля', 'Наследует Input layout.'],
+    ],
+    unitFile: 'src/components/Search/Search.test.tsx',
+    browserFile: 'tests/visual/selection-menus.visual.spec.ts',
+  },
+  Select: {
+    unit: 'Combobox, open/close, option selection, clear, disabled, creatable и keyboard.',
+    browser: 'Геометрия popup, flip у края, focus, clear/selected icons и адаптив.',
+    gaps: 'Нет performance-тестов больших списков и screen-reader matrix.',
+    selectors: [
+      ['role=combobox', 'Поле', 'Основной интерактивный селектор.'],
+      ['role=listbox / role=option', 'Popup и варианты', 'При открытом списке.'],
+      ['role=button name=Очистить выбор', 'Clear', 'Когда значение можно очистить.'],
+    ],
+    unitFile: 'src/components/Select/Select.test.tsx',
+    browserFile: 'tests/visual/selection-menus.visual.spec.ts',
+  },
+  SelectionControl: {
+    unit: 'Checkbox/Radio/Switch: native form, keyboard, indeterminate, disabled/Skeleton, error description и axe.',
+    browser: 'Матрица состояний/токенов, размеры, длинные labels и native keyboard.',
+    gaps: 'Нет Safari/Firefox и screen-reader прогона.',
+    selectors: [
+      ['role=checkbox / role=radio / role=switch', 'Нативный control', 'Основной селектор по типу.'],
+      ['.fdoc-control', 'Корень визуального control', 'Для геометрии/токенов.'],
+      ['.fdoc-control__label', 'Label', 'Если передан label.'],
+    ],
+    unitFile: 'src/components/SelectionControl/SelectionControl.test.tsx',
+    browserFile: 'tests/visual/bulk-components.visual.spec.ts',
+  },
+  SelectionGroup: {
+    unit: 'RadioGroup single selection; CheckboxGroup/SwitchGroup независимые значения; controlled mode и доступная group-семантика.',
+    browser: 'Native keyboard RadioGroup и общий viewport-audit.',
+    gaps: 'Нет отдельной browser-матрицы всех group props.',
+    selectors: [
+      ['role=group / fieldset semantics', 'Корень группы', 'Ищите по label/legend.'],
+      ['role=checkbox / role=radio / role=switch', 'Опции', 'Ищите по доступному имени option.'],
+    ],
+    unitFile: 'src/components/SelectionControl/SelectionControl.test.tsx',
+    browserFile: 'tests/visual/bulk-components.visual.spec.ts',
+  },
+  SingleFileInput: {
+    unit: 'Picker desktop/mobile, выбор/удаление файла, Loading/Disabled, validation message, FileItem layout и Skeleton.',
+    browser: 'Desktop/mobile адаптив по контейнеру/viewport, длинное имя+вес, Skeleton и отсутствие overflow.',
+    gaps: 'Нет e2e системного picker на реальном устройстве.',
+    selectors: [
+      ['single-file-input / single-file-input-skeleton', 'Корень / Skeleton', 'Стабильные test IDs.'],
+      ['role=button name=Загрузить', 'Открытие picker', 'Desktop и mobile action.'],
+      ['role=progressbar', 'Loading файла', 'В заполненном loading-state.'],
+      ['role=alert', 'Ошибка валидации файла', 'Когда передан validationMessage.'],
+    ],
+    unitFile: 'src/components/SingleFileInput/SingleFileInput.test.tsx',
+    browserFile: 'tests/visual/single-file-input.visual.spec.ts',
+  },
+  Tabs: {
+    unit: 'ARIA tab/tabpanel и выбор активного таба.',
+    browser: 'Manual activation, overflow scrolling, keyboard Home/End/Space и адаптив.',
+    gaps: 'Нет vertical orientation и screen-reader matrix.',
+    selectors: [
+      ['role=tablist', 'Список вкладок', 'Корень управления вкладками.'],
+      ['role=tab', 'Вкладка', 'aria-selected отражает выбор.'],
+      ['role=tabpanel', 'Активная панель', 'Связана с выбранным tab.'],
+    ],
+    unitFile: 'src/components/Tabs/Tabs.test.tsx',
+    browserFile: 'tests/visual/tabs.visual.spec.ts',
+  },
+  Tooltip: {
+    unit: 'Показ/скрытие и aria-describedby.',
+    browser: 'Flip у края viewport, геометрия и удержание внутри экрана.',
+    gaps: 'Нет touch/long-press сценариев и screen-reader matrix.',
+    selectors: [
+      ['role=tooltip', 'Popup', 'Когда Tooltip открыт.'],
+      ['aria-describedby', 'Связь trigger → tooltip', 'На child trigger.'],
+      ['.fdoc-tooltip-anchor', 'Обертка trigger', 'Для layout-проверок.'],
+    ],
+    unitFile: 'src/components/Tooltip/Tooltip.test.tsx',
+    browserFile: 'tests/visual/bulk-components.visual.spec.ts',
+  },
+  Typography: {
+    unit: 'Variant/tag mapping, children, className и базовые attributes.',
+    browser: 'Контекстные размеры и отсутствие мобильного уменьшения шрифтов.',
+    gaps: 'Нет скриншотного эталона всех вариантов.',
+    selectors: [
+      ['typography', 'Корень', 'Дефолтный test ID.'],
+      ['data-typography-variant', 'Вариант', 'Если компонент выставляет data-атрибут.'],
+      ['role=heading', 'Heading variants', 'При соответствующем semantic tag.'],
+    ],
+    unitFile: 'src/components/Typography/Typography.test.tsx',
+    browserFile: 'tests/visual/typography-context.visual.spec.ts',
+  },
 };
 
 export function testingDocs(name: keyof typeof docs): string {
   const item = docs[name];
   const base = 'https://github.com/dariaeremina89-oss/design-system/blob/main/';
-  const visual = name === 'Icon' || name === 'Skeleton' ? 'atoms' : name === 'ProgressIndicator' ? 'progress-indicator' : name === 'ButtonFAB' ? 'button-fab' : name === 'ButtonIcon' ? 'button-icon' : name.toLowerCase();
+  const unitFile = item.unitFile ?? `src/components/${name}/${name}.test.tsx`;
+  const defaultVisual = name === 'Icon' || name === 'Skeleton' ? 'atoms' : name === 'ProgressIndicator' ? 'progress-indicator' : name === 'ButtonFAB' ? 'button-fab' : name === 'ButtonIcon' ? 'button-icon' : name.toLowerCase();
+  const browserFile = item.browserFile ?? `tests/visual/${defaultVisual}.visual.spec.ts`;
   return `
 
 ## Автотесты
@@ -149,7 +515,7 @@ export function testingDocs(name: keyof typeof docs): string {
 
 Это описание покрытия, не статус последнего запуска. CSS-проверки токенов не заменяют визуальную сверку с Figma; браузерные UI-тесты здесь проверяют DOM и вычисленные стили, а не скриншотные эталоны.
 
-[Unit-тесты](${base}src/components/${name}/${name}.test.tsx) · [Браузерные тесты](${base}tests/visual/${visual}.visual.spec.ts) · [Результаты запусков](https://github.com/dariaeremina89-oss/design-system/actions)
+[Unit-тесты](${base}${unitFile}) · [Браузерные тесты](${base}${browserFile}) · [Результаты запусков](https://github.com/dariaeremina89-oss/design-system/actions)
 
 ## Селекторы для тестирования
 
