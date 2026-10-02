@@ -66,6 +66,10 @@ function createRowDragPreview(event: DragEvent<HTMLButtonElement>, fileName: str
   preview.classList.add('fdoc-file-row__drag-preview');
   preview.style.width = `${rect.width}px`;
   preview.setAttribute('aria-hidden', 'true');
+  preview.removeAttribute('data-testid');
+  preview.removeAttribute('data-file-row-dragging');
+  preview.querySelectorAll('[data-testid]').forEach(node => node.removeAttribute('data-testid'));
+  preview.querySelectorAll('[id]').forEach(node => node.removeAttribute('id'));
   document.body.appendChild(preview);
 
   const offsetX = Math.max(0, Math.min(rect.width, event.clientX - rect.left));
