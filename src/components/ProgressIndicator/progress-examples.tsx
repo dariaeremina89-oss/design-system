@@ -1,4 +1,4 @@
-import { testingDocs } from '../../docs/testing';
+import { qualityDocs } from '../../docs/quality';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
   ProgressIndicator,
@@ -32,7 +32,7 @@ const meta = {
 Linear занимает доступную ширину и имеет высоту 4 px. Circular получает размер через \`size\` (по умолчанию 24 px). В Indeterminate Circular по умолчанию используется MUI-подобная анимация: индикатор вращается за 1,4 с, а длина дуги одновременно увеличивается и уменьшается через ease-in-out. Анимация отключается при prefers-reduced-motion.
 
 Компонент не кликабелен и не получает фокус. Determinate публикует aria-valuemin, aria-valuemax и aria-valuenow, Indeterminate — только роль и доступную подпись.
-        ` + testingDocs('ProgressIndicator'),
+        ` + qualityDocs('ProgressIndicator'),
       },
     },
   },
