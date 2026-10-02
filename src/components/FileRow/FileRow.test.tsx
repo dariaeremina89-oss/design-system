@@ -114,6 +114,24 @@ describe('FileRow', () => {
     expect(screen.getByRole('button', { name: 'Открыть действия файла' })).toBeEnabled();
   });
 
+  it('exposes stable FileItem slot selectors', () => {
+    render(
+      <FileRow
+        fileName="Договор.pdf"
+        additionalContent="2,7 МБ"
+        trailingAction={<ButtonIcon aria-label="Действия" icon="more-vertical" size="xsmall" color="neutral" />}
+        message={{ type: 'warning', text: 'Проверьте файл' }}
+      />,
+    );
+
+    const row = screen.getByTestId('file-row');
+    expect(row.querySelector('[data-file-item-slot="name"]')).toHaveTextContent('Договор.pdf');
+    expect(row.querySelector('[data-file-item-slot="leading"]')).toBeInTheDocument();
+    expect(row.querySelector('[data-file-item-slot="additional"]')).toHaveTextContent('2,7 МБ');
+    expect(row.querySelector('[data-file-item-slot="trailing"]')).toBeInTheDocument();
+    expect(row.querySelector('[data-file-item-slot="message"]')).toHaveTextContent('Проверьте файл');
+  });
+
   it('drags only by the reorder handle, uses the whole row as drag image and supports keyboard reorder', () => {
     const onReorderKey = vi.fn();
     const onReorderDragStart = vi.fn();
