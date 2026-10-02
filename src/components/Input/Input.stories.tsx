@@ -1,4 +1,4 @@
-import { testingDocs } from '../../docs/testing';
+import { qualityDocs } from '../../docs/quality';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { iconNames } from '../Icon/Icon';
 import { Input } from './Input';
@@ -38,7 +38,7 @@ Caret не является пропсом: текстовый курсор ос
 Поддерживаются Default, Hover, Focused, Disabled, Error и Skeleton. Focus не меняет внешний размер поля. Компонент использует нативный \`input\`, связывает Label через \`htmlFor\`, а Description, Error и Counter через \`aria-describedby\`; для ошибки устанавливает \`aria-invalid\`.
 
 Это компонент тестовой дизайн-системы и личного плейбука, а не официальный production-пакет F.Doc.
-        ` + testingDocs('Input'),
+        ` + qualityDocs('Input'),
       },
     },
   },
