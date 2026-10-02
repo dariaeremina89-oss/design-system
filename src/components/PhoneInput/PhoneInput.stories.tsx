@@ -1,3 +1,4 @@
+import { componentDocs } from '../../docs/bulk-components';
 import { qualityDocs } from '../../docs/quality';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -18,19 +19,7 @@ const meta = {
     layout: 'padded',
     controls: controlsParameters(controlOrder),
     docs: {
-      description: { component: (`
-**PhoneInput** — специализированное поле для одного телефонного номера. Компонент собирается из Input и Menu и поддерживает российский и иностранный формат.
-
-**Russian** используется по умолчанию. В пустом поле отображаются постоянный префикс \`+7\` и маска \`(000) 000-00-00\`. Значение форматируется как \`+7 (999) 999-99-99\`. Номера из 10 цифр, начинающиеся с 9, а также 11 цифр с \`79\` или \`89\`, распознаются как российские; \`8\` преобразуется в \`7\`.
-
-**International** отображает постоянный \`+\` без маски и дополнительного форматирования.
-
-Type selector — отдельный фокусируемый элемент в Leading-зоне. Он открывает Menu из двух вариантов: «Россия +7» и «Иностранный номер». Актуальные состояния selector берутся из \`flag_chevron\` в Figma.
-
-При вставке удаляются символы форматирования, определяется тип номера и применяется нужное отображение. Ввод букв и других недопустимых символов не сохраняется.
-
-Внешнее \`value\` нормализовано до \`+\` и цифр. Валидационные тексты по спецификации: «${PHONE_INPUT_REQUIRED_ERROR}» и «${PHONE_INPUT_FORMAT_ERROR}». Само отображение ошибки управляется prop \`error\`, как у базового Input.
-        `.trim()) + qualityDocs('PhoneInput') },
+      description: { component: componentDocs('PhoneInput') + qualityDocs('PhoneInput') },
     },
   },
   decorators: [Story => <div style={{ width: '100%', maxWidth: 456 }}><Story /></div>],
