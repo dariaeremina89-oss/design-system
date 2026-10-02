@@ -1,3 +1,4 @@
+import { qualityDocs } from '../../docs/quality';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Select } from './Select';
 import { selectionDocs } from '../../docs/selection-components';
@@ -24,7 +25,7 @@ const meta = {
   parameters: {
     layout: 'padded',
     controls: controlsParameters(controlOrder),
-    docs: { description: { component: selectionDocs('Select') } },
+    docs: { description: { component: (selectionDocs('Select')) + qualityDocs('Select') } },
   },
   args: { label: 'Статус документа', placeholder: 'Выберите статус', options, caption: 'Текущее состояние документа' },
   decorators: [Story => <div style={{ width: '100%', maxWidth: 456 }}><Story /></div>],
