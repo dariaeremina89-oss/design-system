@@ -60,7 +60,7 @@ function FileName({ fileName }: { fileName: string }) {
   }, [fileName]);
 
   return (
-    <span className="fdoc-file-item__name-slot">
+    <span className="fdoc-file-item__name-slot" data-file-item-slot="name">
       <Tooltip content={fileName} placement="bottom" disabled={!truncated}>
         <span ref={ref} className="fdoc-file-item__name">{fileName}</span>
       </Tooltip>
@@ -134,7 +134,7 @@ export function FileItemLayout({
       {beforeLeading}
 
       {leading !== false && leadingContent !== null && (
-        <span className={leadingClassName}>{leadingContent}</span>
+        <span className={leadingClassName} data-file-item-slot="leading">{leadingContent}</span>
       )}
 
       <div className="fdoc-file-item__content">
@@ -143,13 +143,13 @@ export function FileItemLayout({
           {(hasAdditional || hasTrailing) && (
             <span className={`fdoc-file-item__right ${additionalIsText ? 'fdoc-file-item__right--text' : ''} ${additionalIsComponent ? 'fdoc-file-item__right--component' : ''}`}>
               {hasAdditional && (
-                <span className={`fdoc-file-item__additional ${additionalIsText ? 'fdoc-file-item__additional--text' : 'fdoc-file-item__additional--component'}`}>
+                <span className={`fdoc-file-item__additional ${additionalIsText ? 'fdoc-file-item__additional--text' : 'fdoc-file-item__additional--component'}`} data-file-item-slot="additional">
                   {additionalIsText
                     ? <span className="fdoc-file-item__additional-text">{resolvedAdditional}</span>
                     : resolvedAdditional}
                 </span>
               )}
-              {hasTrailing && <span className="fdoc-file-item__trailing">{resolvedTrailing}</span>}
+              {hasTrailing && <span className="fdoc-file-item__trailing" data-file-item-slot="trailing">{resolvedTrailing}</span>}
             </span>
           )}
         </div>
@@ -158,6 +158,7 @@ export function FileItemLayout({
           <span
             id={messageId}
             className={`fdoc-file-item__message fdoc-file-item__message--${message.type}`}
+            data-file-item-slot="message"
             role={message.type === 'error' ? 'alert' : 'status'}
           >
             {message.text}
