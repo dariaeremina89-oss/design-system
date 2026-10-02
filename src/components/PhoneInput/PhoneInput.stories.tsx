@@ -30,7 +30,7 @@ Type selector — отдельный фокусируемый элемент в 
 При вставке удаляются символы форматирования, определяется тип номера и применяется нужное отображение. Ввод букв и других недопустимых символов не сохраняется.
 
 Внешнее \`value\` нормализовано до \`+\` и цифр. Валидационные тексты по спецификации: «${PHONE_INPUT_REQUIRED_ERROR}» и «${PHONE_INPUT_FORMAT_ERROR}». Само отображение ошибки управляется prop \`error\`, как у базового Input.
-        `.trim(),) + qualityDocs('PhoneInput') },
+        `.trim()) + qualityDocs('PhoneInput') },
     },
   },
   decorators: [Story => <div style={{ width: '100%', maxWidth: 456 }}><Story /></div>],
