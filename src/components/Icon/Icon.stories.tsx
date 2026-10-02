@@ -1,10 +1,11 @@
+import { qualityDocs } from '../../docs/quality';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Icon, iconNames } from './Icon';
 import { Typography } from '../Typography/Typography';
 
 const meta={
   title:'Components/Elements/Icon',component:Icon,tags:['autodocs','ready'],
-  parameters:{layout:'padded',docs:{description:{component:'SVG-иконка из общей библиотеки. name выбирает изображение, size задает размер в px, color — цвет монохромной иконки. Без color иконка наследует цвет текста. Самостоятельной смысловой иконке задайте title; декоративная скрыта от скринридера. Полный каталог находится в General / Icons.'}}},
+  parameters:{layout:'padded',docs:{description: { component: ('SVG-иконка из общей библиотеки. name выбирает изображение, size задает размер в px, color — цвет монохромной иконки. Без color иконка наследует цвет текста. Самостоятельной смысловой иконке задайте title; декоративная скрыта от скринридера. Полный каталог находится в General / Icons.') + qualityDocs('Icon') }}},
   args:{name:'doc-list',size:24,title:'Документ'},
   argTypes:{name:{control:'select',options:iconNames},size:{control:{type:'number',min:1}},color:{control:'color'},title:{control:'text'}},
 } satisfies Meta<typeof Icon>;
