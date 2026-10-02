@@ -1,3 +1,4 @@
+import { qualityDocs } from '../../docs/quality';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { multipleFileInputDocs } from '../../docs/file-upload';
@@ -77,7 +78,7 @@ const meta = {
   tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
-    docs: { description: { component: multipleFileInputDocs } },
+    docs: { description: { component: (multipleFileInputDocs) + qualityDocs('MultipleFileInput') } },
   },
   args: {
     files,
