@@ -65,7 +65,7 @@ describe('File upload visual contract', () => {
     expect(queryByTestId('file-row')).not.toBeInTheDocument();
   });
 
-  it('preserves filename priority while allowing arbitrary Additional components to shrink safely', () => {
+  it('preserves filename priority while keeping Additional content component agnostic', () => {
     render(<FileRow fileName="Очень длинное название файла которое должно сокращаться.pdf" weight="2,7 МБ" />);
     expectRuleValue('.fdoc-file-item__name-slot', 'flex-grow', '1');
     expectRuleValue('.fdoc-file-item__name-slot', 'flex-shrink', '1');
@@ -80,7 +80,8 @@ describe('File upload visual contract', () => {
     expectRuleValue('.fdoc-file-item__additional', 'min-width', '0');
     expectRuleValue('.fdoc-file-item__additional', 'min-height', 'var(--elements-24)');
     expectRuleValue('.fdoc-file-item__additional', 'max-width', '100%');
-    expectRuleValue('.fdoc-file-item__additional--component', 'width', 'max-content');
+    expectRuleValue('.fdoc-file-item__additional--component', 'min-width', '0');
+    expectRuleValue('.fdoc-file-item__additional--component', 'max-width', '100%');
     expectRuleValue('.fdoc-file-item__additional-text', 'white-space', 'nowrap');
     expectRuleValue('.fdoc-file-item__additional-text', 'color', 'var(--text-base-secondary)');
   });
