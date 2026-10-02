@@ -14,7 +14,7 @@ function walk(directory: string): string[] {
 
 describe('component quality documentation', () => {
   it('keeps every quality contract connected to real tests and selectors', () => {
-    for (const [name, item] of Object.entries(componentQuality)) {
+    for (const [name, item] of Object.entries(componentQuality) as Array<[string, { unit: string; browser?: string; selectors: Array<[string, string]> }]>) {
       expect(item.selectors.length, `${name}: selectors`).toBeGreaterThan(0);
       expect(existsSync(join(root, item.unit)), `${name}: ${item.unit}`).toBe(true);
       if (item.browser) {
