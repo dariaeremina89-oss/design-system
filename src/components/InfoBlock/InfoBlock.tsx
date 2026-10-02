@@ -6,6 +6,7 @@ import './InfoBlock.css';
 export type InfoBlockColor = 'neutral' | 'base' | 'success' | 'accent' | 'warning' | 'error' | 'inverse';
 
 export interface InfoBlockProps extends Omit<HTMLAttributes<HTMLDivElement>, 'color' | 'title'> {
+  'data-testid'?: string;
   color?: InfoBlockColor;
   title?: ReactNode;
   text?: ReactNode;
@@ -34,7 +35,7 @@ function joinClassNames(...classes: Array<string | false | undefined>) {
 
 function flattenActions(node: ReactNode): ReactNode[] {
   return Children.toArray(node).flatMap(child =>
-    isValidElement(child) && child.type === Fragment
+    isValidElement<{ children?: ReactNode }>(child) && child.type === Fragment
       ? flattenActions(child.props.children)
       : [child],
   );

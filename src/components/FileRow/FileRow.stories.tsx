@@ -22,7 +22,7 @@ const reorderableRows = [
 
 function Example({ label, testId, children }: { label: string; testId?: string; children: ReactNode }) {
   return (
-    <div data-testid={testId} style={{ display: 'grid', minWidth: 0, gap: 6 }}>
+    <div data-testid={testId} style={{ display: 'grid', minWidth: 0, gap: 'var(--space-6)' }}>
       <span style={{ color: 'var(--text-base-secondary)', font: 'var(--page-caption)' }}>{label}</span>
       {children}
     </div>
@@ -30,7 +30,7 @@ function Example({ label, testId, children }: { label: string; testId?: string; 
 }
 
 function ExampleGrid({ children }: { children: ReactNode }) {
-  return <div style={{ display: 'grid', width: '100%', minWidth: 0, gap: 16 }}>{children}</div>;
+  return <div style={{ display: 'grid', width: '100%', minWidth: 0, gap: 'var(--space-16)' }}>{children}</div>;
 }
 
 function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
@@ -139,8 +139,10 @@ const meta = {
     trailingAction: { control: false },
     message: { control: false },
     leading: { control: false },
+    leadingIcon: { control: 'text', description: 'Имя иконки Leading из библиотеки Icon.' },
     preview: { control: false },
     menuItems: { control: false },
+    menuAriaLabel: { control: 'text', description: 'Доступное название кнопки меню файла.' },
     onDelete: { action: 'delete' },
     onMenuAction: { action: 'menuAction' },
     onReorderDragStart: { action: 'reorderDragStart' },
@@ -157,28 +159,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
-
-export const States: Story = {
-  render: args => (
-    <ExampleGrid>
-      <Example label="Default"><FileRow {...args} state="default" /></Example>
-      <Example label="Loading"><FileRow {...args} state="loading" /></Example>
-      <Example label="Disabled"><FileRow {...args} disabled /></Example>
-      <Example label="Loading + Disabled"><FileRow {...args} state="loading" disabled /></Example>
-    </ExampleGrid>
-  ),
-};
-
-export const Messages: Story = {
-  render: args => (
-    <ExampleGrid>
-      <Example label="Error"><FileRow {...args} message={{ type: 'error', text: 'Error text' }} /></Example>
-      <Example label="Warning"><FileRow {...args} message={{ type: 'warning', text: 'Warning text' }} /></Example>
-      <Example label="Loading + Error"><FileRow {...args} state="loading" message={{ type: 'error', text: 'Error text' }} /></Example>
-      <Example label="Disabled + Error"><FileRow {...args} disabled message={{ type: 'error', text: 'Error text' }} /></Example>
-    </ExampleGrid>
-  ),
+export const Default: Story = {
+  render: args => <Example label="Default"><FileRow {...args} /></Example>,
 };
 
 export const LeadingContent: Story = {
@@ -263,6 +245,46 @@ export const AdditionalContent: Story = {
   ),
 };
 
+export const TrailingActions: Story = {
+  render: args => (
+    <ExampleGrid>
+      <Example label="Delete / default">
+        <FileRow {...args} deletable />
+      </Example>
+      <Example label="ButtonIcon / custom action">
+        <FileRow {...args} deletable={false} trailingAction={({ disabled }) => <ButtonIcon aria-label="Открыть действия файла" icon="more-vertical" size="xsmall" color="neutral" disabled={disabled} />} />
+      </Example>
+      <Example label="Link / custom action">
+        <FileRow {...args} deletable={false} trailingAction={({ disabled }) => <Link href="#" size="medium" color="accent" decoration={null} disabled={disabled}>Открыть</Link>} />
+      </Example>
+    </ExampleGrid>
+  ),
+};
+
+export const States: Story = {
+  render: args => (
+    <ExampleGrid>
+      <Example label="Default"><FileRow {...args} state="default" /></Example>
+      <Example label="Loading"><FileRow {...args} state="loading" /></Example>
+      <Example label="Disabled"><FileRow {...args} disabled /></Example>
+      <Example label="Loading + Disabled"><FileRow {...args} state="loading" disabled /></Example>
+    </ExampleGrid>
+  ),
+};
+
+export const Messages: Story = {
+  render: args => (
+    <ExampleGrid>
+      <Example label="Error"><FileRow {...args} message={{ type: 'error', text: 'Error text' }} /></Example>
+      <Example label="Warning"><FileRow {...args} message={{ type: 'warning', text: 'Warning text' }} /></Example>
+      <Example label="Loading + Warning"><FileRow {...args} state="loading" message={{ type: 'warning', text: 'Warning text' }} /></Example>
+      <Example label="Loading + Error"><FileRow {...args} state="loading" message={{ type: 'error', text: 'Error text' }} /></Example>
+      <Example label="Disabled + Warning"><FileRow {...args} disabled message={{ type: 'warning', text: 'Warning text' }} /></Example>
+      <Example label="Disabled + Error"><FileRow {...args} disabled message={{ type: 'error', text: 'Error text' }} /></Example>
+    </ExampleGrid>
+  ),
+};
+
 export const AdditionalContentDisabled: Story = {
   render: args => (
     <ExampleGrid>
@@ -294,7 +316,7 @@ export const AdditionalContentDisabled: Story = {
               size="small"
               color="base"
               disabled={disabled}
-              interactive
+              interactive={false}
             />
           )}
         />
@@ -303,31 +325,22 @@ export const AdditionalContentDisabled: Story = {
   ),
 };
 
-export const TrailingActions: Story = {
-  render: args => (
-    <ExampleGrid>
-      <Example label="Delete / default">
-        <FileRow {...args} deletable />
-      </Example>
-      <Example label="ButtonIcon / custom action">
-        <FileRow {...args} deletable={false} trailingAction={({ disabled }) => <ButtonIcon aria-label="Открыть действия файла" icon="more-vertical" size="xsmall" color="neutral" disabled={disabled} />} />
-      </Example>
-      <Example label="Link / custom action">
-        <FileRow {...args} deletable={false} trailingAction={({ disabled }) => <Link href="#" size="medium" color="accent" decoration={null} disabled={disabled}>Открыть</Link>} />
-      </Example>
-    </ExampleGrid>
-  ),
+export const Skeleton: Story = {
+  args: { state: 'skeleton' },
+  render: args => <Example label="Skeleton"><FileRow {...args} /></Example>,
 };
 
 export const Menu: Story = {
   args: { reorderable: true, deletable: false, menuItems },
+  render: args => <Example label="Reorder handle + Menu"><FileRow {...args} /></Example>,
 };
 
 export const Reorderable: Story = {
-  render: args => <ReorderableFileRows {...args} />,
+  render: args => <Example label="Reorder / drag or ArrowUp and ArrowDown"><ReorderableFileRows {...args} /></Example>,
 };
 
 export const LongFileNameWithChips: Story = {
+  render: args => <Example label="Long file name + Chips / Warning"><FileRow {...args} /></Example>,
   args: {
     fileName: 'Очень длинное название документа с приложениями и дополнительными материалами.pdf',
     weight: undefined,
@@ -336,5 +349,3 @@ export const LongFileNameWithChips: Story = {
     ),
   },
 };
-
-export const Skeleton: Story = { args: { state: 'skeleton' } };

@@ -56,7 +56,7 @@ describe('ButtonToggle', () => {
       disconnect() {}
     });
 
-    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
       const element = this as HTMLElement;
       const width = element.classList.contains('fdoc-button-toggle') && element.style.position === 'fixed' ? 640 : 0;
       return {

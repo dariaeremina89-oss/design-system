@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { axe } from 'jest-axe';
 import { Badge } from '../Badge/Badge';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { Chips } from '../Chips/Chips';
@@ -198,6 +199,26 @@ describe('FileRow', () => {
     expect(screen.getByText('Переименовать')).toBeInTheDocument();
     fireEvent.click(screen.getByText('Удалить'));
     expect(onDelete).toHaveBeenCalledOnce();
+  });
+
+  it.each([false, true])('keeps slot accessibility and disabled state consistent (disabled=%s)', async disabled => {
+    const { container } = render(
+      <FileRow
+        fileName="Договор.pdf"
+        disabled={disabled}
+        reorderable
+        deletable
+        message={{ type: 'warning', text: 'Проверьте документ' }}
+        additionalContent={({ disabled: inactive }) => <>
+          <Badge text="PDF" state={inactive ? 'disabled' : 'default'} />
+          <Chips text="На подпись" interactive disabled={inactive} />
+        </>}
+      />,
+    );
+    expect(screen.getByTestId('badge')).toHaveAttribute('data-badge-state', disabled ? 'disabled' : 'default');
+    expect(screen.getByTestId('chips')).toHaveAttribute('data-state', disabled ? 'disabled' : 'default');
+    expect(screen.getByRole('button', { name: 'На подпись' }).hasAttribute('disabled')).toBe(disabled);
+    expect((await axe(container)).violations).toEqual([]);
   });
 
   it('renders Skeleton without row content or actions', () => {

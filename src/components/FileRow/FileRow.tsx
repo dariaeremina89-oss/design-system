@@ -136,7 +136,7 @@ export function FileRow({
         <Dropdown
           items={menuItems!}
           trigger="hover"
-          placement="bottom-end"
+          placement="bottom"
           open={menuOpen}
           onOpenChange={setMenuOpen}
           onAction={item => onMenuAction?.(item)}

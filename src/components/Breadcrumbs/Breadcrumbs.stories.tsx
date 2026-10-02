@@ -26,7 +26,7 @@ const meta = {
   argTypes: {
     items: { control: 'object' },
     isLoading: { control: 'boolean' },
-    collapseAt: { control: 'number' },
+    'aria-label': { control: 'text', description: 'Доступное название навигационной цепочки.' },
   },
 } satisfies Meta<typeof Breadcrumbs>;
 

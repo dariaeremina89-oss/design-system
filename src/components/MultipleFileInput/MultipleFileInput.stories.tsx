@@ -58,7 +58,7 @@ function Interactive(args: any) {
         files={wired}
         totalSize={args.totalSize ?? totalSize}
         collapsed={collapsed}
-        onToggleCollapse={() => setCollapsed(value => !value)}
+        onToggleCollapse={() => setCollapsed((value: boolean) => !value)}
         onDeleteAll={() => setCurrentFiles([])}
         onAddFiles={add}
         onReorder={(from: number, to: number) => setCurrentFiles((current: any[]) => {

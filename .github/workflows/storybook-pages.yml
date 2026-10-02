@@ -43,11 +43,14 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Run browser UI tests
-        run: npm run test:visual
+      - name: Typecheck
+        run: npx tsc -b
 
       - name: Build Storybook
         run: npm run build-storybook -- --output-dir storybook-static
+
+      - name: Run browser UI tests
+        run: npm run test:visual
 
       - name: Upload Storybook
         uses: actions/upload-pages-artifact@v3

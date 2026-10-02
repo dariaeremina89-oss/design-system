@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { componentQuality } from './quality';
+import { componentDocs } from './bulk-components';
 
 const root = process.cwd();
 
@@ -23,6 +24,19 @@ function publicComponentExports(): string[] {
 }
 
 describe('component quality documentation', () => {
+  it('loads the shared descriptions used by component stories', () => {
+    const names = new Set(walk(join(root, 'src/components'))
+      .filter(path => path.endsWith('.stories.tsx'))
+      .flatMap(path => [...readFileSync(path, 'utf8').matchAll(/componentDocs\('([^']+)'\)/g)]
+        .map(match => match[1])));
+    expect(names.size).toBeGreaterThan(0);
+    for (const name of names) {
+      const description = componentDocs(name);
+      expect(description, name).not.toMatch(/undefined|\\`/);
+      expect(description, name).toContain('###');
+    }
+  });
+
   it('covers every public component exported from src/index.ts', () => {
     const registered = Object.keys(componentQuality);
     const missing = publicComponentExports().filter(name => !registered.includes(name));

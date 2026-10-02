@@ -96,3 +96,31 @@ test('FileRow reorder moves the actual row, not only the drop indicator', async 
 
   await expect(names).toHaveText(['Заявление.pdf', 'Согласие.pdf', 'Договор.pdf']);
 });
+
+
+test('FileRow disabled examples use the nested Badge and Chips states', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 600 });
+  await page.goto('/iframe.html?id=components-elements-filerow--additional-content-disabled&viewMode=story');
+  const badge = page.getByTestId('file-row-additional-badge-disabled');
+  const chips = page.getByTestId('file-row-additional-chips-disabled');
+  await expect(badge).toHaveAttribute('data-badge-state', 'disabled');
+  await expect(chips).toHaveAttribute('data-state', 'disabled');
+  await expect(chips).toHaveAttribute('data-interactive', 'false');
+  await expect(badge).toHaveCSS('height', '20px');
+  await expect(chips).toHaveCSS('height', '24px');
+  for (const row of await page.getByTestId('file-row').all()) {
+    await expect(row).toHaveAttribute('aria-disabled', 'true');
+    await expect(row.getByRole('button')).toBeDisabled();
+    expect(await row.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  }
+});
+
+test('FileRow can reorder with the keyboard and keeps focus on the moved handle', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-elements-filerow--reorderable&viewMode=story');
+  const handle = page.getByTestId('reorder-row-contract').getByTestId('file-row-reorder-handle');
+  await handle.focus();
+  await handle.press('ArrowDown');
+  await expect(page.locator('[data-testid^="reorder-row-"] .fdoc-file-item__name'))
+    .toHaveText(['Заявление.pdf', 'Договор.pdf', 'Согласие.pdf']);
+  await expect(handle).toBeFocused();
+});
