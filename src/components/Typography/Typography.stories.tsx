@@ -1,3 +1,4 @@
+import { qualityDocs } from '../../docs/quality';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Typography, type TypographyVariant } from './Typography';
 
@@ -41,7 +42,7 @@ const meta = {
   tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
-    docs: { description: { component: description } },
+    docs: { description: { component: (description) + qualityDocs('Typography') } },
   },
   args: {
     children: 'Пример текста',
