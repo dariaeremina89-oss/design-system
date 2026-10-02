@@ -98,7 +98,7 @@ test('color mode also switches the Storybook manager and documentation shell',as
   await expect(page.locator('html')).toHaveAttribute('data-color-mode','light');
 });
 
-test('Primary swatches, root tokens and CSS export change together between Light and Dark',async({page})=>{
+test('Primary ramp stays shared while semantic colors and CSS export follow the theme',async({page})=>{
   await page.goto(branding);
   const swatches=page.locator('[data-primary-step]');
   const readRamp=()=>swatches.evaluateAll(elements=>elements.map(element=>({
@@ -116,13 +116,14 @@ test('Primary swatches, root tokens and CSS export change together between Light
     await page.getByRole('radio',{name:'Dark',exact:true}).click();
     await expect(page.locator('.fdoc-branding__palette')).toHaveAttribute('data-color-mode','dark');
     const dark=await readRamp();
-    expect(dark.map(swatch=>swatch.background)).not.toEqual(light.map(swatch=>swatch.background));
+    expect(dark.map(swatch=>swatch.background)).toEqual(light.map(swatch=>swatch.background));
+    const secondary=await page.locator('html').evaluate(el=>getComputedStyle(el).getPropertyValue('--background-primary-secondary').trim());
+    expect(secondary).toBe(dark.find(swatch=>swatch.step===900)!.token);
     for(let index=0;index<dark.length;index++) {
       const swatch=dark[index];
       expect(hex(swatch.background)).toBe(swatch.token);
       expect(swatch.label).toContain(swatch.token.toUpperCase());
       if(swatch.step===500) expect(swatch.background).toBe(light[index].background);
-      // Near white or black, 8-bit rounding can leave an individual endpoint unchanged.
     }
     await page.getByRole('button',{name:'Показать CSS темы'}).click();
     for(const swatch of dark) await expect(page.getByLabel('CSS темы')).toContainText(`--primary-${swatch.step}: ${swatch.token};`);
@@ -130,4 +131,18 @@ test('Primary swatches, root tokens and CSS export change together between Light
     await page.getByRole('radio',{name:'Light',exact:true}).click();
     expect(await readRamp()).toEqual(light);
   }
+});
+
+
+test('focus halos retain alpha in Dark across primary, base and status components',async({page})=>{
+  await page.goto(branding);
+  await page.getByRole('radio',{name:'Dark',exact:true}).click();
+  const focusButton=page.getByTestId('brand-button-focused');
+  await expect(focusButton).toHaveCSS('outline-style','solid');
+  expect(await focusButton.evaluate(el=>getComputedStyle(el).outlineColor)).toMatch(/^rgba\(.+, 0\.16\d*\)$/);
+  const colors=await page.locator('html').evaluate(el=>{
+    const style=getComputedStyle(el);
+    return ['primary','base-default','base-secondary','base-tertiary','base-light','base-inverse','success','error','warning','accent'].map(role=>style.getPropertyValue(`--border-${role}-focused`).trim());
+  });
+  for(const color of colors) expect(color).toMatch(/^#[0-9a-f]{6}29$/i);
 });

@@ -44,17 +44,14 @@ describe('Primary color theme',()=>{
       for(const key of Object.keys(v)) expect(key).not.toMatch(/^--(?:neutral|yellow|green|red|purple|orange|client|violet|white|black)-/);
     }
   });
-  it('recalculates the ramp for Dark while keeping the seed and restoring Light exactly',()=>{
+  it('shares every primitive across modes while remapping semantic surfaces',()=>{
     for(const seed of [DEFAULT_PRIMARY,'#2f26ff','#008567','#8b1245','#f4e5fa','#171329']) {
       const light=createColorTheme(seed,'light'),dark=createColorTheme(seed,'dark');
-      expect(dark.palette[500]).toBe(light.palette[500]);
-      expect(dark.palette).not.toEqual(light.palette);
-      for(const step of primarySteps.filter(step=>step!==500)) {
-        const lightLuminance=relativeLuminance(light.palette[step]);
-        const darkLuminance=relativeLuminance(dark.palette[step]);
-        if(step<500) expect(darkLuminance).toBeGreaterThanOrEqual(lightLuminance);
-        else expect(darkLuminance).toBeLessThanOrEqual(lightLuminance);
-      }
+      expect(dark.palette).toEqual(light.palette);
+      expect(dark.references['--background-primary-secondary']).toBe('--primary-900');
+      expect(light.references['--background-primary-secondary']).toBe('--primary-25');
+      expect(dark.references['--background-primary-inverse']).toBe('--primary-50');
+      expect(light.references['--background-primary-inverse']).toBe('--primary-900');
       applyPrimaryTheme(seed,true,'light');
       applyColorMode('dark');
       for(const step of primarySteps) {
@@ -75,6 +72,17 @@ describe('Primary color theme',()=>{
     for(const role of ['success','error','warning','accent']) for(const state of ['', '-hover','-pressed']) expect(contrastRatio(fdoc.variables[`--text-${role}-default-light`],fdoc.variables[`--background-${role}-secondary${state}`])).toBeGreaterThanOrEqual(4.5);
     expect(primaryThemeCss(fdoc)).toContain('color-scheme: dark');
     expect(primaryThemeCss(fdoc)).toContain('--background-primary-default: var(--primary-500)');
+  });
+  it('preserves 16 percent alpha for focus halos and in exported references',()=>{
+    for(const mode of ['light','dark'] as const) for(const seed of [DEFAULT_PRIMARY,'#2f26ff','#000000','#ffffff']) {
+      const theme=createColorTheme(seed,mode);
+      for(const role of ['primary','base-default','base-secondary','base-tertiary','base-light','base-inverse','success','error','warning','accent']) {
+        const token=`--border-${role}-focused`;
+        const color=theme.variables[token]??original[token];
+        expect(color,`${mode}: ${token}`).toMatch(/^#[0-9a-f]{6}29$/i);
+        if(theme.references[token]) expect(primaryThemeCss(theme)).toContain(`${token}: var(${theme.references[token]})`);
+      }
+    }
   });
   it('switches modes without losing the seed and reset removes overrides from the whole document',()=>{
     applyColorMode('dark');expect(getPrimarySeed()).toBeNull();expect(getColorMode()).toBe('dark');

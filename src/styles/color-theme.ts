@@ -26,7 +26,7 @@ export function createColorTheme(seed:string=DEFAULT_PRIMARY,mode:ColorMode='lig
     set(`--border-base-${family}`,inverse?'--neutral-400':family==='light'?'--white-50-08':family==='default'?'--neutral-300':'--neutral-600');
     set(`--border-base-${family}-hover`,inverse?'--neutral-600':'--neutral-200');
     set(`--border-base-${family}-pressed`,inverse?'--neutral-800':'--neutral-100');
-    set(`--border-base-${family}-focused`,inverse?'--neutral-400':'--neutral-200');
+    set(`--border-base-${family}-focused`,inverse?'--neutral-transparent-16':'--white-100-16');
     set(`--border-base-${family}-disabled`,inverse?'--neutral-300':'--neutral-700');
   }
   for(const [state,reference] of Object.entries({hover:'white-50-08',focused:'white-100-16',pressed:'white-200-24'})) set(`--transparent-background-base-${state}`,`--${reference}`);
@@ -49,7 +49,8 @@ export function createColorTheme(seed:string=DEFAULT_PRIMARY,mode:ColorMode='lig
       for(const state of ['', '-hover','-pressed']) set(`--${kind}-${role}-${family}${state}`,`--${palette}-${foreground}`);
       set(`--${kind}-${role}-${family}-disabled`,`--${palette}-500`);
     }
-    for(const state of ['default','hover','pressed','focused']) set(`--border-${role}-${state}`,`--${palette}-${foreground}`);
+    for(const state of ['default','hover','pressed']) set(`--border-${role}-${state}`,`--${palette}-${foreground}`);
+    set(`--border-${role}-focused`,`--${palette}-transparent-16`);
     set(`--border-${role}-disabled`,`--${palette}-700`);
   }
   return theme;

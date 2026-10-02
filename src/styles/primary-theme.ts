@@ -19,12 +19,8 @@ export function normalizeHex(value: string): string | null {
   return /^[\da-f]{6}$/i.test(hex)?'#'+hex.toLowerCase():null;
 }
 function rgb(hex:string) { return [1,3,5].map(index=>parseInt(hex.slice(index,index+2),16)); }
-// Light preserves the original F.Doc ramp. Dark separates tints from the seed
-// more strongly and lowers shade luminance for subdued surfaces on dark Base.
-const rampAmounts: Record<ColorMode, Record<PrimaryStep, number>> = {
-  light: {25:.96,50:.80,100:.72,200:.56,300:.32,400:.16,500:0,600:.16,700:.32,800:.56,900:.72},
-  dark: {25:.98,50:.88,100:.80,200:.68,300:.50,400:.28,500:0,600:.28,700:.50,800:.76,900:.88},
-};
+// One primitive ramp is shared by both themes; only semantic references depend on mode.
+const rampAmounts: Record<PrimaryStep, number> = {25:.96,50:.80,100:.72,200:.56,300:.32,400:.16,500:0,600:.16,700:.32,800:.56,900:.72};
 /** Interpolate encoded sRGB channels toward white or black. */
 function mix(hex:string, target:number, amount:number) {
   return '#'+rgb(hex).map(channel=>Math.round(channel+(target-channel)*amount).toString(16).padStart(2,'0')).join('');
@@ -41,7 +37,7 @@ export function contrastRatio(first:string,second:string):number {
 }
 export function createPrimaryTheme(input:string,mode:ColorMode='light'):PrimaryTheme {
   const seed=normalizeHex(input); if(!seed) throw new Error('Введите HEX из 3 или 6 символов');
-  const amounts=rampAmounts[mode];
+  const amounts=rampAmounts;
   const palette=Object.fromEntries(primarySteps.map(step=>[step,mix(seed,step<500?255:0,amounts[step])])) as Record<PrimaryStep,string>;
   const variables:Record<string,string>={'--primary-0':'#ffffff','--primary-1000':'#000000'};
   const references:Record<string,string>={};
@@ -96,7 +92,6 @@ export function createPrimaryTheme(input:string,mode:ColorMode='light'):PrimaryT
     for(const [state,step] of Object.entries({'':900,'-hover':800,'-pressed':safePressed,'-disabled':900})) assign(`--background-primary-secondary${state}`,step);
     for(const [state,step] of Object.entries({'':800,'-hover':900,'-pressed':800,'-disabled':900})) assign(`--background-primary-tertiary${state}`,step);
   }
-  assign('--border-primary-focused',pick(lightSurfaces,policy.icon,policy.onSurface));
   // Interaction overlays must be visible on the current surface even for white/black seeds.
   for(const [state,opacity] of Object.entries({hover:8,focused:16,pressed:24})) {
     const reference=`--primary-interaction-transparent-${String(opacity).padStart(2,'0')}`;
@@ -104,6 +99,8 @@ export function createPrimaryTheme(input:string,mode:ColorMode='light'):PrimaryT
     references[`--transparent-background-primary-${state}`]=reference;
     variables[`--transparent-background-primary-${state}`]=variables[reference];
   }
+  references['--border-primary-focused']='--primary-interaction-transparent-16';
+  variables['--border-primary-focused']=variables['--primary-interaction-transparent-16'];
   return {seed,palette,variables,references,lightForeground,mode};
 }
 
