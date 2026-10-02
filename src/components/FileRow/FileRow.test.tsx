@@ -106,7 +106,7 @@ describe('FileRow', () => {
           <Chips text="На подпись" interactive disabled={disabled} />
         )}
         trailingAction={({ disabled }) => (
-          <ButtonIcon aria-label="Открыть действия файла" icon="more-vertical" size="xsmall" color="neutral" disabled={disabled} />
+          <ButtonIcon aria-label="Открыть действия файла" icon="more-vertical" size="xsmall" iconSize={24} className="fdoc-file-row__button-icon" color="neutral" disabled={disabled} />
         )}
       />,
     );
@@ -120,7 +120,7 @@ describe('FileRow', () => {
       <FileRow
         fileName="Договор.pdf"
         additionalContent="2,7 МБ"
-        trailingAction={<ButtonIcon aria-label="Действия" icon="more-vertical" size="xsmall" color="neutral" />}
+        trailingAction={<ButtonIcon aria-label="Действия" icon="more-vertical" size="xsmall" iconSize={24} className="fdoc-file-row__button-icon" color="neutral" />}
         message={{ type: 'warning', text: 'Проверьте файл' }}
       />,
     );

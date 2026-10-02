@@ -124,3 +124,18 @@ test('FileRow can reorder with the keyboard and keeps focus on the moved handle'
     .toHaveText(['Заявление.pdf', 'Договор.pdf', 'Согласие.pdf']);
   await expect(handle).toBeFocused();
 });
+
+
+test('FileRow menu glyphs stay 24px in built-in and custom slots, including disabled', async ({ page }) => {
+  for (const name of ['menu', 'additional-content', 'trailing-actions']) {
+    for (const disabled of [false, true]) {
+      await page.goto(`/iframe.html?id=components-elements-filerow--${name}&viewMode=story&args=disabled:${disabled}`);
+      const glyph = page.getByTestId('file-row').locator('[data-icon="more-vertical"]');
+      await expect(glyph).toHaveCSS('width', '24px');
+      await expect(glyph).toHaveCSS('height', '24px');
+      const button = glyph.locator('..');
+      await expect(button).toHaveCSS('width', '24px');
+      await expect(button).toHaveCSS('padding', '0px');
+    }
+  }
+});

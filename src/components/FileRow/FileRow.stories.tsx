@@ -206,7 +206,7 @@ export const AdditionalContent: Story = {
           {...args}
           weight={undefined}
           additionalContent={({ disabled }) => (
-            <ButtonIcon aria-label="Подробнее" icon="more-vertical" size="xsmall" color="neutral" disabled={disabled} />
+            <ButtonIcon aria-label="Подробнее" icon="more-vertical" size="xsmall" iconSize={24} className="fdoc-file-row__button-icon" color="neutral" disabled={disabled} />
           )}
         />
       </Example>
@@ -252,7 +252,7 @@ export const TrailingActions: Story = {
         <FileRow {...args} deletable />
       </Example>
       <Example label="ButtonIcon / custom action">
-        <FileRow {...args} deletable={false} trailingAction={({ disabled }) => <ButtonIcon aria-label="Открыть действия файла" icon="more-vertical" size="xsmall" color="neutral" disabled={disabled} />} />
+        <FileRow {...args} deletable={false} trailingAction={({ disabled }) => <ButtonIcon aria-label="Открыть действия файла" icon="more-vertical" size="xsmall" iconSize={24} className="fdoc-file-row__button-icon" color="neutral" disabled={disabled} />} />
       </Example>
       <Example label="Link / custom action">
         <FileRow {...args} deletable={false} trailingAction={({ disabled }) => <Link href="#" size="medium" color="accent" decoration={null} disabled={disabled}>Открыть</Link>} />

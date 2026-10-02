@@ -9,7 +9,7 @@
 }
 
 .fdoc-file-row__button-icon {
-  --fdoc-button-icon-padding: 0px;
+  padding: 0;
 }
 
 .fdoc-file-row__drag {
