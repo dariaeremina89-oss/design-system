@@ -19,6 +19,20 @@ describe('InfoBlock', () => {
     expect(screen.queryByTestId('info-block-close')).not.toBeInTheDocument();
   });
 
+  it.each([undefined, null, '', false])('omits empty copy slots (%s)', empty => {
+    const { container, rerender } = render(<InfoBlock title="Title" text={empty} />);
+    expect(container.querySelector('.fdoc-info-block__text')).toBeNull();
+    rerender(<InfoBlock title={empty} text="Text" />);
+    expect(container.querySelector('.fdoc-info-block__title')).toBeNull();
+    rerender(<InfoBlock title={empty} text={empty} />);
+    expect(container.querySelector('.fdoc-info-block__copy')).toBeNull();
+  });
+
+  it('preserves numeric content', () => {
+    render(<InfoBlock title={0} />);
+    expect(screen.getByText('0')).toBeInTheDocument();
+  });
+
   it('calls onClose', () => {
     const onClose = vi.fn();
     render(<InfoBlock title="Title" onClose={onClose} />);

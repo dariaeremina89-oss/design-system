@@ -41,7 +41,7 @@ test('active buttons, icons and inverse Primary have sufficient actual contrast 
   await page.goto(branding);
   for(const mode of ['Light','Dark']) {
     await page.getByRole('radio',{name:mode,exact:true}).click();
-    for(const color of ['#2f26ff','#ffdc00','#ffffff','#000000','#777777']) {
+    for(const color of ['#2f26ff','#ffdc00','#ffffff','#000000','#777777','#008567']) {
       await page.getByRole('textbox',{name:'Primary 500 HEX'}).fill(color);
       // Wait for the component's existing background transition before measuring contrast.
       await expect.poll(async()=>hex(await page.getByTestId('brand-button-default').evaluate(el=>getComputedStyle(el).backgroundColor))).toBe(color);
@@ -50,6 +50,7 @@ test('active buttons, icons and inverse Primary have sufficient actual contrast 
         const colors=await button.evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor,icon:getComputedStyle(el.querySelector('.fdoc-icon')!).color}));
         expect(contrast(colors.text,colors.bg)).toBeGreaterThanOrEqual(4.5);expect(contrast(colors.icon,colors.bg)).toBeGreaterThanOrEqual(3);
         if(state==='default') expect(hex(colors.bg)).toBe(color);
+        if(color==='#008567') expect(colors.text).toBe('rgb(255, 255, 255)');
       }
       const inverse=await page.getByTestId('brand-inverse-primary').evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
       expect(contrast(inverse.text,inverse.bg)).toBeGreaterThanOrEqual(4.5);

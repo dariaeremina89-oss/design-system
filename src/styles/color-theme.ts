@@ -49,6 +49,22 @@ export function createColorTheme(seed:string=DEFAULT_PRIMARY,mode:ColorMode='lig
       for(const state of ['', '-hover','-pressed']) set(`--${kind}-${role}-${family}${state}`,`--${palette}-${foreground}`);
       set(`--${kind}-${role}-${family}-disabled`,`--${palette}-500`);
     }
+    // Existing default fills/content stay unchanged; inverse roles swap to light surfaces in Dark.
+    const inverseText=selectContrastStep(steps,policy.inverseContent.dark,[50,100].map(step=>({color:color(step),minimum:policy.text})),contrastRatio);
+    const inversePressed=selectContrastStep(steps,policy.inverseBackground.dark[2],[{color:color(inverseText),minimum:policy.text}],contrastRatio);
+    for(const [state,step] of Object.entries({'':50,'-hover':100,'-pressed':inversePressed})) set(`--background-${role}-inverse${state}`,`--${palette}-${step}`);
+    for(const kind of ['text','icon'] as const) {
+      const minimum=policy[kind];
+      const inversePairs=[50,100,inversePressed].map(step=>({color:color(step),minimum}));
+      // Error checkbox marks reuse this inverse icon on the solid error-500 fill.
+      if(role==='error'&&kind==='icon') inversePairs.push({color:color(500),minimum});
+      const onInverse=selectContrastStep(steps,policy.inverseContent.dark,inversePairs,contrastRatio);
+      const onInverseBase=selectContrastStep(steps,policy.onInverseSurface,['#ffffff','#dddee0','#cfd1d3'].map(color=>({color,minimum})),contrastRatio);
+      for(const state of ['', '-hover','-pressed']) {
+        set(`--${kind}-${role}-inverse${state}`,`--${palette}-${onInverse}`);
+        set(`--${kind}-${role}-inverse-light${state}`,`--${palette}-${onInverseBase}`);
+      }
+    }
     for(const state of ['default','hover','pressed']) set(`--border-${role}-${state}`,`--${palette}-${foreground}`);
     set(`--border-${role}-focused`,`--${palette}-transparent-16`);
     set(`--border-${role}-disabled`,`--${palette}-700`);

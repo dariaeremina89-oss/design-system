@@ -68,17 +68,55 @@ export function CustomBranding() {
           <tr><th scope="row">ButtonIcon</th>{buttonStates.map(state=><td key={state}><ButtonIcon state={state} icon="plus" aria-label={`Создать: ${state}`}/></td>)}</tr>
           <tr><th scope="row">Chips</th>{buttonStates.map(state=><td key={state}><Chips text="Выбрано" color="primary" interactive state={state}/></td>)}</tr>
         </tbody></table></div>
-      <Typography variant="caption" responsive>На темной заливке используется светлый текст. Hover и Pressed выбираются так, чтобы один цвет текста оставался читаемым во всех активных состояниях.</Typography>
+      <Typography variant="caption" responsive>Направление контраста определяется по заливке: сравниваем ее контраст с белым и черным, выбираем сторону с большим значением. Hover и Pressed выбираются так, чтобы один цвет текста оставался читаемым во всех активных состояниях.</Typography>
       <div className="fdoc-branding__row">{ratios.map(({state,text,icon})=><Typography key={state} as="span" variant="caption" data-testid={`contrast-${state}`}>{state}: текст {text.toFixed(2)}:1 · иконка {icon.toFixed(2)}:1</Typography>)}</div>
       {!seed&&mode==='light'&&<Typography variant="caption" responsive>Сейчас показаны исходные токены F.Doc. Расчет с проверкой контраста включается при вводе HEX или выборе пресета.</Typography>}
     </section>
 
+    <section>{title('Когда нужно светлое содержимое')}
+      <Typography responsive>Название темы не определяет цвет текста на брендовой кнопке. Сначала сравниваем контраст Primary 500 с белым и черным. Если белый дает больший контраст, выбираем светлую сторону растяжки, иначе темную. Затем подбираем на выбранной стороне ближайшую допустимую ступень: от 25 для светлого содержимого и от 900 для темного, с порогом 4.5:1. При необходимости доступны крайние точки 0 (белый) и 1000 (черный).</Typography>
+      <Typography responsive>Например, у зеленого бренда #008567 черный дает {contrastRatio('#008567','#000000').toFixed(2)}:1, белый — {contrastRatio('#008567','#ffffff').toFixed(2)}:1. Поэтому выбирается белый. Разница небольшая: при неизменной заливке 500 никакой цвет текста не даст здесь 7:1. Порог 4.5:1 — минимальная проверка, а не обещание высокого визуального контраста. Для большего запаса понадобится изменить сам брендовый HEX или разрешить отдельную более темную заливку кнопки.</Typography>
+      <Typography responsive>Hover / Pressed усиливают выбранное направление: 600 / 700 со светлым содержимым, 400 / 300 с темным. Цвет текста остается одним во всех активных состояниях. Inverse — отдельная семантическая роль противоположной поверхности; переключение Light / Dark и выбор светлого текста на Primary 500 — разные решения.</Typography>
+    </section>
+
+    <section>{title('Что рассчитывается автоматически')}
+      <Typography responsive>Фронт передает два значения: цвет клиента в HEX и тему Light или Dark. Генератор сам строит растяжку и назначает цвета семантическим токенам. Вручную подбирать оттенки для каждого клиента не нужно.</Typography>
+      <Typography responsive>Растяжка — набор доступных оттенков. Семантический токен — назначение цвета в интерфейсе. Например, background-primary-secondary означает мягкую брендовую подложку, а text-primary-secondary — цветное содержимое на обычных и брендовых подложках. Компонент использует эти имена, а тема определяет, какие оттенки за ними стоят.</Typography>
+      <ol>
+        <li>HEX становится Primary 500. Из него строятся общие для Light и Dark ступени 25–900. При смене темы эти оттенки остаются прежними.</li>
+        <li>Для каждой темы назначаются поверхности. Например, background-primary-secondary берет 25 в Light и 900 в Dark: светлая подложка сменяется темной.</li>
+        <li>Для ролей с автоматическим подбором задается начальная ступень и список фонов, на которых цвет должен читаться. Для text-primary-secondary начальная ступень — 500, порог контраста — 4.5:1.</li>
+        <li>Генератор проверяет кандидатов из общей растяжки и выбирает ближайшую к начальной ступень, которая проходит порог на всех заданных фонах. Если 500 не подходит, проверяются другие ступени; итогом может стать, например, 900 в Light и 500 в Dark.</li>
+        <li>Результат записывается в CSS-переменные приложения. Компоненты получают новые цвета через прежние семантические имена.</li>
+      </ol>
+      <Typography responsive>Начальные ступени, фоны и пороги — правила дизайн-системы, заданные в коде один раз. Итоговые ссылки и HEX — автоматический результат для введенного цвета и выбранной темы. Поэтому «подбор от 500» не означает «всегда использовать 500».</Typography>
+    </section>
+
     <section>{title('Семантика Light / Dark')}
       <Typography responsive>Имя токена и его назначение сохраняются. Тема определяет, на какую ступень общей палитры он ссылается. Здесь показаны итоговые ссылки и HEX для текущего Primary после проверки контраста. Некоторые пары остаются одинаковыми: например, заливка Primary Default всегда использует 500.</Typography>
+      <Typography responsive>Как читать таблицу: слева — постоянное имя, которое использует компонент. В колонке темы первая строка — ссылка на выбранный токен, вторая — его фактический HEX. Запись background-primary-secondary → primary-900 означает: «для этой подложки взять цвет ступени 900». Это смена ссылки, а не изменение самой ступени 900.</Typography>
       <div className="fdoc-branding__scroll"><table className="fdoc-branding__table" aria-label="Семантика Light и Dark">
         <thead><tr><th scope="col">Семантический токен</th><th scope="col">Light</th><th scope="col">Dark</th></tr></thead>
         <tbody>{mappings.map(token=><tr key={token}><th scope="row">{token}</th>{[light,dark].map(item=>{const color=item.variables[token]??original[token];return <td key={item.mode}><span className="fdoc-branding__color-dot" style={{background:color}} aria-hidden="true"/>{item.references[token]??semanticColorTokens.find(entry=>entry.token===token)?.reference}<br/>{color.toUpperCase()}</td>;})}</tr>)}</tbody>
       </table></div>
+    </section>
+
+    <section>{title('Base и статусы: меняется тема, а не бренд')}
+      <Typography responsive>Neutral, Green, Red, Orange и Purple не пересчитываются из клиентского HEX. При смене бренда эти палитры и статусные цвета сохраняются. При смене Light / Dark меняются их семантические ссылки: обычные подложки становятся темными, содержимое на них светлеет, инверсные поверхности становятся светлыми. Primary использует свою отдельную растяжку.</Typography>
+      <div className="fdoc-branding__scroll"><table className="fdoc-branding__table" aria-label="Семантика Base и статусов">
+        <thead><tr><th scope="col">Роль</th><th scope="col">Light: подложка / содержимое</th><th scope="col">Dark: подложка / содержимое</th></tr></thead>
+        <tbody>{[['Base','--background-base-default','--text-base-default'],['Base Inverse','--background-base-inverse','--text-base-inverse'],...['success','error','warning','accent'].flatMap(role=>[[role+' Secondary',`--background-${role}-secondary`,`--text-${role}-secondary`],[role+' Inverse',`--background-${role}-inverse`,`--text-${role}-inverse`]])].map(([label,bg,fg])=><tr key={label}><th scope="row">{label}</th>{[light,dark].map(item=><td key={item.mode}>{[bg,fg].map(token=><div key={token}>{token}: {item.references[token]??semanticColorTokens.find(entry=>entry.token===token)?.reference} · {(item.variables[token]??original[token]).toUpperCase()}</div>)}</td>)}</tr>)}</tbody>
+      </table></div>
+      <Typography variant="caption" responsive>Таблица показывает Default каждой роли. Насыщенные статусные заливки Default сохраняют исходные ступени; смена темы не означает механическое переворачивание всех номеров. Для Dark отдельно проверяются пары Secondary и Inverse, их Hover / Pressed и содержимое на Base Inverse. Полупрозрачные фокусные ореолы сохраняют 16%.</Typography>
+    </section>
+
+    <section>{title('Пример: подложка и текст для текущего HEX')}
+      <Typography responsive>Ниже показан результат генератора для введенного цвета. В обеих темах компонент использует одну пару имен: background-primary-secondary и text-primary-secondary. Меняются выбранные ступени. При выборе другого HEX эта таблица пересчитывается автоматически.</Typography>
+      <div className="fdoc-branding__scroll"><table className="fdoc-branding__table" aria-label="Пример чтения семантической пары">
+        <thead><tr><th scope="col">Тема</th><th scope="col">Подложка</th><th scope="col">Текст</th><th scope="col">Контраст этой пары</th></tr></thead>
+        <tbody>{[light,dark].map(item=><tr key={item.mode}><th scope="row">{item.mode==='light'?'Light':'Dark'}</th><td>{item.references['--background-primary-secondary']}<br/>{item.variables['--background-primary-secondary'].toUpperCase()}</td><td>{item.references['--text-primary-secondary']}<br/>{item.variables['--text-primary-secondary'].toUpperCase()}</td><td>{contrastRatio(item.variables['--text-primary-secondary'],item.variables['--background-primary-secondary']).toFixed(2)}:1 · минимум 4.5:1</td></tr>)}</tbody>
+      </table></div>
+      <Typography variant="caption" responsive>Здесь показана одна пара в Default. Алгоритм дополнительно учитывает другие предусмотренные поверхности и активные состояния. Значение на экране округляется до двух знаков; решение о прохождении порога принимается без этого округления.</Typography>
     </section>
 
     <section>{title('Живые примеры')}
@@ -115,7 +153,7 @@ export function CustomBranding() {
           <tr><th scope="row">background-primary-secondary</th><td>25 / 50 / 100</td><td>900 / 800 / 700*</td><td>Подложка под цветное содержимое: светлая в Light, темная в Dark.</td></tr>
           <tr><th scope="row">background-primary-tertiary</th><td>200 / 100 / 50</td><td>800 / 900 / 800</td><td>Дополнительная подложка использует ту же пару text/icon-primary-secondary.</td></tr>
           <tr><th scope="row">text/icon-primary-secondary</th><td>Подбор от 500 на светлых поверхностях</td><td>Подбор от 500 на темных поверхностях</td><td>Одна ступень на Default / Hover / Pressed. Текст: минимум 4.5:1, иконки: 3:1.</td></tr>
-          <tr><th scope="row">text/icon-primary-default</th><td>Подбор от 900 на Primary 500</td><td>То же правило</td><td>Основная иконка совпадает с текстом. Облегченная icon-primary-default-light подбирается от 700 с порогом 3:1 и той же светлотной полярностью.</td></tr>
+          <tr><th scope="row">text/icon-primary-default</th><td>Выбор светлой или темной стороны; подбор от 25 или 900 на Primary 500</td><td>То же правило</td><td>Сторона выбирается по большему контрасту Primary 500 с белым или черным, независимо от темы. Основная иконка совпадает с текстом. Облегченная icon-primary-default-light подбирается от 700 с порогом 3:1 и той же светлотной полярностью.</td></tr>
           <tr><th scope="row">background-primary-default-hover / pressed</th><td colSpan={2}>400 / 300 при темном содержимом; 600 / 700 при светлом</td><td>Направление зависит от контраста с введенным HEX, а не от названия темы. Цвет содержимого остается постоянным.</td></tr>
           <tr><th scope="row">background-primary-inverse</th><td>900 / 800 / 700*</td><td>50 / 100 / 200*</td><td>Инверсная заливка: темная в Light, светлая в Dark.</td></tr>
           <tr><th scope="row">text/icon-primary-inverse</th><td>Подбор от 25</td><td>Подбор от 900</td><td>Контраст проверяется со всеми активными фонами Primary Inverse.</td></tr>
@@ -132,20 +170,45 @@ export function CustomBranding() {
       <Typography variant="caption" responsive>Без клиентского переопределения исходная Light-тема F.Doc использует опубликованные токены без перерасчета семантики. Расчет с проверкой контраста применяется после ввода HEX, выбора пресета и в Dark. Таблица «Семантика Light / Dark» показывает рассчитанные соответствия для текущего HEX.</Typography>
     </section>
 
+    <section>{title('Как проверяется результат')}
+      <Typography responsive>Цвет проверяется в паре с фоном, а не сам по себе. Генератор берет конечные HEX, рассчитывает относительную яркость каждого цвета и делит яркость более светлого цвета с добавлением 0.05 на яркость более темного с добавлением 0.05. Получается коэффициент контраста: например, 7:1.</Typography>
+      <ul>
+        <li>Для текста в предусмотренных активных сочетаниях требуется минимум 4.5:1, для иконок — 3:1. Основная иконка на заливке Primary использует цвет текста и проходит его более строгий порог.</li>
+        <li>Содержимое остается читаемым на Default, Hover и Pressed. Если для роли задано несколько поверхностей, кандидат должен подходить ко всем, а не только к фону страницы.</li>
+        <li>При подборе кандидаты сортируются по разнице номеров с начальной ступенью. Например, от 500 сначала проверяется 500, затем 400 и 600, затем 300 и 700. При равной разнице первым идет меньший номер. Дополнительные крайние точки — белый 0 и черный 1000.</li>
+        <li>Для Disabled действует отдельный внутренний порог 3:1. Фокусный ореол сохраняет 16% прозрачности; его итоговая видимость зависит от поверхности и не гарантируется проверкой непрозрачного цвета.</li>
+        <li>Автотесты проверяют предусмотренные цветовые пары на 312 HEX в обеих темах, сохранение Primary 500, общую растяжку и прозрачность фокуса. Браузерные тесты проверяют применение значений к компонентам, переключение темы и экспорт CSS.</li>
+      </ul>
+      <Typography responsive>Проверяются конкретные сочетания из правил библиотеки. Произвольный фон, изображение под компонентом или дополнительная прозрачность требуют отдельной проверки. У белого, черного и очень близких к ним HEX некоторые ступени могут совпасть: контраст текста и различимость состояний — разные проверки.</Typography>
+      <Typography responsive>Для проверки вручную введи HEX или выбери пресет, сравни Light и Dark, затем посмотри таблицу семантики и живые компоненты в состояниях. Растяжка должна оставаться одинаковой, фоны и содержимое должны соответствовать выбранной теме, а фокус — сохранять прозрачность. Кнопка «Показать CSS темы» ниже открывает итоговые переменные.</Typography>
+    </section>
+
+    <section>{title('Как подключить автоматику на фронте')}
+      <Typography responsive>Передайте в разработку генератор вместе с базовыми токенами, стилями компонентов и тестами. Основные файлы: <a href="https://github.com/dariaeremina89-oss/design-system/blob/main/src/styles/primary-theme.ts">primary-theme.ts</a> — растяжка и Primary-семантика; <a href="https://github.com/dariaeremina89-oss/design-system/blob/main/src/styles/color-theme.ts">color-theme.ts</a> — тема всей системы; <a href="https://github.com/dariaeremina89-oss/design-system/blob/main/src/styles/contrast-policy.ts">contrast-policy.ts</a> — правила подбора; <a href="https://github.com/dariaeremina89-oss/design-system/blob/main/src/styles/primary-theme.test.ts">primary-theme.test.ts</a> — проверки. Таблицы на этой странице объясняют код; вручную переносить их для каждого клиента не нужно.</Typography>
+      <Typography responsive>После подключения исходников или сборки библиотеки и базовых стилей вызов выглядит так. При смене HEX или темы заменяйте содержимое одного и того же style-элемента: так от предыдущей темы не останутся лишние переопределения.</Typography>
+      <pre className="fdoc-branding__code" tabIndex={0} aria-label="Пример подключения генератора">{`import { createColorTheme, primaryThemeCss } from '@fdoc/design-system';
+
+const themeStyle = document.createElement('style');
+document.head.append(themeStyle);
+
+function setBrandTheme(hex: string, mode: 'light' | 'dark') {
+  const theme = createColorTheme(hex, mode);
+  themeStyle.textContent = primaryThemeCss(theme);
+  return theme;
+}
+
+setBrandTheme('#2F26FF', 'light');
+// При переключении темы:
+setBrandTheme('#2F26FF', 'dark');`}</pre>
+      <Typography responsive>В результате palette содержит общую растяжку, references — ссылки семантических токенов на выбранные цвета, variables — готовые значения. primaryThemeCss формирует CSS для :root, чтобы тема действовала и на портальные меню. Компоненты используют var(--background-primary-secondary), var(--text-primary-secondary) и другие семантические имена вместо конкретных номеров ступеней.</Typography>
+      <Typography responsive>Генератор принимает непрозрачный HEX из 3 или 6 символов. Некорректный ввод вызывает ошибку: фронт должен показать ошибку поля и сохранить предыдущую корректную тему. Если для заданных правил не найдена подходящая ступень, расчет тоже завершается ошибкой. Проверки на 312 цветах подтверждают проверенные сценарии, но не служат обещанием для всех возможных наложений интерфейса.</Typography>
+      <Typography variant="caption" responsive>Функции сами не сохраняют настройки клиента: хранение HEX и режима, восстановление при входе и вызов генератора при изменении настраиваются в приложении. В Storybook это делает отдельный слой настроек темы. Генератор не зависит от React; при переносе на другой стек нужно сохранить правила и прогнать те же тесты.</Typography>
+    </section>
+
     <section>{title('Как устроен расчет')}
       <Typography responsive>Для каждого RGB-канала: светлый оттенок = round(C500 + (255 − C500) × k), темный = round(C500 × (1 − k)). Общие коэффициенты для 25, 50, 100, 200, 300, 400: 96%, 80%, 72%, 56%, 32%, 16%; для 600, 700, 800, 900: 16%, 32%, 56%, 72%. Эти коэффициенты задают растяжку; пригодность каждой ступени для конкретной роли проверяется отдельно по контрасту.</Typography>
-      <Typography responsive>Для семантики действует одно правило: берем номинальную ступень роли, проверяем все ее пары с фонами и выбираем ближайшую ступень, которая проходит порог контраста. Близость — минимальная разница номеров ступеней; при равенстве выбирается меньший номер. Белый 0 и черный 1000 служат крайними точками. Отдельных поправок под Button, Chips или другие компоненты нет.</Typography>
-      <div className="fdoc-branding__scroll"><table className="fdoc-branding__table" aria-label="Единые правила цветовых ролей">
-        <thead><tr><th scope="col">Роль</th><th scope="col">Номинальная ступень</th><th scope="col">Проверка</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">Содержимое на заливке Primary</th><td>Текст и основная иконка 900; облегченная иконка 700</td><td>Default, Hover и Pressed вместе; текст 4.5:1, облегченная иконка 3:1</td></tr>
-          <tr><th scope="row">Primary на фоне страницы</th><td>500</td><td>Фоны текущей темы, включая подложки и их состояния</td></tr>
-          <tr><th scope="row">Содержимое на Primary Inverse</th><td>Light: 25 · Dark: 900</td><td>Light-фоны 900 / 800 / 700; Dark-фоны 50 / 100 / 200</td></tr>
-          <tr><th scope="row">Primary на инверсном Base</th><td>500</td><td>Инверсные фоны текущей темы и их состояния</td></tr>
-          <tr><th scope="row">Обводка фокуса</th><td>500</td><td>Цвет текущей icon-primary-secondary с прозрачностью 16%; порог 3:1 не относится к итоговому ореолу</td></tr>
-          <tr><th scope="row">Disabled</th><td>600</td><td>Отдельный общий порог 3:1 для содержимого</td></tr>
-        </tbody>
-      </table></div>
+      <Typography responsive>Для ролей с автоматическим подбором после выбора светлой или темной стороны действует правило: берем номинальную ступень роли, проверяем все ее пары с фонами и выбираем ближайшую ступень, которая проходит порог контраста. Близость — минимальная разница номеров ступеней; при равенстве выбирается меньший номер. Белый 0 и черный 1000 служат крайними точками. Отдельных поправок под Button, Chips или другие компоненты нет.</Typography>
+
       <Typography responsive>Заливка Default всегда остается 500. При светлом содержимом Hover / Pressed идут к 600 / 700, при темном — к 400 / 300. Так цвет текста не скачет между состояниями. Для Pressed у Inverse и темного Secondary номинальный фон дополнительно проверяется на контраст с выбранным содержимым; при необходимости берется ближайшая допустимая ступень.</Typography>
       <Typography responsive>Семантические названия сохраняются. Текст на Primary и его активных состояниях подбирается с контрастом не ниже 4.5:1, иконки — 3:1. Считается фактический контраст конечных HEX, без округления порога. Disabled проверяется отдельно от активных состояний. Это проверка заданных пар цветов, а не всех возможных наложений компонентов.</Typography>
       <Typography responsive>Все примитивы Primary одинаковы в Light и Dark. Переключение темы меняет только семантические соответствия. Neutral и статусные палитры тоже сохраняют исходные значения; Dark выбирает другие ступени для их фонов, текста, иконок и обводок.</Typography>

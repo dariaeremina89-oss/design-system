@@ -70,3 +70,33 @@ test('InfoBlock actions stay at the top when there is enough width', async ({ pa
   expect(actionsBox).not.toBeNull();
   expect(Math.abs(actionsBox!.y - copyBox!.y)).toBeLessThanOrEqual(6);
 });
+
+for (const [story, visible, absent] of [
+  ['title-only', 'title', 'text'],
+  ['text-only', 'text', 'title'],
+] as const) {
+  test(`InfoBlock ${story} has one copy row without a hidden slot`, async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 700 });
+    await page.goto(`/iframe.html?id=components-elements-infoblock--${story}&viewMode=story`);
+    const block = page.getByTestId('info-block');
+    await expect(block).toBeVisible();
+    await expect(block.locator(`.fdoc-info-block__${visible}`)).toBeVisible();
+    await expect(block.locator(`.fdoc-info-block__${absent}`)).toHaveCount(0);
+    const copy = block.locator('.fdoc-info-block__copy');
+    expect((await copy.boundingBox())!.height).toBe(40);
+    const main = block.locator('.fdoc-info-block__main');
+    const actions = block.locator('.fdoc-info-block__actions');
+    expect((await main.boundingBox())!.height).toBe((await actions.boundingBox())!.height);
+    const mainBox = (await main.boundingBox())!;
+    for (const part of [copy, block.getByTestId('info-block-icon')]) {
+      const box = (await part.boundingBox())!;
+      const top = box.y - mainBox.y;
+      const bottom = mainBox.y + mainBox.height - box.y - box.height;
+      expect(Math.abs(top - bottom)).toBeLessThanOrEqual(0.5);
+    }
+    // Without actions, only the visible row and the existing copy/root padding remain.
+    await page.goto(`/iframe.html?id=components-elements-infoblock--${story}&viewMode=story&args=actionsCount:none`);
+    await expect(block.locator('.fdoc-info-block__actions')).toHaveCount(0);
+    expect((await block.boundingBox())!.height).toBe(50);
+  });
+}

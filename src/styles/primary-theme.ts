@@ -54,8 +54,8 @@ export function createPrimaryTheme(input:string,mode:ColorMode='light'):PrimaryT
   const pick=(backgrounds:string[],minimum:number,preferred:number,accept?:(color:string)=>boolean)=>selectContrastStep(allSteps,preferred,backgrounds.map(color=>({color,minimum})),contrastRatio,accept);
   const assign=(token:string,step:number)=>{references[token]=`--primary-${step}`;variables[token]=value(step);};
   // A stable foreground across Default/Hover/Pressed avoids color flicker.
-  const main=pick([seed],policy.text,policy.onFill);
-  const lightForeground=relativeLuminance(value(main))>relativeLuminance(seed);
+  const lightForeground=contrastRatio(seed,'#ffffff')>contrastRatio(seed,'#000000');
+  const main=pick([seed],policy.text,lightForeground?25:policy.onFill,color=>(relativeLuminance(color)>relativeLuminance(seed))===lightForeground);
   const hover=lightForeground?600:400,pressed=lightForeground?700:300;
   assign('--background-primary-default-hover',hover); assign('--background-primary-default-pressed',pressed);
   const activeBackgrounds=[seed,palette[hover],palette[pressed]];

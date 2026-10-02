@@ -55,6 +55,8 @@ export function InfoBlock({
   ...props
 }: InfoBlockProps) {
   const actionItems = flattenActions(actions).slice(0, 2);
+  const hasTitle = title !== undefined && title !== null && title !== '' && typeof title !== 'boolean';
+  const hasText = text !== undefined && text !== null && text !== '' && typeof text !== 'boolean';
 
   return (
     <div
@@ -69,10 +71,10 @@ export function InfoBlock({
           </span>
         )}
         <div className="fdoc-info-block__body">
-          {(title !== undefined && title !== null || text !== undefined && text !== null) && (
+          {(hasTitle || hasText) && (
             <div className="fdoc-info-block__copy">
-              {title !== undefined && title !== null && <div className="fdoc-info-block__title">{title}</div>}
-              {text !== undefined && text !== null && <div className="fdoc-info-block__text">{text}</div>}
+              {hasTitle && <div className="fdoc-info-block__title">{title}</div>}
+              {hasText && <div className="fdoc-info-block__text">{text}</div>}
             </div>
           )}
           {actionItems.length > 0 && <div className="fdoc-info-block__actions">{actionItems}</div>}
