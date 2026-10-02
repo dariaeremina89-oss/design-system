@@ -114,17 +114,12 @@
 
 .fdoc-file-item__additional--component {
   flex: 0 1 auto;
-  width: max-content;
+  min-width: 0;
   max-width: 100%;
 }
 
 .fdoc-file-item__additional--component > * {
-  flex-shrink: 0;
   max-width: 100%;
-}
-
-.fdoc-file-item__additional--component > .fdoc-chips {
-  flex-shrink: 1;
 }
 
 .fdoc-file-item__additional-text {
