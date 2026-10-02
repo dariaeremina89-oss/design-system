@@ -13,10 +13,10 @@ Control — элемент без текста. Option — тот же конт�
 
 ### Публичный API
 
-- `Checkbox`, `Radio`, `Switch` — базовые публичные компоненты.
-- `CheckboxControl` / `RadioControl` / `SwitchControl` — совместимые алиасы соответствующих базовых компонентов для сценария без текстовой части.
-- `CheckboxOption` / `RadioOption` / `SwitchOption` — совместимые алиасы тех же компонентов для сценария с label/description.
-- Control и Option не имеют отдельной внутренней реализации: используется один API `SelectionControlProps`, поэтому состояния, ошибки, Disabled, Skeleton и доступность не должны расходиться между алиасами.
+- Checkbox, Radio, Switch — базовые публичные компоненты.
+- CheckboxControl / RadioControl / SwitchControl — совместимые алиасы соответствующих базовых компонентов для сценария без текстовой части.
+- CheckboxOption / RadioOption / SwitchOption — совместимые алиасы тех же компонентов для сценария с label/description.
+- Control и Option не имеют отдельной внутренней реализации: используется один API SelectionControlProps, поэтому состояния, ошибки, Disabled, Skeleton и доступность не должны расходиться между алиасами.
 
 | Элемент | Токены и размеры |
 | --- | --- |
@@ -201,7 +201,7 @@ gap задается произвольным неотрицательным ч�
 
 ### Публичный API
 
-`Breadcrumbs` — основной компонент цепочки. `Breadcrumb` экспортируется как совместимый алиас `Breadcrumbs` и не имеет отдельного поведения или визуальных правил. API обоих имен полностью совпадает: `items`, `aria-label`, `isLoading`, `className`.
+Breadcrumbs — основной компонент цепочки. Breadcrumb экспортируется как совместимый алиас Breadcrumbs и не имеет отдельного поведения или визуальных правил. API обоих имен полностью совпадает: items, aria-label, isLoading, className.
 
 Типографика Caption Base. Gap space-4; разделитель arrow-chevron-right 16 × 16, icon-base-secondary. Текущий текст text-base-default, Ellipsis text-base-secondary. Nav имеет доступное название; список ul/li. Разделители декоративны, Ellipsis не интерактивен.
 
@@ -218,9 +218,9 @@ gap задается произвольным неотрицательным ч�
 
 ### Публичный API
 
-- `Tabs` управляет набором вкладок, выбранным значением, клавиатурной навигацией, overflow и связанными tabpanel.
-- `Tab` — низкоуровневая публичная вкладка. Ее можно использовать отдельно только если родитель сам обеспечивает tablist, связь с panel и управление выбранным значением.
-- `TabProps`: `selected`, `icon`, `badge`, `state` и стандартные props кнопки.
+- Tabs управляет набором вкладок, выбранным значением, клавиатурной навигацией, overflow и связанными tabpanel.
+- Tab — низкоуровневая публичная вкладка. Ее можно использовать отдельно только если родитель сам обеспечивает tablist, связь с panel и управление выбранным значением.
+- TabProps: selected, icon, badge, state и стандартные props кнопки.
 
 Высота 48, padding Y=12; текстовый Tab X=16, icon-only X=12. Иконка 24; обертка с текстом добавляет справа 4, icon-only — по 4 с каждой стороны. Текст Body Strong с горизонтальным padding 8. Badge добавляет слева 4. Gap=0. Нижняя линия border-middle; обычная border-base-secondary, выбранная border-primary-default. Disabled — соответствующий -disabled.
 
@@ -240,9 +240,9 @@ gap задается произвольным неотрицательным ч�
 
 ### Публичный API
 
-- `Pagination` рассчитывает страницы, Counter, адаптивное количество кнопок и вызывает `onChangePage`.
-- `ButtonPagination` — низкоуровневая публичная специализация `Button size="small"` для пагинации. Она не рассчитывает страницы и не хранит текущую страницу сама.
-- `ButtonPaginationProps` наследует Button props, но фиксирует размер и ограничивает цвет схемами пагинации.
+- Pagination рассчитывает страницы, Counter, адаптивное количество кнопок и вызывает onChangePage.
+- ButtonPagination — низкоуровневая публичная специализация Button size="small" для пагинации. Она не рассчитывает страницы и не хранит текущую страницу сама.
+- ButtonPaginationProps наследует Button props, но фиксирует размер и ограничивает цвет схемами пагинации.
 
 Props: totalElements, size (элементов на странице), page (с 1), onChangePage, direction, color, showCounter=true, isLoading. Число страниц ceil(totalElements/size). При нуле элементов компонент скрыт. Одна страница показывает только Counter; showCounter=false скрывает весь компонент. 2–4 страницы отображаются без стрелок. От 5 — Previous и Next, недоступные направления Disabled.
 
