@@ -1,3 +1,4 @@
+import { componentDocs } from '../../docs/bulk-components';
 import { qualityDocs } from '../../docs/quality';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -32,7 +33,7 @@ const meta = {
     layout: 'padded',
     controls: controlsParameters(controlOrder),
     docs: {
-      description: { component: 'AsyncAutocomplete использует ту же визуальную и интерактивную модель, что Autocomplete, но варианты получает по запросу. Запрос запускается после minCharacters и debounce; состояния Loading и Load Error относятся к Menu и не заменяют validation error поля. required работает так же, как у Autocomplete и Input.' + qualityDocs('AsyncAutocomplete') },
+      description: { component: componentDocs('AsyncAutocomplete') + qualityDocs('AsyncAutocomplete') },
     },
   },
   decorators: [Story => <div style={{ width: '100%', maxWidth: 456 }}><Story /></div>],
