@@ -1,8 +1,9 @@
+import { qualityDocs } from '../../docs/quality';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Link } from './Link';
 import { Typography } from '../Typography/Typography';
 import { componentDocs } from '../../docs/bulk-components';
-const meta={title:'Components/Actions/Link',component:Link,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('Link')}}},args:{text:'Подробнее',iconRight:'arrow-chevron-right',href:'#details'},argTypes:{typography:{control:'radio',options:['fixed','inherit'],description:'Постоянный размер или типографика окружающего текста'},color:{control:'select',options:['base','primary','accent','neutral','inverse']},size:{control:'select',options:['small','medium','large','giant']},state:{control:'select',options:['default','hover','focused','pressed','disabled','skeleton']},decoration:{control:'select',options:['solid','dashed','dotted',null]}}} satisfies Meta<typeof Link>;
+const meta={title:'Components/Actions/Link',component:Link,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('Link')+qualityDocs('Link')}}},args:{text:'Подробнее',iconRight:'arrow-chevron-right',href:'#details'},argTypes:{typography:{control:'radio',options:['fixed','inherit'],description:'Постоянный размер или типографика окружающего текста'},color:{control:'select',options:['base','primary','accent','neutral','inverse']},size:{control:'select',options:['small','medium','large','giant']},state:{control:'select',options:['default','hover','focused','pressed','disabled','skeleton']},decoration:{control:'select',options:['solid','dashed','dotted',null]}}} satisfies Meta<typeof Link>;
 export default meta;type Story=StoryObj<typeof meta>;
 export const Default:Story={};
 export const Disabled:Story={args:{disabled:true}};
