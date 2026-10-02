@@ -20,6 +20,8 @@ export default defineConfig({
     command: 'npm run storybook -- --ci --host 127.0.0.1',
     url: 'http://127.0.0.1:6006',
     reuseExistingServer: !process.env.CI,
+    stdout: 'pipe',
+    stderr: 'pipe',
     timeout: 120_000,
   },
 });
