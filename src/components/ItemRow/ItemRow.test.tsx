@@ -58,7 +58,7 @@ describe('ItemRow', () => {
     expect(screen.getByRole('link', { name: 'Подробнее' })).toHaveAttribute('href', '#details');
 
     rerender(<ItemRow variant="search" searchProps={{ 'aria-label': 'Поиск', placeholder: 'Найти' }} />);
-    expect(screen.getByRole('textbox', { name: 'Поиск' })).toBeInTheDocument();
+    expect(screen.getByRole('searchbox', { name: 'Поиск' })).toBeInTheDocument();
   });
 
   it('replaces row content with noninteractive Skeleton state', () => {
