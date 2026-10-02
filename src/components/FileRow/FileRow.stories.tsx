@@ -20,9 +20,9 @@ const reorderableRows = [
   { id: 'agreement', fileName: 'Согласие.pdf', weight: '1,4 МБ' },
 ];
 
-function Example({ label, children }: { label: string; children: ReactNode }) {
+function Example({ label, testId, children }: { label: string; testId?: string; children: ReactNode }) {
   return (
-    <div style={{ display: 'grid', minWidth: 0, gap: 6 }}>
+    <div data-testid={testId} style={{ display: 'grid', minWidth: 0, gap: 6 }}>
       <span style={{ color: 'var(--text-base-secondary)', font: 'var(--page-caption)' }}>{label}</span>
       {children}
     </div>
@@ -228,21 +228,34 @@ export const AdditionalContent: Story = {
           )}
         />
       </Example>
-      <Example label="Badge">
+      <Example label="Badge / Primary" testId="file-row-example-badge">
         <FileRow
           {...args}
           weight={undefined}
           additionalContent={({ disabled }) => (
-            <Badge size="medium" color="secondary" state={disabled ? 'disabled' : 'default'} text="PDF" />
+            <Badge
+              data-testid="file-row-additional-badge"
+              size="medium"
+              color="primary"
+              state={disabled ? 'disabled' : 'default'}
+              text="PDF"
+            />
           )}
         />
       </Example>
-      <Example label="Chips / status">
+      <Example label="Chips / Base" testId="file-row-example-chips">
         <FileRow
           {...args}
           weight={undefined}
           additionalContent={({ disabled }) => (
-            <Chips text="На подпись" size="small" color="secondary" disabled={disabled} interactive={false} />
+            <Chips
+              data-testid="file-row-additional-chips"
+              text="На подпись"
+              size="small"
+              color="base"
+              disabled={disabled}
+              interactive={false}
+            />
           )}
         />
       </Example>
@@ -253,11 +266,38 @@ export const AdditionalContent: Story = {
 export const AdditionalContentDisabled: Story = {
   render: args => (
     <ExampleGrid>
-      <Example label="Badge / Disabled">
-        <FileRow {...args} disabled weight={undefined} additionalContent={({ disabled }) => <Badge size="medium" color="secondary" state={disabled ? 'disabled' : 'default'} text="PDF" />} />
+      <Example label="Badge / Primary / Disabled" testId="file-row-example-badge-disabled">
+        <FileRow
+          {...args}
+          disabled
+          weight={undefined}
+          additionalContent={({ disabled }) => (
+            <Badge
+              data-testid="file-row-additional-badge-disabled"
+              size="medium"
+              color="primary"
+              state={disabled ? 'disabled' : 'default'}
+              text="PDF"
+            />
+          )}
+        />
       </Example>
-      <Example label="Chips / Disabled">
-        <FileRow {...args} disabled weight={undefined} additionalContent={({ disabled }) => <Chips text="На подпись" size="small" color="secondary" disabled={disabled} interactive />} />
+      <Example label="Chips / Base / Disabled" testId="file-row-example-chips-disabled">
+        <FileRow
+          {...args}
+          disabled
+          weight={undefined}
+          additionalContent={({ disabled }) => (
+            <Chips
+              data-testid="file-row-additional-chips-disabled"
+              text="На подпись"
+              size="small"
+              color="base"
+              disabled={disabled}
+              interactive
+            />
+          )}
+        />
       </Example>
     </ExampleGrid>
   ),
