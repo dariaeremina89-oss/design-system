@@ -118,7 +118,7 @@ export function FileItemLayout({
   const hasAdditional = resolvedAdditional !== null && resolvedAdditional !== undefined && resolvedAdditional !== false;
   const hasTrailing = resolvedTrailing !== null && resolvedTrailing !== undefined && resolvedTrailing !== false;
   const additionalIsText = typeof resolvedAdditional === 'string' || typeof resolvedAdditional === 'number';
-  const fixedRight = (!hasAdditional || additionalIsText) && hasTrailing || additionalIsText;
+  const additionalIsComponent = hasAdditional && !additionalIsText;
   const describedBy = [props['aria-describedby'], message ? messageId : undefined].filter(Boolean).join(' ') || undefined;
 
   return (
@@ -141,9 +141,9 @@ export function FileItemLayout({
         <div className="fdoc-file-item__line">
           <FileName fileName={fileName} />
           {(hasAdditional || hasTrailing) && (
-            <span className={`fdoc-file-item__right ${fixedRight ? 'fdoc-file-item__right--fixed' : ''}`}>
+            <span className={`fdoc-file-item__right ${additionalIsText ? 'fdoc-file-item__right--text' : ''} ${additionalIsComponent ? 'fdoc-file-item__right--component' : ''}`}>
               {hasAdditional && (
-                <span className="fdoc-file-item__additional">
+                <span className={`fdoc-file-item__additional ${additionalIsText ? 'fdoc-file-item__additional--text' : 'fdoc-file-item__additional--component'}`}>
                   {additionalIsText
                     ? <span className="fdoc-file-item__additional-text">{resolvedAdditional}</span>
                     : resolvedAdditional}
