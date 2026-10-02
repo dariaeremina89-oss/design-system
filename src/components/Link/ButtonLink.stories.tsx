@@ -1,8 +1,9 @@
+import { qualityDocs } from '../../docs/quality';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ButtonLink } from './Link';
 import { Typography } from '../Typography/Typography';
 import { componentDocs } from '../../docs/bulk-components';
-const meta={title:'Components/Actions/ButtonLink',component:ButtonLink,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('ButtonLink')}}},args:{text:'Подробнее',iconRight:'arrow-chevron-right'},argTypes:{typography:{control:'radio',options:['fixed','inherit'],description:'Постоянный размер или типографика окружающего текста'},color:{control:'select',options:['base','primary','accent','neutral','inverse']},size:{control:'select',options:['small','medium','large','giant']},state:{control:'select',options:['default','hover','focused','pressed','disabled','skeleton']},decoration:{control:'select',options:['solid','dashed','dotted',null]}}} satisfies Meta<typeof ButtonLink>;
+const meta={title:'Components/Actions/ButtonLink',component:ButtonLink,tags:['autodocs','ready'],parameters:{layout:'padded',docs:{description:{component:componentDocs('ButtonLink')+qualityDocs('ButtonLink')}}},args:{text:'Подробнее',iconRight:'arrow-chevron-right'},argTypes:{typography:{control:'radio',options:['fixed','inherit'],description:'Постоянный размер или типографика окружающего текста'},color:{control:'select',options:['base','primary','accent','neutral','inverse']},size:{control:'select',options:['small','medium','large','giant']},state:{control:'select',options:['default','hover','focused','pressed','disabled','skeleton']},decoration:{control:'select',options:['solid','dashed','dotted',null]}}} satisfies Meta<typeof ButtonLink>;
 export default meta;type Story=StoryObj<typeof meta>;
 export const Default:Story={};
 export const Disabled:Story={args:{disabled:true}};
