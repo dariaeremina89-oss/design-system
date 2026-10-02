@@ -1,3 +1,4 @@
+import { qualityDocs } from '../../docs/quality';
 import { Fragment, useState, type ComponentProps, type DragEvent, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Badge } from '../Badge/Badge';
@@ -117,7 +118,7 @@ const meta = {
   tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
-    docs: { description: { component: fileRowDocs } },
+    docs: { description: { component: (fileRowDocs) + qualityDocs('FileRow') } },
   },
   args: {
     state: 'default',
