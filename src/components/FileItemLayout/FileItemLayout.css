@@ -90,22 +90,41 @@
   gap: var(--space-8);
 }
 
-.fdoc-file-item__right--fixed {
+.fdoc-file-item__right--text {
   flex-shrink: 0;
-  min-width: max-content;
+}
+
+.fdoc-file-item__right--component {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .fdoc-file-item__additional {
   display: flex;
-  flex: 0 1 auto;
   min-width: 0;
   min-height: var(--elements-24);
   max-width: 100%;
   align-items: center;
 }
 
-.fdoc-file-item__additional > * {
+.fdoc-file-item__additional--text {
+  flex: 0 0 auto;
+}
+
+.fdoc-file-item__additional--component {
+  flex: 0 1 auto;
+  width: max-content;
   max-width: 100%;
+}
+
+.fdoc-file-item__additional--component > * {
+  flex-shrink: 0;
+  max-width: 100%;
+}
+
+.fdoc-file-item__additional--component > .fdoc-chips {
+  flex-shrink: 1;
 }
 
 .fdoc-file-item__additional-text {
