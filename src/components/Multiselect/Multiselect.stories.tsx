@@ -1,3 +1,4 @@
+import { componentDocs } from '../../docs/bulk-components';
 import { qualityDocs } from '../../docs/quality';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -27,39 +28,7 @@ const meta = {
     layout: 'padded',
     controls: controlsParameters(controlOrder),
     docs: {
-      description: { component: (`
-**Multiselect** выбирает несколько значений из списка и поддерживает разные способы показа выбранного.
-
-### Display
-
-- **comma** — значения через запятую в одну строку; при нехватке ширины текст обрезается через ellipsis;
-- **count** — текст «Выбрано N»;
-- **firstAndCount** — первое значение и количество остальных, например «Дизайн +3»;
-- **chips** — отдельные Chips с удалением каждого значения; Chips переносятся на новые строки, поэтому поле растет по высоте.
-
-### Creatable
-
-При **creatable=true** компонент всегда использует display=chips. После выбранных Chips находится поле ввода. Enter превращает введенный текст в новый Chips. Пользовательское значение хранится в value, но не добавляется в Menu.
-
-### Menu
-
-Menu использует ItemRow с Checkbox и остается открытым после выбора. Checkbox по умолчанию расположен слева. selectionPosition="right" освобождает левый слот строки под leadingIcon. selectAll добавляет первой строкой «Выбрать все»; при частичном выборе Checkbox этой строки становится indeterminate.
-
-### Общее поведение
-
-- value/defaultValue содержат массив значений;
-- onValueChange возвращает полный новый массив;
-- Clear использует общий FieldClearButton и очищает весь выбор;
-- повторный выбор пункта снимает его выбор;
-- после выбора мышкой строка не сохраняет focused-состояние;
-- Disabled option нельзя выбрать;
-- Escape закрывает Menu, Tab закрывает Menu и продолжает обычную навигацию;
-- ArrowDown/ArrowUp перемещают активный пункт, Enter переключает его;
-- Backspace удаляет последнее выбранное значение, когда это не мешает вводу creatable;
-- required использует общий FieldLabel и aria-required.
-
-Это компонент тестовой дизайн-системы и личного плейбука, а не официальный production-пакет F.Doc.
-        `) + qualityDocs('Multiselect') },
+      description: { component: componentDocs('Multiselect') + qualityDocs('Multiselect') },
     },
   },
   decorators: [Story => <div style={{ width: '100%', maxWidth: 456 }}><Story /></div>],
