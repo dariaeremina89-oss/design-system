@@ -1,3 +1,4 @@
+import { qualityDocs } from '../../docs/quality';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { dropzoneDocs } from '../../docs/file-upload';
 import { Dropzone } from './Dropzone';
@@ -8,7 +9,7 @@ const meta = {
   tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
-    docs: { description: { component: dropzoneDocs } },
+    docs: { description: { component: (dropzoneDocs) + qualityDocs('Dropzone') } },
   },
   args: {
     state: 'default',
