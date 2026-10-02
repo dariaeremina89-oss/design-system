@@ -59,7 +59,7 @@ Menu использует ItemRow с Checkbox и остается открыты
 - required использует общий FieldLabel и aria-required.
 
 Это компонент тестовой дизайн-системы и личного плейбука, а не официальный production-пакет F.Doc.
-        `,) + qualityDocs('Multiselect') },
+        `) + qualityDocs('Multiselect') },
     },
   },
   decorators: [Story => <div style={{ width: '100%', maxWidth: 456 }}><Story /></div>],
