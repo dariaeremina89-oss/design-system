@@ -137,9 +137,6 @@ export function createColorTheme(seed:string=DEFAULT_PRIMARY,mode:ColorMode='lig
   })) set(`--transparent-background-base-${state}`,`--${reference}`);
 
   // Transparent content changes polarity together with the surface.
-  for(const item of primitiveColorTokens) {
-    void item;
-  }
   // These semantic aliases are generated from their Light references by
   // swapping black and white while keeping the same opacity.
   // The source list is intentionally explicit so literal white/black tokens
