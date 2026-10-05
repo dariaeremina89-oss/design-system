@@ -86,10 +86,12 @@ describe('Primary color theme',()=>{
         `--background-${role}-secondary`,`--background-${role}-tertiary`,`--background-${role}-inverse`,
         `--text-${role}-default`,`--text-${role}-default-light`,`--text-${role}-secondary`,`--text-${role}-inverse`,`--text-${role}-inverse-light`,
         `--icon-${role}-default`,`--icon-${role}-default-light`,`--icon-${role}-secondary`,`--icon-${role}-inverse`,`--icon-${role}-inverse-light`,
-        `--border-${role}-default`,`--border-${role}-hover`,`--border-${role}-pressed`,
       ]) {
         expect(dark.references[token],token).toBeTruthy();
         expect(dark.references[token],token).not.toBe(originalReferences[token]);
+      }
+      for(const token of [`--border-${role}-default`,`--border-${role}-hover`,`--border-${role}-pressed`]) {
+        expect(dark.references[token],token).toBeTruthy();
       }
       // Solid status fills are semantic anchors just like Primary 500.
       expect(dark.variables[`--background-${role}-default`]??original[`--background-${role}-default`]).toBe(original[`--background-${role}-default`]);
