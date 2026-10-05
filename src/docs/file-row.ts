@@ -1,50 +1,39 @@
-export const fileRowDocs = `
-**FileRow** — строка уже добавленного файла или документа. Компонент не выбирает и не загружает новый файл: он показывает состояние конкретного файла и действия над ним. В группах порядок, удаление из массива и повторная валидация остаются ответственностью родителя.
+import { componentDoc } from './component-doc';
 
-### Анатомия
+export const fileRowDocs = componentDoc({
+  purpose: `**FileRow** — строка уже добавленного файла или документа. Компонент не выбирает новый файл: он показывает состояние одного файла и действия над ним. Порядок массива, удаление из группы и повторная валидация остаются ответственностью родителя.`,
+  anatomy: `Порядок слотов: **Reorder handle → Leading → File name → Additional content → Trailing action**. Под основной строкой может появляться **Message**.
 
-Порядок слотов: **Reorder handle → Leading → File name → Additional content → Trailing action**. Под основной строкой может появляться **Message**.
-
-- Reorder handle — только при \`reorderable\`.
-- Leading — обычная иконка, preview, произвольный child или Circular Progress в Loading; \`leading={false}\` полностью убирает слот.
-- File name занимает остаток ширины и сокращается многоточием. Полное имя доступно через Tooltip при реальном обрезании.
-- Additional content — произвольный child справа от имени: текст/вес, Link, Button, ButtonIcon, Badge, Chips и другие подходящие компоненты.
-- Trailing action — произвольное конечное действие. По умолчанию может быть Delete или Menu, но слот ими не ограничен.
-- Message — \`error\` или \`warning\`; текст переносится, в том числе для сверхдлинных последовательностей.
-
-### API
-
-| Prop | Назначение |
+- Reorder handle — только при \`reorderable\`;
+- Leading — иконка, preview, произвольный child или Circular Progress в Loading; \`leading={false}\` убирает слот;
+- File name занимает остаток ширины и получает Tooltip при реальном обрезании;
+- Additional content — текст/weight или готовый Link, Button, ButtonIcon, Badge, Chips и другие child components;
+- Trailing action — произвольное конечное действие; стандартно Delete или Menu;
+- Message — error или warning с переносом длинного текста.`,
+  api: `| Prop | Назначение |
 | --- | --- |
-| \`state\` | \`default / loading / disabled / skeleton\`. Для сочетаний Loading + Disabled используйте отдельный \`disabled\`. |
-| \`disabled\` | Блокирует действия, reorder и передается render-slot детям через \`{ disabled }\`. |
-| \`fileName\` | Имя файла. |
-| \`weight\` | Shortcut для текстового Additional content. Игнорируется, если передан \`additionalContent\`. |
-| \`additionalContent\` | ReactNode или render-slot \`({ disabled }) => ReactNode\`. |
-| \`trailingAction\` | ReactNode или render-slot для конечного действия. |
-| \`message\` | \`{ type: 'error' | 'warning', text }\`. |
-| \`leading / leadingIcon / preview\` | Настройка Leading. Loading и preview сохраняют приоритет над семантической иконкой Message. |
-| \`deletable / onDelete\` | Стандартное удаление через ButtonIcon. |
-| \`menuItems / onMenuAction\` | Стандартное меню действий. |
-| \`reorderable\` | Показывает drag handle; drag начинается только с него. |
-| \`onReorderDragStart / onReorderDragEnd / onReorderKey\` | События для родителя, который меняет порядок массива. |
-
-### Additional content и Trailing action
-
-FileRow не переопределяет типографику, цвет или state вложенного компонента. Только обычный текст и \`weight\` получают Body Base / text-base-secondary. Для интерактивных children используйте render-slot и передавайте \`disabled\` их собственному API.
-
-Для компактной строки рекомендуются Badge до Large (elements-24) по высоте и Chips Small (elements-24). Более высокий child допустим, но увеличивает высоту строки — FileRow не должен искусственно уменьшать вложенный компонент.
-
-Иконка меню внутри ButtonIcon — elements-24, в том числе в Additional content и Trailing action. Для кнопки Xsmall передавайте \`iconSize={24}\` и используйте нулевой внутренний отступ, как у стандартного меню строки.
-
-### Reorder
-
-Перетаскивание начинается только за ButtonIcon с \`drag-dot\`, но drag preview показывает **всю строку**. Исходная строка остается на своем месте приглушенной до завершения drag. Родитель показывает DropIndicator в целевой позиции и после drop переставляет соответствующий объект целиком вместе с Message и остальными данными.
-
-Клавиатура: фокус на handle, \`ArrowUp / ArrowDown\` вызывают \`onReorderKey\`. Disabled отключает drag и клавиатурное изменение порядка.
-
-### Геометрия и адаптив
-
-Базовая высота — 48 px, padding Y — space-12, X — space-8. Gap между основными слотами — space-8, между именем и правой группой — space-16. Border рисуется внутри и не увеличивает размер. Компонент занимает ширину родителя, не меняет размер шрифта на мобильном; фиксированные controls сохраняют размер, имя файла отдает ширину первым.
-
-`;
+| \`state\` | default / loading / disabled / skeleton |
+| \`disabled\` | блокирует действия и reorder; передается render-slot детям |
+| \`fileName\` | имя файла |
+| \`weight\` | shortcut для текстового Additional content |
+| \`additionalContent\` | ReactNode или render-slot \`({ disabled })\` |
+| \`trailingAction\` | ReactNode или render-slot |
+| \`message\` | \`{ type: 'error' | 'warning', text }\` |
+| \`leading / leadingIcon / preview\` | Leading |
+| \`deletable / onDelete\` | стандартное удаление |
+| \`menuItems / onMenuAction\` | стандартное меню |
+| \`reorderable\` | drag handle |
+| \`onReorderDragStart / onReorderDragEnd / onReorderKey\` | события reorder |`,
+  variants: `Loading меняет Leading на Progress Indicator, Disabled блокирует интерактивные слоты, Skeleton заменяет строку загрузочной геометрией. Message может быть Error или Warning и не меняет смысл остальных слотов.`,
+  geometry: `Базовая высота — 48 px, padding Y — \`--space-12\`, X — \`--space-8\`. Gap основных слотов — \`--space-8\`, между именем и правой группой — \`--space-16\`. Border рисуется внутри и не увеличивает размер. Иконка стандартного Menu внутри ButtonIcon — 24 px.`,
+  behavior: `FileRow не переопределяет типографику, цвет или state вложенного компонента. Только обычный текст и \`weight\` получают Body Base / text-base-secondary. Drag начинается только за handle, preview показывает всю строку, исходная строка остается приглушенной. ArrowUp/ArrowDown на handle вызывает клавиатурный reorder.`,
+  responsive: `Компонент занимает ширину родителя; controls не сжимаются, имя файла отдает ширину первым. Размер шрифта на мобильных не уменьшается. Длинный Message переносится через безопасный перенос.`,
+  accessibility: `Tooltip полного имени появляется только при фактическом обрезании. Интерактивные child components сохраняют собственную семантику. Для reorder всегда есть клавиатурная альтернатива.`,
+  checklist: [
+    'Все слоты появляются и исчезают без пустых промежутков.',
+    'Loading/Disabled/Skeleton не ломают высоту и порядок слотов.',
+    'Длинное имя сокращается, а полный текст остается доступен.',
+    'Additional/Trailing child получает disabled через render-slot, если это требуется.',
+    'Drag и ArrowUp/ArrowDown переставляют один и тот же объект файла.',
+  ],
+});
