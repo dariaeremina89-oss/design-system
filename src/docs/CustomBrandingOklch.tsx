@@ -29,6 +29,7 @@ import {
   getColorMode,
   getPrimarySeed,
 } from '../styles/primary-theme-store';
+import { semanticColorTokens } from '../styles/token-catalog';
 import './custom-branding.css';
 
 const presets=[
@@ -39,6 +40,8 @@ const presets=[
   ['Светлый','#f4e5fa'],
   ['Темный','#171329'],
 ] as const;
+
+const originalSemantic:Record<string,string>=Object.fromEntries(semanticColorTokens.map(item=>[item.token,item.value]));
 
 const semanticRows=[
   ['Primary Default','--background-primary-default','--text-primary-default'],
@@ -77,7 +80,7 @@ function Palette({label,theme,testId}:{label:string;theme:PrimaryTheme;testId:st
 }
 
 function semanticValue(theme:PrimaryTheme,token:string) {
-  return theme.variables[token]??'—';
+  return theme.variables[token]??originalSemantic[token]??'—';
 }
 
 export function CustomBrandingOklch() {
