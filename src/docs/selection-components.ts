@@ -1,150 +1,138 @@
+import { componentDoc } from './component-doc';
+
 const fixedTypography = 'Типографика и размеры внутри компонента постоянны на десктопе и мобильных. Компонент занимает доступную ширину родителя.';
+
 const docs: Record<string, string> = {
-Search: `
-## Назначение
-Search вводит запрос и запускает поиск по кнопке «Найти» или Enter. Подходит для документов, организаций, сотрудников и поиска внутри Menu. Для выбора с поиском используется Autocomplete; для обычного ввода — Input.
+  Search: componentDoc({
+    purpose: `**Search** вводит запрос и запускает поиск по кнопке «Найти» или Enter. Подходит для документов, организаций, сотрудников и поиска внутри Menu. Для выбора с поиском используйте Autocomplete, для обычного ввода — Input.`,
+    anatomy: `Input Small + Button Small. Опциональны Label, Required, Leading Icon, Description, Clear и Helper (Caption/Error/Counter).`,
+    api: `- \`value / defaultValue / onChange\` — запрос;
+- \`onSearch\` — явный запуск поиска;
+- \`buttonText\` — подпись обязательной кнопки;
+- \`clearable / onClear\` — очистка без автоматического запуска поиска;
+- \`disabled\` блокирует поле, кнопку и Clear;
+- \`skeleton\` заменяет элементы загрузочной геометрией.`,
+    variants: `Error имеет приоритет над Caption. Disabled блокирует все дочерние действия. Skeleton не создает фокусируемых элементов.`,
+    geometry: `Поле — 48 px, Button — 32 px. Основной текст — Subtitle 16/24, подписи — Caption 12/16, Button — Caption Strong 12/16. Радиус — \`--radius-middle\`, зазоры до подписей — 4 px.`,
+    behavior: `Enter и кнопка запускают поиск один раз. IME-ввод не отправляет промежуточное значение. Clear очищает запрос и возвращает фокус в поле, но не запускает поиск автоматически.`,
+    responsive: fixedTypography,
+    accessibility: `Ошибка связана через aria-describedby/aria-invalid. Кнопка и Clear имеют собственную семантику и доступны с клавиатуры.`,
+    checklist: [
+      'Enter и кнопка дают один вызов onSearch.',
+      'Clear не запускает поиск и возвращает фокус.',
+      'Disabled блокирует Input, Button и Clear.',
+      'Skeleton не оставляет интерактивных элементов.',
+    ],
+  }),
 
-## Анатомия и размеры
-Использует Input Small и Button Small: поле 48 px, кнопка 32 px. Опциональны Label, Required, иконка 24 px, Description, очистка и Caption/Error/Counter. Основной текст — Subtitle 16/24, подписи — Caption 12/16, кнопка — Caption Strong 12/16. Радиус — radius-middle, зазоры до подписи и подсказки — 4 px. ${fixedTypography}
-
-## Поведение и API
-- value/defaultValue и onChange управляют запросом, onSearch получает запрос только после явного запуска.
-- buttonText меняет надпись кнопки; сама кнопка обязательна.
-- clearable показывает очистку непустого запроса; onClear сообщает об очистке. Фокус возвращается в поле, поиск автоматически не запускается.
-- disabled блокирует поле, кнопку и очистку. skeleton заменяет элементы загрузочными формами соответствующих размеров.
-- Ошибка имеет приоритет над Caption; связь с полем сохраняется через aria-describedby и aria-invalid.
-
-## Проверка
-- [x] Input и Button переиспользуются со своими состояниями.
-- [x] Enter и кнопка запускают поиск один раз; IME-ввод не отправляется преждевременно.
-- [x] Очистка не запускает поиск, восстанавливает placeholder и фокус.
-- [x] Disabled исключает взаимодействие, Skeleton не создает фокусируемые элементы.
-- [x] Текст и скелетоны сохраняют размеры на мобильных.
-`,
-ItemRow: `
-## Назначение
-ItemRow — единая строка для списков выбора, действий, заголовков, ссылок и поиска. Используется в Menu и Select, подходит для панелей выбора и Bottom Sheet.
-
-## Анатомия
-Слева — опциональная иконка, Checkbox, отметка выбора или логотип. В центре — Title и опциональное Description. Справа — Helper и опциональная иконка или индикатор выбора. Divider включается независимо и остается внутри строки.
-
-## Варианты и размеры
-| Вариант | Основной текст | Геометрия |
+  ItemRow: componentDoc({
+    purpose: `**ItemRow** — единая строка для списков выбора, действий, заголовков, ссылок и поиска. Используется внутри Menu/Select и подходит для панелей выбора и Bottom Sheet.`,
+    anatomy: `Слева — опциональная Icon, Checkbox, selection mark или Logo. В центре — Title + Description. Справа — Helper и опциональная Icon/selection indicator. Divider включается независимо и остается внутри строки.`,
+    api: `- \`variant\`: item / header / link / search;
+- \`title / description / helper\`;
+- \`leadingIcon / trailingIcon / logo\`;
+- \`selection\`: check / checkbox, \`selectionPosition\`: left / right, \`selected\`;
+- \`divider\` — готовый Divider;
+- \`state\`: default / hover / pressed / focused / disabled / skeleton;
+- для Search используется \`searchProps\`, для Link — href.`,
+    variants: `Item, Header, Link и Search отличаются типографикой и геометрией. Hover/Pressed меняют фон. Focused использует \`--border-large\` без изменения размеров. Disabled блокирует действие и фокус.`,
+    geometry: `| Variant | Основной текст | Геометрия |
 | --- | --- | --- |
-| item | Body 14/20 | минимум 48 px, padding 12 px |
-| header | Subtitle Strong 16/24 | минимум 56 px, padding сверху 20 px |
-| link | Link Medium, Body 14/20 | минимум 44 px |
-| search | Search, Subtitle 16/24 | padding 8 px по вертикали, 12 px по горизонтали |
+| item | Body 14/20 | min 48 px, padding 12 px |
+| header | Subtitle Strong 16/24 | min 56 px, padding-top 20 px |
+| link | Link Medium, Body 14/20 | min 44 px |
+| search | Search, Subtitle 16/24 | padding Y 8 / X 12 |
 
-Description — Caption 12/16, Helper — Body 14/20. Иконки и Checkbox занимают 24 px, логотип — 32 px. Gap слева — 12 px, справа — 16 px, между текстами — 4 px. Длинные заголовки и описания переносятся, строка растет по высоте. ${fixedTypography}
+Description — Caption 12/16, Helper — Body 14/20. Icon/Checkbox — 24 px, Logo — 32 px. Gap слева 12 px, справа 16 px, между текстами 4 px.`,
+    behavior: `Длинные Title/Description переносятся и увеличивают высоту. В прокручиваемом Menu focus-обводка размещается так, чтобы оставаться видимой у края.`,
+    responsive: fixedTypography,
+    accessibility: `Интерактивная строка получает соответствующую роль и активируется Enter/Space. Header не становится кнопкой. Checkbox внутри строки — визуальный индикатор одного доступного элемента выбора.`,
+    checklist: [
+      'Все variants используют правильную семантику.',
+      'Длинный текст переносится, fixed controls сохраняют размеры.',
+      'Focused не меняет габариты строки.',
+      'Skeleton повторяет текстовые зоны соответствующих стилей.',
+      'Divider остается декоративным.',
+    ],
+  }),
 
-## API и состояния
-- variant: item/header/link/search. Для Search используется searchProps, для ссылки — href.
-- title, description, helper; leadingIcon, trailingIcon, logo.
-- selection: check/checkbox, selectionPosition: left/right, selected. Отметка check — иконка filled/check_circle_filled 24 px, цвет icon-primary-secondary.
-- divider включает готовый Divider без дополнительных отступов.
-- state: default/hover/pressed/focused/disabled/skeleton. Реальное взаимодействие также включает состояния.
-- Hover и Pressed меняют фон. Focused — обводка border-large цвета border-base-default-focused без изменения размеров. У отдельной строки она внешняя; в прокручиваемом Menu размещается внутри строки, чтобы сохранять видимость у краев.
-- disabled блокирует действие и фокус, использует disabled-токены текста и иконок.
+  Menu: componentDoc({
+    purpose: `**Menu** — контейнер строк выбора, действий и служебного содержимого. ItemRow задает анатомию строк; Menu отвечает за порядок, поиск, прокрутку и нижнюю область действий.`,
+    anatomy: `Search может быть закреплен сверху, далее идет прокручиваемый список ItemRow, затем опциональный Footer с Button. Разделители добавляются только там, где нужны по смыслу.`,
+    api: `- \`items\`: id, title, description, helper, icons, selected/disabled, selection, variant, href, onAction;
+- \`role\`: menu / listbox;
+- \`selectedId\` — выбранный пункт;
+- \`searchable\` и \`textValue\` — поиск по списку;
+- \`footer\` — готовые Button;
+- \`activeId / onActiveChange\` — управление активной строкой;
+- \`maxHeight\` — ограничение списка;
+- \`skeleton\` — неинтерактивное состояние.`,
+    variants: `Menu может работать как список действий (menu) или выбора (listbox), с Search/Footer или без них. Header и Disabled не участвуют в интерактивной навигации.`,
+    geometry: `Фон \`--background-base-default\`, радиус \`--radius-middle\`, тень \`--shadow-m\`. Padding Y 8 px, X 0. Минимальная ширина 112 px, базовый max-height 304 px; внутренние отступы строк принадлежат ItemRow.`,
+    behavior: `Список прокручивается, а Search/Footer остаются на месте. ArrowUp/Down перемещают активный пункт, Home/End — к краям, Enter/Space активируют. Typeahead переводит фокус к подходящему пункту; из Search стрелки переходят к результатам.`,
+    responsive: `Menu ограничивается viewport и не должен создавать horizontal overflow. Типографика ItemRow не уменьшается на мобильных.`,
+    accessibility: `Используются role=menu/menuitem или listbox/option в зависимости от сценария. Disabled/Header пропускаются клавиатурной навигацией, выбранность доступна программно.`,
+    checklist: [
+      'Search и Footer не прокручиваются вместе со списком.',
+      'Disabled/Header пропускаются Arrow/Home/End.',
+      'Selected state доступен через семантику роли.',
+      'Длинный список не перекрывает текст scrollbar-ом.',
+      'Skeleton отключает интерактивность.',
+    ],
+  }),
 
-## Доступность и проверка
-- [x] Интерактивная строка получает роль и активируется Enter/Space; Header не становится кнопкой.
-- [x] Ссылка и Search используют собственную семантику и состояния.
-- [x] Checkbox внутри строки — визуальный индикатор; вся строка представляет один доступный элемент выбора.
-- [x] Title, Description, Helper и Header заменяются Skeleton соответствующих текстовых стилей.
-- [x] Divider имеет толщину 1 px и не получает Disabled-состояние.
-`,
-Menu: `
-## Назначение
-Menu — контейнер строк выбора, действий и служебного содержимого. ItemRow задает анатомию строк; Menu отвечает за порядок, поиск, прокрутку и нижнюю область действий. Dropdown добавляет раскрытие от кнопки, Select — выбор значения формы.
+  Dropdown: componentDoc({
+    purpose: `**Dropdown** раскрывает Menu от Button/ButtonIcon для дополнительных действий и навигации. Для выбора значения формы используйте Select.`,
+    anatomy: `Trigger + portal Menu. В hover-сценарии основное действие может оставаться на trigger, а дополнительные действия — в Menu.`,
+    api: `- \`children\` — trigger;
+- \`items\` и props Menu — содержимое;
+- \`open / defaultOpen / onOpenChange\` — раскрытие;
+- \`placement\`: auto / bottom / top;
+- \`matchWidth\` — привязка ширины к trigger;
+- \`closeOnSelect\` — закрытие после выбора;
+- \`disabled\` — блокировка;
+- \`trigger\`: click / hover;
+- \`primaryAction\` — основное действие для hover/mobile сценария.`,
+    variants: `Click — обычный dropdown. Hover — дополнительное меню у кнопки с основным действием: на desktop hover только открывает Menu, а click/Enter/Space выполняют primaryAction; на touch первый tap открывает Menu, где primaryAction добавляется первым пунктом.`,
+    geometry: `Menu находится в portal и располагается поверх контента. Gap до trigger — 4 px. При нехватке места сторона меняется, ширина/высота ограничиваются viewport.`,
+    behavior: `В hover-режиме переход курсора между trigger и Menu сохраняет раскрытие; уход из обеих областей закрывает с задержкой 180 мс. ArrowDown/ArrowUp открывают Menu с первым/последним доступным пунктом. Escape, outside click и выбор закрывают Menu; после Escape/выбора фокус возвращается на trigger.`,
+    responsive: `На ширине до 767 px, устройстве без hover или при фактическом touch первый tap только раскрывает Menu. primaryAction доступен первым пунктом и не дублируется при совпадающем id.`,
+    accessibility: `Trigger использует aria-haspopup/aria-expanded/aria-controls. Клавиатурный сценарий сохраняется независимо от hover. Disabled блокирует hover, click и touch.`,
+    checklist: [
+      'Click-mode открывается мышью и клавиатурой.',
+      'Hover не выполняет primaryAction и не забирает фокус.',
+      'Touch открывает Menu первым tap и оставляет primaryAction доступным.',
+      'ArrowDown/ArrowUp выбирают правильную стартовую строку.',
+      'Escape и выбор возвращают фокус на trigger.',
+    ],
+  }),
 
-## Анатомия и размеры
-Фон background-base-default, радиус radius-middle, тень shadow-m. Отступы сверху и снизу — 8 px, по горизонтали — 0; внутренние отступы задаются ItemRow. Минимальная ширина 112 px, исходное ограничение высоты — 304 px; maxHeight можно изменить. Список прокручивается, Search и область кнопок остаются на месте. Разделители добавляются только там, где они нужны по смыслу.
-
-## API
-- items: уникальный id, title, description, helper, иконки, selected/disabled, selection, variant, href, onAction.
-- role: menu для действий или listbox для выбора. selectedId обозначает выбранное значение.
-- searchable добавляет Search первым элементом; ввод фильтрует строки и не закрывает меню. textValue задает поисковую строку для title с разметкой.
-- footer принимает готовые Button; область отделена Divider и расположена после списка.
-- activeId/onActiveChange позволяют Select управлять активной строкой, сохраняя фокус в поле.
-- skeleton заменяет строки и поиск, отключая интерактивность.
-
-## Клавиатура
-ArrowDown/ArrowUp перемещают фокус, Home/End переходят к краям. Disabled и Header пропускаются. Enter/Space активируют строку. Ввод букв переводит фокус к соответствующему пункту. Из Search стрелки переводят фокус в результаты.
-
-## Проверка
-- [x] Строки строятся на ItemRow, Search на Input и Button.
-- [x] Поддерживаются один пункт, длинные списки, Header, Link и Checkbox.
-- [x] Прокрутка не перекрывает текст, поиск и кнопки не прокручиваются со списком.
-- [x] Disabled нельзя активировать, выбранный пункт имеет доступное состояние.
-- [x] Текст и Skeleton используют одинаковые именованные стили на всех ширинах.
-`,
-Dropdown: `
-## Назначение
-Dropdown раскрывает Menu от Button или ButtonIcon для дополнительных действий и навигации. Для выбора значения формы используется Select.
-
-## API и поведение
-- children — один вызывающий элемент, обычно Button или ButtonIcon с доступным названием.
-- items и остальные параметры Menu определяют содержимое.
-- open/defaultOpen/onOpenChange позволяют управлять раскрытием.
-- placement: auto/bottom/top; при нехватке места меню переворачивается и ограничивается экраном.
-- matchWidth по умолчанию false: ширина зависит от содержимого. true привязывает ее к вызывающему элементу.
-- closeOnSelect по умолчанию true. Для сценария с подтверждением можно отключить закрытие и передать footer с Button.
-- disabled блокирует раскрытие; disabled-состояние вызывающей кнопки также учитывается.
-- trigger: click (по умолчанию) / hover. primaryAction задает основное действие как MenuItem с тем же id, title и обработчиком для кнопки и меню.
-
-### Кнопка с основным действием и меню по наведению
-В режиме trigger=hover используйте Button с iconRight=arrow-chevron-down. На ширине от 768 px с мышью наведение открывает меню дополнительных действий и не перемещает фокус. Клик, Enter или Space на кнопке выполняют primaryAction. ArrowDown / ArrowUp открывают меню с фокусом на первом / последнем доступном пункте, в том числе если оно уже открыто наведением.
-
-На ширине до 767 px, на устройстве без hover и при фактическом касании экрана тап только открывает меню. primaryAction автоматически добавляется первым пунктом; его выбор вызывает то же действие, что клик по кнопке на десктопе. Если пункт с этим id есть в items, он не дублируется. Задавайте основное действие через primaryAction.onAction или общий onAction, чтобы оно было доступно в обоих сценариях.
-
-Меню остается открытым при переходе курсора с кнопки в меню через зазор 4 px. После ухода из обеих областей оно закрывается с задержкой 180 мс. Работа с клавиатуры сохраняет меню, пока фокус внутри. Escape, клик снаружи и выбор действия закрывают меню. Disabled блокирует наведение, клик и касание.
-
-Menu находится в портале поверх содержимого и не меняет поток страницы. Расстояние до кнопки — 4 px. В режиме trigger=click при открытии мышью фокус остается на контейнере (или Search), первая строка не подсвечивается. Открытие с клавиатуры переводит фокус на доступный пункт. Клик снаружи, уход фокуса или Escape закрывают меню. После Escape и выбора действия фокус возвращается на вызывающий элемент; Tab продолжает обычную навигацию.
-
-## Проверка
-- [x] В режиме trigger=click клик и Enter/Space на кнопке раскрывают меню.
-- [x] ArrowDown открывает первый, ArrowUp — последний доступный пункт.
-- [x] Навигация пропускает заголовки и Disabled.
-- [x] Ввод в Search не закрывает меню.
-- [x] aria-haspopup, aria-expanded и aria-controls связывают кнопку и меню.
-- [x] Меню сохраняет типографику, переворачивается и помещается на мобильном экране.
-- [x] Hover не вызывает действие и не забирает фокус; переход в меню сохраняет раскрытие.
-- [x] Основное действие одинаково при клике на десктопе и выборе первого пункта при касании.
-- [x] На мобильной ширине и сенсорном устройстве первый тап только раскрывает меню.
-`,
-Select: `
-## Назначение
-Select выбирает одно значение из заранее заданного списка. Подходит для форм, настроек и фильтров. Для нескольких значений нужен Multiselect; для команд — Dropdown; для свободного текста — Input.
-
-## Анатомия и размеры
-Переиспользует Input, Menu и ItemRow. Поддерживает Label, Required, leadingIcon, Description, Clear, chevron и Caption/Error/Counter. Small — 48 px, Medium — 56 px без Description; описание увеличивает высоту. Основной текст — Subtitle 16/24, подписи — Caption 12/16, радиус radius-middle. Chevron всегда 24 px; очистка — ButtonIcon Neutral 24 px с иконкой 24 px и padding 0. ${fixedTypography}
-
-## API
-| Параметр | Назначение |
+  Select: componentDoc({
+    purpose: `**Select** выбирает одно значение из заранее заданного списка. Для нескольких значений используйте Multiselect, для команд — Dropdown, для свободного текста — Input, для поиска по списку — Autocomplete.`,
+    anatomy: `Переиспользует Input, Menu и ItemRow. Поддерживает Label, Required, Leading Icon, Description, Clear, Chevron и Helper (Caption/Error/Counter).`,
+    api: `| Prop | Назначение |
 | --- | --- |
-| options | value, label, description, helper, leadingIcon, disabled |
-| value/defaultValue | Выбранное значение; пустая строка означает отсутствие выбора |
-| onValueChange | Получает value после выбора, создания или очистки |
-| creatable | Создание собственного значения по Enter без фильтрации списка |
-| clearable | Очистка выбранного значения |
-| open/defaultOpen/onOpenChange | Управление раскрытием |
-| placement, menuMaxHeight | Позиционирование и ограничение меню |
-| name | Передача выбранного value при отправке формы |
-
-Значения options должны быть уникальными и непустыми. В поле показывается только label; описание опции остается в меню. В обычном режиме поле не редактируется. Creatable позволяет ввести и сохранить новое значение, полный список options при этом не фильтруется. При совпадении с label существующего доступного варианта выбирается его value. Созданное значение не добавляется в options. Escape отменяет неподтвержденный ввод и сохраняет прежний выбор. Для поиска по вариантам используется Autocomplete.
-
-## Состояния и раскрытие
-Default, Hover, Focused, Disabled и модификатор Error используют правила Input. При фокусе меняется обводка, геометрия остается прежней. Получение фокуса само по себе не открывает список. Клик, Enter, Space в обычном режиме и ArrowDown раскрывают Menu. Creatable открывается при вводе без фильтрации вариантов. При открытии мышью первая строка не получает фокус-обводку; она появляется после навигации клавиатурой. Menu совпадает с шириной поля, располагается без зазора, перекрывает Caption и при нехватке места раскрывается вверх.
-
-## Доступность и проверка
-- [x] Label связан с combobox; ошибка, описание и подпись доступны через aria-describedby.
-- [x] aria-required, aria-invalid, aria-expanded и aria-controls отражают состояние.
-- [x] ArrowDown/ArrowUp, Home/End в обычном режиме и Enter управляют выбором; Disabled пропускаются.
-- [x] В Creatable курсор остается в поле; aria-activedescendant указывает активный вариант.
-- [x] Очистка доступна с клавиатуры и возвращает фокус, Disabled скрывает очистку.
-- [x] Escape не меняет выбор, Tab закрывает список и продолжает навигацию.
-- [x] Skeleton текста использует Subtitle, подписи — Caption, шеврон — 24 px.
-`,
+| \`options\` | value, label, description, helper, leadingIcon, disabled |
+| \`value / defaultValue\` | выбранное значение |
+| \`onValueChange\` | выбор/создание/очистка |
+| \`creatable\` | создание собственного значения по Enter |
+| \`clearable\` | очистка |
+| \`open / defaultOpen / onOpenChange\` | раскрытие |
+| \`placement / menuMaxHeight\` | popup |
+| \`name\` | значение формы |`,
+    variants: `Default/Hover/Focused/Disabled/Error наследуют правила Input. Creatable превращает поле в редактируемое для создания значения, но не фильтрует options. Skeleton повторяет состав поля.`,
+    geometry: `Small — 48 px, Medium — 56 px без Description. Основной текст — Subtitle 16/24, подписи — Caption 12/16, радиус \`--radius-middle\`. Chevron — 24 px; Clear — ButtonIcon Neutral 24 px с иконкой 24 px и padding 0.`,
+    behavior: `Фокус сам по себе не открывает список. Click, Enter/Space и ArrowDown раскрывают Menu. При открытии мышью первая строка не получает focus-обводку до клавиатурной навигации. Creatable выбирает существующий value при совпадении label; новое значение не добавляется в options. Escape отменяет неподтвержденный ввод и сохраняет прежний выбор.`,
+    responsive: `${fixedTypography} Menu совпадает с шириной поля, не создает horizontal overflow и при нехватке места может раскрыться вверх.`,
+    accessibility: `Label связан с combobox; Description/Error/Caption через aria-describedby. aria-required, aria-invalid, aria-expanded и aria-controls отражают состояние. Arrow/Home/End и Enter управляют активным option; Disabled пропускаются.`,
+    checklist: [
+      'Обычный Select не редактируется как text input.',
+      'Creatable создает значение без фильтрации списка.',
+      'Clear возвращает пустое значение и фокус.',
+      'Mouse-open не подсвечивает первую строку как keyboard focus.',
+      'Popup помещается во viewport и сохраняет ширину поля.',
+    ],
+  }),
 };
+
 export const selectionDocs = (name: string) => docs[name];
