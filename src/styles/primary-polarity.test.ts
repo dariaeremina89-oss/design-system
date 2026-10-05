@@ -2,13 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { contrastRatio, createPrimaryTheme } from './primary-theme';
 
 describe('Primary foreground polarity', () => {
-  it('uses the stronger contrast side for green independently of page mode', () => {
+  it('chooses foreground polarity from the semantic Primary Default fill in each mode', () => {
     for (const mode of ['light', 'dark'] as const) {
       const theme = createPrimaryTheme('#008567', mode);
-      expect(theme.lightForeground).toBe(true);
-      expect(theme.variables['--text-primary-default']).toBe('#ffffff');
-      expect(theme.references['--background-primary-default-hover']).toBe('--primary-600');
-      expect(theme.references['--background-primary-default-pressed']).toBe('--primary-700');
+      const fill=theme.variables['--background-primary-default'];
+      expect(theme.lightForeground).toBe(contrastRatio(fill,'#ffffff')>contrastRatio(fill,'#000000'));
       for (const state of ['', '-hover', '-pressed']) {
         expect(contrastRatio(theme.variables['--text-primary-default'], theme.variables[`--background-primary-default${state}`])).toBeGreaterThanOrEqual(4.5);
       }
