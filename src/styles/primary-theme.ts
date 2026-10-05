@@ -37,13 +37,13 @@ export function contrastRatio(first:string,second:string):number {
 }
 
 const DARK_PRIMARY_SURFACE = '#18191c';
-const DARK_PRIMARY_SURFACE_MIN_CONTRAST = 3;
-const DARK_PRIMARY_TARGET_CONTRAST = 4;
+const DARK_PRIMARY_SURFACE_MIN_CONTRAST = 6.5;
+const DARK_PRIMARY_SURFACE_MAX_CONTRAST = 10.5;
 
 function chooseDarkPrimaryActiveSteps(palette:Record<PrimaryStep,string>) {
   const candidates:Array<{
-    score:number;
-    distance:number;
+    bandDistance:number;
+    distanceFrom500:number;
     defaultStep:PrimaryStep;
     hoverStep:PrimaryStep;
     pressedStep:PrimaryStep;
@@ -51,25 +51,40 @@ function chooseDarkPrimaryActiveSteps(palette:Record<PrimaryStep,string>) {
   }>=[];
   for(let index=0;index<primarySteps.length;index++) {
     const defaultStep=primarySteps[index];
-    const surfaceContrast=contrastRatio(palette[defaultStep],DARK_PRIMARY_SURFACE);
-    if(surfaceContrast<DARK_PRIMARY_SURFACE_MIN_CONTRAST) continue;
-    for(const direction of [-1,1] as const) {
+    const defaultFill=palette[defaultStep];
+    const surfaceContrast=contrastRatio(defaultFill,DARK_PRIMARY_SURFACE);
+    const bandDistance=surfaceContrast<DARK_PRIMARY_SURFACE_MIN_CONTRAST
+      ? DARK_PRIMARY_SURFACE_MIN_CONTRAST-surfaceContrast
+      : surfaceContrast>DARK_PRIMARY_SURFACE_MAX_CONTRAST
+        ? surfaceContrast-DARK_PRIMARY_SURFACE_MAX_CONTRAST
+        : 0;
+
+    for(const [foreground,lightForeground,direction] of [
+      ['#ffffff',true,1],
+      ['#000000',false,-1],
+    ] as const) {
       const hoverIndex=index+direction;
       const pressedIndex=index+direction*2;
       if(hoverIndex<0||pressedIndex<0||hoverIndex>=primarySteps.length||pressedIndex>=primarySteps.length) continue;
       const hoverStep=primarySteps[hoverIndex],pressedStep=primarySteps[pressedIndex];
-      const backgrounds=[palette[defaultStep],palette[hoverStep],palette[pressedStep]];
-      for(const [foreground,lightForeground] of [['#ffffff',true],['#000000',false]] as const) {
-        if(!backgrounds.every(background=>contrastRatio(foreground,background)>=policy.text)) continue;
-        candidates.push({
-          score:Math.abs(surfaceContrast-DARK_PRIMARY_TARGET_CONTRAST),
-          distance:Math.abs(defaultStep-500),
-          defaultStep,hoverStep,pressedStep,lightForeground,
-        });
-      }
+      const backgrounds=[defaultFill,palette[hoverStep],palette[pressedStep]];
+      if(!backgrounds.every(background=>contrastRatio(foreground,background)>=policy.text)) continue;
+      candidates.push({
+        bandDistance,
+        distanceFrom500:Math.abs(defaultStep-500),
+        defaultStep,
+        hoverStep,
+        pressedStep,
+        lightForeground,
+      });
     }
   }
-  candidates.sort((a,b)=>a.score-b.score||a.distance-b.distance||a.defaultStep-b.defaultStep);
+
+  candidates.sort((a,b)=>
+    a.bandDistance-b.bandDistance
+    || a.distanceFrom500-b.distanceFrom500
+    || a.defaultStep-b.defaultStep
+  );
   const best=candidates[0];
   if(!best) throw new Error('No dark Primary state set satisfies the contrast policy');
   return best;
