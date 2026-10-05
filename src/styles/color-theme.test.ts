@@ -33,10 +33,19 @@ describe('Dark status color semantics',()=>{
       }
     }
   });
-  it('leaves the existing solid status fill and its default content unchanged',()=>{
+  it('keeps solid status fills as palette anchors but remaps their content for Dark Base surfaces',()=>{
     const theme=createColorTheme(DEFAULT_PRIMARY,'dark');
-    for(const role of ['success','error','warning','accent']) for(const state of ['', '-hover','-pressed','-disabled']) {
-      for(const kind of ['background','text','icon']) expect(theme.variables).not.toHaveProperty(`--${kind}-${role}-default${state}`);
+    const get=(token:string)=>theme.variables[token]??original[token];
+    for(const role of ['success','error','warning','accent']) {
+      for(const state of ['', '-hover','-pressed','-disabled']) {
+        expect(theme.variables).not.toHaveProperty(`--background-${role}-default${state}`);
+      }
+      for(const state of ['', '-hover','-pressed']) {
+        expect(theme.references[`--text-${role}-default${state}`]).toBeTruthy();
+        expect(theme.references[`--icon-${role}-default${state}`]).toBeTruthy();
+        expect(contrastRatio(get(`--text-${role}-default${state}`),get('--background-base-default'))).toBeGreaterThanOrEqual(4.5);
+        expect(contrastRatio(get(`--icon-${role}-default${state}`),get('--background-base-default'))).toBeGreaterThanOrEqual(3);
+      }
     }
   });
 });
