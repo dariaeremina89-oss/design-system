@@ -22,7 +22,7 @@ test('InfoBlock actions wrap below automatically in a narrow container', async (
   const actionsBox = await page.locator('.fdoc-info-block__actions').boundingBox();
   expect(copyBox).not.toBeNull();
   expect(actionsBox).not.toBeNull();
-  expect(actionsBox!.y).toBeGreaterThanOrEqual(copyBox!.y + copyBox!.height - 1);
+  expect(actionsBox!.y).toBeGreaterThanOrEqual(copyBox!.y + copyBox!.height + 3.5);
 });
 
 test('InfoBlock long content stays inside the component', async ({ page }) => {
@@ -86,7 +86,7 @@ test('InfoBlock copy does not jump when actions wrap from horizontal to vertical
   await host.evaluate(el => { (el as HTMLElement).style.width = '288px'; });
   const actionsBox = (await block.locator('.fdoc-info-block__actions').boundingBox())!;
   const copyBox = (await block.locator('.fdoc-info-block__copy').boundingBox())!;
-  expect(actionsBox.y).toBeGreaterThanOrEqual(copyBox.y + copyBox.height - 0.5);
+  expect(actionsBox.y).toBeGreaterThanOrEqual(copyBox.y + copyBox.height + 3.5);
   expect(await relativeTop()).toBeCloseTo(wideTop, 1);
 });
 
@@ -104,7 +104,7 @@ for (const [story, visible, absent] of [
     const copy = (await block.locator('.fdoc-info-block__copy').boundingBox())!;
     const actions = (await block.locator('.fdoc-info-block__actions').boundingBox())!;
     expect(icon.y - main.y).toBe(8);
-    expect(actions.y).toBeGreaterThanOrEqual(copy.y + copy.height - 0.5);
+    expect(actions.y).toBeGreaterThanOrEqual(copy.y + copy.height + 3.5);
   });
   test(`InfoBlock ${story} has one copy row without a hidden slot`, async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 700 });
@@ -117,13 +117,20 @@ for (const [story, visible, absent] of [
     expect((await copy.boundingBox())!.height).toBe(40);
     const main = block.locator('.fdoc-info-block__main');
     const actions = block.locator('.fdoc-info-block__actions');
-    expect((await main.boundingBox())!.height).toBe((await actions.boundingBox())!.height);
     const mainBox = (await main.boundingBox())!;
     const copyBox = (await copy.boundingBox())!;
+    const actionsBox = (await actions.boundingBox())!;
+    expect(mainBox.height).toBe(copyBox.height);
     expect(copyBox.y - mainBox.y).toBeCloseTo(0, 1);
+    expect(actionsBox.height).toBe(36);
     const lineBox = (await block.locator(`.fdoc-info-block__${visible}`).boundingBox())!;
     const iconBox = (await block.getByTestId('info-block-icon').boundingBox())!;
-    expect(Math.abs((lineBox.y + lineBox.height / 2) - (iconBox.y + iconBox.height / 2))).toBeLessThanOrEqual(0.5);
+    const buttonBox = (await actions.locator('.fdoc-button').first().boundingBox())!;
+    const closeBox = (await block.getByTestId('info-block-close').boundingBox())!;
+    const lineCenter = lineBox.y + lineBox.height / 2;
+    expect(Math.abs(lineCenter - (iconBox.y + iconBox.height / 2))).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(lineCenter - (buttonBox.y + buttonBox.height / 2))).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(lineCenter - (closeBox.y + closeBox.height / 2))).toBeLessThanOrEqual(0.5);
     // Without actions, only the visible row and the existing copy/root padding remain.
     await page.goto(`/iframe.html?id=components-elements-infoblock--${story}&viewMode=story&args=actionsCount:none`);
     await expect(block.locator('.fdoc-info-block__actions')).toHaveCount(0);
