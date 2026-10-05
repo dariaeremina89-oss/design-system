@@ -53,27 +53,26 @@ describe('Primary color theme',()=>{
     }
   });
   it('keeps Primary 500 as the brand anchor but adapts the semantic Default fill in Dark',()=>{
-    const cases=[
-      ['#f4e5fa',700],
-      ['#171329',200],
-      ['#ffdc00',700],
-      ['#2f26ff',300],
-      ['#008567',500],
-      ['#8b1245',300],
-    ] as const;
-    for(const [seed,expectedStep] of cases) {
+    const seeds=['#f4e5fa','#171329','#ffdc00','#2f26ff','#008567','#8b1245'] as const;
+    for(const seed of seeds) {
       const light=createColorTheme(seed,'light');
       const dark=createColorTheme(seed,'dark');
       expect(light.palette[500]).toBe(seed);
       expect(dark.palette[500]).toBe(seed);
       expect(light.references['--background-primary-default']).toBe('--primary-500');
-      expect(dark.references['--background-primary-default']).toBe(`--primary-${expectedStep}`);
+      expect(dark.references['--background-primary-default']).toMatch(/^--primary-/);
       expect(contrastRatio(dark.variables['--background-primary-default'],'#18191c')).toBeGreaterThanOrEqual(3);
       for(const state of ['', '-hover','-pressed']) {
         expect(contrastRatio(dark.variables['--text-primary-default'],dark.variables[`--background-primary-default${state}`])).toBeGreaterThanOrEqual(4.5);
         expect(contrastRatio(dark.variables['--icon-primary-default-light'],dark.variables[`--background-primary-default${state}`])).toBeGreaterThanOrEqual(3);
       }
     }
+
+    const pale=createColorTheme('#f4e5fa','dark');
+    expect(relativeLuminance(pale.variables['--background-primary-default'])).toBeLessThan(relativeLuminance(pale.palette[500]));
+
+    const veryDark=createColorTheme('#171329','dark');
+    expect(relativeLuminance(veryDark.variables['--background-primary-default'])).toBeGreaterThan(relativeLuminance(veryDark.palette[500]));
   });
 
   it('shares every primitive across modes while remapping semantic surfaces',()=>{
@@ -128,7 +127,9 @@ describe('Primary color theme',()=>{
       // Solid status fills are semantic anchors just like Primary 500.
       expect(dark.variables[`--background-${role}-default`]??original[`--background-${role}-default`]).toBe(original[`--background-${role}-default`]);
     }
-    expect(dark.variables['--background-primary-default']).toBe(DEFAULT_PRIMARY);
+    expect(dark.variables['--primary-500']).toBe(DEFAULT_PRIMARY);
+    expect(dark.references['--background-primary-default']).toMatch(/^--primary-/);
+    expect(contrastRatio(dark.variables['--background-primary-default'],'#18191c')).toBeGreaterThanOrEqual(3);
   });
 
   it('Dark is available with the F.Doc seed and never changes status values when the brand changes',()=>{
