@@ -93,7 +93,7 @@ test('Dark remaps Base, status and inverse component colors while preserving bra
     inverse:await readPair(page.getByTestId('brand-inverse-primary')),
     inverseLight:await readPair(page.getByTestId('brand-inverse-light-action')),
     highlight:await readPair(highlight),
-    statuses:Object.fromEntries(await Promise.all(statusColors.map(async color=>[color,await readPair(page.getByTestId(`brand-status-${color}`)]))),
+    statuses:Object.fromEntries(await Promise.all(statusColors.map(async color=>[color,await readPair(page.getByTestId(`brand-status-${color}`))] as const))),
   };
 
   // Primary 500 is the brand anchor, so the solid primary action may stay identical.
