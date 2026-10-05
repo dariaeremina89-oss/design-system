@@ -1,5 +1,4 @@
 import { componentDoc } from './component-doc';
-import { qualityDocs } from './quality';
 
 export const dropzoneDocs = componentDoc({
   purpose: `**Dropzone** — область выбора файлов через системный picker или drag&drop. Компонент принимает новую пачку файлов, валидирует ее по переданным ограничениям и сообщает результат наружу; список уже добавленных файлов хранит родитель.`,
@@ -24,7 +23,7 @@ export const dropzoneDocs = componentDoc({
     'Drag FileRow внутри группы не запускает добавление файла.',
     'Длинный текст и список ограничений остаются внутри контейнера.',
   ],
-}) + qualityDocs('Dropzone');
+});
 
 export const singleFileInputDocs = componentDoc({
   purpose: `**SingleFileInput** — выбор и отображение одного файла. Заполненное состояние повторяет визуальную анатомию FileRow через общий внутренний layout, но компонент остается SingleFileInput и не получает reorder/menu-логику группы.`,
@@ -47,7 +46,7 @@ export const singleFileInputDocs = componentDoc({
     'Delete очищает файл и возвращает пустое состояние.',
     'Error/Disabled/Loading не ломают выравнивание Leading и actions.',
   ],
-}) + qualityDocs('SingleFileInput');
+});
 
 export const multipleFileInputDocs = componentDoc({
   purpose: `**MultipleFileInput** — управляемая группа добавленных файлов с выбором новых файлов, Dropzone, сворачиванием, общей ошибкой, суммарным размером и опциональным reorder.`,
@@ -72,4 +71,4 @@ export const multipleFileInputDocs = componentDoc({
     'Drag переносит весь объект файла вместе с Message/Additional content.',
     'Клавиатурный reorder дает тот же результат, что drag&drop.',
   ],
-}) + qualityDocs('MultipleFileInput');
+});
