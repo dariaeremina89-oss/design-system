@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createBrandSafeColorTheme, getBrandSafeProfile, hexToBrandSafeColor } from './brand-safe-color-theme';
+import { compositeStateLayer, createBrandSafeColorTheme, getBrandSafeProfile, hexToBrandSafeColor } from './brand-safe-color-theme';
 import { createColorTheme } from './color-theme';
 import { contrastRatio, DEFAULT_PRIMARY, normalizeHex } from './primary-theme';
 
@@ -61,6 +61,18 @@ describe('Brand-safe Primary experiment',()=>{
     }
   });
 
+  it('builds Hover and Pressed as onPrimary state layers over the same Default',()=>{
+    for(const seed of [DEFAULT_PRIMARY,'#2f26ff','#008567','#8b1245','#f4e5fa','#171329']) {
+      const profile=getBrandSafeProfile(seed);
+      expect(profile.hoverOpacity).toBeGreaterThanOrEqual(0);
+      expect(profile.hoverOpacity).toBeLessThanOrEqual(.08);
+      expect(profile.pressedOpacity).toBeGreaterThanOrEqual(profile.hoverOpacity);
+      expect(profile.pressedOpacity).toBeLessThanOrEqual(.12);
+      expect(profile.darkHover).toBe(compositeStateLayer(profile.darkDefault,profile.foreground,profile.hoverOpacity));
+      expect(profile.darkPressed).toBe(compositeStateLayer(profile.darkDefault,profile.foreground,profile.pressedOpacity));
+    }
+  });
+
   it('keeps Dark Default, Hover and Pressed readable for arbitrary HEX values',()=>{
     const seeds=['#000000','#ffffff','#ff0000','#00ff00','#0000ff','#777777',DEFAULT_PRIMARY,'#2f26ff','#171329','#f4e5fa','#008567','#8b1245'];
     let random=194827;
@@ -76,6 +88,9 @@ describe('Brand-safe Primary experiment',()=>{
       expect(profile.defaultContrast,seed).toBeLessThanOrEqual(10.58);
       expect(profile.hoverContrast,seed).toBeGreaterThanOrEqual(2.48);
       expect(profile.pressedContrast,seed).toBeGreaterThanOrEqual(2.48);
+      expect(profile.hoverOpacity,seed).toBeLessThanOrEqual(.08);
+      expect(profile.pressedOpacity,seed).toBeLessThanOrEqual(.12);
+      expect(profile.pressedOpacity,seed).toBeGreaterThanOrEqual(profile.hoverOpacity);
 
       for(const state of ['', '-hover','-pressed']) {
         const bg=theme.variables[`--background-primary-default${state}`];
