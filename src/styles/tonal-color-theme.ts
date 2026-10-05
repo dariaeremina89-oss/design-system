@@ -1,5 +1,6 @@
 import { createColorTheme } from './color-theme';
 import { PRIMARY_CONTRAST_POLICY as policy, selectContrastStep } from './contrast-policy';
+import { semanticColorTokens } from './token-catalog';
 import {
   contrastRatio,
   normalizeHex,
@@ -29,6 +30,8 @@ const TONAL_LIGHTNESS:Record<PrimaryStep,number>={
   800:.34,
   900:.26,
 };
+
+const ORIGINAL_SEMANTIC:Record<string,string>=Object.fromEntries(semanticColorTokens.map(item=>[item.token,item.value]));
 
 const PRIMARY_MAPPING={
   light:{
@@ -126,6 +129,12 @@ function roleBackgrounds(theme:PrimaryTheme,family:keyof typeof PRIMARY_MAPPING.
   return [steps.base,steps.hover,steps.pressed].map(step=>theme.palette[step]);
 }
 
+function semanticValue(theme:PrimaryTheme,token:string) {
+  const value=theme.variables[token]??ORIGINAL_SEMANTIC[token];
+  if(!value) throw new Error(`Unknown semantic color token: ${token}`);
+  return value;
+}
+
 function assignStep(theme:PrimaryTheme,token:string,step:number) {
   const reference=`--primary-${step}`;
   theme.references[token]=reference;
@@ -193,14 +202,14 @@ export function createTonalColorTheme(input:string,mode:ColorMode='light'):Prima
 
   const defaultSurfaces=roleBackgrounds(theme,'default');
   const secondarySurfaces=[
-    theme.variables['--background-base-default'],
-    theme.variables['--background-base-secondary'],
+    semanticValue(theme,'--background-base-default'),
+    semanticValue(theme,'--background-base-secondary'),
     ...roleBackgrounds(theme,'secondary'),
     ...roleBackgrounds(theme,'tertiary'),
   ];
   const inverseSurfaces=[
-    theme.variables['--background-base-inverse'],
-    theme.variables['--background-base-inverse-light'],
+    semanticValue(theme,'--background-base-inverse'),
+    semanticValue(theme,'--background-base-inverse-light'),
     ...roleBackgrounds(theme,'inverse'),
   ];
 
@@ -222,8 +231,8 @@ export function createTonalColorTheme(input:string,mode:ColorMode='light'):Prima
     ? {default:600,hover:700,pressed:800,disabled:300}
     : {default:200,hover:100,pressed:300,disabled:700};
   const borderSurfaces=[
-    theme.variables['--background-base-default'],
-    theme.variables['--background-base-secondary'],
+    semanticValue(theme,'--background-base-default'),
+    semanticValue(theme,'--background-base-secondary'),
   ];
   for(const [state,preferred] of Object.entries(borderPreferred)) {
     const minimum=state==='disabled'?policy.disabled:policy.icon;
