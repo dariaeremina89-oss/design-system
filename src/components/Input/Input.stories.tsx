@@ -1,4 +1,5 @@
 import { qualityDocs } from '../../docs/quality';
+import { coreDocs } from '../../docs/core-components';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { iconNames } from '../Icon/Icon';
 import { Input } from './Input';
@@ -20,25 +21,7 @@ const meta = {
     controls: controlsParameters(controlOrder),
     docs: {
       description: {
-        component: `
-**Input** — нативное текстовое поле F.Doc с опциональными Label, Description, Helper, Caption/Error, Counter и слотами иконок.
-
-### API и анатомия
-
-- Размеры: \`medium\` (56 px) и \`small\` (48 px).
-- \`leadingIcon\`, \`trailingIcon\`, \`sumIcon\` и \`clearIcon\` выбираются из библиотеки \`Icon\`.
-- \`clearable\` использует \`ButtonIcon\` размера 24, цвета \`Neutral\`, с иконкой \`filled/cross_circle_filled\` по умолчанию.
-- \`counter={true}\` показывает длину значения и учитывает \`maxLength\`.
-- \`error\` заменяет \`caption\`, но не меняет цвет Value, Placeholder, Description, Counter и иконок.
-
-Caret не является пропсом: текстовый курсор остается нативным поведением HTML input и не добавляется как отдельная иконка.
-
-### Состояния и доступность
-
-Поддерживаются Default, Hover, Focused, Disabled, Error и Skeleton. Focus не меняет внешний размер поля. Компонент использует нативный \`input\`, связывает Label через \`htmlFor\`, а Description, Error и Counter через \`aria-describedby\`; для ошибки устанавливает \`aria-invalid\`.
-
-Это компонент тестовой дизайн-системы и личного плейбука, а не официальный production-пакет F.Doc.
-        ` + qualityDocs('Input'),
+        component: coreDocs('Input') + qualityDocs('Input'),
       },
     },
   },
