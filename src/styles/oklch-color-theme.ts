@@ -100,8 +100,8 @@ export function createOklchDarkPalette(input:string):Record<PrimaryStep,string> 
     500:baseL,
     600:Math.max(.60,baseL-.03),
     700:Math.max(.48,baseL-.10),
-    800:Math.max(.38,baseL-.18),
-    900:Math.max(.28,baseL-.28),
+    800:Math.min(.46,baseL-.18),
+    900:Math.min(.36,baseL-.28),
   };
   return Object.fromEntries(primarySteps.map(step=>[
     step,
