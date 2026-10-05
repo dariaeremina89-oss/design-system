@@ -56,12 +56,12 @@ export function CustomBranding() {
       <div className="fdoc-branding__row" aria-label="Примеры цветов">
         {[['Синий','#2f26ff'],['Зеленый','#008567'],['Бордовый','#8b1245'],['Светлый Primary','#f4e5fa'],['Темный Primary','#171329']].map(([name,color])=><button key={color} type="button" className="fdoc-branding__preset" aria-label={`${name} ${color}`} onClick={()=>update(color)}><span aria-hidden="true" style={{background:color}}/>{name}</button>)}
       </div>
-      <Typography variant="caption" responsive role="status">{seed?`Primary 500: ${seed.toUpperCase()}`:'Исходная палитра F.Doc'} · {mode==='dark'?'Dark':'Light'}. Primary 500 и его примитивная растяжка не меняются между темами; меняются семантические роли вокруг них. Тема применяется ко всем стори и сохраняется в этом браузере.</Typography>
+      <Typography variant="caption" responsive role="status">{seed?`Primary 500: ${seed.toUpperCase()}`:'Исходная палитра F.Doc'} · {mode==='dark'?'Dark':'Light'}. Primary 500 и растяжка остаются брендовым источником; Light / Dark выбирают из нее разные семантические ступени. Активный Primary Default отмечен ниже. Тема применяется ко всем стори и сохраняется в этом браузере.</Typography>
     </section>
 
     <Typography responsive data-testid="brand-highlight"><Highlight highlight="договор">Найденный договор подсвечен цветом Accent.</Highlight></Typography>
 
-    <section>{title('Палитра Primary')}
+    <section>{title('Растяжка Primary')}
       <div className="fdoc-branding__palette" role="group" data-color-mode={mode} aria-label={`Палитра Primary · ${mode === 'dark' ? 'Dark' : 'Light'}`}>{primarySteps.map(step=>{const color=value(`--primary-${step}`);const foreground=contrastRatio(color,'#000000')>=contrastRatio(color,'#ffffff')?'#000000':'#ffffff';const active=step===activePrimaryStep;return <div key={step} className="fdoc-branding__swatch" style={{background:color,color:foreground}} data-primary-step={step} data-active={active||undefined}><Typography as="span" variant="body" strong>{step}{active?' · Default':''}</Typography><Typography as="span" variant="caption">{color.toUpperCase()}</Typography></div>;})}</div>
       <Typography variant="caption" responsive data-testid="active-primary-default">Сейчас background-primary-default → {activePrimaryReference} · {activePrimaryValue.toUpperCase()}.</Typography>
       <Typography variant="caption" responsive>500 сохраняет введенный HEX точно. 25–400 — смесь с белым, 600–900 — с черным. Растяжка общая для Light и Dark; тема меняет семантические ссылки на ее ступени. Активная ступень Default отмечена прямо в палитре. Клиентский Primary не пересчитывает Neutral, Green, Red, Orange и Purple.</Typography>
@@ -196,7 +196,7 @@ export function CustomBranding() {
       <Typography responsive>Все примитивы Primary одинаковы в Light и Dark. Переключение темы меняет только семантические соответствия. Neutral и статусные палитры тоже сохраняют исходные значения; Dark выбирает другие ступени для их фонов, текста, иконок и обводок.</Typography>
       <Button color="secondary" onClick={()=>setExported(!exported)}>{exported?'Скрыть CSS':'Показать CSS темы'}</Button>
       {exported&&<pre className="fdoc-branding__code" tabIndex={0} aria-label="CSS темы">{theme?primaryThemeCss(theme):'/* Исходная Light-тема: подключите styles/tokens.css без переопределений. */'}</pre>}
-      <Typography variant="caption" responsive>Для интеграции: createColorTheme(hex, mode) возвращает палитру, значения и связи токенов; primaryThemeCss(theme) формирует CSS для корня приложения, включая портальные меню. Для Dark F.Doc используется #FFDC00 без клиентского переопределения.</Typography>
+      <Typography variant="caption" responsive>Для интеграции: createColorTheme(hex, mode) возвращает палитру, значения и связи токенов; primaryThemeCss(theme) формирует CSS для корня приложения, включая портальные меню. Для Dark F.Doc исходным брендовым HEX остается #FFDC00, а компоненты используют рассчитанные Dark-ссылки на его растяжку.</Typography>
       <Typography variant="caption" responsive>Методика контраста: <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html" target="_blank" rel="noreferrer">WCAG — Contrast Minimum</a>.</Typography>
     </section>
 
