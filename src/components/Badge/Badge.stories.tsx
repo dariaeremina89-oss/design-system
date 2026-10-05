@@ -1,4 +1,5 @@
 import { qualityDocs } from '../../docs/quality';
+import { coreDocs } from '../../docs/core-components';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Badge, type BadgeColor, type BadgeSize, type BadgeState } from './Badge';
 
@@ -11,25 +12,7 @@ const meta = {
     layout: 'padded',
     docs: {
       description: {
-        component: `
-**Badge** — небольшой неинтерактивный индикатор для количества, короткой метки или точки активности.
-
-Это тестовая дизайн-система и личный плейбук, а не официальная production-библиотека F.Doc.
-
-### API
-
-- size: smallest / small / medium / large / giant;
-- color: primary / secondary / inverse;
-- state: default / disabled / skeleton;
-- text или children: короткое значение без переноса;
-- skeletonWidth: ширина Skeleton для конкретного контента.
-
-### Геометрия из Figma
-
-Smallest имеет внешний размер 16 и внутреннюю точку 8. Остальные размеры имеют фиксированную высоту 16, 20, 24 и 28, а ширина зависит от контента и горизонтальных padding. Skeleton использует общую wave-анимацию атома Skeleton и радиус --radius-small.
-
-Badge не кликабелен, не получает фокус и не содержит иконок или вложенных интерактивных элементов. Для декоративного Badge можно передать aria-hidden, для самостоятельного текстового значения — aria-label.
-        ` + qualityDocs('Badge'),
+        component: coreDocs('Badge') + qualityDocs('Badge'),
       },
     },
   },
