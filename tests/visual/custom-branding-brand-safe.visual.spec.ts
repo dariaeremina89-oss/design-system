@@ -53,11 +53,30 @@ test('Brand-safe color output uses full-width compact strips instead of the 11-c
   const sourceColumns=await source.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
   const stateColumns=await states.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
   expect(sourceColumns).toBe(1);
-  expect(stateColumns).toBe(3);
+  expect(stateColumns).toBe(4);
 
   const stateWidths=await states.locator('.fdoc-branding__swatch').evaluateAll(items=>items.map(item=>item.getBoundingClientRect().width));
-  expect(stateWidths).toHaveLength(3);
+  expect(stateWidths).toHaveLength(4);
   expect(Math.max(...stateWidths)-Math.min(...stateWidths)).toBeLessThan(2);
+});
+
+test('Brand-safe Focus keeps the Default fill and adds only the focus outline',async({page})=>{
+  await page.goto(pageUrl);
+  const button=page.getByTestId('brand-safe-primary-button');
+  await expect(button).toBeVisible();
+
+  const before=await button.evaluate(el=>getComputedStyle(el).backgroundColor);
+  await button.focus();
+  const focused=await button.evaluate(el=>({
+    background:getComputedStyle(el).backgroundColor,
+    outlineStyle:getComputedStyle(el).outlineStyle,
+    outlineWidth:getComputedStyle(el).outlineWidth,
+  }));
+
+  expect(focused.background).toBe(before);
+  expect(focused.outlineStyle).not.toBe('none');
+  expect(focused.outlineWidth).not.toBe('0px');
+  await expect(page.getByTestId('brand-safe-focus')).toBeVisible();
 });
 
 test('Brand-safe live Primary button reads the experimental Dark semantic color',async({page})=>{
