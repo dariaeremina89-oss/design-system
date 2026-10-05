@@ -156,6 +156,24 @@ for (const width of [320, 288, 256, 240]) {
   });
 }
 
+test('InfoBlock action colors match Figma for Base and Inverse', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-elements-infoblock--colors&viewMode=story');
+
+  const base = page.locator('.fdoc-info-block--base');
+  const baseButtons = base.locator('.fdoc-info-block__actions .fdoc-button');
+  await expect(baseButtons.nth(0)).toHaveClass(/fdoc-button--secondary/);
+  await expect(baseButtons.nth(1)).toHaveClass(/fdoc-button--tertiary/);
+
+  const inverse = page.locator('.fdoc-info-block--inverse');
+  const inverseButtons = inverse.locator('.fdoc-info-block__actions .fdoc-button');
+  await expect(inverseButtons.nth(0)).toHaveClass(/fdoc-button--secondary/);
+  await expect(inverseButtons.nth(1)).toHaveClass(/fdoc-button--inverse/);
+
+  const inverseText = await inverseButtons.nth(1).evaluate(el => getComputedStyle(el).color);
+  const expectedInverseText = await page.locator('html').evaluate(el => getComputedStyle(el).getPropertyValue('--text-base-inverse').trim());
+  expect(inverseText).toBe(expectedInverseText);
+});
+
 test('InfoBlock semantic colors remain readable in dark theme', async ({ page }) => {
   await page.goto('/iframe.html?id=components-elements-infoblock--colors&viewMode=story');
   await page.evaluate(() => document.documentElement.setAttribute('data-color-mode', 'dark'));
