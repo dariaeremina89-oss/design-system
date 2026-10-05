@@ -71,7 +71,7 @@ export function qualityDocs(name: QualityComponentName): string {
   const browser = item.browser ?? sharedResponsive;
   return `
 
-## Автотесты
+### Автотесты
 
 - Unit / DOM / CSS: [${item.unit}](${base}${item.unit}).
 - Browser UI: [${browser}](${base}${browser}).
@@ -79,7 +79,7 @@ export function qualityDocs(name: QualityComponentName): string {
 
 Это описание покрытия, а не статус последнего запуска. Актуальный результат смотрите в GitHub Actions.
 
-## Селекторы для тестирования
+### Селекторы для тестирования
 
 Предпочитайте доступные роли и data-атрибуты из таблицы. CSS-классы используйте только для visual-contract тестов внутри дизайн-системы.
 
