@@ -16,7 +16,8 @@ test('F.Doc has its own Dark theme without a client HEX; switching preserves pri
   await expect(page.getByRole('heading',{name:'Custom Branding',exact:true})).toHaveCSS('color','rgb(255, 255, 255)');
   await expect(page.locator('.fdoc-branding > p').first()).toHaveCSS('color','rgb(255, 255, 255)');
   await expect(page.getByRole('table',{name:'Семантика Light и Dark'}).locator('td').first()).toHaveCSS('color','rgb(255, 255, 255)');
-  await expect(page.getByTestId('brand-button-default')).toHaveCSS('background-color','rgb(255, 220, 0)');
+  await expect(page.getByTestId('brand-button-default')).not.toHaveCSS('background-color','rgb(255, 220, 0)');
+  expect(await page.locator('html').evaluate(el=>getComputedStyle(el).getPropertyValue('--primary-500').trim().toLowerCase())).toBe('#ffdc00');
   const after=await page.evaluate(()=>{const css=getComputedStyle(document.documentElement);return ['--yellow-500','--green-500','--red-500','--neutral-900'].map(token=>css.getPropertyValue(token).trim());});
   expect(after).toEqual(before);
   await page.getByRole('radio',{name:'Light',exact:true}).click();await expect(page.locator('html')).toHaveAttribute('data-color-mode','light');
@@ -43,7 +44,7 @@ test('HEX entry is stable, invalid input keeps the last theme, and the same seed
   await expect(page.locator('html')).toHaveAttribute('data-color-mode','dark');
   await page.goto(branding);await expect(page.getByRole('textbox',{name:'Primary 500 HEX'})).toHaveValue('#2f26ff');
   await page.getByRole('button',{name:'Сбросить к F.Doc'}).click();await expect(page.locator('html')).toHaveAttribute('data-color-mode','dark');
-  await expect(page.getByTestId('brand-button-default')).toHaveCSS('background-color','rgb(255, 220, 0)');
+  await expect(page.getByTestId('brand-button-default')).not.toHaveCSS('background-color','rgb(255, 220, 0)');
   await expect(page.locator('body')).toHaveCSS('background-color','rgb(24, 25, 28)');
   await page.getByRole('radio',{name:'Light',exact:true}).click();
   await page.reload();await expect(page.getByTestId('brand-button-default')).toHaveCSS('color','rgb(71, 62, 0)');
@@ -61,7 +62,13 @@ test('active buttons, icons and inverse Primary have sufficient actual contrast 
         const button=page.getByTestId(`brand-button-${state}`);
         const colors=await button.evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor,icon:getComputedStyle(el.querySelector('.fdoc-icon')!).color}));
         expect(contrast(colors.text,colors.bg)).toBeGreaterThanOrEqual(4.5);expect(contrast(colors.icon,colors.bg)).toBeGreaterThanOrEqual(3);
-        if(state==='default') expect(hex(colors.bg)).toBe(color);
+        if(state==='default') {
+          if(mode==='Light') expect(hex(colors.bg)).toBe(color);
+          else {
+            expect(await page.locator('html').evaluate(el=>getComputedStyle(el).getPropertyValue('--primary-500').trim().toLowerCase())).toBe(color);
+            expect(hex(colors.bg)).toBe(await page.locator('html').evaluate(el=>getComputedStyle(el).getPropertyValue('--background-primary-default').trim().toLowerCase()));
+          }
+        }
         if(color==='#008567') expect(colors.text).toBe('rgb(255, 255, 255)');
       }
       const inverse=await page.getByTestId('brand-inverse-primary').evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
@@ -96,8 +103,8 @@ test('Dark remaps Base, status and inverse component colors while preserving bra
     statuses:Object.fromEntries(await Promise.all(statusColors.map(async color=>[color,await readPair(page.getByTestId(`brand-status-${color}`))] as const))),
   };
 
-  // Primary 500 is the brand anchor, so the solid primary action may stay identical.
-  expect(dark.primary).toEqual(light.primary);
+  // Primary/500 stays the brand anchor, but the semantic Default fill is adapted for Dark.
+  expect(dark.primary).not.toEqual(light.primary);
   expect(dark.secondary).not.toEqual(light.secondary);
   expect(dark.inverse).not.toEqual(light.inverse);
   expect(dark.inverseLight).not.toEqual(light.inverseLight);
@@ -169,9 +176,7 @@ test('light and dark Primary presets keep 500 but remap semantic component roles
     const dark=await read();
 
     expect(dark['--primary-500']).toBe(light['--primary-500']);
-    expect(dark['--background-primary-default']).toBe(light['--background-primary-default']);
-    // Text on the solid 500 fill is contrast-driven, not mode-driven.
-    expect(dark['--text-primary-default']).toBe(light['--text-primary-default']);
+    expect(dark['--background-primary-default']).not.toBe(light['--background-primary-default']);
 
     for(const token of [
       '--background-primary-secondary','--background-primary-tertiary','--background-primary-inverse',
