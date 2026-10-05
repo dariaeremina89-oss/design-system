@@ -1,507 +1,383 @@
-const states = `### Состояния и проверка
+import { componentDoc } from './component-doc';
 
-В Controls можно зафиксировать Default, Hover, Focused, Pressed, Disabled и Skeleton. Default реагирует на мышь и клавиатуру; фиксированные образцы сохраняют выбранное состояние.
+const autocomplete = componentDoc({
+  purpose: `**Autocomplete** — поле выбора одного значения через текстовый поиск. Используйте, когда список достаточно большой и пользователю проще искать по названию, чем просматривать его целиком.`,
+  anatomy: `Компонент объединяет Input, Menu и Select-модель: поле поиска, popup со списком ItemRow и опциональную очистку. Выбранным значением может стать только item из переданного списка.`,
+  api: `- \`data\` — value/label + description/helper/leadingIcon/disabled;
+- \`value / defaultValue\` — выбранный item.value;
+- \`inputValue / defaultInputValue\` — отдельно управляемый текст поиска;
+- \`mode\`: auto / input / select;
+- \`minCharacters\`, \`highlightMatches\`, \`showSelectedIcon\`;
+- \`loading / loadError / idleText / noOptionsText\` — состояния списка;
+- \`open / defaultOpen / onOpenChange\`;
+- \`placement / menuMaxHeight\`;
+- Label/required/description/caption/error/counter/size/clearable/disabled/skeleton наследуются от Input.`,
+  variants: `Mode Auto выбирает визуальную модель по наличию списка. Loading/Load Error относятся к popup и не заменяют validation Error самого поля. Disabled option не выбирается и пропускается клавиатурой.`,
+  behavior: `Ввод меняет только поисковый текст. Выбор option синхронизирует value и видимый label. Clear сбрасывает и value, и inputValue. Popup открывается по пользовательскому действию и при нехватке места может сменить сторону.`,
+  responsive: `Поле и popup остаются внутри viewport, типографика не уменьшается. Длинные label/description переносятся внутри Menu.`,
+  accessibility: `Используется combobox с aria-expanded/aria-controls/aria-activedescendant и listbox/option. Arrow keys перемещают активный вариант, Enter выбирает, Escape закрывает popup.`,
+  checklist: [
+    'Controlled и uncontrolled value/inputValue работают независимо.',
+    'Validation Error поля не смешивается с loading/loadError списка.',
+    'Clear очищает и выбранное значение, и текст поиска.',
+    'Disabled option пропускается клавиатурой.',
+    'Popup не создает horizontal overflow.',
+  ],
+});
 
-- Проверьте размеры, отступы и цвета в примере «Все состояния» или «Цвета и состояния».
-- Сравните реальное наведение, нажатие и клавиатурный фокус с образцами.
-- Disabled не выполняет действие и не входит в Tab-порядок.
-- Skeleton не содержит интерактивных элементов.
-`;
-const selection = `### Структура и применение
+const asyncAutocomplete = componentDoc({
+  purpose: `**AsyncAutocomplete** — Autocomplete для вариантов, которые загружаются по текущему запросу. Используйте для серверного поиска и списков, которые нельзя заранее загрузить целиком.`,
+  anatomy: `Анатомия совпадает с Autocomplete: Input + Menu + ItemRow. Дополнительно компонент управляет жизненным циклом запроса.`,
+  api: `- все публичные props Autocomplete, кроме локального \`filterData\`;
+- \`onFetch(value)\` — запрос вариантов;
+- \`minCharacters\` — порог запроса;
+- \`debounce\` — задержка;
+- \`limit\` — максимум отображаемых результатов;
+- \`loading / loadError\` — состояние загрузки списка.`,
+  variants: `Loading, Results, Empty и Load Error меняют только содержимое popup. Validation Error поля остается отдельным состоянием.`,
+  behavior: `onFetch запускается после достижения minCharacters и окончания debounce. Локальная фильтрация выключена: источник истины — переданный data. Выбор, Clear, controlled/uncontrolled value и клавиатура совпадают с Autocomplete.`,
+  responsive: `Popup сохраняет ширину при переходах Loading → Results → Empty/Error и остается внутри viewport.`,
+  accessibility: `Combobox сохраняет роль во время загрузки; состояние загрузки доступно assistive technologies. Клавиатурная модель совпадает с Autocomplete.`,
+  checklist: [
+    'Debounce не вызывает запрос на каждый символ.',
+    'Запрос не стартует раньше minCharacters.',
+    'Новые данные не сбрасывают выбранное значение без причины.',
+    'Loading/Error/Empty не меняют геометрию поля.',
+    'Disabled блокирует новые запросы и взаимодействие.',
+  ],
+});
 
-Control — элемент без текста. Option — тот же контрол с label и необязательным description. Group — заголовок, описание, список опций и отдельная ошибка группы. Для Control без текста задайте aria-label; Option получает имя из label. Ошибка опции заменяет ее description, ошибка группы отображается под списком.
+const highlight = componentDoc({
+  purpose: `**Highlight** — подсветка буквального совпадения внутри текста через нативный mark. Используйте для результатов поиска и фильтрации.`,
+  anatomy: `Компонент не добавляет layout-контейнер: он заменяет совпавшие текстовые фрагменты на mark, сохраняя окружающую React-разметку.`,
+  api: `- \`children\` — текст или разметка;
+- \`highlight\` — буквальная подстрока;
+- \`matchWholeWord\` — только полные слова;
+- \`isCaseInsensitive\` — игнорировать регистр, по умолчанию true.`,
+  behavior: `Пустой highlight возвращает исходный контент. Во вложенной разметке поиск идет внутри отдельных текстовых узлов; props и структура элементов сохраняются.`,
+  responsive: `Highlight не задает собственную ширину и наследует правила переноса родителя.`,
+  accessibility: `mark не получает фокус. Текст должен оставаться понятным без цветовой подсветки.`,
+  checklist: [
+    'Кириллица и латиница ищутся корректно.',
+    'Пустой highlight не меняет DOM-смысл.',
+    'matchWholeWord не подсвечивает часть более длинного слова.',
+    'Вложенные элементы сохраняют props и структуру.',
+  ],
+});
 
-### Публичный API
+const icon = componentDoc({
+  purpose: `**Icon** — единая SVG-библиотека F.Doc. Используйте только имена из IconName, чтобы продуктовые компоненты не зависели от случайных внешних SVG.`,
+  anatomy: `Одна SVG-иконка в квадратном контейнере. Монохромные ресурсы наследуют currentColor; многослойные ресурсы сохраняют собственные цвета.`,
+  api: `- \`name\` — имя из библиотеки;
+- \`size\` — квадратный размер;
+- \`color\` — явный цвет для монохромной иконки;
+- \`title\` — доступное имя самостоятельной смысловой иконки.`,
+  geometry: `Размер задается явно через size и не должен самопроизвольно сжиматься внутри Button/ButtonIcon и других controls.`,
+  responsive: `Размер иконки не уменьшается на мобильных без явного решения родительского компонента.`,
+  accessibility: `Декоративная Icon скрывается от screen reader. Если иконка несет смысл без текста, задайте title или доступное имя родительскому интерактивному элементу.`,
+  checklist: [
+    'Имя существует в экспортированной библиотеке.',
+    'Размер соответствует контейнеру.',
+    'Монохромная иконка берет цвет через currentColor.',
+    'Icon внутри Button/ButtonIcon не дублирует доступное имя действия.',
+  ],
+});
 
-- Checkbox, Radio, Switch — базовые публичные компоненты.
-- CheckboxControl / RadioControl / SwitchControl — совместимые алиасы соответствующих базовых компонентов для сценария без текстовой части.
-- CheckboxOption / RadioOption / SwitchOption — совместимые алиасы тех же компонентов для сценария с label/description.
-- Control и Option не имеют отдельной внутренней реализации: используется один API SelectionControlProps, поэтому состояния, ошибки, Disabled, Skeleton и доступность не должны расходиться между алиасами.
+const infoBlock = componentDoc({
+  purpose: `**InfoBlock** — встроенное контекстное сообщение внутри страницы, формы или сценария. Используйте для пояснения, предупреждения, ошибки или статуса, который должен оставаться рядом с контентом. Для краткого временного уведомления используйте Snackbar.`,
+  anatomy: `Leading Icon → Title/Text → один или два Action → Close. Title и Text независимы. Leading и Close опциональны. Actions передаются готовыми child components.`,
+  api: `- \`color\`: neutral / base / success / accent / warning / error / inverse;
+- \`title / text\` — текстовые зоны;
+- \`leftIcon / leftIconView / showLeftIcon\` — Leading;
+- \`actions\` — до двух действий;
+- \`closable / onClose\` — закрытие;
+- стандартные HTML/ARIA attributes передаются корню.`,
+  variants: `Цвет задает семантические background/icon/text tokens. В Inverse состав Actions повторяет Figma: Secondary + Inverse; Base использует Secondary + Tertiary; остальные стандартные варианты — Base + Tertiary.`,
+  geometry: `Корень всегда использует padding 4 / 4 / 4 / 16. Leading имеет слот 24 × 32 с 8 px сверху; текстовая колонка — padding 10 px сверху/снизу. Border рисуется внутри и не увеличивает layout-размер.
 
-| Элемент | Токены и размеры |
+Horizontal: Actions справа, контейнер 40 px, кнопки 32 px по центру, без дополнительного bottom padding. Vertical: Actions под текстом, gap 8 px и bottom padding 8 px; при Leading начинаются на 32 px правее его левого края.`,
+  behavior: `Actions остаются справа, пока хватает реальной доступной ширины для текста и фактической ширины кнопок; затем переключаются в Vertical. Перестроение не двигает первую строку текста. Child actions сохраняют собственные состояния и доступность.`,
+  responsive: `Переключение зависит от доступной ширины компонента, а не фиксированного breakpoint экрана. Длинные слова и URL используют безопасный перенос и не создают horizontal overflow.`,
+  accessibility: `Семантика сообщения задается допустимыми HTML/ARIA attributes. Close имеет доступное имя. Error/Warning не должны различаться только цветом, если смысл требует явного текста.`,
+  checklist: [
+    'Без Title или Text не остается пустого слота.',
+    'Horizontal и Vertical совпадают с Figma по отступам.',
+    'Один/два Action переключаются по фактической ширине.',
+    'Long text не создает overflow.',
+    'Close не запускает Action и наоборот.',
+  ],
+});
+
+const multiselect = componentDoc({
+  purpose: `**Multiselect** — выбор нескольких независимых значений из списка. Для одного значения используйте Select.`,
+  anatomy: `Поле выбора + Menu с ItemRow/Checkbox + отображение выбранных значений в одном из display-режимов. Chips-режим использует готовый Chips.`,
+  api: `- \`options\` — value/label + description/helper/leadingIcon/disabled;
+- \`value / defaultValue\` — массив выбранных value;
+- \`onValueChange\` — новый полный массив;
+- \`display\`: comma / count / firstAndCount / chips;
+- \`creatable\` — создание собственного значения;
+- \`selectAll / selectAllLabel\` — массовый выбор доступных options;
+- \`selectionPosition\`: left / right;
+- \`open / defaultOpen / onOpenChange / placement / menuMaxHeight\`;
+- \`emptyText\` — пустой список.`,
+  variants: `Creatable всегда отображает выбранные значения через Chips. Display меняет только представление, не данные. Disabled option не входит в select-all.`,
+  behavior: `Option переключается независимо. Удаление Chips обновляет тот же массив value; Clear вызывает onValueChange([]) и onClear. Созданное значение не добавляется в исходный options автоматически.`,
+  responsive: `В comma/firstAndCount длинный текст не раздувает поле; Chips переносятся по правилам компонента. Menu и поле остаются внутри viewport, типографика не уменьшается.`,
+  accessibility: `Используется combobox/listbox модель; выбранность options программно доступна. Клавиатура открывает popup, перемещает активный пункт, переключает выбор и закрывает список.`,
+  checklist: [
+    'Controlled/uncontrolled массивы не расходятся.',
+    'Select-all игнорирует Disabled.',
+    'Удаление Chips и Clear возвращают корректный полный массив.',
+    'Все display-режимы показывают одно и то же выбранное множество.',
+    'Длинные значения не создают overflow.',
+  ],
+});
+
+const phoneInput = componentDoc({
+  purpose: `**PhoneInput** — специализированное поле одного телефонного номера на общей основе Input. Поддерживает российский и международный режимы.`,
+  anatomy: `Input с переключателем типа номера, mask/placeholder и общей системой Label/Description/Helper. Leading/Trailing управляются самим компонентом и не переопределяются как у обычного Input.`,
+  api: `- \`phoneType\`: russian / international;
+- \`value / defaultValue\` — нормализованное значение: + и цифры;
+- \`onValueChange\` — нормализованное значение;
+- \`onPhoneTypeChange\` — смена режима;
+- \`open / defaultOpen / onOpenChange\` — Menu типа;
+- \`placement / menuMaxHeight\` — popup;
+- Required/Error/Disabled/Skeleton наследуют общую модель Input.`,
+  variants: `Russian по умолчанию показывает постоянный +7 и российскую mask. International принимает + и международный набор цифр без российской mask.`,
+  behavior: `Ввод, paste и Clear нормализуют значение одинаково. Переключение режима не оставляет несовместимую mask. Ошибка обязательности и ошибка формата должны быть различимы по причине.`,
+  responsive: `Поле сохраняет типографику Input, занимает ширину родителя и не выходит за контейнер. Skeleton повторяет геометрию заполненного поля.`,
+  accessibility: `Menu выбора типа доступно с клавиатуры. Required и validation Error связаны с полем через общую ARIA-модель Input.`,
+  checklist: [
+    'Во внешнем value нет пробелов, скобок и дефисов.',
+    'Российский номер форматируется после paste.',
+    'International не получает российскую mask.',
+    'Clear возвращает пустое нормализованное значение.',
+    'Menu остается внутри viewport.',
+  ],
+});
+
+const selectionGeometry = `| Элемент | Размеры |
 | --- | --- |
-| Checkbox / Radio | --elements-24, внутренняя фигура --elements-20 |
-| State layer | --elements-32, радиус --radius-full |
-| Checkbox | --radius-small, --border-small; иконка 20 × 20 |
-| Radio | --radius-full; внутренний круг --elements-12 |
-| Switch | Track 36 × 20; Handle Off 12, On 16; radius-full |
-| Контрол → текст | --space-16 |
-| Подпись | Subtitle: --page-subtitle-size / --page-subtitle-line-height, базовый вес |
-| Описание | Caption Base; отступ --space-4 |
-| Заголовок группы | Subtitle Strong |
-| Заголовок → опции, между строками, до ошибки | --space-16 |
-| Между опциями в строке | --space-24; на мобильном column |
+| Checkbox / Radio | 24 px, внутренняя фигура 20 px |
+| State layer | 32 px, radius-full |
+| Checkbox | radius-small, border-small, icon 20 px |
+| Radio | radius-full, внутренний круг 12 px |
+| Switch | Track 36 × 20; Handle 12 / 16 |
+| Control → Text | space-16 |
+| Label | Subtitle 16/24 |
+| Description | Caption 12/16, gap 4 px |`;
 
-В SwitchOption подпись расположена слева, переключатель справа, с отступом сверху space-2. Длинные слова переносятся через overflow-wrap:anywhere; обычные слова остаются целыми. Высота строки определяется содержимым.
+const checkbox = componentDoc({
+  purpose: `**Checkbox** — независимый выбор boolean-значения. Поддерживает Indeterminate для частично выбранного набора.`,
+  anatomy: `Control может использоваться без текста или с Label/Description через тот же API. Error заменяет Description.`,
+  api: `Checkbox — основной публичный компонент. CheckboxControl и CheckboxOption — совместимые алиасы того же SelectionControlProps без отдельной реализации.`,
+  variants: `Default/Hover/Focused/Pressed/Disabled, Selected/Unselected, Indeterminate и Error используют семантические state-layer/background/border tokens. Disabled использует -disabled значения.`,
+  geometry: selectionGeometry,
+  behavior: `Клик по всей строке с Label переключает значение. Tab фокусирует Checkbox, Space переключает; Enter не переключает.`,
+  responsive: `Label/Description переносятся, Control сохраняет размер. Label 16/24 не уменьшается на мобильных.`,
+  accessibility: `Нативный checkbox. Control без Label требует aria-label. Description/Error связываются через aria-describedby; Indeterminate объявляется как mixed.`,
+  checklist: ['Control/Option используют одинаковые состояния.','Disabled блокирует всю строку.','Длинный Label не сжимает Control.','Error и Description не показываются одновременно.','Space переключает, Enter — нет.'],
+});
 
-### Токены состояния
+const radio = componentDoc({
+  purpose: `**Radio** — выбор одного значения внутри общей RadioGroup.`,
+  anatomy: `Control может использоваться без текста или с Label/Description через тот же API. Error заменяет Description.`,
+  api: `Radio — основной публичный компонент. RadioControl и RadioOption — совместимые алиасы того же SelectionControlProps.`,
+  variants: `Default/Hover/Focused/Pressed/Disabled, Selected/Unselected и Error используют семантические state-layer/background/border tokens.`,
+  geometry: selectionGeometry,
+  behavior: `Tab входит в radio-набор, Arrow keys перемещают выбор, Space выбирает активный вариант.`,
+  responsive: `Label/Description переносятся, Control сохраняет размер. Label 16/24 не уменьшается на мобильных.`,
+  accessibility: `Нативный radio; связанные варианты объединяются общим name. Control без Label требует aria-label; Description/Error — aria-describedby.`,
+  checklist: ['Control/Option используют одинаковые состояния.','В группе выбран максимум один вариант.','Disabled пропускается клавиатурой.','Длинный Label не сжимает Control.','Arrow keys работают внутри группы.'],
+});
 
-| Вариант | Фигура | Индикатор / border | State layer |
-| --- | --- | --- | --- |
-| Не выбран | прозрачный; Checkbox Disabled — background-base-secondary-disabled | border-base-default / border-base-default-disabled | transparent-background-base-* |
-| Выбран | background-primary-default / background-primary-default-disabled | Checkbox: icon-primary-default / icon-primary-default-disabled; Radio: background-primary-default / disabled | transparent-background-primary-* |
-| Ошибка | background-error-default / background-error-default-disabled | icon-error-inverse / icon-error-inverse-disabled; border-error-default / border-error-disabled | transparent-background-error-* |
-| Switch Off | background-base-tertiary / background-base-tertiary-disabled | Handle: background-base-default / background-base-default-disabled | transparent-background-base-* |
-| Switch On | background-primary-default / background-primary-default-disabled | Handle: background-base-default / background-base-default-disabled | transparent-background-primary-* |
+const switchControl = componentDoc({
+  purpose: `**Switch** — немедленное включение или выключение boolean-настройки.`,
+  anatomy: `В SwitchOption Label расположен слева, Switch справа. Description/Error относятся к текстовой части; Error заменяет Description.`,
+  api: `Switch — основной публичный компонент. SwitchControl и SwitchOption — совместимые алиасы того же SelectionControlProps.`,
+  variants: `Off/On + Default/Hover/Focused/Pressed/Disabled/Error используют семантические tokens. Track Off — base-tertiary, On — primary-default; Handle использует base-default и disabled-варианты.`,
+  geometry: selectionGeometry,
+  behavior: `Клик по строке переключает значение. Tab фокусирует Switch, Space и Enter переключают.`,
+  responsive: `Label/Description переносятся, Switch сохраняет размер и остается справа. Label 16/24 не уменьшается на мобильных.`,
+  accessibility: `Используется role=switch с программно доступным checked-state. Control без Label требует aria-label; Description/Error связываются через aria-describedby.`,
+  checklist: ['Off/On используют правильные tokens.','Disabled блокирует строку.','Label переносится без сжатия Switch.','Space и Enter переключают.','Error остается доступным текстом.'],
+});
 
-Звездочка обозначает hover, focused или pressed. State layer — круг вокруг Checkbox/Radio и вокруг Handle у Switch. Checkbox Unselected Error в Default имеет background-error-secondary; при взаимодействии фон прозрачный, в Disabled — background-error-secondary-disabled.
+function selectionGroup(kind: string, single: boolean) {
+  return componentDoc({
+    purpose: `**${kind}Group** объединяет связанные ${kind}Option и управляет групповым Label/Description/Error и layout.`,
+    anatomy: `Group Label/Description → список options → Group Error. Индивидуальный Error option остается внутри строки и не подменяет Group Error.`,
+    api: `Группа поддерживает controlled/uncontrolled value, disabled, direction и Position Up/Left. Дочерние options сохраняют собственные props.`,
+    variants: `Row/Column меняют layout. Disabled группы блокирует дочерние controls. Group Error и option Error независимы.`,
+    geometry: `Gap от заголовка до options, между строками и до Group Error — space-16. В Row между options — space-24. Position Left: Label 116 px, gap space-20.`,
+    behavior: single ? 'Выбран максимум один Radio; клавиатурная модель следует нативной radio-группе.' : 'Options меняются независимо и группа сообщает актуальное значение родителю.',
+    responsive: `Row перестраивается в Column на мобильной ширине без сброса выбора. Position Left переходит в заголовок сверху.`,
+    accessibility: `Группа имеет доступное имя и связывает Group Error с набором controls. Дочерние элементы сохраняют нативную семантику ${kind}.`,
+    checklist: ['Group Error не заменяет option Error.','Responsive не сбрасывает выбор.','Disabled группы блокирует options.','Label группы остается доступным именем.'],
+  });
+}
 
-Подпись: text-base-default, disabled — text-base-default-disabled. Описание: text-base-secondary. Ошибка: text-error-secondary. Disabled использует соответствующий токен с суффиксом -disabled.
-
-### Клавиатура и ошибки
-
-Checkbox: Tab и Space; Enter не переключает. Radio: Tab входит в группу, стрелки переключают выбор, Space выбирает. Switch: Tab, Space и Enter. Для форм используются нативные input; Radio объединяется общим name. Ошибка и описание программно связаны с контролом или группой. Indeterminate выставляется через prop и объявляется как mixed.
-
-### Чеклист
-
-- Подпись и описание переносятся, контрол сохраняет размеры.
-- Клик по всей строке меняет значение; Disabled блокирует всю строку.
-- Checkbox поддерживает независимый выбор и Indeterminate; Radio — только один выбор; Switch — boolean.
-- Групповые и индивидуальные ошибки не подменяют друг друга.
-- Position Up / Left управляет положением заголовка группы. Left: ширина подписи 116 px, gap space-20; на мобильном заголовок сверху. Row перестраивается на мобильном, выбранные значения сохраняются.
-- Control без подписи имеет aria-label; ошибку можно найти через aria-describedby.
-
-### Уточнения по актуальному макету
-
-Подпись опции — Subtitle 16/24 на всех ширинах экрана, без верхнего отступа; иконка Checkbox — 20 × 20. Эти параметры заменяют Body 14, отступ 2 и иконку 24 из текстовой спецификации.
-`;
-const links = `Текстовая ссылка для перехода на страницу или якорь; ButtonLink — локальное действие: раскрытие деталей, фильтров, дополнительной информации. Для основного действия используйте Button.
-
-| Размер | Текст | Иконка |
+function linkDoc(button: boolean) {
+  return componentDoc({
+    purpose: button
+      ? '**ButtonLink** — текстовое локальное действие. Для перехода используйте Link, для основного действия — Button.'
+      : '**Link** — текстовая ссылка для перехода на страницу, документ или якорь. Для локального действия используйте ButtonLink.',
+    anatomy: `Text + опциональные Leading/Trailing Icon. Decoration применяется только к тексту.`,
+    api: `- \`size\`: small / medium / large / giant;
+- \`color\`: base / primary / accent / neutral / inverse;
+- \`decoration\`: solid / dashed / dotted / null;
+- \`typography\`: fixed / inherit;
+- Leading/Trailing Icon, Disabled и Skeleton.`,
+    variants: `Hover/Pressed/Disabled используют соответствующие semantic tokens; Focused сохраняет базовые цвета и добавляет внешнюю border-large.`,
+    geometry: `| Size | Text | Icon |
 | --- | --- | --- |
 | Small | Caption Base | 16 |
 | Medium | Body Base | 20 |
 | Large | Subtitle Base | 24 |
 | Giant | Subtitle Strong | 28 |
 
-Typography: fixed (по умолчанию) сохраняет размер из size на всех ширинах. Для ссылки внутри текста задайте typography="inherit": шрифт, начертание, размер и межстрочный интервал наследуются от абзаца, включая его мобильные стили; size при этом не задает размер текста. Link переносится вместе с абзацем. ButtonLink остается нативной кнопкой со внутренним переносом текста. Иконки слева и справа масштабируются до 1em вместе с текстом. Skeleton наследует тот же текстовый стиль и размер иконок, сохраняя межстрочный интервал абзаца. Режим доступен у Link и ButtonLink.
-
-Gap — space-8. Иконки слева и справа необязательны. Decoration: solid, dashed, dotted или null. Подчеркивание применяется только к тексту через text-decoration, толщина border-small, отступ space-2; цвет совпадает с текстом.
-
-| Color | Текст | Иконка | Focus |
-| --- | --- | --- | --- |
-| Base | text-base-default | icon-base-secondary | border-base-default-focused |
-| Primary | text-base-default | icon-primary-secondary | border-primary-focused |
-| Accent | text-accent-secondary | icon-accent-secondary | border-accent-focused |
-| Neutral | text-base-secondary | icon-base-secondary | border-base-default-focused |
-| Inverse | text-base-inverse | icon-base-inverse-secondary | border-white-focused |
-
-Hover / Pressed / Disabled используют соответствующие токены с суффиксами -hover / -pressed / -disabled. Focused сохраняет базовые цвета; внешняя рамка border-large не меняет геометрию.
-
-Link использует a и активируется Enter; ButtonLink использует button, поддерживает Enter и Space, по умолчанию type=button. Disabled Link лишается href, получает aria-disabled и исключается из Tab-порядка; Disabled ButtonLink использует нативный disabled.
-
-### Чеклист
-
-- Все четыре размера и пять цветов соответствуют таблице.
-- Underline не затрагивает иконки; null скрывает линию.
-- Focused не меняет цвет текста и не сдвигает соседей.
-- Link выполняет навигацию; ButtonLink вызывает локальное действие без изменения URL.
-- Disabled не активируется ни мышью, ни клавиатурой.
-`;
-
-const autocomplete = `### Назначение и применение
-
-**Autocomplete** — поле выбора одного значения через текстовый поиск. Используйте его, когда список вариантов достаточно большой и пользователю проще искать по названию, чем просматривать весь список.
-
-Компонент объединяет поведение Input, Menu и Select. Он сохраняет только значение из переданного списка: произвольный текст не становится выбранным значением.
-
-### API
-
-- \`data\` — варианты \`value / label\` с опциональными description, helper, leadingIcon и disabled;
-- \`value / defaultValue\` — выбранный \`item.value\`;
-- \`inputValue / defaultInputValue\` — отдельно управляемый текст поиска;
-- \`mode\`: \`auto\` / \`input\` / \`select\`. В Auto визуальная модель зависит от наличия полученного списка;
-- \`minCharacters\` — сколько символов нужно до показа результатов;
-- \`highlightMatches\` — подсветка найденной части label;
-- \`showSelectedIcon\` — отметка выбранного варианта в Menu;
-- \`loading\`, \`loadError\`, \`idleText\`, \`noOptionsText\` — состояния списка, а не validation состояния поля;
-- \`open / defaultOpen / onOpenChange\` — управляемое раскрытие;
-- \`placement / menuMaxHeight\` — позиция и высота Menu.
-
-Наследуемые Label, required, description, caption, error, counter, size, clearable, disabled и skeleton работают по контракту Input.
-
-### Поведение
-
-Ввод меняет только поисковый текст. Выбор option синхронизирует выбранное value и видимый label. Очистка сбрасывает и value, и текст. Disabled option пропускается при клавиатурной навигации и не выбирается.
-
-Menu открывается по пользовательскому действию и не должен вытеснять соседний контент. При нехватке места Popup может сменить сторону. Длинные label/description остаются внутри Menu.
-
-### Доступность и адаптив
-
-Используется \`role=combobox\` с \`aria-expanded\`, \`aria-controls\` и активной option через \`aria-activedescendant\`. Список использует \`listbox / option\`. Стрелки перемещают активный вариант, Enter выбирает, Escape закрывает Menu.
-
-Компонент занимает ширину родителя, типографика на мобильных не уменьшается. Поле и Popup не должны создавать горизонтальный скролл.
-
-### Чеклист
-
-- Controlled и uncontrolled value/inputValue работают независимо.
-- Validation error поля не смешивается с loading/loadError списка.
-- Clear возвращает пустое выбранное значение и пустой поиск.
-- Disabled блокирует поле и недоступные options.
-- Клавиатура работает без pointer.
-- Popup остается внутри viewport и совпадает с шириной поля, если этого требует сценарий.
-`;
-
-const asyncAutocomplete = `### Назначение и применение
-
-**AsyncAutocomplete** — Autocomplete для вариантов, которые загружаются по текущему поисковому запросу. Используйте его для серверного поиска или списков, которые нельзя заранее загрузить целиком.
-
-Визуальная модель, выбор и доступность совпадают с Autocomplete; компонент добавляет управление запросом.
-
-### API
-
-- все публичные props Autocomplete, кроме локального \`filterData\`;
-- \`onFetch(value)\` — запрос вариантов;
-- \`minCharacters\` — минимальная длина запроса; \`0\` разрешает загрузку при монтировании;
-- \`debounce\` — задержка перед запросом;
-- \`limit\` — максимум отображаемых вариантов;
-- \`loading\` — текущая загрузка;
-- \`loadError\` — ошибка получения списка.
-
-### Поведение
-
-Изменение текста запускает \`onFetch\` только после достижения \`minCharacters\` и окончания debounce. Локальная фильтрация отключена: источник истины для списка — переданный \`data\`.
-
-Loading и Load Error относятся к содержимому Menu и не заменяют validation error самого поля. Выбор option, очистка, controlled/uncontrolled value и клавиатурная модель такие же, как у Autocomplete.
-
-### Доступность и адаптив
-
-Во время загрузки состояние должно быть доступно assistive technologies, но combobox остается тем же элементом управления. Popup не должен прыгать по ширине при смене Loading → Results → Empty/Error.
-
-### Чеклист
-
-- Debounce не вызывает лишний запрос на каждый символ.
-- Запрос не запускается раньше minCharacters.
-- Новые данные не сбрасывают выбранное значение без причины.
-- Loading/Error/Empty не меняют геометрию поля.
-- Disabled блокирует новые запросы и взаимодействие.
-`;
-
-const highlight = `### Назначение и применение
-
-**Highlight** — подсветка буквального совпадения внутри текста с помощью нативного \`mark\`. Используйте для результатов поиска, фильтрации и визуального выделения найденной части строки.
-
-### API
-
-- \`children\` — текст или разметка;
-- \`highlight\` — буквальная подстрока, не регулярное выражение;
-- \`matchWholeWord\` — подсвечивать только полные слова;
-- \`isCaseInsensitive\` — игнорировать регистр, по умолчанию true.
-
-Компонент не меняет исходную типографику и наследует ее от окружающего текста. Во вложенной разметке совпадения ищутся внутри отдельных текстовых узлов; структура React-элементов сохраняется.
-
-### Доступность и адаптив
-
-Подсветка не является отдельным интерактивным элементом и не получает фокус. Текст остается читаемым без цвета. Компонент не задает собственную ширину и не меняет правила переноса родителя.
-
-### Чеклист
-
-- Кириллица и латиница ищутся корректно.
-- Пустой highlight возвращает исходный контент.
-- matchWholeWord не подсвечивает часть более длинного слова.
-- Вложенные элементы не теряют props и структуру.
-`;
-
-const icon = `### Назначение и применение
-
-**Icon** — единая SVG-библиотека F.Doc. Используйте только имена из \`IconName\`, чтобы продуктовые компоненты не зависели от случайных внешних SVG.
-
-### API
-
-- \`name\` — имя иконки из библиотеки;
-- \`size\` — квадратный размер в px;
-- \`color\` — явный цвет монохромной иконки; без него используется \`currentColor\`;
-- \`title\` — доступное имя для самостоятельной смысловой иконки.
-
-Монохромные иконки наследуют цвет компонента. Многослойные ресурсы, где цвет является частью изображения, не перекрашиваются как маска.
-
-### Доступность и адаптив
-
-Декоративная иконка скрывается от screen reader. Если Icon несет смысл без текста, передайте \`title\` или доступное имя родительскому интерактивному компоненту. Размер иконки не должен самопроизвольно уменьшаться на мобильных.
-
-### Чеклист
-
-- Имя существует в экспортированной библиотеке.
-- Размер соответствует компоненту-контейнеру.
-- Цвет берется из семантического токена родителя.
-- Icon внутри Button/ButtonIcon не дублирует доступное имя действия.
-`;
-
-const infoBlock = `### Назначение и применение
-
-**InfoBlock** — встроенный информационный блок для контекстного сообщения внутри страницы, формы или сценария. Используйте его для пояснения, предупреждения, ошибки или статуса, который должен оставаться рядом с контентом. Для краткого временного уведомления используйте Snackbar.
-
-### Состав и API
-
-- \`color\`: neutral / base / success / accent / warning / error / inverse;
-- \`title\` и \`text\` — независимые текстовые зоны;
-- \`leftIcon\` или \`leftIconView\` — Leading;
-- \`showLeftIcon\` — возможность скрыть Leading без пустого места;
-- \`actions\` — один или два действия; лишние элементы не рендерятся;
-- \`closable / onClose\` — отдельное действие закрытия.
-
-Actions являются готовыми child components и сохраняют собственные состояния/доступность. InfoBlock не подменяет их типографику и внутреннюю логику.
-
-### Layout и адаптив
-
-Title/Text занимают оставшееся место. Длинные слова и ссылки переносятся через безопасный перенос и не ломают ширину блока. Actions остаются справа, пока для текста и действий хватает места, и автоматически переходят под текст при недостатке ширины. Перестроение определяется доступной шириной и фактической шириной Actions, а не фиксированным breakpoint экрана.
-
-В Horizontal Actions находятся в строке справа и не добавляют нижний padding. В Vertical между Text и Actions сохраняется 8 px, а после Actions — 8 px внутри контентной части. Leading и Close сохраняют свои размеры и положение относительно первой строки.
-
-Border рисуется внутри границ и не участвует в расчете layout: его появление не увеличивает ширину или высоту компонента. Смена состояния и focus вложенных действий также не должна менять внешнюю геометрию InfoBlock.
-
-### Доступность
-
-Семантика сообщения задается сценарием через допустимые HTML/ARIA attributes. Close имеет доступное имя. Error/Warning не должны различаться только цветом, если содержимое требует явной семантики.
-
-### Чеклист
-
-- Без Title или Text пустое место не остается.
-- Один и два Action располагаются предсказуемо.
-- Long text и длинная ссылка не создают horizontal overflow.
-- Close не запускает Action и наоборот.
-- Disabled дочерних действий принадлежит самим Actions.
-`;
-
-const multiselect = `### Назначение и применение
-
-**Multiselect** — выбор нескольких значений из списка. Используйте, когда пользователь может одновременно выбрать несколько независимых вариантов.
-
-### API и отображение выбранного
-
-- \`options\` — доступные value/label с description, helper, leadingIcon и disabled;
-- \`value / defaultValue\` — массив выбранных value;
-- \`onValueChange\` — новое полное множество выбранных значений;
-- \`display\`: \`comma\` / \`count\` / \`firstAndCount\` / \`chips\`;
-- \`creatable\` — создание собственного значения по Enter; такое значение не добавляется в Menu;
-- \`selectAll / selectAllLabel\` — отдельная строка выбора всех доступных options;
-- \`selectionPosition\`: left / right для Checkbox в Menu;
-- \`open / defaultOpen / onOpenChange\`, \`placement\`, \`menuMaxHeight\` — Popup;
-- \`emptyText\` — состояние пустого списка.
-
-Creatable всегда использует Chips для выбранных значений.
-
-### Поведение
-
-Option переключается независимо от остальных. Disabled option не выбирается и не входит в select-all. Удаление Chips обновляет тот же массив value. Полная очистка вызывает \`onValueChange([])\` и \`onClear\`.
-
-Display не меняет данные, только визуальное представление. В comma/firstAndCount длинный контент не должен раздувать поле; в chips выбранные элементы используют собственные размеры и могут переноситься по правилам компонента.
-
-### Доступность и адаптив
-
-Поле использует combobox/listbox модель. Выбранность options программно доступна; клавиатура позволяет открыть список, перемещаться, переключать значения и закрывать Popup. На узкой ширине типографика не уменьшается, поле и Menu остаются внутри viewport.
-
-### Чеклист
-
-- Controlled/uncontrolled массивы не расходятся.
-- Выбор, удаление Chips, select-all и clear дают правильный полный массив.
-- Disabled options не меняются массовыми действиями.
-- Все display-режимы отображают одинаковое выбранное множество.
-- Popup и длинные значения не создают horizontal overflow.
-`;
-
-const phoneInput = `### Назначение и применение
-
-**PhoneInput** — специализированное поле для одного телефонного номера. Компонент использует общую основу Input и переключает российский и международный формат.
-
-### API
-
-- \`phoneType\`: russian / international;
-- \`value / defaultValue\` — нормализованное значение: \`+\` и цифры без визуального форматирования;
-- \`onValueChange\` — нормализованное значение;
-- \`onPhoneTypeChange\` — ручная или автоматическая смена формата;
-- \`open / defaultOpen / onOpenChange\` — Menu выбора типа;
-- \`placement / menuMaxHeight\` — позиция и размер Menu.
-
-Компонент сам управляет placeholder/mask, inputMode, maxLength, clear и leading/trailing content; эти части не должны переопределяться как обычный Input.
-
-### Форматы и валидация
-
-Russian используется по умолчанию и отображает постоянный префикс +7 с маской российского номера. International принимает + и международный набор цифр без российской маски. Во внешний value форматирование не попадает.
-
-Required и validation error используют общую модель Input. Ошибка обязательности и ошибка формата должны быть различимы по причине и не зависеть от состояния Menu.
-
-### Поведение и доступность
-
-Ввод, paste и clear нормализуют значение одинаково. Переключение типа не должно оставлять несовместимую маску. Menu доступно с клавиатуры и не меняет высоту поля при открытии.
-
-Поле сохраняет типографику Input на всех ширинах и не выходит за контейнер. Skeleton повторяет геометрию заполненного поля.
-
-### Чеклист
-
-- В value нет пробелов, скобок и дефисов.
-- Российский номер корректно форматируется из вставленного набора цифр.
-- International не получает российскую маску.
-- Clear возвращает пустое нормализованное значение.
-- Required/format errors связаны с полем через ARIA.
-- Menu остается внутри viewport.
-`;
-
-const docs:Record<string,string>={
- Autocomplete:autocomplete, AsyncAutocomplete:asyncAutocomplete, Highlight:highlight, Icon:icon, InfoBlock:infoBlock, Multiselect:multiselect, PhoneInput:phoneInput,
- Checkbox:selection, Radio:selection, Switch:selection, CheckboxGroup:selection, RadioGroup:selection, SwitchGroup:selection,
- Link:links,ButtonLink:links,
- ButtonToggle:`Сегментированный переключатель одного обязательного значения. Используйте для двух или трех равнозначных вариантов; для разделов страницы используйте Tabs, для большего числа вариантов — Select или Chips.
-
-Состав: общий Container, сегменты Button и разделитель между двумя неактивными сегментами. Один сегмент выбран всегда; повторная активация не снимает выбор. Размеры Small 32 и Medium 40 наследуются от Button. Рамка border-small снаружи, radius-middle; компонент остается в одной строке.
-
-| Color | Активный Button | Неактивный Button | Рамка | Разделитель |
-| --- | --- | --- | --- | --- |
-| Primary | Primary | Secondary | border-primary-default | background-base-default |
-| Base | Secondary | Base | border-white-full | background-base-secondary |
-| Inverse | Inverse | Secondary | border-base-inverse | background-base-default |
-
-Container: role=radiogroup с доступным названием. Сегменты: role=radio и aria-checked. Tab входит на выбранный сегмент; стрелки и Home/End переключают доступные варианты. Disabled пропускается. Для отправки значения формой задайте name.
-
-### Чеклист
-
-- Передайте ровно 2–3 уникальных value; выбран всегда один сегмент.
-- Проверьте оба размера и все цвета.
-- Разделитель виден только между неактивными соседями.
-- Стрелки меняют выбор и фокус, повторный клик сохраняет выбор.
-- При нехватке места выберите другой компонент в макете.
-`,
- Divider:`Линия для визуального разделения блоков, строк и групп элементов. Компонент декоративный, скрыт от экранного диктора.
-
-| Property | Значения |
-| --- | --- |
-| orientation | horizontal / vertical |
-| inset | Любое неотрицательное число в px; по умолчанию 0 |
-| Толщина | border-small — 1 px |
-| Цвет | border-base-tertiary |
-
-По умолчанию линия выравнивается по границам контента родителя: Horizontal заполняет его доступную ширину, Vertical — доступную высоту flex-контейнера. Padding родителя уже учитывается версткой и не дублируется внутри Divider. При изменении отступов родителя, в том числе в адаптиве, линия следует за ними.
-
-Inset добавляет отступ с обоих концов относительно границ контента родителя: слева и справа у Horizontal, сверху и снизу у Vertical. Например, при padding родителя 24 и inset=12 линия начинается в 36 px от его внешней границы. Значения 16 и 24 в макете — быстрые варианты для работы в Figma, а не ограничения API. Можно задать 8, 32, 37.5 или другое число.
-
-### Чеклист
-
-- Линия толщиной 1 px, цвет токена border-base-tertiary.
-- При inset=0 линия совпадает с границами контента родителя, без двойного отступа.
-- Числовой inset добавляет заданный отступ; значения не ограничены 16 и 24.
-- При изменении padding родителя линия перестраивается автоматически.
-- Horizontal и Vertical не получают фокус и не объявляются действием.
-`,
- Tooltip:`Краткое пояснение к иконке, статусу, сокращению или обрезанному тексту. Не используйте для ошибок, важной информации или интерактивного содержимого. Можно передать короткий форматированный текст.
-
-Фон background-base-inverse; текст text-base-inverse, Caption Base; padding space-8, radius-small, shadow-m. String подстраивается под текст, Area — 216 px, Area max — 288 px с ограничением по ширине viewport. Длинные слова переносятся внутри.
-
-placement задает желаемую сторону и выравнивание. При нехватке места сторона меняется, положение сдвигается внутрь viewport; при прокрутке обновляется. Подсказка рендерится поверх контента через portal.
-
-trigger: hover, focus или hover+focus (по умолчанию). delayShow=200 ms, delayHide=120 ms. Уход указателя/фокуса скрывает подсказку; при наведении на саму подсказку она остается видна. Escape не закрывает ее — согласно спецификации. Arrow по умолчанию отсутствует. Элемент должен поддерживать aria-describedby; Tooltip не перехватывает фокус.
-
-### Чеклист
-
-- Сравните три ширины и перенос длинных слов.
-- Hover и клавиатурный фокус показывают подсказку с задержкой.
-- Подсказка связана с триггером через aria-describedby.
-- У края окна подсказка остается внутри viewport.
-- Disabled блокирует показ; размонтирование удаляет portal и таймеры.
-`,
- Accordion:`Показывает и скрывает раздел внутри страницы. Header — единая кнопка с Title, необязательным Description и декоративной частью ButtonIcon справа. Content может содержать текст, формы и другие компоненты. Интерактивные элементы размещаются в Content.
-
-| Параметр | Medium | Large |
+Gap — space-8. Decoration: border-small с offset space-2. Focus не меняет layout-размер.`,
+    behavior: button
+      ? 'ButtonLink рендерится нативным button, поддерживает Enter/Space и по умолчанию type=button.'
+      : 'Link рендерится нативной ссылкой. Disabled убирает href, ставит aria-disabled и исключает ссылку из Tab.',
+    responsive: `fixed сохраняет size. \`typography="inherit"\` наследует font/size/line-height окружающего текста, включая mobile-стили; Icons масштабируются до 1em.`,
+    accessibility: button
+      ? 'ButtonLink сохраняет button-семантику; Disabled использует нативный disabled.'
+      : 'Link активируется Enter и должен иметь понятное название перехода.',
+    checklist: ['Размеры/цвета используют правильные tokens.','Decoration не затрагивает Icon.','Focus не сдвигает layout.','typography=inherit совпадает с абзацем.','Disabled не активируется.'],
+  });
+}
+
+const buttonToggle = componentDoc({
+  purpose: `**ButtonToggle** — сегментированный переключатель одного обязательного значения. Используйте для двух-трех равнозначных вариантов.`,
+  anatomy: `Container + 2–3 сегмента Button + Divider только между двумя неактивными соседями.`,
+  api: `Уникальные items value/label, controlled/uncontrolled value, color primary/base/inverse, size small/medium, disabled сегментов и name формы.`,
+  variants: `Один сегмент выбран всегда. Primary: active Primary / inactive Secondary. Base: active Secondary / inactive Base. Inverse: active Inverse / inactive Secondary.`,
+  geometry: `Small 32 px, Medium 40 px наследуют Button. Внешняя border-small, radius-middle.`,
+  behavior: `Arrow keys и Home/End переключают доступные сегменты, Disabled пропускаются. Повторная активация выбранного сегмента не снимает выбор.`,
+  responsive: `Компонент остается в одну строку. Если варианты не помещаются, используйте другой control вместо уменьшения текста.`,
+  accessibility: `Container role=radiogroup, segments role=radio + aria-checked. Tab входит на выбранный сегмент.`,
+  checklist: ['Передано 2–3 уникальных value.','Выбран один доступный сегмент.','Divider только между неактивными соседями.','Arrow/Home/End меняют выбор и фокус.'],
+});
+
+const divider = componentDoc({
+  purpose: `**Divider** — декоративная линия для визуального разделения блоков, строк и групп.`,
+  anatomy: `Одна horizontal или vertical линия без интерактивных частей.`,
+  api: `- \`orientation\`: horizontal / vertical;
+- \`inset\`: любое неотрицательное число px, по умолчанию 0.`,
+  geometry: `Толщина — border-small (1 px), цвет — border-base-tertiary. inset добавляется к границам контента родителя и не дублирует его padding.`,
+  responsive: `Divider следует доступной ширине/высоте родителя и автоматически учитывает изменение его padding.`,
+  accessibility: `Декоративный компонент скрыт от screen reader и не получает фокус.`,
+  checklist: ['inset=0 совпадает с границами контента.','Inset не ограничен Figma-пресетами.','Толщина остается 1 px.','Обе orientation не интерактивны.'],
+});
+
+const tooltip = componentDoc({
+  purpose: `**Tooltip** — краткое пояснение к Icon, статусу, сокращению или обрезанному тексту. Не используйте для Error, важной информации или интерактивного содержимого.`,
+  anatomy: `Portal-поверхность с коротким текстом; Arrow по умолчанию отсутствует.`,
+  api: `placement, trigger hover/focus/hover+focus, delayShow 200 ms, delayHide 120 ms и варианты ширины String / Area / Area max.`,
+  variants: `String подстраивается под текст, Area — 216 px, Area max — 288 px с ограничением viewport.`,
+  geometry: `background-base-inverse, text-base-inverse, Caption Base, padding space-8, radius-small, shadow-m.`,
+  behavior: `Hover/focus показывают Tooltip с задержкой. Hover по самому Tooltip сохраняет его. Placement пересчитывается у края viewport и при scroll.`,
+  responsive: `Ширина ограничивается viewport; длинные слова переносятся внутри.`,
+  accessibility: `Trigger связывается через aria-describedby. Tooltip не перехватывает фокус; Disabled trigger не показывает подсказку.`,
+  checklist: ['Все ширины помещаются во viewport.','Hover и keyboard focus показывают Tooltip.','aria-describedby связывает trigger.','Размонтирование удаляет portal/timers.'],
+});
+
+const accordion = componentDoc({
+  purpose: `**Accordion** показывает и скрывает раздел внутри страницы.`,
+  anatomy: `Header — одна кнопка с Title, опциональным Description и Chevron справа. Content содержит произвольные компоненты; Content Divider показывается только внутри открытой панели.`,
+  api: `controlled expanded или defaultExpanded, callbacks, size medium/large, Title/Description/children, headingLevel, disabled/state.`,
+  variants: `Header: Default transparent, Hover/Pressed background, Focused state layer, Disabled disabled colors. Medium/Large различаются типографикой и spacing.`,
+  geometry: `| Параметр | Medium | Large |
 | --- | --- | --- |
 | Title | Subtitle Strong | H3 Heading |
 | Description | Body Base | Body Base |
-| Header padding Y / left / right | 16 / 16 / 8 | 24 / 32 / 24 |
-| Gap до ButtonIcon | 16 | 24 |
+| Header padding Y / L / R | 16 / 16 / 8 | 24 / 32 / 24 |
+| Gap до Chevron | 16 | 24 |
 | Gap Title → Description | 4 | 8 |
-| ButtonIcon / иконка | 40 / 24 | 40 / 24 |
+| ButtonIcon / Icon | 40 / 24 | 40 / 24 |`,
+  behavior: `Click по Header, Enter и Space переключают раскрытие. Disabled сохраняет текущее состояние и блокирует переключение.`,
+  responsive: `Large на мобильных использует spacing Medium, но H3 сохраняет 20/28. Длинные слова используют overflow-wrap:anywhere.`,
+  accessibility: `Header сообщает aria-expanded/aria-controls, hidden Content исключается из Tab. headingLevel выбирается по структуре страницы.`,
+  checklist: ['Title переносится, Chevron сохраняет 40 × 40.','Все состояния работают в обоих размерах.','Content Divider скрыт с Content.','Hidden Content не содержит Tab-controls.'],
+});
 
-На мобильном у Large уменьшаются отступы до Medium; заголовок сохраняет H3 20/28. Размер шрифта и межстрочный интервал внутри компонентов не зависят от ширины экрана. Высота растет по контенту; слова переносятся через overflow-wrap:anywhere. Компонент заполняет ширину и не задает внешнюю рамку или тень. Content Divider использует Divider Full, border-small и border-base-tertiary и показывается только внутри открытой панели.
+const accordionGroup = componentDoc({
+  purpose: `**AccordionGroup** объединяет связанные Accordion и управляет количеством одновременно открытых панелей.`,
+  anatomy: `Список Accordion. Group Divider между соседями принадлежит группе; Content Divider — отдельному Accordion.`,
+  api: `- \`multiple\`: false / true;
+- \`value / defaultValue\` — массив id;
+- callbacks изменения;
+- \`gap\` — любое неотрицательное число px.`,
+  variants: `multiple=false — максимум один открытый раздел; multiple=true — несколько. Полностью закрытая группа допустима в обоих режимах.`,
+  geometry: `gap=0 показывает Group Divider, gap>0 скрывает его и задает расстояние между Accordion.`,
+  behavior: `В single открытие новой панели закрывает предыдущую; повторная активация открытой панели закрывает ее.`,
+  responsive: `Группа наследует адаптив Accordion; gap не меняет размеры Header.`,
+  accessibility: `Каждый Accordion сохраняет собственные aria-expanded/aria-controls; группа не добавляет лишнюю интерактивную роль.`,
+  checklist: ['Single закрывает предыдущую панель.','Multiple сохраняет остальные.','Group/Content Divider независимы.','Disabled Accordion не меняет состояние.'],
+});
 
-Header: Default прозрачный; Hover background-base-default-hover; Focused transparent-background-base-focused; Pressed background-base-default-pressed; Disabled background-base-default-disabled. Title text-base-default, Description text-base-secondary; Disabled использует соответствующие -disabled. Chevron icon-base-secondary, Disabled icon-base-default-disabled по актуальному макету.
+const breadcrumbs = componentDoc({
+  purpose: `**Breadcrumbs** отражает иерархию текущей страницы, а не историю переходов. Показывается начиная с двух уровней.`,
+  anatomy: `Nav → список уровней. Previous — Link Neutral Small, Current — текст с aria-current=page, separators — декоративные Chevron; на глубокой mobile-цепочке появляется Ellipsis.`,
+  api: `Breadcrumbs — основной компонент. Breadcrumb — совместимый алиас без отдельной логики. API: items / aria-label / isLoading / className.`,
+  geometry: `Caption Base, gap space-4, Chevron 16 px, icon-base-secondary. Current text-base-default, Ellipsis text-base-secondary.`,
+  behavior: `Последний уровень не ссылка. Цепочка в одну строку; длинный текст сокращается ellipsis, полное название остается в DOM/title.`,
+  responsive: `До трех уровней на мобильном показываются все; глубже — Ellipsis + Previous + Current. Previous max 30%, Current max 40% доступной ширины.`,
+  accessibility: `Nav имеет доступное имя, Current — aria-current=page. Hidden mobile-уровни исключаются из DOM и Tab.`,
+  checklist: ['Один уровень скрывает компонент.','Current не ссылка.','Длинный текст не создает overflow.','Mobile-сокращение не оставляет скрытые Tab-links.'],
+});
 
-Клик по Header, Enter и Space переключают раскрытие. aria-expanded сообщает состояние, aria-controls связывает Header и Content. Свернутая область hidden и недоступна по Tab. Для уровня заголовка используется headingLevel. Можно управлять expanded извне или задать defaultExpanded.
+const tabs = componentDoc({
+  purpose: `**Tabs** переключает связанные разделы внутри одной страницы. В каждый момент выбран один Tab.`,
+  anatomy: `Tablist + Tabs с Text/Icon/Badge + связанный tabpanel. При overflow появляются navigation arrows.`,
+  api: `Tabs управляет items/value/callbacks/keyboard/overflow/tabpanel. Tab — низкоуровневый публичный control с selected/icon/badge/state.`,
+  variants: `Text / Icon / Text+Icon; Selected меняет нижнюю линию на Primary. Disabled использует disabled tokens; Hover/Focused/Pressed — state-layer.`,
+  geometry: `Высота 48 px, padding Y 12. Text X 16, icon-only X 12. Icon 24 px, Text Body Strong с X padding 8, Badge left 4. Bottom border-middle.`,
+  behavior: `Arrow/Home/End перемещают фокус, Enter/Space активируют. Focus не меняет selection. Overflow поддерживает arrows/scroll/swipe и прокручивает selected Tab в видимую область.`,
+  responsive: `Высота/типографика сохраняются; при нехватке ширины используется horizontal overflow, а не уменьшение текста.`,
+  accessibility: `role=tablist/tab/tabpanel, aria-selected/aria-controls. При входе фокус попадает на selected Tab.`,
+  checklist: ['Tabs связаны с tabpanel.','Arrow/Home/End меняют только фокус.','Enter/Space меняют выбор.','Overflow позволяет добраться до каждого Tab.','Disabled пропускается.'],
+});
 
-### Чеклист
+const pagination = componentDoc({
+  purpose: `**Pagination** — навигация по страницам с опциональным Counter. ButtonPagination — низкоуровневая специализация Button Small.`,
+  anatomy: `Counter + nav с Previous/Next, ButtonPagination и Ellipsis. Skeleton заменяет только отображаемые части.`,
+  api: `totalElements, size элементов на странице, page с 1, onChangePage, direction, color, showCounter=true, isLoading. ButtonPagination наследует Button props с фиксированным small size.`,
+  variants: `0 элементов скрывает компонент. 1 страница показывает только Counter. 2–4 страницы без arrows, от 5 — Previous/Next. Selected — Primary, остальные Base/Inverse.`,
+  geometry: `Button: height/min-width 32, padding Y 8 / X 4, radius-middle, Caption Strong. Counter Body Base. Gap кнопок 4 px, Counter → nav 24 px.`,
+  behavior: `Counter from–to из totalElements. Horizontal до 6 номеров, Vertical/узкий контейнер до 4. Первая/последняя/текущая сохраняются, Ellipsis не фокусируется. Previous/Next Disabled на краях.`,
+  responsive: `Количество соседних страниц зависит от доступной ширины и фактической ширины чисел; узкий layout ставит Counter сверху без уменьшения шрифта.`,
+  accessibility: `Nav имеет имя, текущая кнопка aria-current=page. Tab/Enter/Space нативны. Disabled/Loading не вызывают onChangePage.`,
+  checklist: ['Проверены 0, 1, 2–4 и много страниц.','Counter корректен на последней странице.','Нет дублирующих Ellipsis.','Arrows блокируются на краях.','Long Numbers не создают overflow.'],
+});
 
-- Заголовок переносится, Chevron остается 40 × 40 справа.
-- Все пять состояний, Medium/Large и мобильный переход.
-- Клик по любой части Header выполняет одно переключение.
-- Content Divider скрыт вместе с Content.
-- Скрытый Content не оставляет доступных ссылок и полей.
-- Disabled сохраняет текущее раскрытие и блокирует переключение.
-`,
- AccordionGroup:`Группа связанных Accordion. Использует готовые Accordion и Divider.
-
-multiple=false оставляет открытым максимум один раздел; multiple=true позволяет раскрывать независимо. Повторный клик закрывает раздел в обоих режимах, допускается полностью закрытая группа. value / defaultValue — массив идентификаторов.
-
-gap задается произвольным неотрицательным числом в пикселях; по умолчанию 0. В Controls доступен числовой ввод. Group Divider показывается между соседними Accordion при нулевом gap независимо от раскрытия; при положительном gap разделители отсутствуют.
-
-### Чеклист
-
-- Single закрывает предыдущую панель; Multiple сохраняет остальные.
-- Закрытие последней панели оставляет пустой выбор.
-- Group Divider и Content Divider работают независимо.
-- Disabled-элементы не меняют состояние.
-`,
- Breadcrumbs:`Навигационная цепочка отражает иерархию, а не историю переходов. Показывается начиная с двух уровней. Предыдущие уровни — Link Neutral Small без подчеркивания; текущий уровень — обычный текст с aria-current=page.
-
-### Публичный API
-
-Breadcrumbs — основной компонент цепочки. Breadcrumb экспортируется как совместимый алиас Breadcrumbs и не имеет отдельного поведения или визуальных правил. API обоих имен полностью совпадает: items, aria-label, isLoading, className.
-
-Типографика Caption Base. Gap space-4; разделитель arrow-chevron-right 16 × 16, icon-base-secondary. Текущий текст text-base-default, Ellipsis text-base-secondary. Nav имеет доступное название; список ul/li. Разделители декоративны, Ellipsis не интерактивен.
-
-Цепочка остается в одну строку. Текст сокращается CSS ellipsis, полное название хранится в DOM и title. На мобильном до трех уровней отображаются все; больше трех — Ellipsis, предыдущий и текущий. Previous занимает максимум 30%, Current — 40% доступной ширины. Скрытые ссылки исключаются из DOM и Tab-порядка.
-
-### Чеклист
-
-- Один уровень скрывает компонент; последний не является ссылкой.
-- Tab / Enter работают только на Previous.
-- Длинный текст не выходит за контейнер, title содержит полное название.
-- На мобильном глубокая цепочка сокращается, Ellipsis ничего не раскрывает.
-`,
- Tabs:`Переключение связанных разделов внутри страницы. В один момент выбран один Tab. Варианты: текст, иконка, текст+иконка; Badge необязателен. Основа использует Icon, Badge и Skeleton.
-
-### Публичный API
-
-- Tabs управляет набором вкладок, выбранным значением, клавиатурной навигацией, overflow и связанными tabpanel.
-- Tab — низкоуровневая публичная вкладка. Ее можно использовать отдельно только если родитель сам обеспечивает tablist, связь с panel и управление выбранным значением.
-- TabProps: selected, icon, badge, state и стандартные props кнопки.
-
-Высота 48, padding Y=12; текстовый Tab X=16, icon-only X=12. Иконка 24; обертка с текстом добавляет справа 4, icon-only — по 4 с каждой стороны. Текст Body Strong с горизонтальным padding 8. Badge добавляет слева 4. Gap=0. Нижняя линия border-middle; обычная border-base-secondary, выбранная border-primary-default. Disabled — соответствующий -disabled.
-
-Текст text-base-default, иконка icon-base-default; Disabled использует -disabled. Выбор не меняет текст и Badge. State layer: transparent-background-base-hover/focused/pressed; у выбранного — transparent-background-primary-*. Анимаций нет.
-
-Контейнер role=tablist; Tab role=tab, aria-selected, aria-controls. Стрелки и Home/End перемещают фокус; Enter/Space активируют. Фокус сам по себе не переключает контент. При входе фокус на выбранной вкладке. При переполнении появляются стрелки 32 × 48, доступна прокрутка и свайп. Выбранный Tab прокручивается в видимую область; недоступные направления блокируются.
-
-### Чеклист
-
-- Вкладки связаны со своими tabpanel, скрытые панели исключены из навигации.
-- Стрелки меняют фокус, Enter/Space меняют выбор.
-- Повторная активация выбранной вкладки не вызывает изменение.
-- Badge меняется только в Disabled, текст остается Body Strong.
-- Overflow показывает стрелки и позволяет добраться до каждой вкладки.
-`,
- Pagination:`Навигация по страницам с необязательным Counter. Структура: ButtonPagination, Previous/Next, неинтерактивные Ellipsis, Counter. ButtonPagination наследует Button; Skeleton заменяет только отображаемые части.
-
-### Публичный API
-
-- Pagination рассчитывает страницы, Counter, адаптивное количество кнопок и вызывает onChangePage.
-- ButtonPagination — низкоуровневая публичная специализация Button size="small" для пагинации. Она не рассчитывает страницы и не хранит текущую страницу сама.
-- ButtonPaginationProps наследует Button props, но фиксирует размер и ограничивает цвет схемами пагинации.
-
-Props: totalElements, size (элементов на странице), page (с 1), onChangePage, direction, color, showCounter=true, isLoading. Число страниц ceil(totalElements/size). При нуле элементов компонент скрыт. Одна страница показывает только Counter; showCounter=false скрывает весь компонент. 2–4 страницы отображаются без стрелок. От 5 — Previous и Next, недоступные направления Disabled.
-
-Кнопки: height/min-width elements-32, padding Y space-8 / X space-4, radius-middle. Текст Caption Strong; ширина увеличивается по числу. Выбранная кнопка Primary, остальные Base или Inverse. Состояния наследуют токены Button. Counter Body Base, text-base-secondary; Inverse text-base-inverse. Gap между кнопками space-4; между Counter и навигацией space-24.
-
-Counter: «from—to из totalElements», последнее значение не превышает totalElements. Например: 91—95 из 95. Ellipsis обозначает пропущенные страницы и не получает фокус.
-
-Horizontal: максимум 6 номеров, первая/последняя/текущая сохраняются. Vertical и узкий контейнер: максимум 4, Counter сверху. При длинных номерах соседей становится меньше с учетом фактической ширины текста. Начало: 1 2 3 4 5 … 40; середина: 1 … 24 25 26 … 40; конец: 1 … 36 37 38 39 40.
-
-Nav имеет имя, текущая кнопка aria-current=page. Tab перемещает фокус; Enter/Space активируют. Disabled и Loading не вызывают onChangePage.
-
-### Чеклист
-
-- Ноль, одна, 2–4 и много страниц; границы диапазона Counter.
-- Первые/средние/последние страницы, отсутствие дублирующих Ellipsis.
-- Previous/Next блокируются на краях.
-- Long Numbers остаются внутри контейнера.
-- showCounter и isLoading работают независимо.
-- Фокус внешний, кнопки не меняют размер от состояния.
-`,
+const docs: Record<string, string> = {
+  Autocomplete: autocomplete,
+  AsyncAutocomplete: asyncAutocomplete,
+  Highlight: highlight,
+  Icon: icon,
+  InfoBlock: infoBlock,
+  Multiselect: multiselect,
+  PhoneInput: phoneInput,
+  Checkbox: checkbox,
+  Radio: radio,
+  Switch: switchControl,
+  CheckboxGroup: selectionGroup('Checkbox', false),
+  RadioGroup: selectionGroup('Radio', true),
+  SwitchGroup: selectionGroup('Switch', false),
+  Link: linkDoc(false),
+  ButtonLink: linkDoc(true),
+  ButtonToggle: buttonToggle,
+  Divider: divider,
+  Tooltip: tooltip,
+  Accordion: accordion,
+  AccordionGroup: accordionGroup,
+  Breadcrumbs: breadcrumbs,
+  Tabs: tabs,
+  Pagination: pagination,
 };
-export function componentDocs(name:string){return docs[name] + (['Link','ButtonLink','Checkbox','Radio','Switch'].includes(name)?'\n'+states:'') + '\n### Проверки реализации\n\nПоведение проверяется модульными тестами с нативными событиями и axe. Браузерные проверки покрывают клавиатуру, геометрию и основные сценарии адаптива. Полный ручной чеклист приведен выше; отметки исходной спецификации не считаются результатами проверки этой реализации.\n';}
+
+export function componentDocs(name: string) {
+  return docs[name];
+}
