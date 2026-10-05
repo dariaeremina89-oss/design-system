@@ -54,9 +54,9 @@ function adjustmentLabel(adjustment:'unchanged'|'lightened'|'darkened') {
   return adjustment==='lightened'?'Осветлен минимально':'Затемнен минимально';
 }
 
-function Swatch({label,color,testId}:{label:string;color:string;testId?:string}) {
+function Swatch({label,color,testId,focusBorder}:{label:string;color:string;testId?:string;focusBorder?:string}) {
   const foreground=contrastRatio(color,'#000000')>=contrastRatio(color,'#ffffff')?'#000000':'#ffffff';
-  return <div className="fdoc-branding__swatch" style={{background:color,color:foreground}} data-testid={testId}>
+  return <div className="fdoc-branding__swatch" style={{background:color,color:foreground,boxShadow:focusBorder?`inset 0 0 0 3px ${focusBorder}`:undefined}} data-testid={testId}>
     <Typography as="span" variant="body" strong>{label}</Typography>
     <Typography as="span" variant="caption">{color.toUpperCase()}</Typography>
   </div>;
@@ -168,11 +168,12 @@ export function CustomBrandingBrandSafe() {
           <Typography variant="subtitle" strong>Dark Primary states</Typography>
           <div className="fdoc-branding__color-strip" data-testid="brand-safe-states-strip">
             <Swatch label="Default" color={profile.darkDefault} testId="brand-safe-dark-default"/>
-            <Swatch label="Hover" color={profile.darkHover}/>
-            <Swatch label="Pressed" color={profile.darkPressed}/>
+            <Swatch label={`Hover · ${Math.round(profile.hoverOpacity*100)}%`} color={profile.darkHover}/>
+            <Swatch label="Focus" color={profile.darkDefault} focusBorder={profile.focusBorder} testId="brand-safe-focus"/>
+            <Swatch label={`Pressed · ${Math.round(profile.pressedOpacity*100)}%`} color={profile.darkPressed}/>
           </div>
           <Typography variant="caption" responsive data-testid="brand-safe-adjustment">
-            {adjustmentLabel(profile.adjustment)}. Source contrast {profile.sourceContrast.toFixed(2)}:1 → Default {profile.defaultContrast.toFixed(2)}:1. Текст: {profile.foreground.toUpperCase()}.
+            {adjustmentLabel(profile.adjustment)}. Source contrast {profile.sourceContrast.toFixed(2)}:1 → Default {profile.defaultContrast.toFixed(2)}:1. onPrimary: {profile.foreground.toUpperCase()}. Hover layer {Math.round(profile.hoverOpacity*100)}%, Pressed layer {Math.round(profile.pressedOpacity*100)}%.
           </Typography>
         </div>
       </div>
@@ -187,7 +188,10 @@ export function CustomBrandingBrandSafe() {
         Если цвет выходит за диапазон, меняется только OKLCH lightness до ближайшей границы. Hue сохраняется, chroma остается максимально исходной и уменьшается только при выходе за sRGB. Алгоритм не ищет ступень 200, 500 или 600 и не перестраивает бренд под заранее выбранный тон.
       </Typography>
       <Typography responsive>
-        Hover и Pressed строятся от получившегося Default небольшим изменением lightness в сторону, которая увеличивает контраст с единым цветом содержимого. Текст должен проходить минимум 4.5:1 во всех трех состояниях, а сами Hover / Pressed остаются различимы с Dark Base минимум на {brandSafeDarkStateMinimum}:1.
+        Hover и Pressed больше не пересчитывают lightness отдельно. Поверх Default накладывается onPrimary state layer: целевое значение 8% для Hover и 12% для Pressed. Если такая opacity у конкретного HEX опускает контраст текста ниже 4.5:1 или делает состояние слишком близким к Dark Base, opacity уменьшается до максимального безопасного значения. Направление при этом всегда одно и то же: state layer использует цвет содержимого.
+      </Typography>
+      <Typography responsive>
+        Focus не меняет заливку вообще: остается тот же Default. Состояние показывается только focus-обводкой по системному токену border-primary-focused. Поэтому Hover / Pressed отвечают за изменение поверхности, а Focus — только за клавиатурный фокус.
       </Typography>
     </section>
 
