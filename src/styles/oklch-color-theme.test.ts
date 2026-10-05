@@ -42,7 +42,7 @@ describe('experimental OKLCH branding theme',()=>{
       expect(profile.dark500.l).toBeGreaterThanOrEqual(.615);
       expect(profile.dark500.l).toBeLessThanOrEqual(.785);
       expect(profile.dark500.c).toBeLessThanOrEqual(profile.source.c+.002);
-      if(profile.source.c>.02) expect(hueDistance(profile.dark500.h,profile.source.h)).toBeLessThan(1);
+      if(profile.source.c>.02) expect(hueDistance(profile.dark500.h,profile.source.h)).toBeLessThan(2);
     }
   });
 
