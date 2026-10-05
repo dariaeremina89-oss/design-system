@@ -1,4 +1,5 @@
 import { qualityDocs } from '../../docs/quality';
+import { coreDocs } from '../../docs/core-components';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Typography, type TypographyVariant } from './Typography';
 
@@ -7,34 +8,6 @@ const variants: TypographyVariant[] = [
   'subtitle', 'body', 'caption', 'overline', 'code',
 ];
 
-const description = `
-**Typography** применяет именованный типографический стиль дизайн-системы к выбранному семантическому HTML-элементу. Foundation со всеми токенами остается в General / Typography; эта страница описывает React API компонента.
-
-### API
-
-- \`as\` задает HTML-тег независимо от визуального стиля: p / span / div / h1–h6;
-- \`variant\` выбирает h0-heading / h1-heading / h2-heading / h3-heading / subtitle / body / caption / overline / code;
-- \`strong\` включает Strong weight для не-heading вариантов;
-- \`responsive\` разрешает существующий Mobile-размер того же page style. Внутри остальных компонентов responsive обычно не используется: их типографика фиксирована;
-- обычные HTML attributes, className и style передаются корню.
-
-### Поведение
-
-Семантика и визуальный стиль не связаны жестко: например, \`as="h2" variant="h1-heading"\` остается heading второго уровня, но выглядит как H1 style. Компонент не добавляет интерактивность и не должен использоваться вместо Link/Button.
-
-### Автотесты
-
-Unit-тесты проверяют дефолты, независимость semantic tag от variant, Strong, responsive token references и переопределение test id. Все stories дополнительно участвуют в общем браузерном responsive-audit на 320 px.
-
-### Селекторы для тестирования
-
-| Селектор | Назначение |
-| --- | --- |
-| \`data-testid="typography"\` | Корень; можно переопределить. |
-| \`data-typography\` | Фактический variant. |
-| \`data-responsive\` | true / false. |
-| \`data-strong\` | true / false. |
-`;
 
 const meta = {
   title: 'Components/Elements/Typography',
@@ -42,7 +15,7 @@ const meta = {
   tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
-    docs: { description: { component: (description) + qualityDocs('Typography') } },
+    docs: { description: { component: coreDocs('Typography') + qualityDocs('Typography') } },
   },
   args: {
     children: 'Пример текста',
