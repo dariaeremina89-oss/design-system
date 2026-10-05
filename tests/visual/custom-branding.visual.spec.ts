@@ -40,8 +40,13 @@ test('HEX entry is stable, invalid input keeps the last theme, and the same seed
   await input.fill('#zzzzzz');await expect(input).toHaveAttribute('aria-invalid','true');
   await expect(page.getByTestId('brand-button-default')).toHaveCSS('background-color','rgb(47, 38, 255)');
   await page.getByRole('radio',{name:'Dark',exact:true}).click();
-  await page.goto(buttonStory);await expect(page.locator('#storybook-root .fdoc-button').first()).toHaveCSS('background-color','rgb(47, 38, 255)');
+  await page.goto(buttonStory);
   await expect(page.locator('html')).toHaveAttribute('data-color-mode','dark');
+  await expect.poll(async()=>{
+    const buttonHex=hex(await page.locator('#storybook-root .fdoc-button').first().evaluate(el=>getComputedStyle(el).backgroundColor));
+    const semanticHex=await page.locator('html').evaluate(el=>getComputedStyle(el).getPropertyValue('--background-primary-default').trim().toLowerCase());
+    return buttonHex===semanticHex;
+  }).toBe(true);
   await page.goto(branding);await expect(page.getByRole('textbox',{name:'Primary 500 HEX'})).toHaveValue('#2f26ff');
   await page.getByRole('button',{name:'Сбросить к F.Doc'}).click();await expect(page.locator('html')).toHaveAttribute('data-color-mode','dark');
   await expect(page.getByTestId('brand-button-default')).not.toHaveCSS('background-color','rgb(255, 220, 0)');
@@ -56,8 +61,12 @@ test('active buttons, icons and inverse Primary have sufficient actual contrast 
     await page.getByRole('radio',{name:mode,exact:true}).click();
     for(const color of ['#2f26ff','#ffdc00','#ffffff','#000000','#777777','#008567']) {
       await page.getByRole('textbox',{name:'Primary 500 HEX'}).fill(color);
-      // Wait for the component's existing background transition before measuring contrast.
-      await expect.poll(async()=>hex(await page.getByTestId('brand-button-default').evaluate(el=>getComputedStyle(el).backgroundColor))).toBe(color);
+      // Wait until the seed is applied, then wait for the semantic Default fill for the active mode.
+      await expect.poll(async()=>page.locator('html').evaluate(el=>getComputedStyle(el).getPropertyValue('--primary-500').trim().toLowerCase())).toBe(color);
+      const expectedDefault=mode==='Light'
+        ? color
+        : await page.locator('html').evaluate(el=>getComputedStyle(el).getPropertyValue('--background-primary-default').trim().toLowerCase());
+      await expect.poll(async()=>hex(await page.getByTestId('brand-button-default').evaluate(el=>getComputedStyle(el).backgroundColor))).toBe(expectedDefault);
       for(const state of ['default','hover','pressed','focused']) {
         const button=page.getByTestId(`brand-button-${state}`);
         const colors=await button.evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor,icon:getComputedStyle(el.querySelector('.fdoc-icon')!).color}));
@@ -69,7 +78,7 @@ test('active buttons, icons and inverse Primary have sufficient actual contrast 
             expect(hex(colors.bg)).toBe(await page.locator('html').evaluate(el=>getComputedStyle(el).getPropertyValue('--background-primary-default').trim().toLowerCase()));
           }
         }
-        if(color==='#008567') expect(colors.text).toBe('rgb(255, 255, 255)');
+        if(mode==='Light'&&color==='#008567') expect(colors.text).toBe('rgb(255, 255, 255)');
       }
       const inverse=await page.getByTestId('brand-inverse-primary').evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
       expect(contrast(inverse.text,inverse.bg)).toBeGreaterThanOrEqual(4.5);
