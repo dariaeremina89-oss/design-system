@@ -161,12 +161,12 @@ export function CustomBrandingBrandSafe() {
       <div className="fdoc-branding__examples">
         <div className="fdoc-branding__panel">
           <Typography variant="subtitle" strong>Brand Source</Typography>
-          <div className="fdoc-branding__palette"><Swatch label="Primary 500" color={seed}/></div>
+          <div className="fdoc-branding__color-strip" data-testid="brand-safe-source-strip"><Swatch label="Primary 500" color={seed}/></div>
           <Typography variant="caption" responsive>Этот HEX не пересчитывается и остается точным значением Primary 500.</Typography>
         </div>
         <div className="fdoc-branding__panel">
           <Typography variant="subtitle" strong>Dark Primary states</Typography>
-          <div className="fdoc-branding__palette">
+          <div className="fdoc-branding__color-strip" data-testid="brand-safe-states-strip">
             <Swatch label="Default" color={profile.darkDefault} testId="brand-safe-dark-default"/>
             <Swatch label="Hover" color={profile.darkHover}/>
             <Swatch label="Pressed" color={profile.darkPressed}/>
