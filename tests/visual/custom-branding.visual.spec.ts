@@ -70,25 +70,52 @@ test('active buttons, icons and inverse Primary have sufficient actual contrast 
   }
 });
 
-test('Dark status chips and portal menus use their own surface mappings and do not depend on brand',async({page})=>{
+test('Dark remaps Base, status and inverse component colors while preserving brand-independent status palettes',async({page})=>{
   await page.goto(branding);
+  const readPair=(locator:any)=>locator.evaluate((el:HTMLElement)=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
   const highlight=page.getByTestId('brand-highlight').locator('mark');
-  const lightHighlight=await highlight.evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
+  const statusColors=['success','error','warning','accent'] as const;
+
+  const light={
+    primary:await readPair(page.getByTestId('brand-primary-action')),
+    secondary:await readPair(page.getByTestId('brand-secondary-action')),
+    inverse:await readPair(page.getByTestId('brand-inverse-primary')),
+    inverseLight:await readPair(page.getByTestId('brand-inverse-light-action')),
+    highlight:await readPair(highlight),
+    statuses:Object.fromEntries(await Promise.all(statusColors.map(async color=>[color,await readPair(page.getByTestId(`brand-status-${color}`)]))),
+  };
+
   await page.getByRole('radio',{name:'Dark',exact:true}).click();
-  const darkHighlight=await highlight.evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
-  expect(darkHighlight.text).not.toBe(lightHighlight.text);
-  expect(darkHighlight.bg).not.toBe(lightHighlight.bg);
-  expect(contrast(darkHighlight.text,darkHighlight.bg)).toBeGreaterThanOrEqual(4.5);
-  const status=page.getByTestId('brand-status-success');
-  const before=await status.evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
-  await page.getByRole('textbox',{name:'Primary 500 HEX'}).fill('#8b1245');
-  expect(await highlight.evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}))).toEqual(darkHighlight);
-  expect(await status.evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}))).toEqual(before);
-  for(const color of ['success','error','warning','accent']) {
-    const colors=await page.getByTestId(`brand-status-${color}`).evaluate(el=>({text:getComputedStyle(el).color,bg:getComputedStyle(el).backgroundColor}));
-    expect(contrast(colors.text,colors.bg)).toBeGreaterThanOrEqual(4.5);
+
+  const dark={
+    primary:await readPair(page.getByTestId('brand-primary-action')),
+    secondary:await readPair(page.getByTestId('brand-secondary-action')),
+    inverse:await readPair(page.getByTestId('brand-inverse-primary')),
+    inverseLight:await readPair(page.getByTestId('brand-inverse-light-action')),
+    highlight:await readPair(highlight),
+    statuses:Object.fromEntries(await Promise.all(statusColors.map(async color=>[color,await readPair(page.getByTestId(`brand-status-${color}`)]))),
+  };
+
+  // Primary 500 is the brand anchor, so the solid primary action may stay identical.
+  expect(dark.primary).toEqual(light.primary);
+  expect(dark.secondary).not.toEqual(light.secondary);
+  expect(dark.inverse).not.toEqual(light.inverse);
+  expect(dark.inverseLight).not.toEqual(light.inverseLight);
+  expect(dark.highlight).not.toEqual(light.highlight);
+
+  for(const color of statusColors) {
+    expect(dark.statuses[color]).not.toEqual(light.statuses[color]);
+    expect(contrast(dark.statuses[color].text,dark.statuses[color].bg)).toBeGreaterThanOrEqual(4.5);
   }
-  await page.getByRole('combobox').click();await expect(page.locator('.fdoc-popup .fdoc-menu')).toHaveCSS('background-color','rgb(24, 25, 28)');
+  expect(contrast(dark.highlight.text,dark.highlight.bg)).toBeGreaterThanOrEqual(4.5);
+
+  // Status palettes depend on mode, not on the client Primary seed.
+  await page.getByRole('textbox',{name:'Primary 500 HEX'}).fill('#8b1245');
+  expect(await readPair(highlight)).toEqual(dark.highlight);
+  for(const color of statusColors) expect(await readPair(page.getByTestId(`brand-status-${color}`))).toEqual(dark.statuses[color]);
+
+  await page.getByRole('combobox').click();
+  await expect(page.locator('.fdoc-popup .fdoc-menu')).toHaveCSS('background-color','rgb(24, 25, 28)');
   await expect(page.getByRole('option',{name:'Подписан'})).toBeVisible();
 });
 
@@ -109,6 +136,50 @@ test('color mode also switches the Storybook manager and documentation shell',as
   await expect(preview.locator('.fdoc-branding h1')).toHaveCSS('color','rgb(255, 255, 255)');
   await preview.getByRole('radio',{name:'Light',exact:true}).click();
   await expect(page.locator('html')).toHaveAttribute('data-color-mode','light');
+});
+
+test('light and dark Primary presets keep 500 but remap semantic component roles',async({page})=>{
+  await page.goto(branding);
+  const tokens=[
+    '--primary-500',
+    '--background-primary-default',
+    '--background-primary-secondary',
+    '--background-primary-tertiary',
+    '--background-primary-inverse',
+    '--text-primary-default',
+    '--text-primary-secondary',
+    '--text-primary-inverse',
+    '--background-base-default',
+    '--text-base-default',
+    '--background-success-secondary',
+    '--text-success-default',
+    '--text-success-default-light',
+  ];
+  const read=()=>page.locator('html').evaluate((el,names)=>{
+    const css=getComputedStyle(el);
+    return Object.fromEntries(names.map(name=>[name,css.getPropertyValue(name).trim()]));
+  },tokens);
+
+  for(const seed of ['#f4e5fa','#171329']) {
+    await page.getByRole('radio',{name:'Light',exact:true}).click();
+    await page.getByRole('textbox',{name:'Primary 500 HEX'}).fill(seed);
+    const light=await read();
+
+    await page.getByRole('radio',{name:'Dark',exact:true}).click();
+    const dark=await read();
+
+    expect(dark['--primary-500']).toBe(light['--primary-500']);
+    expect(dark['--background-primary-default']).toBe(light['--background-primary-default']);
+    // Text on the solid 500 fill is contrast-driven, not mode-driven.
+    expect(dark['--text-primary-default']).toBe(light['--text-primary-default']);
+
+    for(const token of [
+      '--background-primary-secondary','--background-primary-tertiary','--background-primary-inverse',
+      '--text-primary-secondary','--text-primary-inverse',
+      '--background-base-default','--text-base-default',
+      '--background-success-secondary','--text-success-default','--text-success-default-light',
+    ]) expect(dark[token],`${seed}: ${token}`).not.toBe(light[token]);
+  }
 });
 
 test('Primary ramp stays shared while semantic colors and CSS export follow the theme',async({page})=>{
