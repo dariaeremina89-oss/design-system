@@ -63,6 +63,40 @@ describe('Primary color theme',()=>{
       expect(getPrimarySeed()).toBe(seed);
     }
   });
+  it('Dark remaps every component-facing Base and status semantic family that depends on the surface',()=>{
+    const dark=createColorTheme(DEFAULT_PRIMARY,'dark');
+    const originalReferences=Object.fromEntries(semanticColorTokens.map(item=>[item.token,item.reference]));
+
+    const baseTokens=[
+      '--background-base-default','--background-base-secondary','--background-base-tertiary',
+      '--background-base-inverse','--background-base-inverse-light',
+      '--background-base-inverse-light-hover','--background-base-inverse-light-pressed','--background-base-inverse-light-disabled',
+      '--text-base-default','--text-base-default-hover','--text-base-default-pressed',
+      '--text-base-default-light','--text-base-secondary','--text-base-inverse','--text-base-inverse-secondary',
+      '--icon-base-default','--icon-base-default-light','--icon-base-secondary','--icon-base-inverse','--icon-base-inverse-secondary',
+      '--border-base-default','--border-base-secondary','--border-base-tertiary','--border-base-light','--border-base-inverse',
+    ];
+    for(const token of baseTokens) {
+      expect(dark.references[token],token).toBeTruthy();
+      expect(dark.references[token],token).not.toBe(originalReferences[token]);
+    }
+
+    for(const role of ['success','error','warning','accent']) {
+      for(const token of [
+        `--background-${role}-secondary`,`--background-${role}-tertiary`,`--background-${role}-inverse`,
+        `--text-${role}-default`,`--text-${role}-default-light`,`--text-${role}-secondary`,`--text-${role}-inverse`,`--text-${role}-inverse-light`,
+        `--icon-${role}-default`,`--icon-${role}-default-light`,`--icon-${role}-secondary`,`--icon-${role}-inverse`,`--icon-${role}-inverse-light`,
+        `--border-${role}-default`,`--border-${role}-hover`,`--border-${role}-pressed`,
+      ]) {
+        expect(dark.references[token],token).toBeTruthy();
+        expect(dark.references[token],token).not.toBe(originalReferences[token]);
+      }
+      // Solid status fills are semantic anchors just like Primary 500.
+      expect(dark.variables[`--background-${role}-default`]??original[`--background-${role}-default`]).toBe(original[`--background-${role}-default`]);
+    }
+    expect(dark.variables['--background-primary-default']).toBe(DEFAULT_PRIMARY);
+  });
+
   it('Dark is available with the F.Doc seed and never changes status values when the brand changes',()=>{
     const fdoc=createColorTheme(DEFAULT_PRIMARY,'dark'), client=createColorTheme('#2f26ff','dark');
     expect(fdoc.variables['--background-base-default']).toBe('#18191c');
