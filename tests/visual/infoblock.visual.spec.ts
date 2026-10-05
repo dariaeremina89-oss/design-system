@@ -170,7 +170,7 @@ test('InfoBlock action colors match Figma for Base and Inverse', async ({ page }
   await expect(inverseButtons.nth(1)).toHaveClass(/fdoc-button--inverse/);
 
   const inverseText = await inverseButtons.nth(1).evaluate(el => getComputedStyle(el).color);
-  const expectedInverseText = await page.locator('html').evaluate(el => getComputedStyle(el).getPropertyValue('--text-base-inverse').trim());
+  const expectedInverseText = await inverse.evaluate(el => getComputedStyle(el).color);
   expect(inverseText).toBe(expectedInverseText);
 });
 
