@@ -42,6 +42,24 @@ test('Brand-safe Light always uses the exact entered HEX as Primary Default',asy
   }))).toEqual({source:'#2f26ff',semantic:'#2f26ff'});
 });
 
+test('Brand-safe color output uses full-width compact strips instead of the 11-column palette grid',async({page})=>{
+  await page.goto(pageUrl);
+
+  const source=page.getByTestId('brand-safe-source-strip');
+  const states=page.getByTestId('brand-safe-states-strip');
+  await expect(source).toBeVisible();
+  await expect(states).toBeVisible();
+
+  const sourceColumns=await source.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
+  const stateColumns=await states.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
+  expect(sourceColumns).toBe(1);
+  expect(stateColumns).toBe(3);
+
+  const stateWidths=await states.locator('.fdoc-branding__swatch').evaluateAll(items=>items.map(item=>item.getBoundingClientRect().width));
+  expect(stateWidths).toHaveLength(3);
+  expect(Math.max(...stateWidths)-Math.min(...stateWidths)).toBeLessThan(2);
+});
+
 test('Brand-safe live Primary button reads the experimental Dark semantic color',async({page})=>{
   await page.goto(pageUrl);
   const input=page.getByRole('textbox',{name:'Primary HEX'});
