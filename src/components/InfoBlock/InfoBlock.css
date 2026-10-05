@@ -109,7 +109,10 @@
   align-items: flex-start;
   flex-wrap: wrap;
   width: 100%;
-  padding: 0 var(--space-12) var(--space-8) calc(var(--elements-24) + var(--space-8));
+  padding: 0 var(--space-12) var(--space-8) 0;
+}
+.fdoc-info-block[data-actions-layout="vertical"][data-left-icon="true"] .fdoc-info-block__actions {
+  padding-left: calc(var(--elements-24) + var(--space-8));
 }
 
 .fdoc-info-block__close {
