@@ -1,4 +1,5 @@
 import { qualityDocs } from '../../docs/quality';
+import { coreDocs } from '../../docs/core-components';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Badge, type BadgeSize } from '../Badge/Badge';
 import { iconNames } from '../Icon/Icon';
@@ -14,39 +15,7 @@ const meta = {
     layout: 'padded',
     docs: {
       description: {
-        component: `
-**Button** — базовый компонент для запуска действия с текстом, опциональными иконками и Badge-слотами.
-
-Это тестовая дизайн-система и личный плейбук, а не официальная production-библиотека F.Doc. Визуальная истина для этой реализации — компонент Button в Figma: шесть цветовых схем, четыре размера, пять интерактивных состояний и отдельный Skeleton.
-
-### API
-
-- \`size\`: \`small\` / \`medium\` / \`large\` / \`giant\`;
-- \`color\`: \`primary\` / \`base\` / \`secondary\` / \`tertiary\` / \`inverse\` / \`inverse-primary\`;
-- \`state\`: \`default\` / \`hover\` / \`pressed\` / \`focused\` / \`disabled\` / \`skeleton\`;
-- \`iconLeft\` и \`iconRight\` выбирают иконки из локальной Figma-библиотеки; \`iconLeftView\` и \`iconRightView\` позволяют передать собственный слот;
-- \`badgeLeft\` и \`badgeRight\` принимают готовый Badge. Размер и контент Badge принадлежат Badge, а Button автоматически синхронизирует его цвет и disabled-состояние со своей цветовой схемой и состоянием;
-- \`isLoading\` заменяет левую иконку на Circular Progress Indicator и переводит кнопку в нативное disabled-состояние;
-- \`fullWidth\` растягивает кнопку на ширину родителя;
-- \`skeletonWidth\` задает ширину Skeleton, если ее нужно зафиксировать под состав конкретного контента.
-
-### Геометрия из Figma
-
-| Size | Высота | Padding Y / X | Gap | Icon / Badge |
-| --- | ---: | ---: | ---: | ---: |
-| \`small\` | 32 | 8 / 12 | 2 | 16 |
-| \`medium\` | 40 | 8 / 16 | 2 | 20 |
-| \`large\` | 48 | 8 / 16 | 4 | 24 |
-| \`giant\` | 56 | 12 / 20 | 4 | 28 |
-
-Радиус — \`--radius-middle\`. Типографика текста: Small — Caption Strong (12/16), Medium — Body Strong (14/20), Large и Giant — Subtitle Strong (16/24). Badge-слоты используют собственный размер Badge и hug contents; Button добавляет только направленные отступы слота. Focus использует внешнюю рамку \`--border-large\`, поэтому layout-размер кнопки не меняется. Текст однострочный и обрезается многоточием.
-
-### Поведение
-
-Hover и Pressed меняют только фон. Focused добавляет внешнюю рамку. Disabled использует disabled-токены и нативный \`disabled\`; подсказки о причине недоступности остаются на уровне продукта. Loading использует Circular Progress Indicator и не допускает повторного действия.
-
-Для кнопки только с иконкой обязательно задавать \`aria-label\`. Используется нативный \`button\`, поэтому Enter, Space и Tab работают без дополнительной имитации.
-        ` + qualityDocs('Button'),
+        component: coreDocs('Button') + qualityDocs('Button'),
       },
     },
   },
