@@ -1,4 +1,5 @@
 import { qualityDocs } from '../../docs/quality';
+import { coreDocs } from '../../docs/core-components';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
   ProgressIndicator,
@@ -16,23 +17,7 @@ const meta = {
     layout: 'padded',
     docs: {
       description: {
-        component: `
-**Progress Indicator** — неинтерактивный индикатор процесса для Linear и Circular вариантов.
-
-Это тестовая дизайн-система и личный плейбук, а не официальная production-библиотека F.Doc.
-
-### API
-
-- type: linear / circular;
-- mode: determinate / indeterminate;
-- Linear: value и max (по умолчанию 0 и 100);
-- Circular: size (24), strokeWidth (2), variant (primary / secondary / tertiary), duration (1400) и animation;
-- color остается совместимым алиасом variant. Linear использует Primary-схему Figma.
-
-Linear занимает доступную ширину и имеет высоту 4 px. Circular получает размер через \`size\` (по умолчанию 24 px). В Indeterminate Circular по умолчанию используется MUI-подобная анимация: индикатор вращается за 1,4 с, а длина дуги одновременно увеличивается и уменьшается через ease-in-out. Анимация отключается при prefers-reduced-motion.
-
-Компонент не кликабелен и не получает фокус. Determinate публикует aria-valuemin, aria-valuemax и aria-valuenow, Indeterminate — только роль и доступную подпись.
-        ` + qualityDocs('ProgressIndicator'),
+        component: coreDocs('ProgressIndicator') + qualityDocs('ProgressIndicator'),
       },
     },
   },
