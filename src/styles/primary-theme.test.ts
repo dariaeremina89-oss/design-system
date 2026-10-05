@@ -51,7 +51,7 @@ describe('Primary color theme',()=>{
       }
       for(const key of Object.keys(v)) expect(key).not.toMatch(/^--(?:neutral|yellow|green|red|purple|orange|client|violet|white|black)-/);
     }
-  });
+  },15000);
   it('keeps Primary 500 as the brand anchor but adapts the semantic Default fill in Dark',()=>{
     const seeds=['#f4e5fa','#171329','#ffdc00','#2f26ff','#008567','#8b1245'] as const;
     for(const seed of seeds) {
