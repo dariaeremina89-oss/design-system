@@ -98,7 +98,7 @@ export function createOklchDarkPalette(input:string):Record<PrimaryStep,string> 
     300:Math.min(.82,baseL+.10),
     400:Math.min(.80,baseL+.05),
     500:baseL,
-    600:Math.max(.59,baseL-.03),
+    600:Math.max(.60,baseL-.03),
     700:Math.max(.48,baseL-.10),
     800:Math.max(.38,baseL-.18),
     900:Math.max(.28,baseL-.28),
@@ -161,7 +161,7 @@ export function createOklchColorTheme(input:string,mode:ColorMode='light'):Prima
   assign('--background-primary-default-pressed',600);
   assign('--background-primary-default-disabled',700);
 
-  for(const [state,step] of Object.entries({'':900,'-hover':800,'-pressed':700,'-disabled':900})) {
+  for(const [state,step] of Object.entries({'':900,'-hover':800,'-pressed':900,'-disabled':900})) {
     assign(`--background-primary-secondary${state}`,step);
   }
   for(const [state,step] of Object.entries({'':800,'-hover':900,'-pressed':800,'-disabled':900})) {
@@ -176,7 +176,7 @@ export function createOklchColorTheme(input:string,mode:ColorMode='light'):Prima
     theme.variables['--background-base-default'],
     theme.variables['--background-base-secondary'],
     theme.variables['--background-base-tertiary'],
-    palette[900],palette[800],palette[700],
+    palette[900],palette[800],
   ];
   const inverseSurfaces=[
     theme.variables['--background-base-inverse'],
