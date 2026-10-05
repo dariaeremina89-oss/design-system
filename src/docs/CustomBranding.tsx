@@ -34,6 +34,9 @@ export function CustomBranding() {
   const invalid=!valid;
   const light=seed?createColorTheme(seed,'light'):{mode:'light' as const,variables:original,references:originalReferences};
   const dark=createColorTheme(seed??DEFAULT_PRIMARY,'dark');
+  const activePrimaryReference=theme?.references['--background-primary-default']??originalReferences['--background-primary-default']??'--primary-500';
+  const activePrimaryStep=Number(activePrimaryReference.match(/-(\d+)$/)?.[1]??500);
+  const activePrimaryValue=value('--background-primary-default');
   const mappings=['--background-base-default','--text-base-default','--background-primary-default','--text-primary-default','--background-primary-secondary','--text-primary-secondary','--background-primary-inverse','--text-primary-inverse','--border-primary-focused','--background-success-secondary','--text-success-default-light'];
   const ratios=buttonStates.filter(state=>state!=='disabled').map(state=>{
     const background=`--background-primary-default${state==='hover'||state==='pressed'?'-'+state:''}`;
@@ -59,8 +62,9 @@ export function CustomBranding() {
     <Typography responsive data-testid="brand-highlight"><Highlight highlight="договор">Найденный договор подсвечен цветом Accent.</Highlight></Typography>
 
     <section>{title('Палитра Primary')}
-      <div className="fdoc-branding__palette" role="group" data-color-mode={mode} aria-label={`Палитра Primary · ${mode === 'dark' ? 'Dark' : 'Light'}`}>{primarySteps.map(step=>{const color=value(`--primary-${step}`);const foreground=contrastRatio(color,'#000000')>=contrastRatio(color,'#ffffff')?'#000000':'#ffffff';return <div key={step} className="fdoc-branding__swatch" style={{background:color,color:foreground}} data-primary-step={step}><Typography as="span" variant="body" strong>{step}</Typography><Typography as="span" variant="caption">{color.toUpperCase()}</Typography></div>;})}</div>
-      <Typography variant="caption" responsive>500 сохраняет введенный HEX точно. 25–400 — смесь с белым, 600–900 — с черным. Растяжка общая для Light и Dark и при переключении темы не меняется. Меняются ссылки семантических токенов на ее ступени. Клиентский Primary не пересчитывает Neutral, Green, Red, Orange и Purple.</Typography>
+      <div className="fdoc-branding__palette" role="group" data-color-mode={mode} aria-label={`Палитра Primary · ${mode === 'dark' ? 'Dark' : 'Light'}`}>{primarySteps.map(step=>{const color=value(`--primary-${step}`);const foreground=contrastRatio(color,'#000000')>=contrastRatio(color,'#ffffff')?'#000000':'#ffffff';const active=step===activePrimaryStep;return <div key={step} className="fdoc-branding__swatch" style={{background:color,color:foreground}} data-primary-step={step} data-active={active||undefined}><Typography as="span" variant="body" strong>{step}{active?' · Default':''}</Typography><Typography as="span" variant="caption">{color.toUpperCase()}</Typography></div>;})}</div>
+      <Typography variant="caption" responsive data-testid="active-primary-default">Сейчас background-primary-default → {activePrimaryReference} · {activePrimaryValue.toUpperCase()}.</Typography>
+      <Typography variant="caption" responsive>500 сохраняет введенный HEX точно. 25–400 — смесь с белым, 600–900 — с черным. Растяжка общая для Light и Dark; тема меняет семантические ссылки на ее ступени. Активная ступень Default отмечена прямо в палитре. Клиентский Primary не пересчитывает Neutral, Green, Red, Orange и Purple.</Typography>
     </section>
 
     <section>{title('Состояния компонентов')}
@@ -76,9 +80,9 @@ export function CustomBranding() {
     </section>
 
     <section>{title('Когда нужно светлое содержимое')}
-      <Typography responsive>Название темы не определяет цвет текста на брендовой кнопке. Сначала сравниваем контраст Primary 500 с белым и черным. Если белый дает больший контраст, выбираем светлую сторону растяжки, иначе темную. Затем подбираем на выбранной стороне ближайшую допустимую ступень: от 25 для светлого содержимого и от 900 для темного, с порогом 4.5:1. При необходимости доступны крайние точки 0 (белый) и 1000 (черный).</Typography>
+      <Typography responsive>Название темы само по себе не определяет цвет текста на брендовой кнопке. В Light содержимое подбирается для Primary 500. В Dark сначала выбирается подходящая ступень Default, а затем один цвет содержимого проверяется на Default / Hover / Pressed. Для текста нужен контраст минимум 4.5:1, для иконок — 3:1.</Typography>
       <Typography responsive>Например, у зеленого бренда #008567 черный дает {contrastRatio('#008567','#000000').toFixed(2)}:1, белый — {contrastRatio('#008567','#ffffff').toFixed(2)}:1. Поэтому выбирается белый. Разница небольшая: при неизменной заливке 500 никакой цвет текста не даст здесь 7:1. Порог 4.5:1 — минимальная проверка, а не обещание высокого визуального контраста. Для большего запаса понадобится изменить сам брендовый HEX или разрешить отдельную более темную заливку кнопки.</Typography>
-      <Typography responsive>Hover / Pressed усиливают выбранное направление: 600 / 700 со светлым содержимым, 400 / 300 с темным. Цвет текста остается одним во всех активных состояниях. Inverse — отдельная семантическая роль противоположной поверхности; переключение Light / Dark и выбор светлого текста на Primary 500 — разные решения.</Typography>
+      <Typography responsive>В Light Hover / Pressed строятся относительно 500. В Dark они строятся относительно выбранной Default-ступени: со светлым содержимым уходят темнее, с темным — светлее. Цвет текста остается одним во всех активных состояниях. Inverse — отдельная семантическая роль противоположной поверхности.</Typography>
     </section>
 
     <section>{title('Что рассчитывается автоматически')}
@@ -187,7 +191,7 @@ export function CustomBranding() {
       <Typography responsive>Для каждого RGB-канала: светлый оттенок = round(C500 + (255 − C500) × k), темный = round(C500 × (1 − k)). Общие коэффициенты для 25, 50, 100, 200, 300, 400: 96%, 80%, 72%, 56%, 32%, 16%; для 600, 700, 800, 900: 16%, 32%, 56%, 72%. Эти коэффициенты задают растяжку; пригодность каждой ступени для конкретной роли проверяется отдельно по контрасту.</Typography>
       <Typography responsive>Для ролей с автоматическим подбором после выбора светлой или темной стороны действует правило: берем номинальную ступень роли, проверяем все ее пары с фонами и выбираем ближайшую ступень, которая проходит порог контраста. Близость — минимальная разница номеров ступеней; при равенстве выбирается меньший номер. Белый 0 и черный 1000 служат крайними точками. Отдельных поправок под Button, Chips или другие компоненты нет.</Typography>
 
-      <Typography responsive>В Light Primary Default использует 500. В Dark генератор перебирает тройки соседних ступеней и выбирает Default, который различим на background-base-default минимум на 3:1 и позволяет использовать одно содержимое с контрастом текста минимум 4.5:1 на Default / Hover / Pressed. Среди подходящих вариантов выбирается заливка, ближайшая к целевому контрасту около 4:1 с темной поверхностью, а при равенстве — ближе к 500. Поэтому светлый Primary обычно уходит темнее, а слишком темный — светлее.</Typography>
+      <Typography responsive>В Light Primary Default использует 500. В Dark генератор ищет ближайшую к 500 ступень, на которой один цвет текста проходит минимум 4.5:1 на Default / Hover / Pressed. Для самой заливки предпочтителен контраст с background-base-default от 6.5:1 до 10.5:1: слишком яркая заливка сдвигается темнее, слишком темная — светлее. Если ни одна ступень не попадает в этот диапазон, выбирается ближайшая к нему. С темным содержимым Hover / Pressed идут светлее, со светлым — темнее.</Typography>
       <Typography responsive>Семантические названия сохраняются. Текст на Primary и его активных состояниях подбирается с контрастом не ниже 4.5:1, иконки — 3:1. Считается фактический контраст конечных HEX, без округления порога. Disabled проверяется отдельно от активных состояний. Это проверка заданных пар цветов, а не всех возможных наложений компонентов.</Typography>
       <Typography responsive>Все примитивы Primary одинаковы в Light и Dark. Переключение темы меняет только семантические соответствия. Neutral и статусные палитры тоже сохраняют исходные значения; Dark выбирает другие ступени для их фонов, текста, иконок и обводок.</Typography>
       <Button color="secondary" onClick={()=>setExported(!exported)}>{exported?'Скрыть CSS':'Показать CSS темы'}</Button>
