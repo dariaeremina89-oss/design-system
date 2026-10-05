@@ -37,8 +37,8 @@ const sectionTitles: Record<ComponentDocSection, string> = {
 };
 
 function renderValue(value: string | readonly string[]) {
-  if (Array.isArray(value)) return value.map(item => `- ${item}`).join('\n');
-  return value.trim();
+  if (typeof value === 'string') return value.trim();
+  return value.map(item => `- ${item}`).join('\n');
 }
 
 /**
