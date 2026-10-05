@@ -102,7 +102,7 @@ export function InfoBlock({
     observer.observe(root);
     for (const child of Array.from(actionRoot.children)) observer.observe(child);
     return () => observer.disconnect();
-  }, [actionItems.length, closable, hasCopy, showLeftIcon]);
+  }, [actions, actionItems.length, closable, hasCopy, showLeftIcon]);
 
   return (
     <div
@@ -111,6 +111,7 @@ export function InfoBlock({
       className={joinClassNames('fdoc-info-block', `fdoc-info-block--${color}`, className)}
       data-actions-layout={actionsLayout}
       data-closable={closable ? 'true' : 'false'}
+      data-left-icon={showLeftIcon ? 'true' : 'false'}
       data-testid={props['data-testid'] ?? 'info-block'}
     >
       <div className="fdoc-info-block__main">
