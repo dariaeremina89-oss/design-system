@@ -52,6 +52,24 @@ describe('Primary color theme',()=>{
       for(const key of Object.keys(v)) expect(key).not.toMatch(/^--(?:neutral|yellow|green|red|purple|orange|client|violet|white|black)-/);
     }
   },15000);
+  it('uses the nearest brand tone in the preferred Dark surface contrast band',()=>{
+    const fdoc=createColorTheme(DEFAULT_PRIMARY,'dark');
+    expect(fdoc.references['--background-primary-default']).toBe('--primary-600');
+    expect(fdoc.variables['--background-primary-default']).toBe('#d6b900');
+    const ratio=contrastRatio(fdoc.variables['--background-primary-default'],'#18191c');
+    expect(ratio).toBeGreaterThanOrEqual(6.5);
+    expect(ratio).toBeLessThanOrEqual(10.5);
+
+    for(const seed of ['#2f26ff','#008567','#8b1245','#f4e5fa','#171329','#ffffff','#000000']) {
+      const theme=createColorTheme(seed,'dark');
+      const surfaceRatio=contrastRatio(theme.variables['--background-primary-default'],'#18191c');
+      expect(surfaceRatio).toBeGreaterThanOrEqual(3);
+      for(const state of ['', '-hover','-pressed']) {
+        expect(contrastRatio(theme.variables['--text-primary-default'],theme.variables[`--background-primary-default${state}`])).toBeGreaterThanOrEqual(4.5);
+      }
+    }
+  });
+
   it('keeps Primary 500 as the brand anchor but adapts the semantic Default fill in Dark',()=>{
     const seeds=['#f4e5fa','#171329','#ffdc00','#2f26ff','#008567','#8b1245'] as const;
     for(const seed of seeds) {
