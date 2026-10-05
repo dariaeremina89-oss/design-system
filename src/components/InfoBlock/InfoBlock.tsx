@@ -76,9 +76,10 @@ export function InfoBlock({
 
     const measure = () => {
       const actionChildren = Array.from(actionRoot.children) as HTMLElement[];
-      const actionWidth = actionChildren.reduce((sum, child) => sum + child.getBoundingClientRect().width, 0)
-        + Math.max(0, actionChildren.length - 1) * 8
-        + 8;
+      const actionWidth = actionChildren.reduce(
+        (sum, child) => sum + Math.max(child.getBoundingClientRect().width, child.scrollWidth),
+        0,
+      ) + Math.max(0, actionChildren.length - 1) * 8 + 8;
 
       // Figma Medium / Horizontal:
       // Text outer width 206, icon 24 + gap 8, root padding 16/4,
