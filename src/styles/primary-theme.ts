@@ -35,6 +35,46 @@ export function contrastRatio(first:string,second:string):number {
   const a=relativeLuminance(first),b=relativeLuminance(second);
   return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
 }
+
+const DARK_PRIMARY_SURFACE = '#18191c';
+const DARK_PRIMARY_SURFACE_MIN_CONTRAST = 3;
+const DARK_PRIMARY_TARGET_CONTRAST = 4;
+
+function chooseDarkPrimaryActiveSteps(palette:Record<PrimaryStep,string>) {
+  const candidates:Array<{
+    score:number;
+    distance:number;
+    defaultStep:PrimaryStep;
+    hoverStep:PrimaryStep;
+    pressedStep:PrimaryStep;
+    lightForeground:boolean;
+  }>=[];
+  for(let index=0;index<primarySteps.length;index++) {
+    const defaultStep=primarySteps[index];
+    const surfaceContrast=contrastRatio(palette[defaultStep],DARK_PRIMARY_SURFACE);
+    if(surfaceContrast<DARK_PRIMARY_SURFACE_MIN_CONTRAST) continue;
+    for(const direction of [-1,1] as const) {
+      const hoverIndex=index+direction;
+      const pressedIndex=index+direction*2;
+      if(hoverIndex<0||pressedIndex<0||hoverIndex>=primarySteps.length||pressedIndex>=primarySteps.length) continue;
+      const hoverStep=primarySteps[hoverIndex],pressedStep=primarySteps[pressedIndex];
+      const backgrounds=[palette[defaultStep],palette[hoverStep],palette[pressedStep]];
+      for(const [foreground,lightForeground] of [['#ffffff',true],['#000000',false]] as const) {
+        if(!backgrounds.every(background=>contrastRatio(foreground,background)>=policy.text)) continue;
+        candidates.push({
+          score:Math.abs(surfaceContrast-DARK_PRIMARY_TARGET_CONTRAST),
+          distance:Math.abs(defaultStep-500),
+          defaultStep,hoverStep,pressedStep,lightForeground,
+        });
+      }
+    }
+  }
+  candidates.sort((a,b)=>a.score-b.score||a.distance-b.distance||a.defaultStep-b.defaultStep);
+  const best=candidates[0];
+  if(!best) throw new Error('No dark Primary state set satisfies the contrast policy');
+  return best;
+}
+
 export function createPrimaryTheme(input:string,mode:ColorMode='light'):PrimaryTheme {
   const seed=normalizeHex(input); if(!seed) throw new Error('Введите HEX из 3 или 6 символов');
   const amounts=rampAmounts;
@@ -53,13 +93,27 @@ export function createPrimaryTheme(input:string,mode:ColorMode='light'):PrimaryT
   const allSteps:Record<number,string>={0:'#ffffff',...palette,1000:'#000000'};
   const pick=(backgrounds:string[],minimum:number,preferred:number,accept?:(color:string)=>boolean)=>selectContrastStep(allSteps,preferred,backgrounds.map(color=>({color,minimum})),contrastRatio,accept);
   const assign=(token:string,step:number)=>{references[token]=`--primary-${step}`;variables[token]=value(step);};
-  // A stable foreground across Default/Hover/Pressed avoids color flicker.
-  const lightForeground=contrastRatio(seed,'#ffffff')>contrastRatio(seed,'#000000');
-  const main=pick([seed],policy.text,lightForeground?25:policy.onFill,color=>(relativeLuminance(color)>relativeLuminance(seed))===lightForeground);
-  const hover=lightForeground?600:400,pressed=lightForeground?700:300;
-  assign('--background-primary-default-hover',hover); assign('--background-primary-default-pressed',pressed);
-  const activeBackgrounds=[seed,palette[hover],palette[pressed]];
-  const mainIcon=pick(activeBackgrounds,policy.icon,policy.onFillIcon,color=>(relativeLuminance(color)>relativeLuminance(seed))===lightForeground);
+  // Primary/500 always remains the exact client HEX primitive. Semantic Primary
+  // fills are mode-dependent: Light uses 500, Dark chooses a nearby ramp area
+  // that remains distinguishable on the dark Base surface and supports one
+  // stable foreground across Default/Hover/Pressed.
+  const darkActive=mode==='dark'?chooseDarkPrimaryActiveSteps(palette):null;
+  const defaultStep:PrimaryStep=darkActive?.defaultStep??500;
+  const hover:PrimaryStep=darkActive?.hoverStep??(
+    contrastRatio(seed,'#ffffff')>contrastRatio(seed,'#000000')?600:400
+  );
+  const pressed:PrimaryStep=darkActive?.pressedStep??(
+    contrastRatio(seed,'#ffffff')>contrastRatio(seed,'#000000')?700:300
+  );
+  if(mode==='dark') assign('--background-primary-default',defaultStep);
+  assign('--background-primary-default-hover',hover);
+  assign('--background-primary-default-pressed',pressed);
+
+  const defaultFill=palette[defaultStep];
+  const activeBackgrounds=[defaultFill,palette[hover],palette[pressed]];
+  const lightForeground=darkActive?.lightForeground??(contrastRatio(defaultFill,'#ffffff')>contrastRatio(defaultFill,'#000000'));
+  const main=pick(activeBackgrounds,policy.text,lightForeground?25:policy.onFill,color=>(relativeLuminance(color)>relativeLuminance(defaultFill))===lightForeground);
+  const mainIcon=pick(activeBackgrounds,policy.icon,policy.onFillIcon,color=>(relativeLuminance(color)>relativeLuminance(defaultFill))===lightForeground);
   const [inverseDefault,inverseHover,nominalInversePressed]=policy.inverseBackground[mode];
   const inverseText=pick([palette[inverseDefault],palette[inverseHover]],policy.text,policy.inverseContent[mode]);
   const inversePressed=pick([value(inverseText)],policy.text,nominalInversePressed);
