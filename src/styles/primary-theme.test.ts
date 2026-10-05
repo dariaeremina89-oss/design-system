@@ -25,8 +25,14 @@ describe('Primary color theme',()=>{
     let random=321;
     for(let i=0;i<300;i++){random=(Math.imul(random,1664525)+1013904223)>>>0;colors.push('#'+(random&0xffffff).toString(16).padStart(6,'0'));}
     for(const seed of colors) for(const mode of ['light','dark'] as const) {
-      const {palette,variables:v}=createColorTheme(seed,mode);
-      expect(palette[500]).toBe(seed);expect(v['--background-primary-default']).toBe(seed);
+      const theme=createColorTheme(seed,mode);
+      const {palette,variables:v}=theme;
+      expect(palette[500]).toBe(seed);
+      if(mode==='light') expect(v['--background-primary-default']).toBe(seed);
+      else {
+        expect(contrastRatio(v['--background-primary-default'],'#18191c')).toBeGreaterThanOrEqual(3);
+        expect(v['--background-primary-default']).toBe(palette[Number(theme.references['--background-primary-default']?.replace('--primary-','')) as keyof typeof palette]);
+      }
       for(let i=1;i<primarySteps.length;i++) expect(relativeLuminance(palette[primarySteps[i]])).toBeLessThanOrEqual(relativeLuminance(palette[primarySteps[i-1]])+1e-9);
       for(const state of ['', '-hover','-pressed']) {
         expect(contrastRatio(v['--text-primary-default'],v[`--background-primary-default${state}`])).toBeGreaterThanOrEqual(4.5);
@@ -44,6 +50,30 @@ describe('Primary color theme',()=>{
       for(const key of Object.keys(v)) expect(key).not.toMatch(/^--(?:neutral|yellow|green|red|purple|orange|client|violet|white|black)-/);
     }
   });
+  it('keeps Primary 500 as the brand anchor but adapts the semantic Default fill in Dark',()=>{
+    const cases=[
+      ['#f4e5fa',700],
+      ['#171329',200],
+      ['#ffdc00',700],
+      ['#2f26ff',300],
+      ['#008567',500],
+      ['#8b1245',300],
+    ] as const;
+    for(const [seed,expectedStep] of cases) {
+      const light=createColorTheme(seed,'light');
+      const dark=createColorTheme(seed,'dark');
+      expect(light.palette[500]).toBe(seed);
+      expect(dark.palette[500]).toBe(seed);
+      expect(light.references['--background-primary-default']).toBe('--primary-500');
+      expect(dark.references['--background-primary-default']).toBe(`--primary-${expectedStep}`);
+      expect(contrastRatio(dark.variables['--background-primary-default'],'#18191c')).toBeGreaterThanOrEqual(3);
+      for(const state of ['', '-hover','-pressed']) {
+        expect(contrastRatio(dark.variables['--text-primary-default'],dark.variables[`--background-primary-default${state}`])).toBeGreaterThanOrEqual(4.5);
+        expect(contrastRatio(dark.variables['--icon-primary-default-light'],dark.variables[`--background-primary-default${state}`])).toBeGreaterThanOrEqual(3);
+      }
+    }
+  });
+
   it('shares every primitive across modes while remapping semantic surfaces',()=>{
     for(const seed of [DEFAULT_PRIMARY,'#2f26ff','#008567','#8b1245','#f4e5fa','#171329']) {
       const light=createColorTheme(seed,'light'),dark=createColorTheme(seed,'dark');
@@ -107,7 +137,8 @@ describe('Primary color theme',()=>{
     }
     for(const role of ['success','error','warning','accent']) for(const state of ['', '-hover','-pressed']) expect(contrastRatio(fdoc.variables[`--text-${role}-default-light`],fdoc.variables[`--background-${role}-secondary${state}`])).toBeGreaterThanOrEqual(4.5);
     expect(primaryThemeCss(fdoc)).toContain('color-scheme: dark');
-    expect(primaryThemeCss(fdoc)).toContain('--background-primary-default: var(--primary-500)');
+    expect(fdoc.references['--background-primary-default']).toMatch(/^--primary-/);
+    expect(primaryThemeCss(fdoc)).toContain(`--background-primary-default: var(${fdoc.references['--background-primary-default']})`);
   });
   it('preserves 16 percent alpha for focus halos and in exported references',()=>{
     for(const mode of ['light','dark'] as const) for(const seed of [DEFAULT_PRIMARY,'#2f26ff','#000000','#ffffff']) {
@@ -122,7 +153,8 @@ describe('Primary color theme',()=>{
   });
   it('switches modes without losing the seed and reset removes overrides from the whole document',()=>{
     applyColorMode('dark');expect(getPrimarySeed()).toBeNull();expect(getColorMode()).toBe('dark');
-    expect(document.documentElement.style.getPropertyValue('--background-primary-default')).toBe(DEFAULT_PRIMARY);
+    expect(document.documentElement.style.getPropertyValue('--primary-500')).toBe(DEFAULT_PRIMARY);
+    expect(document.documentElement.style.getPropertyValue('--background-primary-default')).not.toBe('');
     applyPrimaryTheme('#123abc');applyColorMode('light');expect(getPrimarySeed()).toBe('#123abc');
     expect(document.documentElement.style.getPropertyValue('--background-base-default')).toBe('');
     expect(document.documentElement.style.getPropertyValue('--yellow-500')).toBe('');
