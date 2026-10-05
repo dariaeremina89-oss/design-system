@@ -230,9 +230,9 @@ export function createColorTheme(seed:string=DEFAULT_PRIMARY,mode:ColorMode='lig
 
     // Borders are semantic content on dark Base surfaces, so their opaque
     // states also follow Dark contrast rather than retaining Light aliases.
-    for(const [state,preferred] of Object.entries({'':500,'-hover':400,'-pressed':300})) {
+    for(const [state,preferred] of Object.entries({default:500,hover:400,pressed:300})) {
       const step=pick(preferred,baseDarkSurfaces,policy.icon);
-      set(`--border-${role}-${state||'default'}`,`--${palette}-${step}`);
+      set(`--border-${role}-${state}`,`--${palette}-${step}`);
     }
     set(`--border-${role}-focused`,`--${palette}-transparent-16`);
     const disabledBorder=pick(600,baseDarkSurfaces,policy.disabled);
