@@ -1,4 +1,5 @@
 import { qualityDocs } from '../../docs/quality';
+import { coreDocs } from '../../docs/core-components';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { iconNames } from '../Icon/Icon';
@@ -10,49 +11,7 @@ const meta = {
   tags: ['autodocs', 'ready'],
   parameters: {
     layout: 'padded',
-    docs: { description: { component: `
-**ButtonFAB** — кнопка одного приоритетного действия экрана, доступного независимо от прокрутки. В этой версии поддерживается только одна библиотечная иконка; текста и меню действий нет.
-
-### Применение
-
-Используйте один FAB на экране для частого основного действия: создания, запуска сценария или доступа к помощи. Не заменяйте им обычные кнопки форм, таблиц и списков. Выбирайте место, где кнопка не мешает важному содержимому и другим действиям.
-
-### Размеры и анатомия
-
-| Элемент | Токен / значение |
-| --- | --- |
-| Кнопка | \`--elements-64\` — 64 × 64 px |
-| Иконка | \`--elements-40\` — 40 × 40 px |
-| Padding | \`--space-12\` — 12 px |
-| Радиус | \`--radius-full\` — 9999 px |
-| Тень | \`--shadow-s\` |
-| Внешняя рамка Focused | \`--border-large\` — 4 px |
-
-Рамка фокуса идет снаружи, не уменьшает иконку и не меняет размеры кнопки. Тень сохраняется во всех состояниях.
-
-### Цвета и состояния
-
-| Color | Фон Default / Hover / Pressed / Disabled | Иконка / Disabled | Рамка Focused |
-| --- | --- | --- | --- |
-| Primary | \`--background-primary-default\` / \`--background-primary-default-hover\` / \`--background-primary-default-pressed\` / \`--background-primary-default-disabled\` | \`--icon-primary-default-light\` / \`--icon-primary-default-light-disabled\` | \`--border-primary-focused\` |
-| Secondary | \`--background-base-secondary\` / \`--background-base-secondary-hover\` / \`--background-base-secondary-pressed\` / \`--background-base-secondary-disabled\` | \`--icon-base-default\` / \`--icon-base-default-disabled\` | \`--border-base-default-focused\` |
-| Base | \`--background-base-default\` / \`--background-base-default-hover\` / \`--background-base-default-pressed\` / \`--background-base-default-disabled\` | \`--icon-base-default\` / \`--icon-base-default-disabled\` | \`--border-base-default-focused\` |
-| Inverse | \`--background-base-inverse\` / \`--background-base-inverse-hover\` / \`--background-base-inverse-pressed\` / \`--background-base-inverse-disabled\` | \`--icon-base-inverse\` / \`--icon-base-inverse-disabled\` | \`--border-base-inverse-focused\` |
-
-Focused использует фон Default. Hover и Pressed меняют только фон. При реальном взаимодействии фокус остается виден одновременно с Hover или Pressed. Проп \`state\` позволяет зафиксировать образец состояния; \`default\` включает обычные реакции на мышь и клавиатуру.
-
-Skeleton из макета — общий неинтерактивный круг 64 × 64 без иконки, с \`--background-base-skeleton\`.
-
-### Размещение
-
-- \`position="floating"\` по умолчанию: фиксированная кнопка справа внизу, отступ \`--space-24\` плюс safe area, слой \`--layer-floating\`. Она находится над контентом, под блокирующими overlay и диалогами.
-- Floating рендерится через portal в body и сохраняет положение даже внутри прокручиваемого или трансформированного родителя. Токены темы должны быть доступны на корне документа. Отступы можно изменить через \`style\` или \`className\`.
-- \`position="inline"\`: кнопка участвует в layout. Примеры состояний используют Inline, чтобы сравнивать образцы рядом. На реальном экране размещается один FAB.
-
-### Доступность
-
-\`aria-label\` и \`icon\` обязательны. Используется нативный button с \`type="button"\` по умолчанию. Tab переводит фокус, Enter и Space вызывают действие. Disabled блокирует действие и исключает кнопку из Tab-порядка. Иконка декоративна для экранного диктора, имя действия берется из aria-label.
-` + qualityDocs('ButtonFAB') } },
+    docs: { description: { component: coreDocs('ButtonFAB') + qualityDocs('ButtonFAB') } },
   },
   args: { icon: 'plus', 'aria-label': 'Создать документ', position: 'inline' },
   argTypes: {
