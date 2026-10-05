@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { qualityDocs } from '../../docs/quality';
+import { coreDocs } from '../../docs/core-components';
 import { Skeleton, type SkeletonShape, type SkeletonTextSize } from './Skeleton';
 
 const textSizes: Exclude<SkeletonTextSize, 'inherit'>[] = [
@@ -22,18 +23,7 @@ const meta = {
     layout: 'padded',
     docs: {
       description: {
-        component: `
-**Skeleton** — базовый плейсхолдер загрузки для компонентов F.Doc. Используйте его при первичной отрисовке, когда геометрия будущего контента уже известна.
-
-### API
-
-- \`shape\`: \`text\` / \`rounded\` / \`circle\` / \`icon\`;
-- \`width\` и \`height\` задают геометрию. Фиксированные значения защищены от случайного flex-shrink; fluid-значения вроде \`100%\`, \`calc()\` и \`clamp()\` остаются адаптивными;
-- \`textSize\` синхронизирует высоту текстового Skeleton с типографическим стилем;
-- \`data-testid\` по умолчанию равен \`skeleton\` и может быть переопределен.
-
-Skeleton не содержит интерактивных элементов, скрыт от accessibility tree через \`aria-hidden\` и использует общую wave-анимацию. Размер Skeleton внутри составного компонента должен повторять геометрию загружаемого содержимого, а не придумывать отдельный layout.
-        ` + qualityDocs('Skeleton'),
+        component: coreDocs('Skeleton') + qualityDocs('Skeleton'),
       },
     },
   },
