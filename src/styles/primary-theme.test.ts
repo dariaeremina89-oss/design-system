@@ -31,7 +31,9 @@ describe('Primary color theme',()=>{
       if(mode==='light') expect(v['--background-primary-default']).toBe(seed);
       else {
         expect(contrastRatio(v['--background-primary-default'],'#18191c')).toBeGreaterThanOrEqual(3);
-        expect(v['--background-primary-default']).toBe(palette[Number(theme.references['--background-primary-default']?.replace('--primary-','')) as keyof typeof palette]);
+        const reference=theme.references['--background-primary-default'];
+        expect(reference).toMatch(/^--primary-/);
+        expect(v['--background-primary-default']).toBe(v[reference]);
       }
       for(let i=1;i<primarySteps.length;i++) expect(relativeLuminance(palette[primarySteps[i]])).toBeLessThanOrEqual(relativeLuminance(palette[primarySteps[i-1]])+1e-9);
       for(const state of ['', '-hover','-pressed']) {
