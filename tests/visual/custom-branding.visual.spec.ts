@@ -16,7 +16,9 @@ test('F.Doc has its own Dark theme without a client HEX; switching preserves pri
   await expect(page.getByRole('heading',{name:'Custom Branding',exact:true})).toHaveCSS('color','rgb(255, 255, 255)');
   await expect(page.locator('.fdoc-branding > p').first()).toHaveCSS('color','rgb(255, 255, 255)');
   await expect(page.getByRole('table',{name:'Семантика Light и Dark'}).locator('td').first()).toHaveCSS('color','rgb(255, 255, 255)');
-  await expect(page.getByTestId('brand-button-default')).not.toHaveCSS('background-color','rgb(255, 220, 0)');
+  await expect(page.getByTestId('brand-button-default')).toHaveCSS('background-color','rgb(214, 185, 0)');
+  await expect(page.getByTestId('active-primary-default')).toContainText('--primary-600');
+  await expect(page.locator('[data-primary-step="600"]')).toHaveAttribute('data-active','true');
   expect(await page.locator('html').evaluate(el=>getComputedStyle(el).getPropertyValue('--primary-500').trim().toLowerCase())).toBe('#ffdc00');
   const after=await page.evaluate(()=>{const css=getComputedStyle(document.documentElement);return ['--yellow-500','--green-500','--red-500','--neutral-900'].map(token=>css.getPropertyValue(token).trim());});
   expect(after).toEqual(before);
@@ -194,6 +196,26 @@ test('light and dark Primary presets keep 500 but remap semantic component roles
       '--background-success-secondary','--text-success-default','--text-success-default-light',
     ]) expect(dark[token],`${seed}: ${token}`).not.toBe(light[token]);
   }
+});
+
+test('active Primary Default marker follows Light and Dark semantic mapping',async({page})=>{
+  await page.goto(branding);
+  const input=page.getByRole('textbox',{name:'Primary 500 HEX'});
+  await input.fill('#2f26ff');
+
+  await page.getByRole('radio',{name:'Light',exact:true}).click();
+  await expect(page.locator('[data-primary-step="500"]')).toHaveAttribute('data-active','true');
+  await expect(page.getByTestId('active-primary-default')).toContainText('--primary-500');
+
+  await page.getByRole('radio',{name:'Dark',exact:true}).click();
+  const ref=await page.locator('html').evaluate(el=>{
+    const value=getComputedStyle(el).getPropertyValue('--background-primary-default').trim().toLowerCase();
+    const steps=[25,50,100,200,300,400,500,600,700,800,900];
+    return steps.find(step=>getComputedStyle(el).getPropertyValue(`--primary-${step}`).trim().toLowerCase()===value);
+  });
+  expect(ref).toBeTruthy();
+  await expect(page.locator(`[data-primary-step="${ref}"]`)).toHaveAttribute('data-active','true');
+  if(ref!==500) await expect(page.locator('[data-primary-step="500"]')).not.toHaveAttribute('data-active','true');
 });
 
 test('Primary ramp stays shared while semantic colors and CSS export follow the theme',async({page})=>{
