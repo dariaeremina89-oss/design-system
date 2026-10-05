@@ -134,7 +134,17 @@ export function CustomBranding() {
       <Typography responsive>Примитивные палитры Neutral, Green, Red, Orange и Purple не пересчитываются из клиентского HEX. При смене бренда их значения сохраняются. При смене Light / Dark меняются уже семантические роли Base и статусов: обычные подложки становятся темными, содержимое на них светлеет, инверсные поверхности становятся светлыми. Success остается Green, Error — Red, Warning — Orange, Accent — Purple.</Typography>
       <div className="fdoc-branding__scroll"><table className="fdoc-branding__table" aria-label="Семантика Base и статусов">
         <thead><tr><th scope="col">Роль</th><th scope="col">Light: подложка / содержимое</th><th scope="col">Dark: подложка / содержимое</th></tr></thead>
-        <tbody>{[['Base','--background-base-default','--text-base-default'],['Base Inverse','--background-base-inverse','--text-base-inverse'],...['success','error','warning','accent'].flatMap(role=>[[role+' Secondary',`--background-${role}-secondary`,`--text-${role}-secondary`],[role+' Inverse',`--background-${role}-inverse`,`--text-${role}-inverse`]])].map(([label,bg,fg])=><tr key={label}><th scope="row">{label}</th>{[light,dark].map(item=><td key={item.mode}>{[bg,fg].map(token=><div key={token}>{token}: {item.references[token]??semanticColorTokens.find(entry=>entry.token===token)?.reference} · {(item.variables[token]??original[token]).toUpperCase()}</div>)}</td>)}</tr>)}</tbody>
+        <tbody>{[
+          ['Base','--background-base-default','--text-base-default'],
+          ['Base Secondary','--background-base-secondary','--text-base-secondary'],
+          ['Base Inverse','--background-base-inverse','--text-base-inverse'],
+          ['Base Inverse light','--background-base-inverse-light','--text-base-inverse'],
+          ...['success','error','warning','accent'].flatMap(role=>[
+            [role+' Default text on Base','--background-base-default',`--text-${role}-default`],
+            [role+' Secondary',`--background-${role}-secondary`,`--text-${role}-secondary`],
+            [role+' Inverse',`--background-${role}-inverse`,`--text-${role}-inverse`],
+          ]),
+        ].map(([label,bg,fg])=><tr key={label}><th scope="row">{label}</th>{[light,dark].map(item=><td key={item.mode}>{[bg,fg].map(token=><div key={token}>{token}: {item.references[token]??semanticColorTokens.find(entry=>entry.token===token)?.reference} · {(item.variables[token]??original[token]).toUpperCase()}</div>)}</td>)}</tr>)}</tbody>
       </table></div>
       <Typography variant="caption" responsive>Таблица показывает Default каждой роли. Насыщенные статусные заливки Default и Primary 500 сохраняют исходные ступени, потому что это опорные цвета, а не поверхности темы. При этом текст, иконки, Secondary / Tertiary / Inverse, состояния и Base в Dark получают другие семантические ссылки. Полупрозрачные фокусные ореолы сохраняют 16%.</Typography>
     </section>
