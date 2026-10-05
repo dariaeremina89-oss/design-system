@@ -1,45 +1,135 @@
 import { expect, test } from '@playwright/test';
 
-test('InfoBlock follows Figma geometry and tokens', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-elements-infoblock--default&viewMode=story');
+test('InfoBlock horizontal geometry matches Figma', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 700 });
+  await page.goto('/iframe.html?id=components-elements-infoblock--wide-container&viewMode=story');
   const block = page.getByTestId('info-block');
+
+  await expect(block).toHaveAttribute('data-actions-layout', 'horizontal');
   await expect(block).toHaveCSS('box-sizing', 'border-box');
   await expect(block).toHaveCSS('border-radius', '8px');
-  await expect(block).toHaveCSS('border-top-width', '1px');
+  await expect(block).toHaveCSS('border-top-width', '0px');
+  expect(await block.evaluate(el => getComputedStyle(el).boxShadow)).not.toBe('none');
   await expect(block).toHaveCSS('padding-left', '16px');
   await expect(block).toHaveCSS('padding-right', '4px');
   await expect(block).toHaveCSS('padding-top', '4px');
-  await expect(page.getByTestId('info-block-icon')).toHaveCSS('width', '24px');
-  await expect(page.getByTestId('info-block-close')).toHaveCSS('width', '32px');
+  await expect(block).toHaveCSS('padding-bottom', '4px');
+  expect((await block.boundingBox())!.height).toBe(70);
+
+  const iconSlot = page.getByTestId('info-block-icon');
+  const copy = page.locator('.fdoc-info-block__copy');
+  const actions = page.locator('.fdoc-info-block__actions');
+  const close = page.getByTestId('info-block-close');
+  await expect(iconSlot).toHaveCSS('width', '24px');
+  await expect(iconSlot).toHaveCSS('height', '32px');
+  await expect(copy).toHaveCSS('padding-top', '10px');
+  await expect(copy).toHaveCSS('padding-right', '12px');
+  await expect(copy).toHaveCSS('padding-bottom', '10px');
+  await expect(actions).toHaveCSS('height', '40px');
+  await expect(actions).toHaveCSS('padding-top', '0px');
+  await expect(actions).toHaveCSS('padding-right', '8px');
+  await expect(actions).toHaveCSS('padding-bottom', '0px');
+  await expect(close).toHaveCSS('width', '32px');
   await expect(page.locator('.fdoc-info-block__title')).toHaveCSS('font-size', '14px');
   await expect(page.locator('.fdoc-info-block__title')).toHaveCSS('line-height', '20px');
 });
 
-test('InfoBlock actions wrap below automatically in a narrow container', async ({ page }) => {
+test('InfoBlock vertical geometry matches Figma at 288px', async ({ page }) => {
   await page.setViewportSize({ width: 900, height: 700 });
   await page.goto('/iframe.html?id=components-elements-infoblock--narrow-container&viewMode=story');
-  const copyBox = await page.locator('.fdoc-info-block__copy').boundingBox();
-  const actionsBox = await page.locator('.fdoc-info-block__actions').boundingBox();
-  expect(copyBox).not.toBeNull();
-  expect(actionsBox).not.toBeNull();
-  expect(actionsBox!.y).toBeGreaterThanOrEqual(copyBox!.y + copyBox!.height + 3.5);
+  const block = page.getByTestId('info-block');
+
+  await expect(block).toHaveAttribute('data-actions-layout', 'vertical');
+  expect((await block.boundingBox())!.height).toBe(118);
+
+  const blockBox = (await block.boundingBox())!;
+  const copyBox = (await page.locator('.fdoc-info-block__copy').boundingBox())!;
+  const actions = page.locator('.fdoc-info-block__actions');
+  const actionsBox = (await actions.boundingBox())!;
+  const firstButtonBox = (await actions.locator('.fdoc-button').first().boundingBox())!;
+
+  expect(copyBox.height).toBe(62);
+  expect(actionsBox.height).toBe(40);
+  expect(actionsBox.y - (copyBox.y + copyBox.height)).toBe(8);
+  expect(firstButtonBox.x - blockBox.x).toBe(48);
+  expect(blockBox.y + blockBox.height - (firstButtonBox.y + firstButtonBox.height)).toBe(12);
+});
+
+test('InfoBlock single-line horizontal anatomy has no extra bottom space', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 700 });
+  await page.goto('/iframe.html?id=components-elements-infoblock--title-only&viewMode=story');
+  const block = page.getByTestId('info-block');
+
+  await expect(block).toHaveAttribute('data-actions-layout', 'horizontal');
+  expect((await block.boundingBox())!.height).toBe(48);
+
+  const titleBox = (await block.locator('.fdoc-info-block__title').boundingBox())!;
+  const iconBox = (await block.getByTestId('info-block-icon').locator('.fdoc-icon').boundingBox())!;
+  const buttonBox = (await block.locator('.fdoc-info-block__actions .fdoc-button').first().boundingBox())!;
+  const closeBox = (await block.getByTestId('info-block-close').boundingBox())!;
+  const blockBox = (await block.boundingBox())!;
+  const titleCenter = titleBox.y + titleBox.height / 2;
+
+  expect(Math.abs(titleCenter - (iconBox.y + iconBox.height / 2))).toBeLessThanOrEqual(0.5);
+  expect(Math.abs(titleCenter - (buttonBox.y + buttonBox.height / 2))).toBeLessThanOrEqual(0.5);
+  expect(titleCenter - (closeBox.y + closeBox.height / 2)).toBe(4);
+  expect(blockBox.y + blockBox.height - (buttonBox.y + buttonBox.height)).toBe(8);
+});
+
+test('InfoBlock switches both ways without moving the text row', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 700 });
+  await page.goto('/iframe.html?id=components-elements-infoblock--wide-container&viewMode=story&args=text:;title:Title');
+  const host = page.locator('body > #storybook-root > div').first();
+  const block = page.getByTestId('info-block');
+  const title = block.locator('.fdoc-info-block__title');
+
+  const relativeTitleTop = async () => {
+    const blockBox = (await block.boundingBox())!;
+    const titleBox = (await title.boundingBox())!;
+    return titleBox.y - blockBox.y;
+  };
+
+  await expect(block).toHaveAttribute('data-actions-layout', 'horizontal');
+  const horizontalTop = await relativeTitleTop();
+  expect((await block.boundingBox())!.height).toBe(48);
+
+  await host.evaluate(el => { (el as HTMLElement).style.width = '288px'; });
+  await expect(block).toHaveAttribute('data-actions-layout', 'vertical');
+  expect(await relativeTitleTop()).toBeCloseTo(horizontalTop, 1);
+  expect((await block.boundingBox())!.height).toBe(96);
+  const verticalButton = (await block.locator('.fdoc-info-block__actions .fdoc-button').first().boundingBox())!;
+  const verticalBlock = (await block.boundingBox())!;
+  expect(verticalBlock.y + verticalBlock.height - (verticalButton.y + verticalButton.height)).toBe(12);
+
+  await host.evaluate(el => { (el as HTMLElement).style.width = '640px'; });
+  await expect(block).toHaveAttribute('data-actions-layout', 'horizontal');
+  expect(await relativeTitleTop()).toBeCloseTo(horizontalTop, 1);
+  expect((await block.boundingBox())!.height).toBe(48);
+});
+
+test('InfoBlock aligns vertical actions with text when the left icon is hidden', async ({ page }) => {
+  await page.setViewportSize({ width: 288, height: 700 });
+  await page.goto('/iframe.html?id=components-elements-infoblock--without-icon&viewMode=story');
+  const block = page.getByTestId('info-block');
+  await expect(block).toHaveAttribute('data-actions-layout', 'vertical');
+  const blockBox = (await block.boundingBox())!;
+  const buttonBox = (await block.locator('.fdoc-info-block__actions .fdoc-button').first().boundingBox())!;
+  expect(buttonBox.x - blockBox.x).toBe(16);
+});
+
+test('InfoBlock without actions keeps the Figma text geometry', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 700 });
+  await page.goto('/iframe.html?id=components-elements-infoblock--title-only&viewMode=story&args=actionsCount:none');
+  const block = page.getByTestId('info-block');
+  await expect(block).toHaveAttribute('data-actions-layout', 'none');
+  await expect(block.locator('.fdoc-info-block__actions')).toHaveCount(0);
+  expect((await block.boundingBox())!.height).toBe(48);
 });
 
 test('InfoBlock long content stays inside the component', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 });
   await page.goto('/iframe.html?id=components-elements-infoblock--long-content&viewMode=story');
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
-});
-
-test('InfoBlock semantic colors remain readable in dark theme', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-elements-infoblock--colors&viewMode=story');
-  await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
-  for (const block of await page.locator('.fdoc-info-block').all()) {
-    await expect(block).toBeVisible();
-    const background = await block.evaluate(el => getComputedStyle(el).backgroundColor);
-    const text = await block.evaluate(el => getComputedStyle(el).color);
-    expect(background).not.toBe(text);
-  }
 });
 
 for (const width of [320, 288, 256, 240]) {
@@ -49,91 +139,30 @@ for (const width of [320, 288, 256, 240]) {
     const host = page.locator('body > #storybook-root > div').first();
     await host.evaluate((el, value) => { (el as HTMLElement).style.width = `${value}px`; }, width);
     const block = page.getByTestId('info-block');
-    const blockBox = await block.boundingBox();
-    expect(blockBox).not.toBeNull();
-    for (const locator of [page.getByTestId('info-block-icon'), page.locator('.fdoc-info-block__copy'), page.getByTestId('info-block-close')]) {
+    await expect(block).toHaveAttribute('data-actions-layout', 'vertical');
+    const blockBox = (await block.boundingBox())!;
+    for (const locator of [
+      page.getByTestId('info-block-icon'),
+      page.locator('.fdoc-info-block__copy'),
+      page.getByTestId('info-block-close'),
+      page.locator('.fdoc-info-block__actions'),
+    ]) {
       const box = await locator.boundingBox();
       expect(box).not.toBeNull();
-      expect(box!.x).toBeGreaterThanOrEqual(blockBox!.x);
-      expect(box!.x + box!.width).toBeLessThanOrEqual(blockBox!.x + blockBox!.width + 0.5);
+      expect(box!.x).toBeGreaterThanOrEqual(blockBox.x - 0.5);
+      expect(box!.x + box!.width).toBeLessThanOrEqual(blockBox.x + blockBox.width + 0.5);
     }
-    expect(await block.evaluate(el => el.scrollWidth)).toBeLessThanOrEqual(Math.ceil(blockBox!.width));
+    expect(await block.evaluate(el => el.scrollWidth)).toBeLessThanOrEqual(Math.ceil(blockBox.width));
   });
 }
 
-test('InfoBlock actions stay at the top when there is enough width', async ({ page }) => {
-  await page.setViewportSize({ width: 900, height: 700 });
-  await page.goto('/iframe.html?id=components-elements-infoblock--wide-container&viewMode=story');
-  const copyBox = await page.locator('.fdoc-info-block__copy').boundingBox();
-  const actionsBox = await page.locator('.fdoc-info-block__actions').boundingBox();
-  expect(copyBox).not.toBeNull();
-  expect(actionsBox).not.toBeNull();
-  expect(Math.abs(actionsBox!.y - copyBox!.y)).toBeLessThanOrEqual(6);
-});
-
-test('InfoBlock copy does not jump when actions wrap from horizontal to vertical', async ({ page }) => {
-  await page.setViewportSize({ width: 900, height: 700 });
-  await page.goto('/iframe.html?id=components-elements-infoblock--wide-container&viewMode=story&args=text:;title:Title');
-  const host = page.locator('body > #storybook-root > div').first();
-  const block = page.getByTestId('info-block');
-  const line = block.locator('.fdoc-info-block__title');
-  const relativeTop = async () => {
-    const blockBox = (await block.boundingBox())!;
-    const lineBox = (await line.boundingBox())!;
-    return lineBox.y - blockBox.y;
-  };
-  const wideTop = await relativeTop();
-  await host.evaluate(el => { (el as HTMLElement).style.width = '288px'; });
-  const actionsBox = (await block.locator('.fdoc-info-block__actions').boundingBox())!;
-  const copyBox = (await block.locator('.fdoc-info-block__copy').boundingBox())!;
-  expect(actionsBox.y).toBeGreaterThanOrEqual(copyBox.y + copyBox.height + 3.5);
-  expect(await relativeTop()).toBeCloseTo(wideTop, 1);
-});
-
-for (const [story, visible, absent] of [
-  ['title-only', 'title', 'text'],
-  ['text-only', 'text', 'title'],
-] as const) {
-  test(`InfoBlock ${story} keeps its icon beside copy when actions wrap`, async ({ page }) => {
-    await page.setViewportSize({ width: 320, height: 700 });
-    await page.goto(`/iframe.html?id=components-elements-infoblock--${story}&viewMode=story`);
-    const block = page.getByTestId('info-block');
+test('InfoBlock semantic colors remain readable in dark theme', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-elements-infoblock--colors&viewMode=story');
+  await page.evaluate(() => document.documentElement.setAttribute('data-color-mode', 'dark'));
+  for (const block of await page.locator('.fdoc-info-block').all()) {
     await expect(block).toBeVisible();
-    const main = (await block.locator('.fdoc-info-block__main').boundingBox())!;
-    const icon = (await block.getByTestId('info-block-icon').boundingBox())!;
-    const copy = (await block.locator('.fdoc-info-block__copy').boundingBox())!;
-    const actions = (await block.locator('.fdoc-info-block__actions').boundingBox())!;
-    expect(icon.y - main.y).toBe(8);
-    expect(actions.y).toBeGreaterThanOrEqual(copy.y + copy.height + 3.5);
-  });
-  test(`InfoBlock ${story} has one copy row without a hidden slot`, async ({ page }) => {
-    await page.setViewportSize({ width: 900, height: 700 });
-    await page.goto(`/iframe.html?id=components-elements-infoblock--${story}&viewMode=story`);
-    const block = page.getByTestId('info-block');
-    await expect(block).toBeVisible();
-    await expect(block.locator(`.fdoc-info-block__${visible}`)).toBeVisible();
-    await expect(block.locator(`.fdoc-info-block__${absent}`)).toHaveCount(0);
-    const copy = block.locator('.fdoc-info-block__copy');
-    expect((await copy.boundingBox())!.height).toBe(40);
-    const main = block.locator('.fdoc-info-block__main');
-    const actions = block.locator('.fdoc-info-block__actions');
-    const mainBox = (await main.boundingBox())!;
-    const copyBox = (await copy.boundingBox())!;
-    const actionsBox = (await actions.boundingBox())!;
-    expect(mainBox.height).toBe(copyBox.height);
-    expect(copyBox.y - mainBox.y).toBeCloseTo(0, 1);
-    expect(actionsBox.height).toBe(36);
-    const lineBox = (await block.locator(`.fdoc-info-block__${visible}`).boundingBox())!;
-    const iconBox = (await block.getByTestId('info-block-icon').boundingBox())!;
-    const buttonBox = (await actions.locator('.fdoc-button').first().boundingBox())!;
-    const closeBox = (await block.getByTestId('info-block-close').boundingBox())!;
-    const lineCenter = lineBox.y + lineBox.height / 2;
-    expect(Math.abs(lineCenter - (iconBox.y + iconBox.height / 2))).toBeLessThanOrEqual(0.5);
-    expect(Math.abs(lineCenter - (buttonBox.y + buttonBox.height / 2))).toBeLessThanOrEqual(0.5);
-    expect(Math.abs(lineCenter - (closeBox.y + closeBox.height / 2))).toBeLessThanOrEqual(0.5);
-    // Without actions, only the visible row and the existing copy/root padding remain.
-    await page.goto(`/iframe.html?id=components-elements-infoblock--${story}&viewMode=story&args=actionsCount:none`);
-    await expect(block.locator('.fdoc-info-block__actions')).toHaveCount(0);
-    expect((await block.boundingBox())!.height).toBe(50);
-  });
-}
+    const background = await block.evaluate(el => getComputedStyle(el).backgroundColor);
+    const text = await block.evaluate(el => getComputedStyle(el).color);
+    expect(background).not.toBe(text);
+  }
+});
