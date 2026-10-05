@@ -116,7 +116,8 @@ function nearestDarkDefault(seed:string,surface:string) {
     else low=middle;
   }
 
-  const hex=brandSafeColorToHex({l:high,c:source.c,h:source.h});
+  const finalLightness=sourceContrast<DARK_SURFACE_MIN?high:low;
+  const hex=brandSafeColorToHex({l:finalLightness,c:source.c,h:source.h});
   return {hex,color:hexToBrandSafeColor(hex)};
 }
 
