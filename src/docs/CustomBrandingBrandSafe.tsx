@@ -12,7 +12,6 @@ import { Select } from '../components/Select/Select';
 import { Checkbox, Radio, Switch } from '../components/SelectionControl/SelectionControl';
 import { Typography } from '../components/Typography/Typography';
 import {
-  brandSafeDarkStateMinimum,
   brandSafeDarkSurfaceRange,
   createBrandSafeColorTheme,
   getBrandSafeProfile,
