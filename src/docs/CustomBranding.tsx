@@ -51,9 +51,9 @@ export function CustomBranding() {
         <Button color="secondary" onClick={()=>{applyPrimaryTheme(null,true,mode);setDraft(DEFAULT_PRIMARY);}}>Сбросить к F.Doc</Button>
       </div>
       <div className="fdoc-branding__row" aria-label="Примеры цветов">
-        {[['Синий','#2f26ff'],['Зеленый','#008567'],['Бордовый','#8b1245'],['Светлый','#f4e5fa'],['Темный','#171329']].map(([name,color])=><button key={color} type="button" className="fdoc-branding__preset" aria-label={`${name} ${color}`} onClick={()=>update(color)}><span aria-hidden="true" style={{background:color}}/>{name}</button>)}
+        {[['Синий','#2f26ff'],['Зеленый','#008567'],['Бордовый','#8b1245'],['Светлый Primary','#f4e5fa'],['Темный Primary','#171329']].map(([name,color])=><button key={color} type="button" className="fdoc-branding__preset" aria-label={`${name} ${color}`} onClick={()=>update(color)}><span aria-hidden="true" style={{background:color}}/>{name}</button>)}
       </div>
-      <Typography variant="caption" responsive role="status">{seed?`Primary 500: ${seed.toUpperCase()}`:'Исходная палитра F.Doc'} · {mode==='dark'?'Dark':'Light'}. Тема применяется ко всем стори и сохраняется в этом браузере.</Typography>
+      <Typography variant="caption" responsive role="status">{seed?`Primary 500: ${seed.toUpperCase()}`:'Исходная палитра F.Doc'} · {mode==='dark'?'Dark':'Light'}. Primary 500 и его примитивная растяжка не меняются между темами; меняются семантические роли вокруг них. Тема применяется ко всем стори и сохраняется в этом браузере.</Typography>
     </section>
 
     <Typography responsive data-testid="brand-highlight"><Highlight highlight="договор">Найденный договор подсвечен цветом Accent.</Highlight></Typography>
@@ -136,7 +136,7 @@ export function CustomBranding() {
         <thead><tr><th scope="col">Роль</th><th scope="col">Light: подложка / содержимое</th><th scope="col">Dark: подложка / содержимое</th></tr></thead>
         <tbody>{[['Base','--background-base-default','--text-base-default'],['Base Inverse','--background-base-inverse','--text-base-inverse'],...['success','error','warning','accent'].flatMap(role=>[[role+' Secondary',`--background-${role}-secondary`,`--text-${role}-secondary`],[role+' Inverse',`--background-${role}-inverse`,`--text-${role}-inverse`]])].map(([label,bg,fg])=><tr key={label}><th scope="row">{label}</th>{[light,dark].map(item=><td key={item.mode}>{[bg,fg].map(token=><div key={token}>{token}: {item.references[token]??semanticColorTokens.find(entry=>entry.token===token)?.reference} · {(item.variables[token]??original[token]).toUpperCase()}</div>)}</td>)}</tr>)}</tbody>
       </table></div>
-      <Typography variant="caption" responsive>Таблица показывает Default каждой роли. Насыщенные статусные заливки Default сохраняют исходные ступени; смена темы не означает механическое переворачивание всех номеров. Для Dark отдельно проверяются пары Secondary и Inverse, их Hover / Pressed и содержимое на Base Inverse. Полупрозрачные фокусные ореолы сохраняют 16%.</Typography>
+      <Typography variant="caption" responsive>Таблица показывает Default каждой роли. Насыщенные статусные заливки Default и Primary 500 сохраняют исходные ступени, потому что это опорные цвета, а не поверхности темы. При этом текст, иконки, Secondary / Tertiary / Inverse, состояния и Base в Dark получают другие семантические ссылки. Полупрозрачные фокусные ореолы сохраняют 16%.</Typography>
     </section>
 
     <section>{title('Пример: подложка и текст для текущего HEX')}
@@ -152,7 +152,7 @@ export function CustomBranding() {
       <div className="fdoc-branding__examples">
         <div className="fdoc-branding__panel">
           <Typography variant="subtitle" strong>Действия и выбор</Typography>
-          <div className="fdoc-branding__row"><Button>Продолжить</Button><Button color="secondary">Отмена</Button><Button color="inverse-primary" data-testid="brand-inverse-primary">Inverse Primary</Button><Badge text="12"/></div>
+          <div className="fdoc-branding__row"><Button data-testid="brand-primary-action">Продолжить</Button><Button color="secondary" data-testid="brand-secondary-action">Отмена</Button><Button color="inverse-primary" data-testid="brand-inverse-primary">Inverse Primary</Button><ButtonIcon color="inverse-light" icon="plus" aria-label="Inverse light" data-testid="brand-inverse-light-action"/><Badge text="12"/></div>
           <ChipsGroup aria-label="Документы" defaultValue={['all']} options={[{value:'all',text:'Все'},{value:'draft',text:'Черновики'},{value:'sent',text:'Отправленные'}]}/>
           <div className="fdoc-branding__row"><Checkbox label="Выбрано" defaultChecked/><Radio label="Вариант" name="brand-radio" defaultChecked/><Switch label="Уведомления" defaultChecked/></div>
           <ProgressIndicator mode="determinate" value={64} aria-label="Загрузка документов"/>
@@ -160,7 +160,7 @@ export function CustomBranding() {
         </div>
         <div className="fdoc-branding__panel">
           <Typography variant="subtitle" strong>Поля и меню</Typography>
-          <Input label="Название документа" placeholder="Введите название" caption="Подсказка под полем"/>
+          <Input label="Название документа" placeholder="Введите название" caption="Подсказка под полем" data-testid="brand-input"/>
           <Select label="Статус документа" defaultValue="draft" options={[{value:'draft',label:'Черновик'},{value:'signed',label:'Подписан'}]}/>
           <Input label="Поле с ошибкой" defaultValue="Некорректное значение" error="Проверьте значение"/>
           <HoverActionExample/>
@@ -169,7 +169,7 @@ export function CustomBranding() {
       <div className="fdoc-branding__panel">
         <Typography variant="subtitle" strong>Статусы сохраняют свои палитры</Typography>
         <div className="fdoc-branding__row">{(['success','error','warning','accent'] as const).map((color,index)=><Chips key={color} color={color} text={['Подписан','Ошибка','Внимание','Информация'][index]} data-testid={`brand-status-${color}`}/>)}</div>
-        <Typography variant="caption" responsive>В Dark для статусов выбираются другие оттенки из тех же палитр. Изменение Primary их не перекрашивает.</Typography>
+        <Typography variant="caption" responsive>В Dark меняются семантические ссылки текста, иконок, мягких и инверсных поверхностей статусов, но сами Green / Red / Orange / Purple остаются теми же примитивными палитрами. Изменение Primary их не перекрашивает.</Typography>
       </div>
     </section>
 
