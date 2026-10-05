@@ -23,6 +23,9 @@ export interface BrandSafeProfile {
   defaultContrast:number;
   hoverContrast:number;
   pressedContrast:number;
+  hoverOpacity:number;
+  pressedOpacity:number;
+  focusBorder:string;
   sourceLightness:number;
   defaultLightness:number;
   deltaLightness:number;
@@ -121,57 +124,54 @@ function nearestDarkDefault(seed:string,surface:string) {
   return {hex,color:hexToBrandSafeColor(hex)};
 }
 
-function interactionStates(defaultHex:string,surface:string) {
-  const base=hexToBrandSafeColor(defaultHex);
-  const foregrounds=(['#000000','#ffffff'] as const)
-    .filter(color=>contrastRatio(defaultHex,color)>=4.5);
+export function compositeStateLayer(background:string,foreground:'#000000'|'#ffffff',opacity:number) {
+  const bg=channels(background).map(value=>Math.round(value*255));
+  const fg=channels(foreground).map(value=>Math.round(value*255));
+  return '#'+bg.map((channel,index)=>
+    Math.round(channel*(1-opacity)+fg[index]*opacity).toString(16).padStart(2,'0')
+  ).join('');
+}
 
-  const deltas:[[number,number],[number,number],[number,number],[number,number],[number,number]]=[
-    [0.02,0.04],
-    [0.015,0.03],
-    [0.01,0.02],
-    [0.005,0.01],
-    [0,0],
-  ];
-
-  const candidates:Array<{
-    foreground:'#000000'|'#ffffff';
-    hover:string;
-    pressed:string;
-    totalDelta:number;
-    minimumTextContrast:number;
-  }>=[];
-
-  for(const foreground of foregrounds) {
-    const direction=foreground==='#000000'?1:-1;
-    for(const [hoverDelta,pressedDelta] of deltas) {
-      const hover=brandSafeColorToHex({l:Math.max(0,Math.min(1,base.l+direction*hoverDelta)),c:base.c,h:base.h});
-      const pressed=brandSafeColorToHex({l:Math.max(0,Math.min(1,base.l+direction*pressedDelta)),c:base.c,h:base.h});
-      const textMinimum=Math.min(
-        contrastRatio(defaultHex,foreground),
-        contrastRatio(hover,foreground),
-        contrastRatio(pressed,foreground),
-      );
-      const surfaceMinimum=Math.min(contrastRatio(hover,surface),contrastRatio(pressed,surface));
-      if(textMinimum>=4.5&&surfaceMinimum>=DARK_STATE_MIN) {
-        candidates.push({
-          foreground,
-          hover,
-          pressed,
-          totalDelta:hoverDelta+pressedDelta,
-          minimumTextContrast:textMinimum,
-        });
-        break;
-      }
-    }
+function maximumSafeLayerOpacity(defaultHex:string,foreground:'#000000'|'#ffffff',surface:string) {
+  const safe=(opacity:number)=>{
+    const color=compositeStateLayer(defaultHex,foreground,opacity);
+    return contrastRatio(color,foreground)>=4.5&&contrastRatio(color,surface)>=DARK_STATE_MIN;
+  };
+  if(safe(.12)) return .12;
+  let low=0,high=.12;
+  for(let i=0;i<30;i++) {
+    const middle=(low+high)/2;
+    if(safe(middle)) low=middle;
+    else high=middle;
   }
+  return low;
+}
 
-  candidates.sort((a,b)=>b.totalDelta-a.totalDelta||b.minimumTextContrast-a.minimumTextContrast);
-  const best=candidates[0];
-  if(best) return best;
+function interactionStates(defaultHex:string,surface:string) {
+  const candidates=(['#000000','#ffffff'] as const)
+    .filter(foreground=>contrastRatio(defaultHex,foreground)>=4.5)
+    .map(foreground=>({
+      foreground,
+      maximumOpacity:maximumSafeLayerOpacity(defaultHex,foreground,surface),
+      baseContrast:contrastRatio(defaultHex,foreground),
+    }))
+    .sort((a,b)=>b.maximumOpacity-a.maximumOpacity||b.baseContrast-a.baseContrast);
 
-  const foreground=contrastRatio(defaultHex,'#000000')>=contrastRatio(defaultHex,'#ffffff')?'#000000':'#ffffff';
-  return {foreground,hover:defaultHex,pressed:defaultHex,totalDelta:0,minimumTextContrast:contrastRatio(defaultHex,foreground)} as const;
+  const selected=candidates[0]??{
+    foreground:(contrastRatio(defaultHex,'#000000')>=contrastRatio(defaultHex,'#ffffff')?'#000000':'#ffffff') as '#000000'|'#ffffff',
+    maximumOpacity:0,
+    baseContrast:Math.max(contrastRatio(defaultHex,'#000000'),contrastRatio(defaultHex,'#ffffff')),
+  };
+
+  const pressedOpacity=Math.min(.12,selected.maximumOpacity);
+  const hoverOpacity=pressedOpacity>=.08?.08:pressedOpacity*(2/3);
+  return {
+    foreground:selected.foreground,
+    hover:compositeStateLayer(defaultHex,selected.foreground,hoverOpacity),
+    pressed:compositeStateLayer(defaultHex,selected.foreground,pressedOpacity),
+    hoverOpacity,
+    pressedOpacity,
+  };
 }
 
 export function getBrandSafeProfile(input:string):BrandSafeProfile {
@@ -182,6 +182,7 @@ export function getBrandSafeProfile(input:string):BrandSafeProfile {
   const source=hexToBrandSafeColor(seed);
   const adjusted=nearestDarkDefault(seed,surface);
   const states=interactionStates(adjusted.hex,surface);
+  const focusBorder=semanticValue(baseTheme,'--border-primary-focused');
   const delta=adjusted.color.l-source.l;
   return {
     sourceHex:seed,
@@ -193,6 +194,9 @@ export function getBrandSafeProfile(input:string):BrandSafeProfile {
     defaultContrast:contrastRatio(adjusted.hex,surface),
     hoverContrast:contrastRatio(states.hover,surface),
     pressedContrast:contrastRatio(states.pressed,surface),
+    hoverOpacity:states.hoverOpacity,
+    pressedOpacity:states.pressedOpacity,
+    focusBorder,
     sourceLightness:source.l,
     defaultLightness:adjusted.color.l,
     deltaLightness:delta,
@@ -213,7 +217,10 @@ function assignCustom(theme:PrimaryTheme,token:string,reference:string,value:str
  * - Dark Default keeps the exact HEX whenever its contrast with the Dark Base
  *   surface is between 3:1 and 10.5:1;
  * - outside that band only OKLCH lightness is moved to the nearest boundary;
- * - hue is preserved and chroma is reduced only when sRGB gamut requires it.
+ * - hue is preserved and chroma is reduced only when sRGB gamut requires it;
+ * - Hover/Pressed are onPrimary state layers over Default (8% / 12% targets);
+ * - layer opacity is reduced only when the target would break contrast;
+ * - Focus keeps the Default fill and uses the existing focus outline token.
  */
 export function createBrandSafeColorTheme(input:string,mode:ColorMode='light'):PrimaryTheme {
   const seed=normalizeHex(input);
