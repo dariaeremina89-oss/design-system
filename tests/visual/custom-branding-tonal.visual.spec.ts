@@ -50,16 +50,20 @@ test('Brand Source changes hue without changing semantic step numbers',async({pa
 
 test('Tonal live components read the experimental semantic tokens',async({page})=>{
   await page.goto(pageUrl);
+  await expect(page.getByTestId('tonal-active-default')).toContainText('--primary-200');
   const button=page.getByTestId('tonal-primary-button');
-  const expected=await page.locator('html').evaluate(el=>getComputedStyle(el).getPropertyValue('--background-primary-default').trim().toLowerCase());
-  const actual=await button.evaluate(el=>getComputedStyle(el).backgroundColor);
-  const normalized=await page.evaluate(color=>{
-    const probe=document.createElement('span');
-    probe.style.backgroundColor=color;
-    document.body.appendChild(probe);
-    const value=getComputedStyle(probe).backgroundColor;
-    probe.remove();
-    return value;
-  },expected);
-  expect(actual).toBe(normalized);
+
+  await expect.poll(async()=>{
+    const expected=await page.locator('html').evaluate(el=>getComputedStyle(el).getPropertyValue('--background-primary-default').trim());
+    const normalized=await page.evaluate(color=>{
+      const probe=document.createElement('span');
+      probe.style.backgroundColor=color;
+      document.body.appendChild(probe);
+      const value=getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return value;
+    },expected);
+    const actual=await button.evaluate(el=>getComputedStyle(el).backgroundColor);
+    return actual===normalized;
+  }).toBe(true);
 });
