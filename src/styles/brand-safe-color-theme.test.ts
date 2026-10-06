@@ -61,6 +61,21 @@ describe('Brand-safe Primary experiment',()=>{
     }
   });
 
+  it('slightly darkens mid red in Dark to keep white onPrimary',()=>{
+    const profile=getBrandSafeProfile('#e14531');
+    expect(profile.darkDefault).toBe('#d93d2a');
+    expect(profile.foreground).toBe('#ffffff');
+    expect(contrastRatio(profile.darkDefault,profile.foreground)).toBeGreaterThanOrEqual(4.5);
+    expect(profile.deltaLightness).toBeLessThan(0);
+    expect(Math.abs(profile.deltaLightness)).toBeLessThanOrEqual(.03);
+  });
+
+  it('does not over-darken bright brands just to force white onPrimary',()=>{
+    const profile=getBrandSafeProfile('#ffdc00');
+    expect(profile.foreground).toBe('#000000');
+    expect(contrastRatio(profile.darkDefault,profile.foreground)).toBeGreaterThanOrEqual(4.5);
+  });
+
   it('chooses interaction overlay independently from text color',()=>{
     for(const seed of [DEFAULT_PRIMARY,'#2f26ff','#008567','#8b1245','#f4e5fa','#171329']) {
       const profile=getBrandSafeProfile(seed);
