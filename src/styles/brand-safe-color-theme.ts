@@ -37,6 +37,7 @@ const ORIGINAL:Record<string,string>=Object.fromEntries(semanticColorTokens.map(
 const DARK_SURFACE_MIN=3;
 const DARK_SURFACE_MAX=10.5;
 const DARK_STATE_MIN=2.5;
+const DARK_WHITE_FOREGROUND_MAX_DELTA_L=0.03;
 
 function srgbToLinear(value:number) {
   return value<=0.04045?value/12.92:Math.pow((value+0.055)/1.055,2.4);
@@ -125,6 +126,36 @@ function nearestDarkDefault(seed:string,surface:string) {
   return {hex,color:hexToBrandSafeColor(hex)};
 }
 
+function resolveDarkDefaultAndForeground(seed:string,surface:string) {
+  const adjusted=nearestDarkDefault(seed,surface);
+  if(contrastRatio(adjusted.hex,'#ffffff')>=4.5) {
+    return {...adjusted,foreground:'#ffffff' as const};
+  }
+
+  let low=0;
+  let high=adjusted.color.l;
+  for(let i=0;i<34;i++) {
+    const middle=(low+high)/2;
+    const hex=brandSafeColorToHex({l:middle,c:adjusted.color.c,h:adjusted.color.h});
+    if(contrastRatio(hex,'#ffffff')>=4.5) low=middle;
+    else high=middle;
+  }
+
+  const whiteHex=brandSafeColorToHex({l:low,c:adjusted.color.c,h:adjusted.color.h});
+  const whiteColor=hexToBrandSafeColor(whiteHex);
+  const whiteDelta=adjusted.color.l-whiteColor.l;
+  const whiteSurfaceContrast=contrastRatio(whiteHex,surface);
+  if(
+    whiteDelta<=DARK_WHITE_FOREGROUND_MAX_DELTA_L
+    && whiteSurfaceContrast>=DARK_SURFACE_MIN
+    && whiteSurfaceContrast<=DARK_SURFACE_MAX
+  ) {
+    return {hex:whiteHex,color:whiteColor,foreground:'#ffffff' as const};
+  }
+
+  return {...adjusted,foreground:'#000000' as const};
+}
+
 export function compositeStateLayer(background:string,foreground:'#000000'|'#ffffff',opacity:number) {
   const bg=channels(background).map(value=>Math.round(value*255));
   const fg=channels(foreground).map(value=>Math.round(value*255));
@@ -153,11 +184,7 @@ function maximumSafeLayerOpacity(
   return low;
 }
 
-function interactionStates(defaultHex:string,surface:string) {
-  const foreground=(contrastRatio(defaultHex,'#000000')>=contrastRatio(defaultHex,'#ffffff')
-    ? '#000000'
-    : '#ffffff') as '#000000'|'#ffffff';
-
+function interactionStates(defaultHex:string,surface:string,foreground:'#000000'|'#ffffff') {
   const candidates=(['#000000','#ffffff'] as const).map(overlay=>{
     const maximumOpacity=maximumSafeLayerOpacity(defaultHex,overlay,foreground,surface);
     const pressedOpacity=Math.min(.12,maximumOpacity);
@@ -198,8 +225,8 @@ export function getBrandSafeProfile(input:string):BrandSafeProfile {
   const baseTheme=createColorTheme(seed,'dark');
   const surface=semanticValue(baseTheme,'--background-base-default');
   const source=hexToBrandSafeColor(seed);
-  const adjusted=nearestDarkDefault(seed,surface);
-  const states=interactionStates(adjusted.hex,surface);
+  const adjusted=resolveDarkDefaultAndForeground(seed,surface);
+  const states=interactionStates(adjusted.hex,surface,adjusted.foreground);
   const focusBorder=semanticValue(baseTheme,'--border-primary-focused');
   const delta=adjusted.color.l-source.l;
   return {
@@ -233,9 +260,10 @@ function assignCustom(theme:PrimaryTheme,token:string,reference:string,value:str
  * Brand-safe experiment:
  * - Light is identical to the current implementation;
  * - the entered HEX remains exact Primary/500;
- * - Dark Default keeps the exact HEX whenever its contrast with the Dark Base
- *   surface is between 3:1 and 10.5:1;
- * - outside that band only OKLCH lightness is moved to the nearest boundary;
+ * - Dark Default first keeps the HEX inside the 3:1–10.5:1 Base contrast band;
+ * - white onPrimary is preferred when it needs no more than 0.03 OKLCH L
+ *   of additional darkening; otherwise black onPrimary is used;
+ * - all Default corrections change only OKLCH lightness;
  * - hue is preserved and chroma is reduced only when sRGB gamut requires it;
  * - Hover/Pressed use a separate black/white interaction overlay over Default;
  * - text color is selected only from Default readability;
