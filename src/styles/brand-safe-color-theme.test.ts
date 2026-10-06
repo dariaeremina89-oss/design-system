@@ -61,16 +61,29 @@ describe('Brand-safe Primary experiment',()=>{
     }
   });
 
-  it('builds Hover and Pressed as onPrimary state layers over the same Default',()=>{
+  it('chooses interaction overlay independently from text color',()=>{
     for(const seed of [DEFAULT_PRIMARY,'#2f26ff','#008567','#8b1245','#f4e5fa','#171329']) {
       const profile=getBrandSafeProfile(seed);
+      expect(['#000000','#ffffff']).toContain(profile.foreground);
+      expect(['#000000','#ffffff']).toContain(profile.interactionOverlay);
       expect(profile.hoverOpacity).toBeGreaterThanOrEqual(0);
       expect(profile.hoverOpacity).toBeLessThanOrEqual(.08);
       expect(profile.pressedOpacity).toBeGreaterThanOrEqual(profile.hoverOpacity);
       expect(profile.pressedOpacity).toBeLessThanOrEqual(.12);
-      expect(profile.darkHover).toBe(compositeStateLayer(profile.darkDefault,profile.foreground,profile.hoverOpacity));
-      expect(profile.darkPressed).toBe(compositeStateLayer(profile.darkDefault,profile.foreground,profile.pressedOpacity));
+      expect(profile.darkHover).toBe(compositeStateLayer(profile.darkDefault,profile.interactionOverlay,profile.hoverOpacity));
+      expect(profile.darkPressed).toBe(compositeStateLayer(profile.darkDefault,profile.interactionOverlay,profile.pressedOpacity));
     }
+  });
+
+  it('gives the green preset visible 8% / 12% states instead of collapsing to 1%',()=>{
+    const profile=getBrandSafeProfile('#008567');
+    expect(profile.darkDefault).toBe('#008567');
+    expect(profile.foreground).toBe('#ffffff');
+    expect(profile.interactionOverlay).toBe('#000000');
+    expect(profile.hoverOpacity).toBeCloseTo(.08,4);
+    expect(profile.pressedOpacity).toBeCloseTo(.12,4);
+    expect(profile.darkHover).toBe('#007a5f');
+    expect(profile.darkPressed).toBe('#00755b');
   });
 
   it('keeps Dark Default, Hover and Pressed readable for arbitrary HEX values',()=>{
