@@ -19,6 +19,7 @@ export interface BrandSafeProfile {
   darkHover:string;
   darkPressed:string;
   foreground:'#000000'|'#ffffff';
+  interactionOverlay:'#000000'|'#ffffff';
   sourceContrast:number;
   defaultContrast:number;
   hoverContrast:number;
@@ -132,9 +133,14 @@ export function compositeStateLayer(background:string,foreground:'#000000'|'#fff
   ).join('');
 }
 
-function maximumSafeLayerOpacity(defaultHex:string,foreground:'#000000'|'#ffffff',surface:string) {
+function maximumSafeLayerOpacity(
+  defaultHex:string,
+  overlay:'#000000'|'#ffffff',
+  foreground:'#000000'|'#ffffff',
+  surface:string,
+) {
   const safe=(opacity:number)=>{
-    const color=compositeStateLayer(defaultHex,foreground,opacity);
+    const color=compositeStateLayer(defaultHex,overlay,opacity);
     return contrastRatio(color,foreground)>=4.5&&contrastRatio(color,surface)>=DARK_STATE_MIN;
   };
   if(safe(.12)) return .12;
@@ -148,29 +154,41 @@ function maximumSafeLayerOpacity(defaultHex:string,foreground:'#000000'|'#ffffff
 }
 
 function interactionStates(defaultHex:string,surface:string) {
-  const candidates=(['#000000','#ffffff'] as const)
-    .filter(foreground=>contrastRatio(defaultHex,foreground)>=4.5)
-    .map(foreground=>({
-      foreground,
-      maximumOpacity:maximumSafeLayerOpacity(defaultHex,foreground,surface),
-      baseContrast:contrastRatio(defaultHex,foreground),
-    }))
-    .sort((a,b)=>b.maximumOpacity-a.maximumOpacity||b.baseContrast-a.baseContrast);
+  const foreground=(contrastRatio(defaultHex,'#000000')>=contrastRatio(defaultHex,'#ffffff')
+    ? '#000000'
+    : '#ffffff') as '#000000'|'#ffffff';
 
-  const selected=candidates[0]??{
-    foreground:(contrastRatio(defaultHex,'#000000')>=contrastRatio(defaultHex,'#ffffff')?'#000000':'#ffffff') as '#000000'|'#ffffff',
-    maximumOpacity:0,
-    baseContrast:Math.max(contrastRatio(defaultHex,'#000000'),contrastRatio(defaultHex,'#ffffff')),
-  };
+  const candidates=(['#000000','#ffffff'] as const).map(overlay=>{
+    const maximumOpacity=maximumSafeLayerOpacity(defaultHex,overlay,foreground,surface);
+    const pressedOpacity=Math.min(.12,maximumOpacity);
+    const hoverOpacity=pressedOpacity>=.08?.08:pressedOpacity*(2/3);
+    const hover=compositeStateLayer(defaultHex,overlay,hoverOpacity);
+    const pressed=compositeStateLayer(defaultHex,overlay,pressedOpacity);
+    return {
+      overlay,
+      maximumOpacity,
+      hoverOpacity,
+      pressedOpacity,
+      hover,
+      pressed,
+      pressedDifference:contrastRatio(defaultHex,pressed),
+    };
+  });
 
-  const pressedOpacity=Math.min(.12,selected.maximumOpacity);
-  const hoverOpacity=pressedOpacity>=.08?.08:pressedOpacity*(2/3);
+  candidates.sort((a,b)=>
+    Number(b.maximumOpacity>=.12)-Number(a.maximumOpacity>=.12)
+    || b.maximumOpacity-a.maximumOpacity
+    || b.pressedDifference-a.pressedDifference
+  );
+
+  const selected=candidates[0];
   return {
-    foreground:selected.foreground,
-    hover:compositeStateLayer(defaultHex,selected.foreground,hoverOpacity),
-    pressed:compositeStateLayer(defaultHex,selected.foreground,pressedOpacity),
-    hoverOpacity,
-    pressedOpacity,
+    foreground,
+    interactionOverlay:selected.overlay,
+    hover:selected.hover,
+    pressed:selected.pressed,
+    hoverOpacity:selected.hoverOpacity,
+    pressedOpacity:selected.pressedOpacity,
   };
 }
 
@@ -190,6 +208,7 @@ export function getBrandSafeProfile(input:string):BrandSafeProfile {
     darkHover:states.hover,
     darkPressed:states.pressed,
     foreground:states.foreground,
+    interactionOverlay:states.interactionOverlay,
     sourceContrast:contrastRatio(seed,surface),
     defaultContrast:contrastRatio(adjusted.hex,surface),
     hoverContrast:contrastRatio(states.hover,surface),
@@ -218,7 +237,9 @@ function assignCustom(theme:PrimaryTheme,token:string,reference:string,value:str
  *   surface is between 3:1 and 10.5:1;
  * - outside that band only OKLCH lightness is moved to the nearest boundary;
  * - hue is preserved and chroma is reduced only when sRGB gamut requires it;
- * - Hover/Pressed are onPrimary state layers over Default (8% / 12% targets);
+ * - Hover/Pressed use a separate black/white interaction overlay over Default;
+ * - text color is selected only from Default readability;
+ * - the overlay that best preserves 8% / 12% and remains most visible wins;
  * - layer opacity is reduced only when the target would break contrast;
  * - Focus keeps the Default fill and uses the existing focus outline token.
  */
