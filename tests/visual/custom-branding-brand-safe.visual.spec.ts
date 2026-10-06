@@ -60,6 +60,21 @@ test('Brand-safe color output uses full-width compact strips instead of the 11-c
   expect(Math.max(...stateWidths)-Math.min(...stateWidths)).toBeLessThan(2);
 });
 
+test('Brand-safe green preset uses a visible black interaction overlay with 8% / 12% states',async({page})=>{
+  await page.goto(pageUrl);
+  const input=page.getByRole('textbox',{name:'Primary HEX'});
+  await input.fill('#008567');
+
+  await expect(page.getByTestId('brand-safe-adjustment')).toContainText('Text: #FFFFFF');
+  await expect(page.getByTestId('brand-safe-adjustment')).toContainText('Interaction overlay: #000000');
+  await expect(page.getByTestId('brand-safe-adjustment')).toContainText('Hover 8%');
+  await expect(page.getByTestId('brand-safe-adjustment')).toContainText('Pressed 12%');
+
+  const states=page.getByTestId('brand-safe-states-strip').locator('.fdoc-branding__swatch');
+  await expect(states.nth(1)).toContainText('#007A5F');
+  await expect(states.nth(3)).toContainText('#00755B');
+});
+
 test('Brand-safe Focus keeps the Default fill and adds only the focus outline',async({page})=>{
   await page.goto(pageUrl);
   const button=page.getByTestId('brand-safe-primary-button');
