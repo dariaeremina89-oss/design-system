@@ -60,6 +60,15 @@ test('Brand-safe color output uses full-width compact strips instead of the 11-c
   expect(Math.max(...stateWidths)-Math.min(...stateWidths)).toBeLessThan(2);
 });
 
+test('Brand-safe mid red keeps white text with only a small Dark Default correction',async({page})=>{
+  await page.goto(pageUrl);
+  const input=page.getByRole('textbox',{name:'Primary HEX'});
+  await input.fill('#e14531');
+
+  await expect(page.getByTestId('brand-safe-dark-default')).toContainText('#D93D2A');
+  await expect(page.getByTestId('brand-safe-adjustment')).toContainText('Text: #FFFFFF');
+});
+
 test('Brand-safe green preset uses a visible black interaction overlay with 8% / 12% states',async({page})=>{
   await page.goto(pageUrl);
   const input=page.getByRole('textbox',{name:'Primary HEX'});
