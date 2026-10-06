@@ -172,7 +172,7 @@ export function CustomBrandingBrandSafe() {
             <Swatch label={`Pressed · ${Math.round(profile.pressedOpacity*100)}%`} color={profile.darkPressed}/>
           </div>
           <Typography variant="caption" responsive data-testid="brand-safe-adjustment">
-            {adjustmentLabel(profile.adjustment)}. Source contrast {profile.sourceContrast.toFixed(2)}:1 → Default {profile.defaultContrast.toFixed(2)}:1. onPrimary: {profile.foreground.toUpperCase()}. Hover layer {Math.round(profile.hoverOpacity*100)}%, Pressed layer {Math.round(profile.pressedOpacity*100)}%.
+            {adjustmentLabel(profile.adjustment)}. Source contrast {profile.sourceContrast.toFixed(2)}:1 → Default {profile.defaultContrast.toFixed(2)}:1. Text: {profile.foreground.toUpperCase()}. Interaction overlay: {profile.interactionOverlay.toUpperCase()}. Hover {Math.round(profile.hoverOpacity*100)}%, Pressed {Math.round(profile.pressedOpacity*100)}%.
           </Typography>
         </div>
       </div>
@@ -187,7 +187,7 @@ export function CustomBrandingBrandSafe() {
         Если цвет выходит за диапазон, меняется только OKLCH lightness до ближайшей границы. Hue сохраняется, chroma остается максимально исходной и уменьшается только при выходе за sRGB. Алгоритм не ищет ступень 200, 500 или 600 и не перестраивает бренд под заранее выбранный тон.
       </Typography>
       <Typography responsive>
-        Hover и Pressed больше не пересчитывают lightness отдельно. Поверх Default накладывается onPrimary state layer: целевое значение 8% для Hover и 12% для Pressed. Если такая opacity у конкретного HEX опускает контраст текста ниже 4.5:1 или делает состояние слишком близким к Dark Base, opacity уменьшается до максимального безопасного значения. Направление при этом всегда одно и то же: state layer использует цвет содержимого.
+        Hover и Pressed больше не зависят от цвета текста. Сначала для Default отдельно выбирается наиболее читаемый Text — черный или белый. Затем черный и белый interaction overlay проверяются независимо: какой позволяет сохранить целевые 8% для Hover и 12% для Pressed и дает более заметное Pressed-состояние, тот и используется. Если даже у него целевая opacity ломает контраст текста 4.5:1 или слишком сближает состояние с Dark Base, opacity уменьшается до максимального безопасного значения.
       </Typography>
       <Typography responsive>
         Focus не меняет заливку вообще: остается тот же Default. Состояние показывается только focus-обводкой по системному токену border-primary-focused. Поэтому Hover / Pressed отвечают за изменение поверхности, а Focus — только за клавиатурный фокус.
