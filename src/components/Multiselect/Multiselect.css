@@ -34,11 +34,11 @@
   column-gap: var(--space-12);
 }
 
-.fdoc-multiselect__field:focus-within {
+.fdoc-multiselect__field:has(.fdoc-field__control:focus) {
   padding: calc(var(--space-12) - var(--border-small));
 }
 
-.fdoc-multiselect__field--small:focus-within {
+.fdoc-multiselect__field--small:has(.fdoc-field__control:focus) {
   padding-top: calc(var(--space-8) - var(--border-small));
   padding-bottom: calc(var(--space-8) - var(--border-small));
 }
