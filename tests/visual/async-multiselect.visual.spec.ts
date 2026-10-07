@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('async multiselect searches and keeps Menu open while selecting', async ({ page }) => {
+test('async multiselect clears search after selecting a result', async ({ page }) => {
   await page.goto('/iframe.html?id=components-selection-asyncmultiselect--selected-across-requests&viewMode=story');
   const input = page.getByRole('combobox');
   await input.fill('Фр');
@@ -9,7 +9,8 @@ test('async multiselect searches and keeps Menu open while selecting', async ({ 
 
   await expect(page.getByRole('button', { name: 'Удалить: Дизайн' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Удалить: Фронтенд' })).toBeVisible();
-  await expect(page.getByRole('listbox')).toBeVisible();
+  await expect(input).toHaveValue('');
+  await expect(page.getByRole('listbox')).toBeHidden();
 });
 
 test('async multiselect exposes loading and load error as Menu states', async ({ page }) => {
