@@ -119,11 +119,11 @@ export function AsyncMultiselect({
 }: AsyncMultiselectProps) {
   const uid = useId();
   const id = providedId ?? uid;
-  const menuId = \`\${id}-menu\`;
-  const errorId = hasRenderableContent(error) ? \`\${id}-error\` : undefined;
-  const captionId = !errorId && hasRenderableContent(caption) ? \`\${id}-caption\` : undefined;
+  const menuId = `${id}-menu`;
+  const errorId = hasRenderableContent(error) ? `${id}-error` : undefined;
+  const captionId = !errorId && hasRenderableContent(caption) ? `${id}-caption` : undefined;
   const hasCounter = counter !== undefined && counter !== null && counter !== false && counter !== '';
-  const counterId = hasCounter ? \`\${id}-counter\` : undefined;
+  const counterId = hasCounter ? `${id}-counter` : undefined;
   const helperId = [inputProps['aria-describedby'], errorId, captionId, counterId].filter(Boolean).join(' ') || undefined;
 
   const [internalValue, setInternalValue] = useState(defaultValue);
@@ -275,7 +275,7 @@ export function AsyncMultiselect({
   const menuItems: MenuItem[] = [];
   if (loading) {
     for (let index = 0; index < 5; index += 1) {
-      menuItems.push({ id: \`__loading-\${index}\`, state: 'skeleton', title: '' });
+      menuItems.push({ id: `__loading-${index}`, state: 'skeleton', title: '' });
     }
   } else if (loadError !== undefined) {
     menuItems.push({
@@ -347,7 +347,7 @@ export function AsyncMultiselect({
         leadingIcon={leadingIcon}
         clearable={clearable}
         value={values.length ? 'selected' : ''}
-        wrapperClassName={\`fdoc-async-multiselect \${wrapperClassName}\`}
+        wrapperClassName={`fdoc-async-multiselect ${wrapperClassName}`}
         data-testid="async-multiselect"
       />
     );
@@ -372,7 +372,7 @@ export function AsyncMultiselect({
         ref={anchorRef}
         className={joinClassNames(
           'fdoc-multiselect__field fdoc-multiselect__field--chips fdoc-field__field',
-          \`fdoc-multiselect__field--\${size}\`,
+          `fdoc-multiselect__field--${size}`,
           leadingIcon !== undefined && 'fdoc-multiselect__field--has-leading',
           isError && 'fdoc-field__field--error',
           disabled && 'fdoc-field__field--disabled',
@@ -409,7 +409,7 @@ export function AsyncMultiselect({
                   suppressOpenOnFocusRef.current = true;
                   inputRef.current?.focus();
                 }}
-                removeLabel={\`Удалить: \${option.label}\`}
+                removeLabel={`Удалить: ${option.label}`}
               />
             ))}
             <input
