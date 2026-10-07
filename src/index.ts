@@ -81,6 +81,11 @@ export { Select } from './components/Select/Select';
 export type { SelectProps, SelectOption } from './components/Select/Select';
 export { Multiselect } from './components/Multiselect/Multiselect';
 export type { MultiselectProps, MultiselectOption, MultiselectDisplay } from './components/Multiselect/Multiselect';
+export { AsyncMultiselect } from './components/AsyncMultiselect/AsyncMultiselect';
+export type {
+  AsyncMultiselectProps,
+  AsyncMultiselectInputChangeReason,
+} from './components/AsyncMultiselect/AsyncMultiselect';
 export { Autocomplete } from './components/Autocomplete/Autocomplete';
 export type {
   AutocompleteProps,
