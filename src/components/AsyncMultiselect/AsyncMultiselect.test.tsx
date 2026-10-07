@@ -56,6 +56,33 @@ describe('AsyncMultiselect', () => {
     expect(fetch).toHaveBeenCalledExactlyOnceWith('');
   });
 
+  it('does not refetch only because onFetch callback identity changed', async () => {
+    vi.useFakeTimers();
+    const first = vi.fn();
+    const second = vi.fn();
+    const { rerender } = render(
+      <AsyncMultiselect
+        options={options}
+        defaultInputValue="Ди"
+        debounce={0}
+        onFetch={first}
+      />,
+    );
+    await act(async () => vi.runAllTimers());
+    expect(first).toHaveBeenCalledTimes(1);
+
+    rerender(
+      <AsyncMultiselect
+        options={options}
+        defaultInputValue="Ди"
+        debounce={0}
+        onFetch={second}
+      />,
+    );
+    await act(async () => vi.runAllTimers());
+    expect(second).not.toHaveBeenCalled();
+  });
+
   it('selects several values without closing Menu or refetching on selection', async () => {
     vi.useFakeTimers();
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
