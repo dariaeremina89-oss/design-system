@@ -75,8 +75,34 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
-export const Required: Story = { args: { required: true } };
+function SearchDemo({ required = false }: { required?: boolean }) {
+  const [options, setOptions] = useState<MultiselectOption[]>([]);
+
+  return (
+    <AsyncMultiselect
+      {...meta.args}
+      required={required}
+      options={options}
+      debounce={0}
+      onFetch={query => {
+        const normalizedQuery = query.toLocaleLowerCase();
+        setOptions(
+          allOptions.filter(option =>
+            option.label.toLocaleLowerCase().includes(normalizedQuery),
+          ),
+        );
+      }}
+    />
+  );
+}
+
+export const Default: Story = {
+  render: () => <SearchDemo />,
+};
+
+export const Required: Story = {
+  render: () => <SearchDemo required />,
+};
 
 export const InteractiveRequest: Story = {
   render: args => {
