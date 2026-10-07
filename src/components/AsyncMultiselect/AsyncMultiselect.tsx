@@ -132,6 +132,8 @@ export function AsyncMultiselect({
   const [activeValue, setActiveValue] = useState<string>();
   const suppressOpenOnFocusRef = useRef(false);
   const optionCache = useRef(new Map<string, MultiselectOption>());
+  const onFetchRef = useRef(onFetch);
+  onFetchRef.current = onFetch;
 
   for (const option of [...selectedOptionsProp, ...options]) optionCache.current.set(option.value, option);
 
@@ -157,11 +159,11 @@ export function AsyncMultiselect({
     if (disabled || skeleton || !eligible) return;
 
     const timer = window.setTimeout(() => {
-      Promise.resolve(onFetch(query)).catch(() => undefined);
+      Promise.resolve(onFetchRef.current(query)).catch(() => undefined);
     }, Math.max(0, debounce));
 
     return () => window.clearTimeout(timer);
-  }, [debounce, disabled, eligible, onFetch, query, skeleton]);
+  }, [debounce, disabled, eligible, query, skeleton]);
 
   function setInputValue(next: string, reason: AsyncMultiselectInputChangeReason) {
     if (controlledInputValue === undefined) setInternalInputValue(next);
