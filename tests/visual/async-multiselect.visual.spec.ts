@@ -13,6 +13,26 @@ test('async multiselect clears search after selecting a result', async ({ page }
   await expect(page.getByRole('listbox')).toBeHidden();
 });
 
+test('async multiselect keeps field height stable between chip remove and text input focus', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-selection-asyncmultiselect--selected-across-requests&viewMode=story');
+
+  const field = page.getByTestId('async-multiselect-field');
+  const input = page.getByRole('combobox');
+  const remove = page.getByRole('button', { name: 'Удалить: Дизайн' });
+
+  await input.focus();
+  const inputFocusedHeight = await field.evaluate(element => element.getBoundingClientRect().height);
+
+  await remove.focus();
+  const removeFocusedHeight = await field.evaluate(element => element.getBoundingClientRect().height);
+
+  expect(removeFocusedHeight).toBe(inputFocusedHeight);
+
+  await remove.click();
+  const afterRemovalHeight = await field.evaluate(element => element.getBoundingClientRect().height);
+  expect(afterRemovalHeight).toBe(inputFocusedHeight);
+});
+
 test('async multiselect exposes loading and load error as Menu states', async ({ page }) => {
   await page.goto('/iframe.html?id=components-selection-asyncmultiselect--loading&viewMode=story');
   await page.getByRole('combobox').click();
