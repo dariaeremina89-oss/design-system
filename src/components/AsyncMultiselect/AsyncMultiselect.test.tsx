@@ -1,7 +1,6 @@
 import { act } from 'react';
 import { beforeAll, afterEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { AsyncMultiselect } from './AsyncMultiselect';
 
 beforeAll(() => {
@@ -85,7 +84,6 @@ describe('AsyncMultiselect', () => {
 
   it('selects several values without closing Menu or refetching on selection', async () => {
     vi.useFakeTimers();
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const fetch = vi.fn();
     const change = vi.fn();
     render(
@@ -102,7 +100,7 @@ describe('AsyncMultiselect', () => {
     await act(async () => vi.runAllTimers());
     expect(fetch).toHaveBeenCalledTimes(1);
 
-    await user.click(screen.getByRole('option', { name: 'Дизайн' }));
+    fireEvent.click(screen.getByRole('option', { name: 'Дизайн' }));
     expect(change).toHaveBeenLastCalledWith(['design']);
     expect(screen.getByRole('listbox')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Удалить: Дизайн' })).toBeInTheDocument();
@@ -188,7 +186,7 @@ describe('AsyncMultiselect', () => {
         label="Команды"
       />,
     );
-    expect(screen.getByText('Не удалось получить список')).toBeInTheDocument();
+    expect(document.querySelector('.fdoc-async-multiselect__message--error')).toHaveTextContent('Не удалось получить список');
   });
 
   it('keeps required semantics and blocks fetch while disabled', async () => {
