@@ -82,7 +82,7 @@ describe('AsyncMultiselect', () => {
     expect(second).not.toHaveBeenCalled();
   });
 
-  it('selects several values without closing Menu or refetching on selection', async () => {
+  it('clears the search after selection without refetching below minCharacters', async () => {
     vi.useFakeTimers();
     const fetch = vi.fn();
     const change = vi.fn();
@@ -102,8 +102,9 @@ describe('AsyncMultiselect', () => {
 
     fireEvent.click(screen.getByRole('option', { name: 'Дизайн' }));
     expect(change).toHaveBeenLastCalledWith(['design']);
-    expect(screen.getByRole('listbox')).toBeInTheDocument();
+    expect(screen.getByRole('combobox')).toHaveValue('');
     expect(screen.getByRole('button', { name: 'Удалить: Дизайн' })).toBeInTheDocument();
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
 
     await act(async () => vi.runAllTimers());
     expect(fetch).toHaveBeenCalledTimes(1);
