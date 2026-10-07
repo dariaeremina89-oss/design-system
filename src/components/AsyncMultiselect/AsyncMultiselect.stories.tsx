@@ -128,6 +128,40 @@ export const SelectedAcrossRequests: Story = {
   },
 };
 
+export const SelectedAsChipsOnly: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Выбранные значения исключаются из результатов следующих запросов и остаются только как Chips внутри поля.',
+      },
+    },
+  },
+  render: args => {
+    const [options, setOptions] = useState<MultiselectOption[]>([]);
+    const [value, setValue] = useState<string[]>([]);
+
+    return (
+      <AsyncMultiselect
+        {...args}
+        options={options}
+        value={value}
+        selectedOptions={allOptions.filter(option => value.includes(option.value))}
+        onValueChange={setValue}
+        debounce={0}
+        onFetch={query => {
+          const normalizedQuery = query.toLocaleLowerCase();
+          setOptions(
+            allOptions.filter(option =>
+              !value.includes(option.value)
+              && option.label.toLocaleLowerCase().includes(normalizedQuery),
+            ),
+          );
+        }}
+      />
+    );
+  },
+};
+
 export const Loading: Story = {
   args: { options: [], defaultInputValue: 'Ди', loading: true },
   parameters: { docs: { description: { story: 'Menu показывает Skeleton результатов, выбранные Chips остаются в поле.' } } },
