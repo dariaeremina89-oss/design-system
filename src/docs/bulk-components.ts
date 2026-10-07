@@ -48,19 +48,19 @@ const asyncAutocomplete = componentDoc({
 });
 
 const asyncMultiselect = componentDoc({
-  purpose: \`**AsyncMultiselect** — выбор нескольких значений через серверный поиск. Используйте для больших или удаленных списков, которые нельзя заранее загрузить целиком.\`,
-  anatomy: \`Поле поиска + выбранные Chips + Menu с ItemRow/Checkbox. Результаты текущего запроса приходят через options; выбранные значения живут независимо от следующего ответа сервера.\`,
-  api: \`- все основные field props Multiselect: value/defaultValue, label, required, caption/error/counter, size, clearable, disabled/skeleton;
-- \\\`options\\\` — результаты текущего серверного запроса;
-- \\\`selectedOptions\\\` — данные выбранных значений, которых уже нет в текущем ответе;
-- \\\`inputValue / defaultInputValue / onInputValueChange\\\` — поисковый запрос;
-- \\\`onFetch(value)\\\`, \\\`minCharacters\\\`, \\\`debounce\\\`, \\\`limit\\\`;
-- \\\`loading / loadError / idleText / noOptionsText\\\` — состояния списка;
-- \\\`selectionPosition\\\`, \\\`open / defaultOpen / onOpenChange\\\`, \\\`placement / menuMaxHeight\\\`.\`,
-  variants: \`Выбранные значения всегда показываются Chips, потому что поле одновременно должно сохранять выбор и принимать новый поисковый запрос. Loading, Load Error, Empty и Idle меняют только содержимое Menu.\`,
-  behavior: \`Запрос запускается после minCharacters и debounce. options не фильтруются локально повторно. Выбор не закрывает Menu и не очищает запрос, поэтому можно отметить несколько результатов одной выдачи. Новый серверный ответ не сбрасывает уже выбранные значения; для controlled preselected значений передавайте selectedOptions.\`,
-  responsive: \`Chips переносятся и увеличивают высоту поля. Menu совпадает с шириной поля и остается внутри viewport; типографика не уменьшается.\`,
-  accessibility: \`Поиск использует combobox + listbox/option и aria-activedescendant. Результаты имеют Checkbox-семантику выбора, Loading объявляется через aria-busy и live status. Arrow keys перемещают активный результат, Enter переключает его, Escape закрывает Menu.\`,
+  purpose: `**AsyncMultiselect** — выбор нескольких значений через серверный поиск. Используйте для больших или удаленных списков, которые нельзя заранее загрузить целиком.`,
+  anatomy: `Поле поиска + выбранные Chips + Menu с ItemRow/Checkbox. Результаты текущего запроса приходят через options; выбранные значения живут независимо от следующего ответа сервера.`,
+  api: `- все основные field props Multiselect: value/defaultValue, label, required, caption/error/counter, size, clearable, disabled/skeleton;
+- \`options\` — результаты текущего серверного запроса;
+- \`selectedOptions\` — данные выбранных значений, которых уже нет в текущем ответе;
+- \`inputValue / defaultInputValue / onInputValueChange\` — поисковый запрос;
+- \`onFetch(value)\`, \`minCharacters\`, \`debounce\`, \`limit\`;
+- \`loading / loadError / idleText / noOptionsText\` — состояния списка;
+- \`selectionPosition\`, \`open / defaultOpen / onOpenChange\`, \`placement / menuMaxHeight\`.`,
+  variants: `Выбранные значения всегда показываются Chips, потому что поле одновременно должно сохранять выбор и принимать новый поисковый запрос. Loading, Load Error, Empty и Idle меняют только содержимое Menu.`,
+  behavior: `Запрос запускается после minCharacters и debounce. options не фильтруются локально повторно. Выбор не закрывает Menu и не очищает запрос, поэтому можно отметить несколько результатов одной выдачи. Новый серверный ответ не сбрасывает уже выбранные значения; для controlled preselected значений передавайте selectedOptions.`,
+  responsive: `Chips переносятся и увеличивают высоту поля. Menu совпадает с шириной поля и остается внутри viewport; типографика не уменьшается.`,
+  accessibility: `Поиск использует combobox + listbox/option и aria-activedescendant. Результаты имеют Checkbox-семантику выбора, Loading объявляется через aria-busy и live status. Arrow keys перемещают активный результат, Enter переключает его, Escape закрывает Menu.`,
   checklist: [
     'Запрос не стартует раньше minCharacters и соблюдает debounce.',
     'Серверные options не фильтруются повторно на клиенте.',
