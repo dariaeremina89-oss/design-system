@@ -198,11 +198,16 @@ export function AsyncMultiselect({
   function toggle(option: MultiselectOption) {
     if (option.disabled || disabled) return;
     optionCache.current.set(option.value, option);
+    const selected = values.includes(option.value);
     commit(
-      values.includes(option.value)
+      selected
         ? values.filter(value => value !== option.value)
         : [...values, option.value],
     );
+    if (!selected) {
+      setInputValue('', 'clear');
+      setActiveValue(undefined);
+    }
   }
 
   function clear() {
