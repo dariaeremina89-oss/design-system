@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState, type DragEvent, type ReactNode } from 'react';
+import { Fragment, useRef, useState, type DragEvent, type PointerEvent, type ReactNode } from 'react';
 import { Button } from '../Button/Button';
 import { Dropzone, type DropzoneProps } from '../Dropzone/Dropzone';
 import { FileRow, type FileRowProps, type FileRowReorderDirection } from '../FileRow/FileRow';
@@ -66,6 +66,7 @@ export function MultipleFileInput({
 }: MultipleFileInputProps) {
   const count = files.length;
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dropSlot, setDropSlot] = useState<number | null>(null);
 
@@ -133,6 +134,39 @@ export function MultipleFileInput({
   const getDropSlot = (event: DragEvent<HTMLDivElement>, index: number) => {
     const rect = event.currentTarget.getBoundingClientRect();
     return event.clientY < rect.top + rect.height / 2 ? index : index + 1;
+  };
+
+  const getPointerDropSlot = (clientY: number) => {
+    const items = listRef.current?.querySelectorAll<HTMLElement>('.fdoc-multiple-file-input__item');
+    if (!items) return null;
+
+    const reorderableIndexes = files
+      .map((_, index) => index)
+      .filter(index => isRowReorderable(index));
+
+    if (!reorderableIndexes.length) return null;
+
+    for (const index of reorderableIndexes) {
+      const item = items[index];
+      if (!item) continue;
+      const rect = item.getBoundingClientRect();
+      if (clientY < rect.top + rect.height / 2) return index;
+    }
+
+    return reorderableIndexes[reorderableIndexes.length - 1] + 1;
+  };
+
+  const finishPointerReorder = (fromIndex: number, event: PointerEvent<HTMLButtonElement>) => {
+    if (event.type !== 'pointercancel') {
+      const slot = getPointerDropSlot(event.clientY);
+      if (slot !== null) {
+        const toIndex = fromIndex < slot ? slot - 1 : slot;
+        reorderFrom(fromIndex, toIndex);
+      }
+    }
+
+    setDragIndex(null);
+    setDropSlot(null);
   };
 
   const keyboardTarget = (index: number, direction: FileRowReorderDirection) =>
@@ -225,7 +259,7 @@ export function MultipleFileInput({
           )}
 
           <div className="fdoc-multiple-file-input__files">
-            <div className="fdoc-multiple-file-input__list">
+            <div ref={listRef} className="fdoc-multiple-file-input__list">
               {dropIndicator(0)}
               {files.map((file, index) => {
                 const rowReorderable = reorderable || file.reorderable;
@@ -261,6 +295,26 @@ export function MultipleFileInput({
                           file.onReorderDragEnd?.(event);
                           setDragIndex(null);
                           setDropSlot(null);
+                        }}
+                        onReorderPointerStart={event => {
+                          file.onReorderPointerStart?.(event);
+                          if (!rowReorderable || file.reorderDisabled) return;
+                          setDragIndex(index);
+                          setDropSlot(null);
+                        }}
+                        onReorderPointerMove={event => {
+                          file.onReorderPointerMove?.(event);
+                          if (!rowReorderable || file.reorderDisabled) return;
+                          setDropSlot(getPointerDropSlot(event.clientY));
+                        }}
+                        onReorderPointerEnd={event => {
+                          file.onReorderPointerEnd?.(event);
+                          if (!rowReorderable || file.reorderDisabled) {
+                            setDragIndex(null);
+                            setDropSlot(null);
+                            return;
+                          }
+                          finishPointerReorder(index, event);
                         }}
                         onReorderKey={direction => {
                           file.onReorderKey?.(direction);
