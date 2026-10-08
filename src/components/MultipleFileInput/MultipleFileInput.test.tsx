@@ -185,6 +185,26 @@ describe('MultipleFileInput', () => {
     expect(screen.queryByTestId('file-row-drop-indicator')).not.toBeInTheDocument();
   });
 
+  it('commits the visible drop position even when dragend fires without drop', () => {
+    const onReorder = vi.fn();
+    const { container } = render(
+      <MultipleFileInput files={files} reorderable onReorder={onReorder} />,
+    );
+
+    const list = container.querySelector('.fdoc-multiple-file-input__list') as HTMLElement;
+    const firstHandle = screen.getByRole('button', { name: 'Изменить порядок файла Первый.pdf' });
+
+    fireEvent.dragStart(firstHandle, { dataTransfer: { effectAllowed: '', setData: vi.fn() } });
+    fireEvent.dragOver(list, { clientY: Number.MAX_SAFE_INTEGER, dataTransfer: { dropEffect: '' } });
+
+    expect(screen.getByTestId('file-row-drop-indicator')).toBeInTheDocument();
+
+    fireEvent.dragEnd(firstHandle);
+
+    expect(onReorder).toHaveBeenCalledWith(0, 1);
+    expect(screen.queryByTestId('file-row-drop-indicator')).not.toBeInTheDocument();
+  });
+
   it('supports keyboard reorder from the handle', () => {
     const onReorder = vi.fn();
     render(<MultipleFileInput files={files} reorderable onReorder={onReorder} />);
