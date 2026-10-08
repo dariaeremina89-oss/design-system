@@ -51,16 +51,17 @@ test('autocomplete does not shrink component typography on mobile', async ({ pag
 });
 
 
-test('async autocomplete separates field validation from load error', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-selection-asyncautocomplete--invalid-characters&viewMode=story');
+test('async autocomplete shows external query validation inside Menu', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-selection-asyncautocomplete--external-validation&viewMode=story');
   const input = page.getByRole('combobox');
 
-  await input.fill('Яб!');
-  await expect(input).toHaveAttribute('aria-invalid', 'true');
-  await expect(page.getByTestId('input-error')).toContainText('Недопустимые символы');
-  await expect(page.getByRole('listbox')).toBeHidden();
-
-  await input.fill('Яб');
+  await input.fill('Иван%');
   await expect(input).not.toHaveAttribute('aria-invalid', 'true');
-  await expect(page.getByRole('option', { name: 'Яблоки' })).toBeVisible();
+  const menu = page.getByRole('listbox');
+  await expect(menu).toBeVisible();
+  await expect(menu).toContainText('Вы ввели недопустимые символы');
+
+  await input.fill('Иван');
+  await expect(menu).not.toContainText('Вы ввели недопустимые символы');
+  await expect(page.getByRole('option', { name: /Иванов Иван Иванович/ })).toBeVisible();
 });
