@@ -40,6 +40,13 @@
   color: var(--text-error-secondary);
 }
 
+.fdoc-autocomplete__message--error[data-variant='header'] .fdoc-link--inherit {
+  --link-text: currentColor;
+  --link-text-hover: currentColor;
+  --link-text-pressed: currentColor;
+  --link-text-disabled: currentColor;
+}
+
 .fdoc-autocomplete__status {
   position: absolute;
   width: 1px;
