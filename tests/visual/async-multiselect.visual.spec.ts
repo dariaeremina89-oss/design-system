@@ -50,3 +50,21 @@ test('async multiselect keeps typography and width on mobile', async ({ page }) 
   await expect(page.locator('.fdoc-chips__text').first()).toHaveCSS('font-size', '12px');
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 });
+
+
+test('async multiselect keeps chips while showing query validation error', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-selection-asyncmultiselect--invalid-characters&viewMode=story');
+  const input = page.getByRole('combobox');
+
+  await expect(page.getByRole('button', { name: 'Удалить: Дизайн' })).toBeVisible();
+
+  await input.fill('Фр@');
+  await expect(input).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.getByTestId('input-error')).toContainText('Недопустимые символы');
+  await expect(page.getByRole('listbox')).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Удалить: Дизайн' })).toBeVisible();
+
+  await input.fill('Фр');
+  await expect(input).not.toHaveAttribute('aria-invalid', 'true');
+  await expect(page.getByRole('option', { name: 'Фронтенд' })).toBeVisible();
+});
