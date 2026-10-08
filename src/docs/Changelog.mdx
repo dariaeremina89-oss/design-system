@@ -21,10 +21,10 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 ### AsyncAutocomplete и AsyncMultiselect
 
-- Добавлены отдельные интерактивные stories для validation error поискового запроса, включая ввод недопустимых символов.
-- Ошибка валидации показывается error-border и текстом под полем; Menu закрывается и серверный запрос не запускается до исправления значения.
-- Load Error остается отдельным состоянием внутри Menu. В AsyncMultiselect выбранные Chips сохраняются при ошибке поискового запроса.
-- loadError добавлен в Controls, сценарии разделения field error / load error покрыты browser-тестами.
+- Async Menu приведен к продуктовым сценариям поиска: Idle → External Menu Message → Loading → Results → No Results → Load Error.
+- Добавлен `menuMessage` для внешней обратной связи по поисковому запросу. Правила валидации не зашиты в компоненты: consumer сам определяет допустимые символы и форматы и решает, выполнять ли `onFetch`.
+- Validation Error самого поля остается отдельным состоянием. В примере внешней валидации сообщение показывается внутри Menu, поле не становится красным, а выбранные Chips в AsyncMultiselect сохраняются.
+- AsyncMultiselect получил `dropdownHeader / dropdownFooter` для той же структуры Menu, что и Autocomplete. Обновлены тексты No Results / Load Error, Controls, Docs и browser-тесты.
 
 ### PriceInput
 
