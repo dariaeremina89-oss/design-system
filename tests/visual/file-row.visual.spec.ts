@@ -180,6 +180,18 @@ test('MultipleFileInput shows consumer-provided reorder tooltip for templates', 
   const handle = page.getByRole('button', { name: 'Изменить порядок файла Договор.docx' });
   await handle.hover();
   await expect(page.getByRole('tooltip')).toHaveText('Изменить порядок шаблона');
+
+  await handle.evaluate(element => {
+    const data = new DataTransfer();
+    element.dispatchEvent(new DragEvent('dragstart', {
+      bubbles: true,
+      cancelable: true,
+      dataTransfer: data,
+      clientX: 8,
+      clientY: 8,
+    }));
+  });
+  await expect(page.getByRole('tooltip')).toHaveCount(0);
 });
 
 test('Disabled reorder handle still explains why reorder is unavailable', async ({ page }) => {
