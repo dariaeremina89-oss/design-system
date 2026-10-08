@@ -116,6 +116,7 @@ export function CodeInput({
   const isControlled = controlledValue !== undefined;
   const value = normalizeCode(isControlled ? controlledValue : internalValue, length);
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const skipFocusGuard = useRef(false);
 
   const hasError = hasRenderableContent(error);
   const hasCaption = hasRenderableContent(caption);
@@ -132,8 +133,9 @@ export function CodeInput({
     onValueChange?.(normalized);
   }
 
-  function focusCell(index: number) {
+  function focusCell(index: number, allowFutureCell = false) {
     const next = Math.max(0, Math.min(length - 1, index));
+    if (allowFutureCell) skipFocusGuard.current = true;
     inputRefs.current[next]?.focus();
   }
 
@@ -151,7 +153,7 @@ export function CodeInput({
 
     if (digits.length >= length) {
       commit(digits.slice(0, length));
-      focusCell(length - 1);
+      focusCell(length - 1, true);
       return;
     }
 
@@ -174,7 +176,7 @@ export function CodeInput({
 
     const effectiveIndex = Math.min(index, value.length);
     commit(replaceFrom(value, effectiveIndex, digits, length));
-    focusCell(Math.min(effectiveIndex + digits.length, length - 1));
+    focusCell(Math.min(effectiveIndex + digits.length, length - 1), true);
   }
 
   function handleKey(index: number, event: KeyboardEvent<HTMLInputElement>) {
@@ -285,6 +287,12 @@ export function CodeInput({
               onPaste={event => handlePaste(index, event)}
               onKeyDown={event => handleKey(index, event)}
               onFocus={event => {
+                if (skipFocusGuard.current) {
+                  skipFocusGuard.current = false;
+                  event.currentTarget.select();
+                  onFocus?.(event);
+                  return;
+                }
                 if (index > value.length) {
                   requestAnimationFrame(() => focusCell(value.length));
                   return;
