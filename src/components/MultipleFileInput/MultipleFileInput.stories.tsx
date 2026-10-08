@@ -168,6 +168,42 @@ export const TemplatesReorderable: Story = {
     },
   },
 };
+export const SingleTemplateReorder: Story = {
+  args: {
+    files: [
+      {
+        id: 'template-contract',
+        fileName: 'Договор.docx',
+        additionalContent: 'Шаблон',
+        sizeBytes: 2.1 * MB,
+        reorderable: true,
+        reorderDisabled: true,
+        reorderTooltip: 'Порядок можно изменить, когда шаблонов несколько',
+      },
+      {
+        id: 'passport',
+        fileName: 'Паспорт.pdf',
+        weight: '2,7 МБ',
+        sizeBytes: 2.7 * MB,
+      },
+      {
+        id: 'attachment',
+        fileName: 'Приложение.pdf',
+        weight: '1,3 МБ',
+        sizeBytes: 1.3 * MB,
+      },
+    ],
+    reorderable: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Один шаблон: drag handle остается видимым, но недоступен. Tooltip объясняет, что изменить порядок можно только при нескольких шаблонах.',
+      },
+    },
+  },
+};
+
 export const WithMenu: Story = { args: { reorderable: true, withMenu: true } as any };
 export const WithErrors: Story = {
   args: {
