@@ -180,7 +180,7 @@ export const SelectedAsChipsOnly: Story = {
   },
   render: args => {
     const [options, setOptions] = useState<MultiselectOption[]>([]);
-    const [value, setValue] = useState<string[]>([]);
+    const [value, setValue] = useState<string[]>(['design']);
 
     return (
       <AsyncMultiselect
@@ -259,6 +259,7 @@ export const MinimumCharacters: Story = {
   args: {
     minCharacters: 3,
     debounce: 0,
+    defaultOpen: true,
     placeholder: 'Начните ввод',
     idleText: 'Введите минимум 3 символа',
   },
@@ -295,6 +296,7 @@ export const SearchHint: Story = {
   args: {
     minCharacters: 3,
     debounce: 0,
+    defaultOpen: true,
     placeholder: 'Начните ввод',
     idleText: 'Введите ФИО, номер телефона или почту, минимум 3 символа',
   },
@@ -388,7 +390,7 @@ export const Filled: Story = {
 };
 
 export const Loading: Story = {
-  args: { options: [], defaultInputValue: 'Ди', loading: true },
+  args: { options: [], defaultInputValue: 'Ди', defaultOpen: true, loading: true },
   parameters: { docs: { description: { story: 'Menu показывает Skeleton результатов, выбранные Chips остаются в поле.' } } },
 };
 
@@ -396,6 +398,7 @@ export const NoResults: Story = {
   args: {
     options: [],
     defaultInputValue: 'Неизвестная команда',
+    defaultOpen: true,
     noOptionsText: 'Результаты не найдены. Проверьте введенные данные',
   },
 };
@@ -404,6 +407,7 @@ export const LoadError: Story = {
   args: {
     options: [],
     defaultInputValue: 'Ком',
+    defaultOpen: true,
     loadError: <>
       Не удалось получить список. Попробуйте вернуться позже. Если ошибка сохраняется, обратитесь в техподдержку{' '}
       <Link href="mailto:support@fdoc.ru" typography="inherit">support@fdoc.ru</Link>
@@ -412,7 +416,7 @@ export const LoadError: Story = {
 };
 
 export const FetchOnMount: Story = {
-  args: { options: allOptions, minCharacters: 0, debounce: 0 },
+  args: { options: allOptions, minCharacters: 0, debounce: 0, defaultOpen: true },
 };
 
 export const WithLeadingIcons: Story = {
@@ -424,5 +428,6 @@ export const WithLeadingIcons: Story = {
       { value: 'settings', label: 'Настройки', leadingIcon: 'gear' },
     ],
     defaultInputValue: 'д',
+    defaultOpen: true,
   },
 };
