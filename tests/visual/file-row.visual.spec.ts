@@ -343,3 +343,56 @@ test('MultipleFileInput commits the same position shown by DropIndicator at list
     'Приложение.pdf',
   ]);
 });
+
+
+test('MultipleFileInput commits the shown DropIndicator position on dragend without drop', async ({ page }) => {
+  await page.setViewportSize({ width: 700, height: 800 });
+  await page.goto('/iframe.html?id=components-inputs-multiplefileinput--templates-reorderable&viewMode=story');
+
+  const list = page.locator('.fdoc-multiple-file-input__list');
+  const rows = page.locator('.fdoc-multiple-file-input__item');
+  const names = rows.locator('.fdoc-file-item__name');
+  const handle = rows.nth(0).getByTestId('file-row-reorder-handle');
+  const thirdTemplate = await rows.nth(2).boundingBox();
+  if (!thirdTemplate) throw new Error('Third template row is not measurable');
+
+  await handle.evaluate(element => {
+    const data = new DataTransfer();
+    element.dispatchEvent(new DragEvent('dragstart', {
+      bubbles: true,
+      cancelable: true,
+      dataTransfer: data,
+      clientX: 12,
+      clientY: 12,
+    }));
+  });
+
+  await list.evaluate((element, y) => {
+    const data = new DataTransfer();
+    element.dispatchEvent(new DragEvent('dragover', {
+      bubbles: true,
+      cancelable: true,
+      dataTransfer: data,
+      clientX: 12,
+      clientY: y,
+    }));
+  }, thirdTemplate.y + thirdTemplate.height + 8);
+
+  await expect(page.getByTestId('file-row-drop-indicator')).toBeVisible();
+
+  await handle.evaluate(element => {
+    element.dispatchEvent(new DragEvent('dragend', {
+      bubbles: true,
+      cancelable: true,
+    }));
+  });
+
+  await expect(page.getByTestId('file-row-drop-indicator')).toHaveCount(0);
+  await expect(names).toHaveText([
+    'Заявление.docx',
+    'Согласие.docx',
+    'Договор.docx',
+    'Паспорт.pdf',
+    'Приложение.pdf',
+  ]);
+});
