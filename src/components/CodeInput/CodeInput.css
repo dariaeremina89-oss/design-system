@@ -1,0 +1,90 @@
+@import "../TextField/TextField.css";
+
+.fdoc-code-input {
+  min-width: 0;
+}
+
+.fdoc-code-input__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  width: max-content;
+  max-width: 100%;
+}
+
+.fdoc-code-input__cell {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: 48px;
+  height: 56px;
+  padding: var(--space-12) var(--space-16);
+  border: var(--border-small) solid var(--border-base-secondary);
+  border-radius: var(--radius-large);
+  outline: 0;
+  background: var(--background-base-secondary);
+  color: var(--text-base-default);
+  font-family: var(--page-h3-heading-family);
+  font-size: var(--page-h3-heading-size);
+  font-weight: var(--page-h3-heading-weight);
+  line-height: var(--page-h3-heading-line-height);
+  text-align: center;
+  caret-color: var(--text-base-default);
+  transition: border-color 120ms ease;
+}
+
+.fdoc-code-input__cell:hover:not(:disabled) {
+  border-color: var(--border-base-secondary-hover);
+}
+
+.fdoc-code-input__cell:focus {
+  border-width: var(--border-middle);
+  border-color: var(--border-primary-default);
+}
+
+.fdoc-code-input[data-error] .fdoc-code-input__cell {
+  border-color: var(--border-error-default);
+}
+
+.fdoc-code-input[data-error] .fdoc-code-input__cell:hover:not(:disabled) {
+  border-color: var(--border-error-hover);
+}
+
+.fdoc-code-input[data-error] .fdoc-code-input__cell:focus {
+  border-width: var(--border-middle);
+  border-color: var(--border-error-default);
+}
+
+.fdoc-code-input__cell:disabled {
+  border-color: var(--border-base-secondary-disabled);
+  background: var(--background-base-secondary-disabled);
+  color: var(--text-base-default-disabled);
+  cursor: not-allowed;
+}
+
+.fdoc-code-input--small .fdoc-code-input__cell {
+  width: 32px;
+  height: 48px;
+  padding: var(--space-6) var(--space-8);
+  border-radius: var(--radius-middle);
+  font-family: var(--page-subtitle-family);
+  font-size: var(--page-subtitle-size);
+  font-weight: var(--page-subtitle-weight-strong);
+  line-height: var(--page-subtitle-line-height);
+}
+
+.fdoc-code-input__cell--skeleton {
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.fdoc-code-input__cell--skeleton .fdoc-skeleton {
+  flex: 0 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fdoc-code-input__cell {
+    transition: none;
+  }
+}
