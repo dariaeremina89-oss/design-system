@@ -19,6 +19,13 @@ import { Meta } from '@storybook/addon-docs/blocks';
 - Реализованы controlled / uncontrolled value, авто-переход фокуса после ввода, Backspace, Arrow / Home / End и вставка полного кода с нормализацией цифр.
 - Добавлены Docs, Controls, unit- и browser-проверки, public export и Quality contract.
 
+### PriceInput
+
+- Заглушка PriceInput заменена рабочей специализацией Input без дублирования базовой геометрии и состояний.
+- Добавлены группировка тысяч, запятая для копеек, символ валюты, Clear, нормализация Paste и normalized value для формы.
+- Добавлены Figma-примеры Empty / Typing / Filled и три Error-сценария: Required, Limit и Validation Error.
+- Counter считает только введенные цифры; добавлены helpers диапазона 1–9 999 999,99 ₽, Docs, Quality contract и unit/browser-проверки.
+
 ## 07.10.2026
 
 ### AsyncMultiselect
