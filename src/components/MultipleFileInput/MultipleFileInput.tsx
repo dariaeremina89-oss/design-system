@@ -108,8 +108,17 @@ export function MultipleFileInput({
     fileInputRef.current?.click();
   };
 
+  const isRowReorderable = (index: number) =>
+    index >= 0 && index < files.length && (reorderable || files[index]?.reorderable === true);
+
   const reorderFrom = (fromIndex: number, toIndex: number) => {
-    if (fromIndex === toIndex || toIndex < 0 || toIndex >= files.length) return;
+    if (
+      fromIndex === toIndex ||
+      toIndex < 0 ||
+      toIndex >= files.length ||
+      !isRowReorderable(fromIndex) ||
+      !isRowReorderable(toIndex)
+    ) return;
     onReorder?.(fromIndex, toIndex);
   };
 
