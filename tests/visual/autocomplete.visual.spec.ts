@@ -42,6 +42,7 @@ test('async loading and load error use Menu states', async ({ page }) => {
   await expect(support).toHaveAttribute('href', 'mailto:support@fdoc.ru');
   await expect(support).toHaveCSS('font-size', '14px');
   await expect(support).toHaveCSS('line-height', '20px');
+  await expect(support).toHaveCSS('color', await error.evaluate(element => getComputedStyle(element).color));
 });
 
 test('autocomplete does not shrink component typography on mobile', async ({ page }) => {
