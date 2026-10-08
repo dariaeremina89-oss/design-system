@@ -3,14 +3,22 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { componentDocs } from '../../docs/bulk-components';
 import { qualityDocs } from '../../docs/quality';
 import { controlsParameters, pickFieldControls } from '../../docs/story-controls';
+import { ButtonLink } from '../Link/Link';
 import type { MultiselectOption } from '../Multiselect/Multiselect';
 import { AsyncMultiselect } from './AsyncMultiselect';
 
-const INVALID_QUERY_ERROR = 'Недопустимые символы. Используйте буквы, цифры, пробелы и дефис.';
+const SEARCH_IDLE_TEXT = 'Начните вводить ФИО, номер телефона или почту, чтобы найти сотрудника. Допустимы кириллица или латиница, цифры, пробел, символы + - @ .';
+const SEARCH_VALIDATION_TEXT = 'Вы ввели недопустимые символы. Допустимы кириллица или латиница, цифры, пробел, символы + - @ .';
 
-function hasInvalidQuery(value: string) {
-  return /[^\p{L}\p{N}\s-]/u.test(value);
+function hasExternalValidationError(value: string) {
+  return /[^\p{L}\p{N}\s+@.\-]/u.test(value);
 }
+
+const employeeOptions: MultiselectOption[] = [
+  { value: 'ivanov', label: 'Иванов Иван Иванович', description: '+7 (913) 000-00-00, pthomsen@icloud.com' },
+  { value: 'sidorov', label: 'Сидоров Иван Иванович', description: '+7 (425) 850-90-97, world@outlook.com' },
+  { value: 'petrov', label: 'Петров Иван Иванович', description: '+7 (838) 969-27-67, mkearl@aol.com' },
+];
 
 const allOptions: MultiselectOption[] = [
   { value: 'design', label: 'Дизайн' },
@@ -27,7 +35,7 @@ const controlOrder = [
   'inputValue', 'defaultInputValue', 'options', 'placeholder', 'caption', 'error', 'counter', 'size',
   'clearable', 'disabled', 'skeleton', 'loading',
   'minCharacters', 'debounce', 'limit', 'highlightMatches', 'selectionPosition',
-  'placement', 'menuMaxHeight', 'noOptionsText', 'idleText', 'loadingText', 'loadError',
+  'placement', 'menuMaxHeight', 'noOptionsText', 'idleText', 'loadingText', 'loadError', 'menuMessage', 'dropdownHeader', 'dropdownFooter',
   'onFetch', 'onValueChange', 'onInputValueChange', 'onClear', 'onOpenChange',
 ] as const;
 
@@ -75,6 +83,9 @@ const meta = {
     idleText: { control: 'text', table: { category: 'Content' } },
     loadingText: { control: 'text', table: { category: 'Content' } },
     loadError: { control: 'text', description: 'Ошибка загрузки результатов внутри Menu. Не равна validation error поля.', table: { category: 'State' } },
+    menuMessage: { control: 'text', description: 'Внешнее сообщение о поисковом запросе внутри Menu. Компонент сам запрос не валидирует.', table: { category: 'State' } },
+    dropdownHeader: { control: 'text', description: 'Неинтерактивный заголовок Menu.', table: { category: 'Content' } },
+    dropdownFooter: { control: 'text', description: 'Контент нижней области Menu.', table: { category: 'Content' } },
     onFetch: { action: 'fetch', table: { category: 'Events' } },
   },
 } satisfies Meta<typeof AsyncMultiselect>;
@@ -195,45 +206,51 @@ export const SelectedAsChipsOnly: Story = {
   },
 };
 
-export const InvalidCharacters: Story = {
+export const ExternalValidation: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Недопустимый поисковый запрос показывает validation error под полем. Выбранные Chips сохраняются, Menu закрывается, запрос данных не запускается до исправления значения.',
+        story: 'Пример внешней продуктовой валидации поискового запроса. AsyncMultiselect не проверяет строку сам: consumer передает menuMessage и решает, запускать ли onFetch. Выбранные Chips сохраняются.',
       },
     },
   },
   render: args => {
     const [options, setOptions] = useState<MultiselectOption[]>([]);
     const [inputValue, setInputValue] = useState('');
-    const [value, setValue] = useState<string[]>(['design']);
-    const invalid = hasInvalidQuery(inputValue);
-    const threshold = Math.max(0, args.minCharacters ?? 1);
-    const showResults = !invalid && inputValue.length >= threshold;
+    const [value, setValue] = useState<string[]>(['ivanov']);
+    const invalid = hasExternalValidationError(inputValue);
 
     return (
       <AsyncMultiselect
         {...args}
+        label="Сотрудники"
+        placeholder="Введите ФИО, номер телефона или почту"
         options={invalid ? [] : options}
         value={value}
-        selectedOptions={allOptions.filter(option => value.includes(option.value))}
+        selectedOptions={employeeOptions.filter(option => value.includes(option.value))}
         inputValue={inputValue}
-        error={invalid ? INVALID_QUERY_ERROR : undefined}
-        open={showResults}
+        minCharacters={1}
         debounce={0}
+        dropdownHeader="Ваши сотрудники"
+        dropdownFooter={<ButtonLink size="small" decoration={null}>Добавить нового сотрудника</ButtonLink>}
+        idleText={SEARCH_IDLE_TEXT}
+        menuMessage={invalid ? SEARCH_VALIDATION_TEXT : undefined}
+        noOptionsText="Сотрудники не найдены. Проверьте введенные данные"
         onValueChange={setValue}
         onInputValueChange={(next, reason) => {
           setInputValue(next);
-          if (hasInvalidQuery(next)) setOptions([]);
+          if (hasExternalValidationError(next)) setOptions([]);
           args.onInputValueChange?.(next, reason);
         }}
         onFetch={query => {
-          if (hasInvalidQuery(query)) return;
+          if (hasExternalValidationError(query)) return;
           const normalizedQuery = query.toLocaleLowerCase();
           setOptions(
-            allOptions.filter(option =>
+            employeeOptions.filter(option =>
               !value.includes(option.value)
-              && option.label.toLocaleLowerCase().includes(normalizedQuery),
+              && `${option.label} ${String(option.description ?? '')}`
+                .toLocaleLowerCase()
+                .includes(normalizedQuery),
             ),
           );
         }}
@@ -248,14 +265,18 @@ export const Loading: Story = {
 };
 
 export const NoResults: Story = {
-  args: { options: [], defaultInputValue: 'Неизвестная команда' },
+  args: {
+    options: [],
+    defaultInputValue: 'Неизвестная команда',
+    noOptionsText: 'Результаты не найдены. Проверьте введенные данные',
+  },
 };
 
 export const LoadError: Story = {
   args: {
     options: [],
     defaultInputValue: 'Ком',
-    loadError: 'Не удалось получить список. Попробуйте вернуться позже.',
+    loadError: 'Не удалось получить список. Попробуйте вернуться позже. Если ошибка сохраняется, обратитесь в техподдержку support@fdoc.ru',
   },
 };
 
