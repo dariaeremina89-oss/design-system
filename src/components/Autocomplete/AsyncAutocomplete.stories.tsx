@@ -166,42 +166,61 @@ export const ExternalValidation: Story = {
 
 export const MinimumCharacters: Story = {
   args: {
-    data: [],
     minCharacters: 3,
     debounce: 0,
+    defaultOpen: true,
     placeholder: 'Начните ввод',
   },
   parameters: {
     docs: {
       description: {
-        story: 'До достижения minCharacters Menu показывает динамический счетчик оставшихся символов: 3 → 2 → 1. После порога начинается обычный async-поиск.',
+        story: 'До достижения minCharacters Menu показывает, сколько символов осталось ввести. После достижения порога показываются результаты поиска.',
       },
     },
+  },
+  render: args => {
+    const [data, setData] = useState<AutocompleteItem[]>([]);
+
+    return (
+      <AsyncAutocomplete
+        {...args}
+        data={data}
+        onFetch={query => {
+          const normalizedQuery = query.toLocaleLowerCase();
+          setData(
+            allItems.filter(item =>
+              item.label.toLocaleLowerCase().includes(normalizedQuery),
+            ),
+          );
+        }}
+      />
+    );
   },
 };
 
 export const Loading: Story = {
-  args: { data: [], defaultInputValue: 'Яб', loading: true },
-  parameters: { docs: { description: { story: 'Нажмите на поле, чтобы показать Loading в Menu.' } } },
+  args: { data: [], defaultInputValue: 'Яб', defaultOpen: true, loading: true },
+  parameters: { docs: { description: { story: 'Menu сразу показывает Loading-состояние результатов.' } } },
 };
 
 export const NoResults: Story = {
-  args: { data: [], defaultInputValue: 'Киви', noOptionsText: 'Результаты не найдены. Проверьте введенные данные' },
-  parameters: { docs: { description: { story: 'Нажмите на поле, чтобы показать состояние без результатов.' } } },
+  args: { data: [], defaultInputValue: 'Киви', defaultOpen: true, noOptionsText: 'Результаты не найдены. Проверьте введенные данные' },
+  parameters: { docs: { description: { story: 'Menu сразу показывает состояние без результатов.' } } },
 };
 
 export const LoadError: Story = {
   args: {
     data: [],
     defaultInputValue: 'Яб',
+    defaultOpen: true,
     loadError: <>
       Не удалось получить список. Попробуйте вернуться позже. Если ошибка сохраняется, обратитесь в техподдержку{' '}
       <Link href="mailto:support@fdoc.ru" typography="inherit">support@fdoc.ru</Link>
     </>,
   },
-  parameters: { docs: { description: { story: 'Нажмите на поле, чтобы показать ошибку загрузки Menu.' } } },
+  parameters: { docs: { description: { story: 'Menu сразу показывает ошибку загрузки.' } } },
 };
 
 export const FetchOnMount: Story = {
-  args: { data: allItems, minCharacters: 0, debounce: 0 },
+  args: { data: allItems, minCharacters: 0, debounce: 0, defaultOpen: true },
 };
