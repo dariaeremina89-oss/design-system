@@ -1,5 +1,5 @@
 import { qualityDocs } from '../../docs/quality';
-import { Fragment, useRef, useState, type ComponentProps, type DragEvent, type PointerEvent, type ReactNode } from 'react';
+import { Fragment, useRef, useState, type ComponentProps, type PointerEvent, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Badge } from '../Badge/Badge';
 import { Button } from '../Button/Button';
@@ -64,11 +64,6 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
       next.splice(toIndex, 0, moved);
       return next;
     });
-  };
-
-  const getDropSlot = (event: DragEvent<HTMLDivElement>, index: number) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    return event.clientY < rect.top + rect.height / 2 ? index : index + 1;
   };
 
   const getClientDropSlot = (clientY: number) => {
