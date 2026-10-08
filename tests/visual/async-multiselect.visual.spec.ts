@@ -69,3 +69,19 @@ test('async multiselect keeps chips while showing external query validation in M
   await expect(menu).not.toContainText('Вы ввели недопустимые символы');
   await expect(page.getByRole('option', { name: /Сидоров Иван Иванович/ })).toBeVisible();
 });
+
+
+test('async multiselect shows remaining characters before search starts', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-selection-asyncmultiselect--minimum-characters&viewMode=story');
+  const input = page.getByRole('combobox');
+
+  await input.focus();
+  const menu = page.getByRole('listbox');
+  await expect(menu).toContainText('Введите еще 3 символа, чтобы начать поиск');
+
+  await input.fill('И');
+  await expect(menu).toContainText('Введите еще 2 символа, чтобы начать поиск');
+
+  await input.fill('Ив');
+  await expect(menu).toContainText('Введите еще 1 символ, чтобы начать поиск');
+});
