@@ -3,7 +3,6 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { componentDocs } from '../../docs/bulk-components';
 import { qualityDocs } from '../../docs/quality';
 import { controlsParameters, pickFieldControls } from '../../docs/story-controls';
-import { ButtonLink } from '../Link/Link';
 import type { MultiselectOption } from '../Multiselect/Multiselect';
 import { AsyncMultiselect } from './AsyncMultiselect';
 
@@ -35,7 +34,7 @@ const controlOrder = [
   'inputValue', 'defaultInputValue', 'options', 'placeholder', 'caption', 'error', 'counter', 'size',
   'clearable', 'disabled', 'skeleton', 'loading',
   'minCharacters', 'debounce', 'limit', 'highlightMatches', 'selectionPosition',
-  'placement', 'menuMaxHeight', 'noOptionsText', 'idleText', 'loadingText', 'loadError', 'menuMessage', 'dropdownHeader', 'dropdownFooter',
+  'placement', 'menuMaxHeight', 'noOptionsText', 'idleText', 'loadingText', 'loadError', 'menuMessage',
   'onFetch', 'onValueChange', 'onInputValueChange', 'onClear', 'onOpenChange',
 ] as const;
 
@@ -84,8 +83,6 @@ const meta = {
     loadingText: { control: 'text', table: { category: 'Content' } },
     loadError: { control: 'text', description: 'Ошибка загрузки результатов внутри Menu. Не равна validation error поля.', table: { category: 'State' } },
     menuMessage: { control: 'text', description: 'Внешнее сообщение о поисковом запросе внутри Menu. Компонент сам запрос не валидирует.', table: { category: 'State' } },
-    dropdownHeader: { control: 'text', description: 'Неинтерактивный заголовок Menu.', table: { category: 'Content' } },
-    dropdownFooter: { control: 'text', description: 'Контент нижней области Menu.', table: { category: 'Content' } },
     onFetch: { action: 'fetch', table: { category: 'Events' } },
   },
 } satisfies Meta<typeof AsyncMultiselect>;
@@ -231,8 +228,6 @@ export const ExternalValidation: Story = {
         inputValue={inputValue}
         minCharacters={1}
         debounce={0}
-        dropdownHeader="Ваши сотрудники"
-        dropdownFooter={<ButtonLink size="small" decoration={null}>Добавить нового сотрудника</ButtonLink>}
         idleText={SEARCH_IDLE_TEXT}
         menuMessage={invalid ? SEARCH_VALIDATION_TEXT : undefined}
         noOptionsText="Сотрудники не найдены. Проверьте введенные данные"
