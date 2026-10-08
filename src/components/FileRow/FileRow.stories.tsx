@@ -1,5 +1,5 @@
 import { qualityDocs } from '../../docs/quality';
-import { Fragment, useState, type ComponentProps, type DragEvent, type ReactNode } from 'react';
+import { Fragment, useRef, useState, type ComponentProps, type DragEvent, type PointerEvent, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Badge } from '../Badge/Badge';
 import { Button } from '../Button/Button';
@@ -35,6 +35,7 @@ function ExampleGrid({ children }: { children: ReactNode }) {
 
 function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
   const [rows, setRows] = useState(reorderableRows);
+  const listRef = useRef<HTMLDivElement>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dropSlot, setDropSlot] = useState<number | null>(null);
 
@@ -53,6 +54,29 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
     return event.clientY < rect.top + rect.height / 2 ? index : index + 1;
   };
 
+  const getPointerDropSlot = (clientY: number) => {
+    const items = listRef.current?.querySelectorAll<HTMLElement>('[data-testid^="reorder-row-"]');
+    if (!items?.length) return null;
+
+    for (let index = 0; index < items.length; index += 1) {
+      const rect = items[index].getBoundingClientRect();
+      if (clientY < rect.top + rect.height / 2) return index;
+    }
+
+    return items.length;
+  };
+
+  const finishPointerReorder = (fromIndex: number, event: PointerEvent<HTMLButtonElement>) => {
+    if (event.type !== 'pointercancel') {
+      const slot = getPointerDropSlot(event.clientY);
+      if (slot !== null) {
+        moveRow(fromIndex, fromIndex < slot ? slot - 1 : slot);
+      }
+    }
+    setDragIndex(null);
+    setDropSlot(null);
+  };
+
   const dropIndicator = (slot: number) =>
     dragIndex !== null && dropSlot === slot ? (
       <div className="fdoc-file-row-drop-indicator" data-testid="file-row-drop-indicator" aria-hidden="true" />
@@ -63,7 +87,7 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
       <span style={{ color: 'var(--text-base-secondary)', font: 'var(--page-caption)' }}>
         Тяни за drag handle слева. Перемещается вся строка; линия показывает новую позицию.
       </span>
-      <div style={{ display: 'flex', width: '100%', minWidth: 0, flexDirection: 'column', gap: 4 }}>
+      <div ref={listRef} style={{ display: 'flex', width: '100%', minWidth: 0, flexDirection: 'column', gap: 4 }}>
         {dropIndicator(0)}
         {rows.map((row, index) => (
           <Fragment key={row.id}>
@@ -100,6 +124,16 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
                 onReorderDragEnd={() => {
                   setDragIndex(null);
                   setDropSlot(null);
+                }}
+                onReorderPointerStart={() => {
+                  setDragIndex(index);
+                  setDropSlot(null);
+                }}
+                onReorderPointerMove={event => {
+                  setDropSlot(getPointerDropSlot(event.clientY));
+                }}
+                onReorderPointerEnd={event => {
+                  finishPointerReorder(index, event);
                 }}
                 onReorderKey={direction => moveRow(index, direction === 'up' ? index - 1 : index + 1)}
               />
@@ -149,6 +183,9 @@ const meta = {
     onMenuAction: { action: 'menuAction' },
     onReorderDragStart: { action: 'reorderDragStart' },
     onReorderDragEnd: { action: 'reorderDragEnd' },
+    onReorderPointerStart: { action: 'reorderPointerStart' },
+    onReorderPointerMove: { action: 'reorderPointerMove' },
+    onReorderPointerEnd: { action: 'reorderPointerEnd' },
     onReorderKey: { action: 'reorderKey' },
   },
   decorators: [Story => (
