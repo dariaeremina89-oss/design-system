@@ -342,8 +342,12 @@ export function Autocomplete({
     ? typeof menuMessage === 'string'
       ? menuMessage
       : 'Сообщение поиска'
-    : loading
-      ? loadingText
+    : !eligible && idleText !== undefined
+      ? typeof idleText === 'string'
+        ? idleText
+        : 'Введите дополнительные символы, чтобы начать поиск'
+      : loading
+        ? loadingText
       : loadError !== undefined
       ? typeof loadError === 'string'
         ? loadError
