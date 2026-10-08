@@ -157,7 +157,7 @@ export function MultipleFileInput({
     return event.clientY < rect.top + rect.height / 2 ? index : index + 1;
   };
 
-  const getPointerDropSlot = (clientY: number) => {
+  const getClientDropSlot = (clientY: number) => {
     const items = listRef.current?.querySelectorAll<HTMLElement>('.fdoc-multiple-file-input__item');
     if (!items) return null;
 
@@ -278,28 +278,27 @@ export function MultipleFileInput({
           )}
 
           <div className="fdoc-multiple-file-input__files">
-            <div ref={listRef} className="fdoc-multiple-file-input__list">
+            <div
+              ref={listRef}
+              className="fdoc-multiple-file-input__list"
+              onDragOver={event => {
+                if (dragIndex === null) return;
+                event.preventDefault();
+                event.dataTransfer.dropEffect = 'move';
+                updateDropSlot(getClientDropSlot(event.clientY));
+              }}
+              onDrop={event => {
+                if (dragIndex === null) return;
+                event.preventDefault();
+                reorderDragged();
+              }}
+            >
               {dropIndicator(0)}
               {files.map((file, index) => {
                 const rowReorderable = reorderable || file.reorderable;
                 return (
                   <Fragment key={file.id ?? `${file.fileName ?? 'file'}-${index}`}>
-                    <div
-                      className="fdoc-multiple-file-input__item"
-                      onDragOver={(event: DragEvent<HTMLDivElement>) => {
-                        if (rowReorderable && dragIndex !== null) {
-                          event.preventDefault();
-                          event.dataTransfer.dropEffect = 'move';
-                          updateDropSlot(getDropSlot(event, index));
-                        }
-                      }}
-                      onDrop={(event: DragEvent<HTMLDivElement>) => {
-                        if (rowReorderable && dragIndex !== null) {
-                          event.preventDefault();
-                          reorderDragged(dropSlotRef.current ?? getDropSlot(event, index));
-                        }
-                      }}
-                    >
+                    <div className="fdoc-multiple-file-input__item">
                       <FileRow
                         {...file}
                         reorderable={rowReorderable}
@@ -324,7 +323,7 @@ export function MultipleFileInput({
                         onReorderPointerMove={event => {
                           file.onReorderPointerMove?.(event);
                           if (!rowReorderable || file.reorderDisabled) return;
-                          updateDropSlot(getPointerDropSlot(event.clientY));
+                          updateDropSlot(getClientDropSlot(event.clientY));
                         }}
                         onReorderPointerEnd={event => {
                           file.onReorderPointerEnd?.(event);
