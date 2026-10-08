@@ -181,6 +181,29 @@ const codeInput = componentDoc({
   ],
 });
 
+const priceInput = componentDoc({
+  purpose: `**PriceInput** — специализированный Input для ввода денежной суммы. Используйте, когда значение нужно форматировать как цену с группировкой тысяч и копейками.`,
+  anatomy: `Компонент переиспользует Input: Label → поле → значение + символ валюты → Clear → Caption / Error / Counter. Отдельная геометрия поля не создается.`,
+  api: `- \`value / defaultValue\` — нормализованная строка без разделителей тысяч, с запятой перед копейками;
+- \`onValueChange(value)\` — нормализованное значение;
+- \`currency\` — символ валюты, по умолчанию ₽;
+- \`counter / maxLength\` считают введенные цифры, а не пробелы форматирования;
+- остальные field props наследуются от Input.`,
+  variants: `Размеры, Focus, Hover, Error, Disabled и Skeleton полностью наследуются от Input. Заполненное значение показывает Clear и символ валюты.`,
+  geometry: `Высота и padding совпадают с Input Medium / Small. Разряды разделяются неразрывными пробелами, копейки — запятой. Символ валюты визуально продолжает текст значения, но остается отдельным suffix внутри Input.`,
+  behavior: `Ввод очищается от пробелов и символа валюты, точка нормализуется в запятую, сохраняются только цифры и один десятичный разделитель. Копейки ограничены двумя знаками. Paste проходит ту же нормализацию. Clear сбрасывает полное значение.`,
+  responsive: `Компонент использует адаптив Input и не уменьшает типографику на мобильных. Форматирование не должно создавать horizontal overflow.`,
+  accessibility: `Используется один нативный textbox с inputMode=decimal. Символ валюты не меняет вводимое значение формы; при наличии name отправляется нормализованная строка через hidden input. Error и Caption наследуют aria-связи Input.`,
+  checklist: [
+    'Тысячи форматируются неразрывными пробелами.',
+    'Поддерживаются запятая и точка при вводе, значение нормализуется к запятой.',
+    'После запятой сохраняется не более двух цифр.',
+    'Counter считает цифры без разделителей и валюты.',
+    'Clear очищает и видимое, и нормализованное значение.',
+    'Focus / Error / Disabled / Skeleton совпадают с Input.',
+  ],
+});
+
 const phoneInput = componentDoc({
   purpose: `**PhoneInput** — специализированное поле одного телефонного номера на общей основе Input. Поддерживает российский и международный режимы.`,
   anatomy: `Input с переключателем типа номера, mask/placeholder и общей системой Label/Description/Helper. Leading/Trailing управляются самим компонентом и не переопределяются как у обычного Input.`,
@@ -409,6 +432,7 @@ const docs: Record<string, string> = {
   InfoBlock: infoBlock,
   Multiselect: multiselect,
   CodeInput: codeInput,
+  PriceInput: priceInput,
   PhoneInput: phoneInput,
   Checkbox: checkbox,
   Radio: radio,
