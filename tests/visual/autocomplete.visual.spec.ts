@@ -49,3 +49,18 @@ test('autocomplete does not shrink component typography on mobile', async ({ pag
   await expect(option.locator('.fdoc-item-row__title')).toHaveCSS('font-size', '14px');
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 });
+
+
+test('async autocomplete separates field validation from load error', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-selection-asyncautocomplete--invalid-characters&viewMode=story');
+  const input = page.getByRole('combobox');
+
+  await input.fill('Яб!');
+  await expect(input).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.getByTestId('input-error')).toContainText('Недопустимые символы');
+  await expect(page.getByRole('listbox')).toBeHidden();
+
+  await input.fill('Яб');
+  await expect(input).not.toHaveAttribute('aria-invalid', 'true');
+  await expect(page.getByRole('option', { name: 'Яблоки' })).toBeVisible();
+});
