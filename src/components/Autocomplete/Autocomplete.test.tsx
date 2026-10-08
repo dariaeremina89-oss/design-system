@@ -91,6 +91,16 @@ describe('Autocomplete', () => {
     );
     expect(within(screen.getByRole('listbox')).getByText('Ошибка загрузки')).toBeInTheDocument();
 
+    rerender(
+      <Autocomplete
+        data={[]}
+        defaultInputValue="Киви%"
+        defaultOpen
+        menuMessage="Вы ввели недопустимые символы"
+      />,
+    );
+    expect(within(screen.getByRole('listbox')).getByText('Вы ввели недопустимые символы')).toBeInTheDocument();
+
     rerender(<Autocomplete data={data} error="Выберите продукт" required />);
     const input = screen.getByRole('combobox');
     expect(input).toHaveAttribute('aria-invalid', 'true');
