@@ -49,35 +49,41 @@ function priceCharacters(value: string) {
     .replace(/\u00a0/g, '')
     .replace(/\s/g, '')
     .replace(/₽/g, '')
-    .replace(/\./g, ',');
+    .replace(/[^\d.,]/g, '');
 }
 
 export function normalizePriceValue(value: string, maxLength?: number) {
   const source = priceCharacters(value);
-  let result = '';
-  let comma = false;
+  if (!source) return '';
+
+  const separators = Array.from(source.matchAll(/[.,]/g));
+  const lastSeparator = separators.at(-1);
+  const digitsAfterLastSeparator = lastSeparator
+    ? source.slice((lastSeparator.index ?? -1) + 1).replace(/\D/g, '').length
+    : 0;
+  const decimalIndex = lastSeparator && digitsAfterLastSeparator <= 2
+    ? lastSeparator.index ?? -1
+    : -1;
+
+  let integer = '';
+  let decimal = '';
   let digits = 0;
 
-  for (const character of source) {
-    if (/\d/.test(character)) {
-      if (maxLength !== undefined && digits >= maxLength) continue;
-      result += character;
-      digits += 1;
-      continue;
+  for (let index = 0; index < source.length; index += 1) {
+    const character = source[index];
+    if (!/\d/.test(character)) continue;
+    if (maxLength !== undefined && digits >= maxLength) continue;
+
+    if (decimalIndex >= 0 && index > decimalIndex) {
+      if (decimal.length < 2) decimal += character;
+    } else {
+      integer += character;
     }
-    if (character === ',' && !comma) {
-      result += ',';
-      comma = true;
-    }
+    digits += 1;
   }
 
-  if (result.startsWith(',')) result = `0${result}`;
-
-  const [integer = '', decimal] = result.split(',');
-  const normalizedInteger = integer || (decimal !== undefined ? '0' : '');
-  if (decimal === undefined) return normalizedInteger;
-
-  return `${normalizedInteger},${decimal.slice(0, 2)}`;
+  if (decimalIndex < 0) return integer;
+  return `${integer || '0'},${decimal}`;
 }
 
 export function formatPriceValue(value: string) {
@@ -158,11 +164,14 @@ export function PriceInput({
     if (event.defaultPrevented) return;
 
     const text = event.clipboardData.getData('text');
-    const normalized = normalizePriceValue(text, maxLength);
-    if (!normalized) return;
+    if (!/\d/.test(text)) return;
 
     event.preventDefault();
-    commit(normalized);
+    const start = event.currentTarget.selectionStart ?? displayValue.length;
+    const end = event.currentTarget.selectionEnd ?? start;
+    const nextDisplayValue =
+      displayValue.slice(0, start) + text + displayValue.slice(end);
+    commit(nextDisplayValue);
   }
 
   return (
