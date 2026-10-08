@@ -120,8 +120,9 @@ export const InvalidCharacters: Story = {
   render: args => {
     const [data, setData] = useState<AutocompleteItem[]>([]);
     const [inputValue, setInputValue] = useState('');
-    const [open, setOpen] = useState(false);
     const invalid = hasInvalidQuery(inputValue);
+    const threshold = Math.max(0, args.minCharacters ?? 1);
+    const showResults = !invalid && inputValue.length >= threshold;
 
     return (
       <AsyncAutocomplete
@@ -129,16 +130,11 @@ export const InvalidCharacters: Story = {
         data={invalid ? [] : data}
         inputValue={inputValue}
         error={invalid ? INVALID_QUERY_ERROR : undefined}
-        open={invalid ? false : open}
-        minCharacters={invalid ? Number.MAX_SAFE_INTEGER : args.minCharacters}
+        open={showResults}
         debounce={0}
-        onOpenChange={next => setOpen(invalid ? false : next)}
         onInputValueChange={(next, reason) => {
           setInputValue(next);
-          if (hasInvalidQuery(next)) {
-            setData([]);
-            setOpen(false);
-          }
+          if (hasInvalidQuery(next)) setData([]);
           args.onInputValueChange?.(next, reason);
         }}
         onFetch={query => {
