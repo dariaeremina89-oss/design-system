@@ -74,7 +74,7 @@ export function MultipleFileInput({
 
   const updateDragIndex = (index: number | null) => {
     dragIndexRef.current = index;
-    updateDragIndex(index);
+    setDragIndex(index);
   };
 
   const updateDropSlot = (slot: number | null) => {
