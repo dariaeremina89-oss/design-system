@@ -89,6 +89,11 @@ test('async multiselect supports both Figma idle guidance variants', async ({ pa
   await input.focus();
   let menu = page.getByRole('listbox');
   await expect(menu).toContainText('Введите минимум 3 символа');
+  let idle = page.locator('.fdoc-async-multiselect__message--idle .fdoc-item-row__title');
+  await expect(idle).toHaveCSS('font-size', '14px');
+  await expect(idle).toHaveCSS('line-height', '20px');
+  await expect(idle).toHaveCSS('font-weight', '400');
+  await expect(idle).toHaveCSS('color', 'rgb(112, 116, 124)');
 
   await input.fill('И');
   await expect(menu).toContainText('Введите минимум 3 символа');
@@ -98,6 +103,10 @@ test('async multiselect supports both Figma idle guidance variants', async ({ pa
   await input.focus();
   menu = page.getByRole('listbox');
   await expect(menu).toContainText('Введите ФИО, номер телефона или почту, минимум 3 символа');
+  idle = page.locator('.fdoc-async-multiselect__message--idle .fdoc-item-row__title');
+  await expect(idle).toHaveCSS('font-size', '14px');
+  await expect(idle).toHaveCSS('line-height', '20px');
+  await expect(idle).toHaveCSS('color', 'rgb(112, 116, 124)');
 });
 
 
