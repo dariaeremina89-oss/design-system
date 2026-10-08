@@ -23,6 +23,7 @@ import {
   joinClassNames,
 } from '../TextField/TextField';
 import type { MultiselectOption, MultiselectProps } from '../Multiselect/Multiselect';
+import { resolveAsyncIdleText, type AsyncIdleText } from '../Autocomplete/asyncSearch';
 import './AsyncMultiselect.css';
 
 export type AsyncMultiselectInputChangeReason = 'input' | 'clear';
@@ -69,8 +70,8 @@ export interface AsyncMultiselectProps
   dropdownFooter?: ReactNode;
   /** Сообщение при пустом результате. */
   noOptionsText?: ReactNode;
-  /** Сообщение до достижения minCharacters. Если не задано, Menu закрыт. */
-  idleText?: ReactNode;
+  /** Сообщение до начала поиска. По умолчанию показывает, сколько символов осталось ввести. */
+  idleText?: AsyncIdleText;
   /** Подсвечивать совпадение запроса в label результата. */
   highlightMatches?: boolean;
   ref?: Ref<HTMLInputElement>;
@@ -151,6 +152,7 @@ export function AsyncMultiselect({
   const query = controlledInputValue ?? internalInputValue;
   const threshold = Math.max(0, minCharacters);
   const eligible = query.length >= threshold;
+  const resolvedIdleText = resolveAsyncIdleText(idleText, query.length, threshold);
   const visibleOptions = eligible ? (limit > 0 ? options.slice(0, limit) : options) : [];
   const enabledOptions = visibleOptions.filter(option => !option.disabled);
   const enabledIds = enabledOptions.map(option => option.value);
@@ -188,7 +190,7 @@ export function AsyncMultiselect({
 
   function canShowMenu(nextQuery = query) {
     return nextQuery.length >= threshold
-      || idleText !== undefined
+      || resolveAsyncIdleText(idleText, nextQuery.length, threshold) !== undefined
       || loading
       || loadError !== undefined
       || menuMessage !== undefined;
@@ -315,12 +317,12 @@ export function AsyncMultiselect({
       title: loadError,
     });
   } else if (!eligible) {
-    if (idleText !== undefined) {
+    if (resolvedIdleText !== undefined) {
       menuItems.push({
         id: '__idle',
         variant: 'header',
         className: 'fdoc-async-multiselect__message',
-        title: idleText,
+        title: resolvedIdleText,
       });
     }
   } else if (!visibleOptions.length) {
@@ -356,8 +358,12 @@ export function AsyncMultiselect({
     ? typeof menuMessage === 'string'
       ? menuMessage
       : 'Сообщение поиска'
-    : loading
-      ? loadingText
+    : !eligible && resolvedIdleText !== undefined
+      ? typeof resolvedIdleText === 'string'
+        ? resolvedIdleText
+        : 'Введите еще символы, чтобы начать поиск'
+      : loading
+        ? loadingText
       : loadError !== undefined
       ? typeof loadError === 'string'
         ? loadError
