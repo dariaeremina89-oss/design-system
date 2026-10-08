@@ -61,6 +61,12 @@ export interface AsyncMultiselectProps
   loadingText?: string;
   /** Ошибка загрузки списка. Не равна validation error поля. */
   loadError?: ReactNode;
+  /** Внешнее сообщение о текущем поисковом запросе внутри Menu. Компонент не валидирует запрос сам. */
+  menuMessage?: ReactNode;
+  /** Контент верхней строки Menu. */
+  dropdownHeader?: ReactNode;
+  /** Контент нижней области Menu. */
+  dropdownFooter?: ReactNode;
   /** Сообщение при пустом результате. */
   noOptionsText?: ReactNode;
   /** Сообщение до достижения minCharacters. Если не задано, Menu закрыт. */
@@ -87,6 +93,9 @@ export function AsyncMultiselect({
   loading = false,
   loadingText = 'Загрузка вариантов',
   loadError,
+  menuMessage,
+  dropdownHeader,
+  dropdownFooter,
   noOptionsText = 'Результаты не найдены',
   idleText,
   highlightMatches = true,
@@ -178,7 +187,11 @@ export function AsyncMultiselect({
   }
 
   function canShowMenu(nextQuery = query) {
-    return nextQuery.length >= threshold || idleText !== undefined || loading || loadError !== undefined;
+    return nextQuery.length >= threshold
+      || idleText !== undefined
+      || loading
+      || loadError !== undefined
+      || menuMessage !== undefined;
   }
 
   function showMenu(keyboard = false, fromEnd = false) {
@@ -280,7 +293,17 @@ export function AsyncMultiselect({
   }
 
   const menuItems: MenuItem[] = [];
-  if (loading) {
+  if (dropdownHeader !== undefined) {
+    menuItems.push({ id: '__header', variant: 'header', title: dropdownHeader });
+  }
+  if (menuMessage !== undefined) {
+    menuItems.push({
+      id: '__menu-message',
+      variant: 'header',
+      className: 'fdoc-async-multiselect__message',
+      title: menuMessage,
+    });
+  } else if (loading) {
     for (let index = 0; index < 5; index += 1) {
       menuItems.push({ id: `__loading-${index}`, state: 'skeleton', title: '' });
     }
@@ -329,9 +352,13 @@ export function AsyncMultiselect({
   const showPopup = open && menuItems.length > 0;
   const isError = hasRenderableContent(error);
   const resolvedCounter = counter === true ? String(values.length) : counter;
-  const accessibleStatus = loading
-    ? loadingText
-    : loadError !== undefined
+  const accessibleStatus = menuMessage !== undefined
+    ? typeof menuMessage === 'string'
+      ? menuMessage
+      : 'Сообщение поиска'
+    : loading
+      ? loadingText
+      : loadError !== undefined
       ? typeof loadError === 'string'
         ? loadError
         : 'Не удалось получить список'
@@ -511,6 +538,7 @@ export function AsyncMultiselect({
             onActiveChange={setActiveValue}
             focusItems={false}
             maxHeight={menuMaxHeight}
+            footer={dropdownFooter}
             onAction={item => {
               const option = visibleOptions.find(candidate => candidate.value === item.id);
               if (option) toggle(option);
