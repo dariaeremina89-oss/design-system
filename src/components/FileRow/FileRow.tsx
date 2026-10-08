@@ -45,6 +45,8 @@ export interface FileRowProps
   /** Preview внутри области Leading. */
   preview?: ReactNode;
   reorderable?: boolean;
+  /** Tooltip для reorder handle. Не показывается, если не передан. */
+  reorderTooltip?: ReactNode;
   deletable?: boolean;
   onDelete?: () => void;
   menuItems?: MenuItem[];
@@ -97,6 +99,7 @@ export function FileRow({
   leadingIcon = 'doc-paper',
   preview,
   reorderable = false,
+  reorderTooltip,
   deletable = false,
   onDelete,
   menuItems,
@@ -170,7 +173,7 @@ export function FileRow({
     }
   }
 
-  const reorderHandle = reorderable ? (
+  const reorderButton = reorderable ? (
     <ButtonIcon
       aria-label={`Изменить порядок файла ${fileName}`}
       aria-keyshortcuts="ArrowUp ArrowDown"
@@ -200,6 +203,12 @@ export function FileRow({
       }}
     />
   ) : undefined;
+
+  const reorderHandle = reorderButton && reorderTooltip ? (
+    <Tooltip content={reorderTooltip} placement="bottom" disabled={disabled}>
+      {reorderButton}
+    </Tooltip>
+  ) : reorderButton;
 
   return (
     <FileItemLayout
