@@ -134,6 +134,8 @@ const meta = {
     fileName: { control: 'text' },
     weight: { control: 'text' },
     reorderable: { control: 'boolean' },
+    reorderDisabled: { control: 'boolean' },
+    reorderTooltip: { control: 'text' },
     deletable: { control: 'boolean' },
     additionalContent: { control: false },
     trailingAction: { control: false },
