@@ -66,7 +66,7 @@ export interface AsyncMultiselectProps
   menuMessage?: ReactNode;
   /** Сообщение при пустом результате. */
   noOptionsText?: ReactNode;
-  /** Сообщение до начала поиска. По умолчанию показывает, сколько символов осталось ввести. */
+  /** Сообщение до начала поиска: готовый текст или функция от remaining/minCharacters. Без значения используется динамическая подсказка. */
   idleText?: AsyncIdleText;
   /** Подсвечивать совпадение запроса в label результата. */
   highlightMatches?: boolean;
