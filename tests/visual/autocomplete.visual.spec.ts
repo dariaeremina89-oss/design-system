@@ -65,3 +65,19 @@ test('async autocomplete shows external query validation inside Menu', async ({ 
   await expect(menu).not.toContainText('Вы ввели недопустимые символы');
   await expect(page.getByRole('option', { name: /Иванов Иван Иванович/ })).toBeVisible();
 });
+
+
+test('async autocomplete shows remaining characters before search starts', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-selection-asyncautocomplete--minimum-characters&viewMode=story');
+  const input = page.getByRole('combobox');
+
+  await input.focus();
+  const menu = page.getByRole('listbox');
+  await expect(menu).toContainText('Введите еще 3 символа, чтобы начать поиск');
+
+  await input.fill('И');
+  await expect(menu).toContainText('Введите еще 2 символа, чтобы начать поиск');
+
+  await input.fill('Ив');
+  await expect(menu).toContainText('Введите еще 1 символ, чтобы начать поиск');
+});
