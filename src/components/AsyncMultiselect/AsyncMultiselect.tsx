@@ -216,6 +216,9 @@ export function AsyncMultiselect({
     if (!selected) {
       setInputValue('', 'clear');
       setActiveValue(undefined);
+      changeOpen(false);
+      suppressOpenOnFocusRef.current = true;
+      inputRef.current?.focus();
     }
   }
 
