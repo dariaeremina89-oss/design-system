@@ -117,6 +117,54 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 export const Reorderable: Story = { args: { reorderable: true } };
+
+export const TemplatesReorderable: Story = {
+  args: {
+    files: [
+      {
+        id: 'template-contract',
+        fileName: 'Договор.docx',
+        additionalContent: 'Шаблон',
+        sizeBytes: 2.1 * MB,
+        reorderable: true,
+      },
+      {
+        id: 'template-application',
+        fileName: 'Заявление.docx',
+        additionalContent: 'Шаблон',
+        sizeBytes: 1.8 * MB,
+        reorderable: true,
+      },
+      {
+        id: 'template-consent',
+        fileName: 'Согласие.docx',
+        additionalContent: 'Шаблон',
+        sizeBytes: 1.2 * MB,
+        reorderable: true,
+      },
+      {
+        id: 'passport',
+        fileName: 'Паспорт.pdf',
+        weight: '2,7 МБ',
+        sizeBytes: 2.7 * MB,
+      },
+      {
+        id: 'attachment',
+        fileName: 'Приложение.pdf',
+        weight: '1,3 МБ',
+        sizeBytes: 1.3 * MB,
+      },
+    ],
+    reorderable: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Частичный reorder: менять порядок можно только у шаблонов в верхней части списка. Обычные документы ниже не имеют drag handle и не участвуют в перестановке.',
+      },
+    },
+  },
+};
 export const WithMenu: Story = { args: { reorderable: true, withMenu: true } as any };
 export const WithErrors: Story = {
   args: {
