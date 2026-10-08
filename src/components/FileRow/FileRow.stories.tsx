@@ -71,7 +71,7 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
     return event.clientY < rect.top + rect.height / 2 ? index : index + 1;
   };
 
-  const getPointerDropSlot = (clientY: number) => {
+  const getClientDropSlot = (clientY: number) => {
     const items = listRef.current?.querySelectorAll<HTMLElement>('[data-testid^="reorder-row-"]');
     if (!items?.length) return null;
 
@@ -101,29 +101,27 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
       <span style={{ color: 'var(--text-base-secondary)', font: 'var(--page-caption)' }}>
         Тяни за drag handle слева. Перемещается вся строка; линия показывает новую позицию.
       </span>
-      <div ref={listRef} style={{ display: 'flex', width: '100%', minWidth: 0, flexDirection: 'column', gap: 4 }}>
+      <div
+        ref={listRef}
+        style={{ display: 'flex', width: '100%', minWidth: 0, flexDirection: 'column', gap: 4 }}
+        onDragOver={event => {
+          if (dragIndex === null) return;
+          event.preventDefault();
+          event.dataTransfer.dropEffect = 'move';
+          updateDropSlot(getClientDropSlot(event.clientY));
+        }}
+        onDrop={event => {
+          if (dragIndex === null) return;
+          event.preventDefault();
+          const slot = dropSlotRef.current;
+          if (slot !== null) moveRow(dragIndex, dragIndex < slot ? slot - 1 : slot);
+          clearReorderState();
+        }}
+      >
         {dropIndicator(0)}
         {rows.map((row, index) => (
           <Fragment key={row.id}>
-            <div
-              data-testid={`reorder-row-${row.id}`}
-              onDragOver={(event: DragEvent<HTMLDivElement>) => {
-                if (dragIndex !== null) {
-                  event.preventDefault();
-                  event.dataTransfer.dropEffect = 'move';
-                  updateDropSlot(getDropSlot(event, index));
-                }
-              }}
-              onDrop={(event: DragEvent<HTMLDivElement>) => {
-                if (dragIndex !== null) {
-                  event.preventDefault();
-                  const slot = dropSlotRef.current ?? getDropSlot(event, index);
-                  const toIndex = dragIndex < slot ? slot - 1 : slot;
-                  moveRow(dragIndex, toIndex);
-                  clearReorderState();
-                }
-              }}
-            >
+            <div data-testid={`reorder-row-${row.id}`}>
               <FileRow
                 {...args}
                 reorderable
@@ -143,7 +141,7 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
                   updateDropSlot(null);
                 }}
                 onReorderPointerMove={event => {
-                  updateDropSlot(getPointerDropSlot(event.clientY));
+                  updateDropSlot(getClientDropSlot(event.clientY));
                 }}
                 onReorderPointerEnd={event => {
                   finishPointerReorder(index, event);
