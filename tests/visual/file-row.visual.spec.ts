@@ -270,3 +270,76 @@ test('MultipleFileInput reorders template rows with touch pointer events at 320p
     'Приложение.pdf',
   ]);
 });
+
+
+test('MultipleFileInput commits the same position shown by DropIndicator at list edges', async ({ page }) => {
+  await page.setViewportSize({ width: 700, height: 800 });
+  await page.goto('/iframe.html?id=components-inputs-multiplefileinput--templates-reorderable&viewMode=story');
+
+  const list = page.locator('.fdoc-multiple-file-input__list');
+  const rows = page.locator('.fdoc-multiple-file-input__item');
+  const names = rows.locator('.fdoc-file-item__name');
+
+  const drag = async (sourceIndex: number, clientY: number) => {
+    const handle = rows.nth(sourceIndex).getByTestId('file-row-reorder-handle');
+
+    await handle.evaluate(element => {
+      const data = new DataTransfer();
+      element.dispatchEvent(new DragEvent('dragstart', {
+        bubbles: true,
+        cancelable: true,
+        dataTransfer: data,
+        clientX: 12,
+        clientY: 12,
+      }));
+    });
+
+    await list.evaluate((element, y) => {
+      const data = new DataTransfer();
+      element.dispatchEvent(new DragEvent('dragover', {
+        bubbles: true,
+        cancelable: true,
+        dataTransfer: data,
+        clientX: 12,
+        clientY: y,
+      }));
+    }, clientY);
+
+    await expect(page.getByTestId('file-row-drop-indicator')).toBeVisible();
+
+    await list.evaluate((element, y) => {
+      const data = new DataTransfer();
+      element.dispatchEvent(new DragEvent('drop', {
+        bubbles: true,
+        cancelable: true,
+        dataTransfer: data,
+        clientX: 12,
+        clientY: y,
+      }));
+    }, clientY);
+  };
+
+  const thirdTemplateBox = await rows.nth(2).boundingBox();
+  if (!thirdTemplateBox) throw new Error('Third template row is not measurable');
+
+  await drag(0, thirdTemplateBox.y + thirdTemplateBox.height + 12);
+  await expect(names).toHaveText([
+    'Заявление.docx',
+    'Согласие.docx',
+    'Договор.docx',
+    'Паспорт.pdf',
+    'Приложение.pdf',
+  ]);
+
+  const firstTemplateBox = await rows.nth(0).boundingBox();
+  if (!firstTemplateBox) throw new Error('First template row is not measurable');
+
+  await drag(2, firstTemplateBox.y - 12);
+  await expect(names).toHaveText([
+    'Договор.docx',
+    'Заявление.docx',
+    'Согласие.docx',
+    'Паспорт.pdf',
+    'Приложение.pdf',
+  ]);
+});
