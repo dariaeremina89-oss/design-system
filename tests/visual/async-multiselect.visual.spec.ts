@@ -98,6 +98,10 @@ test('async multiselect supports both Figma idle guidance variants', async ({ pa
   await input.fill('И');
   await expect(menu).toContainText('Введите минимум 3 символа');
 
+  await input.fill('Ива');
+  await expect(menu).not.toContainText('Введите минимум 3 символа');
+  await expect(page.getByRole('option', { name: /Иванов Иван Иванович/ })).toBeVisible();
+
   await page.goto('/iframe.html?id=components-selection-asyncmultiselect--search-hint&viewMode=story');
   input = page.getByRole('combobox');
   await input.focus();
@@ -107,6 +111,10 @@ test('async multiselect supports both Figma idle guidance variants', async ({ pa
   await expect(idle).toHaveCSS('font-size', '14px');
   await expect(idle).toHaveCSS('line-height', '20px');
   await expect(idle).toHaveCSS('color', 'rgb(112, 116, 124)');
+
+  await input.fill('Сид');
+  await expect(menu).not.toContainText('Введите ФИО, номер телефона или почту, минимум 3 символа');
+  await expect(page.getByRole('option', { name: /Сидоров Иван Иванович/ })).toBeVisible();
 });
 
 
