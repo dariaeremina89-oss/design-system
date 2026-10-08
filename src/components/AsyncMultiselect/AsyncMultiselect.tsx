@@ -64,10 +64,6 @@ export interface AsyncMultiselectProps
   loadError?: ReactNode;
   /** Внешнее сообщение о текущем поисковом запросе внутри Menu. Компонент не валидирует запрос сам. */
   menuMessage?: ReactNode;
-  /** Контент верхней строки Menu. */
-  dropdownHeader?: ReactNode;
-  /** Контент нижней области Menu. */
-  dropdownFooter?: ReactNode;
   /** Сообщение при пустом результате. */
   noOptionsText?: ReactNode;
   /** Сообщение до начала поиска. По умолчанию показывает, сколько символов осталось ввести. */
@@ -95,8 +91,6 @@ export function AsyncMultiselect({
   loadingText = 'Загрузка вариантов',
   loadError,
   menuMessage,
-  dropdownHeader,
-  dropdownFooter,
   noOptionsText = 'Результаты не найдены',
   idleText,
   highlightMatches = true,
@@ -295,9 +289,6 @@ export function AsyncMultiselect({
   }
 
   const menuItems: MenuItem[] = [];
-  if (dropdownHeader !== undefined) {
-    menuItems.push({ id: '__header', variant: 'header', title: dropdownHeader });
-  }
   if (menuMessage !== undefined) {
     menuItems.push({
       id: '__menu-message',
@@ -544,7 +535,6 @@ export function AsyncMultiselect({
             onActiveChange={setActiveValue}
             focusItems={false}
             maxHeight={menuMaxHeight}
-            footer={dropdownFooter}
             onAction={item => {
               const option = visibleOptions.find(candidate => candidate.value === item.id);
               if (option) toggle(option);
