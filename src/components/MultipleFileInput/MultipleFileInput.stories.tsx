@@ -127,6 +127,7 @@ export const TemplatesReorderable: Story = {
         additionalContent: 'Шаблон',
         sizeBytes: 2.1 * MB,
         reorderable: true,
+        reorderTooltip: 'Изменить порядок шаблона',
       },
       {
         id: 'template-application',
@@ -134,6 +135,7 @@ export const TemplatesReorderable: Story = {
         additionalContent: 'Шаблон',
         sizeBytes: 1.8 * MB,
         reorderable: true,
+        reorderTooltip: 'Изменить порядок шаблона',
       },
       {
         id: 'template-consent',
@@ -141,6 +143,7 @@ export const TemplatesReorderable: Story = {
         additionalContent: 'Шаблон',
         sizeBytes: 1.2 * MB,
         reorderable: true,
+        reorderTooltip: 'Изменить порядок шаблона',
       },
       {
         id: 'passport',
