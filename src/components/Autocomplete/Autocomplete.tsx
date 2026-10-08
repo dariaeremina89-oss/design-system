@@ -311,7 +311,7 @@ export function Autocomplete({
       menuItems.push({
         id: '__idle',
         variant: 'header',
-        className: 'fdoc-autocomplete__message',
+        className: 'fdoc-autocomplete__message fdoc-autocomplete__message--idle',
         title: idleText,
       });
     }
