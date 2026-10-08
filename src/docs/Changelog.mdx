@@ -19,6 +19,13 @@ import { Meta } from '@storybook/addon-docs/blocks';
 - Реализованы controlled / uncontrolled value, авто-переход фокуса после ввода, Backspace, Arrow / Home / End и вставка полного кода с нормализацией цифр.
 - Добавлены Docs, Controls, unit- и browser-проверки, public export и Quality contract.
 
+### AsyncAutocomplete и AsyncMultiselect
+
+- Добавлены отдельные интерактивные stories для validation error поискового запроса, включая ввод недопустимых символов.
+- Ошибка валидации показывается error-border и текстом под полем; Menu закрывается и серверный запрос не запускается до исправления значения.
+- Load Error остается отдельным состоянием внутри Menu. В AsyncMultiselect выбранные Chips сохраняются при ошибке поискового запроса.
+- loadError добавлен в Controls, сценарии разделения field error / load error покрыты browser-тестами.
+
 ### PriceInput
 
 - Заглушка PriceInput заменена рабочей специализацией Input без дублирования базовой геометрии и состояний.
