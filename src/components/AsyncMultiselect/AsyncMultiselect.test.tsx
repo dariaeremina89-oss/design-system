@@ -47,6 +47,28 @@ describe('AsyncMultiselect', () => {
     expect(fetch).toHaveBeenCalledExactlyOnceWith('Ди');
   });
 
+  it('shows and updates the remaining character hint before search starts', () => {
+    render(
+      <AsyncMultiselect
+        options={[]}
+        minCharacters={3}
+        debounce={0}
+        onFetch={() => undefined}
+        aria-label="Команды"
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+    fireEvent.focus(input);
+    expect(screen.getByRole('listbox')).toHaveTextContent('Введите еще 3 символа, чтобы начать поиск');
+
+    fireEvent.change(input, { target: { value: 'Д' } });
+    expect(screen.getByRole('listbox')).toHaveTextContent('Введите еще 2 символа, чтобы начать поиск');
+
+    fireEvent.change(input, { target: { value: 'Ди' } });
+    expect(screen.getByRole('listbox')).toHaveTextContent('Введите еще 1 символ, чтобы начать поиск');
+  });
+
   it('fetches on mount when minCharacters is zero', async () => {
     vi.useFakeTimers();
     const fetch = vi.fn();
