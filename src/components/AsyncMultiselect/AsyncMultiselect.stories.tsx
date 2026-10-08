@@ -206,9 +206,10 @@ export const InvalidCharacters: Story = {
   render: args => {
     const [options, setOptions] = useState<MultiselectOption[]>([]);
     const [inputValue, setInputValue] = useState('');
-    const [open, setOpen] = useState(false);
     const [value, setValue] = useState<string[]>(['design']);
     const invalid = hasInvalidQuery(inputValue);
+    const threshold = Math.max(0, args.minCharacters ?? 1);
+    const showResults = !invalid && inputValue.length >= threshold;
 
     return (
       <AsyncMultiselect
@@ -218,17 +219,12 @@ export const InvalidCharacters: Story = {
         selectedOptions={allOptions.filter(option => value.includes(option.value))}
         inputValue={inputValue}
         error={invalid ? INVALID_QUERY_ERROR : undefined}
-        open={invalid ? false : open}
-        minCharacters={invalid ? Number.MAX_SAFE_INTEGER : args.minCharacters}
+        open={showResults}
         debounce={0}
         onValueChange={setValue}
-        onOpenChange={next => setOpen(invalid ? false : next)}
         onInputValueChange={(next, reason) => {
           setInputValue(next);
-          if (hasInvalidQuery(next)) {
-            setOptions([]);
-            setOpen(false);
-          }
+          if (hasInvalidQuery(next)) setOptions([]);
           args.onInputValueChange?.(next, reason);
         }}
         onFetch={query => {
