@@ -35,5 +35,7 @@ export const fileRowDocs = componentDoc({
     'Длинное имя сокращается, а полный текст остается доступен.',
     'Additional/Trailing child получает disabled через render-slot, если это требуется.',
     'Drag и ArrowUp/ArrowDown переставляют один и тот же объект файла.',
+    'reorderDisabled блокирует только handle, не всю FileRow.',
+    'reorderTooltip опционален; его текст задается снаружи.',
   ],
 });
