@@ -138,9 +138,10 @@ export function CodeInput({
   }
 
   function handleChange(index: number, raw: string) {
+    const effectiveIndex = Math.min(index, value.length);
     if (raw === '') {
-      if (index < value.length) {
-        commit(value.slice(0, index) + value.slice(index + 1));
+      if (effectiveIndex < value.length) {
+        commit(value.slice(0, effectiveIndex) + value.slice(effectiveIndex + 1));
       }
       return;
     }
@@ -148,18 +149,32 @@ export function CodeInput({
     const digits = raw.replace(/\D/g, '');
     if (!digits) return;
 
-    const next = replaceFrom(value, index, digits, length);
+    if (digits.length >= length) {
+      commit(digits.slice(0, length));
+      focusCell(length - 1);
+      return;
+    }
+
+    const next = replaceFrom(value, effectiveIndex, digits, length);
     commit(next);
-    const target = Math.min(index + digits.length, length - 1);
-    if (index + digits.length < length) focusCell(target);
+    const target = Math.min(effectiveIndex + digits.length, length - 1);
+    if (effectiveIndex + digits.length < length) focusCell(target);
   }
 
   function handlePaste(index: number, event: ClipboardEvent<HTMLInputElement>) {
     const digits = event.clipboardData.getData('text').replace(/\D/g, '');
     if (!digits) return;
     event.preventDefault();
-    commit(replaceFrom(value, index, digits, length));
-    focusCell(Math.min(index + digits.length, length - 1));
+
+    if (digits.length >= length) {
+      commit(digits.slice(0, length));
+      focusCell(length - 1);
+      return;
+    }
+
+    const effectiveIndex = Math.min(index, value.length);
+    commit(replaceFrom(value, effectiveIndex, digits, length));
+    focusCell(Math.min(effectiveIndex + digits.length, length - 1));
   }
 
   function handleKey(index: number, event: KeyboardEvent<HTMLInputElement>) {
@@ -270,6 +285,10 @@ export function CodeInput({
               onPaste={event => handlePaste(index, event)}
               onKeyDown={event => handleKey(index, event)}
               onFocus={event => {
+                if (index > value.length) {
+                  requestAnimationFrame(() => focusCell(value.length));
+                  return;
+                }
                 event.currentTarget.select();
                 onFocus?.(event);
               }}
