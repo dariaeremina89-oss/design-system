@@ -19,6 +19,19 @@ export type { InputProps, InputSize } from './components/Input/Input';
 export { CodeInput } from './components/CodeInput/CodeInput';
 export type { CodeInputProps, CodeInputSize, CodeInputLength } from './components/CodeInput/CodeInput';
 export {
+  PriceInput,
+  PRICE_INPUT_REQUIRED_ERROR,
+  PRICE_INPUT_RANGE_ERROR,
+  PRICE_INPUT_FORMAT_ERROR,
+  PRICE_INPUT_MIN,
+  PRICE_INPUT_MAX,
+  normalizePriceValue,
+  formatPriceValue,
+  priceValueToNumber,
+  isValidPriceValue,
+} from './components/PriceInput/PriceInput';
+export type { PriceInputProps } from './components/PriceInput/PriceInput';
+export {
   PhoneInput,
   PHONE_INPUT_REQUIRED_ERROR,
   PHONE_INPUT_FORMAT_ERROR,
