@@ -139,3 +139,36 @@ test('FileRow menu glyphs stay 24px in built-in and custom slots, including disa
     }
   }
 });
+
+
+test('FileRow keeps its slot but hides the source row while dragging', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-elements-filerow--reorderable&viewMode=story');
+
+  const row = page.getByTestId('file-row').first();
+  const handle = row.getByTestId('file-row-reorder-handle');
+  const before = await row.boundingBox();
+
+  await handle.evaluate(element => {
+    const data = new DataTransfer();
+    element.dispatchEvent(new DragEvent('dragstart', {
+      bubbles: true,
+      cancelable: true,
+      dataTransfer: data,
+      clientX: 8,
+      clientY: 8,
+    }));
+  });
+
+  await expect(row).toHaveAttribute('data-file-row-dragging', 'true');
+  await expect(row).toHaveCSS('opacity', '0');
+  const during = await row.boundingBox();
+  expect(during?.width).toBe(before?.width);
+  expect(during?.height).toBe(before?.height);
+
+  await handle.evaluate(element => {
+    element.dispatchEvent(new DragEvent('dragend', { bubbles: true, cancelable: true }));
+  });
+
+  await expect(row).not.toHaveAttribute('data-file-row-dragging');
+  await expect(row).toHaveCSS('opacity', '1');
+});
