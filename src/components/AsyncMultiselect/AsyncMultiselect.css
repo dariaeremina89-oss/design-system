@@ -56,6 +56,10 @@
   word-break: normal;
 }
 
+.fdoc-async-multiselect__message--idle[data-variant='header'] .fdoc-item-row__title {
+  color: var(--text-base-secondary);
+}
+
 .fdoc-async-multiselect__message--error[data-variant='header'] .fdoc-item-row__title {
   color: var(--text-error-secondary);
 }
