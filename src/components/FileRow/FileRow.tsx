@@ -1,4 +1,4 @@
-import { useState, type DragEvent, type HTMLAttributes, type ReactNode } from 'react';
+import { useRef, useState, type DragEvent, type HTMLAttributes, type PointerEvent, type ReactNode } from 'react';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import {
   FileItemLayout,
@@ -54,9 +54,13 @@ export interface FileRowProps
   menuItems?: MenuItem[];
   menuAriaLabel?: string;
   onMenuAction?: (item: MenuItem) => void;
-  /** Drag начинается только с Reorder handle. */
+  /** Desktop drag начинается только с Reorder handle. */
   onReorderDragStart?: (event: DragEvent<HTMLButtonElement>) => void;
   onReorderDragEnd?: (event: DragEvent<HTMLButtonElement>) => void;
+  /** Touch/pen reorder через Pointer Events. */
+  onReorderPointerStart?: (event: PointerEvent<HTMLButtonElement>) => void;
+  onReorderPointerMove?: (event: PointerEvent<HTMLButtonElement>) => void;
+  onReorderPointerEnd?: (event: PointerEvent<HTMLButtonElement>) => void;
   /** Клавиатурное изменение порядка. */
   onReorderKey?: (direction: FileRowReorderDirection) => void;
 }
@@ -110,12 +114,17 @@ export function FileRow({
   onMenuAction,
   onReorderDragStart,
   onReorderDragEnd,
+  onReorderPointerStart,
+  onReorderPointerMove,
+  onReorderPointerEnd,
   onReorderKey,
   className = '',
   ...props
 }: FileRowProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const pointerPreviewRef = useRef<HTMLElement | null>(null);
+  const pointerOffsetRef = useRef({ x: 0, y: 0 });
 
   if (state === 'skeleton') {
     return <Skeleton className={className} width="100%" height={48} shape="rounded" data-testid="file-row-skeleton" />;
@@ -197,6 +206,67 @@ export function FileRow({
       onDragEnd={event => {
         setDragging(false);
         onReorderDragEnd?.(event);
+      }}
+      onPointerDown={event => {
+        if (event.pointerType === 'mouse' || disabled || reorderDisabled) return;
+
+        const row = event.currentTarget.closest('.fdoc-file-row') as HTMLElement | null;
+        if (!row) return;
+
+        event.preventDefault();
+        const rect = row.getBoundingClientRect();
+        const pointerPreview = row.cloneNode(true) as HTMLElement;
+        pointerPreview.classList.add('fdoc-file-row__pointer-preview');
+        pointerPreview.style.width = `${rect.width}px`;
+        pointerPreview.style.left = `${rect.left}px`;
+        pointerPreview.style.top = `${rect.top}px`;
+        pointerPreview.setAttribute('aria-hidden', 'true');
+        pointerPreview.removeAttribute('data-testid');
+        pointerPreview.removeAttribute('data-file-row-dragging');
+        pointerPreview.querySelectorAll('[data-testid]').forEach(node => node.removeAttribute('data-testid'));
+        pointerPreview.querySelectorAll('[id]').forEach(node => node.removeAttribute('id'));
+        document.body.appendChild(pointerPreview);
+
+        pointerPreviewRef.current?.remove();
+        pointerPreviewRef.current = pointerPreview;
+        pointerOffsetRef.current = {
+          x: Math.max(0, Math.min(rect.width, event.clientX - rect.left)),
+          y: Math.max(0, Math.min(rect.height, event.clientY - rect.top)),
+        };
+
+        try {
+          event.currentTarget.setPointerCapture?.(event.pointerId);
+        } catch {
+          // Synthetic pointer events used by tests may not have an active pointer capture.
+        }
+
+        setDragging(true);
+        onReorderPointerStart?.(event);
+      }}
+      onPointerMove={event => {
+        if (event.pointerType === 'mouse' || !pointerPreviewRef.current) return;
+        event.preventDefault();
+
+        pointerPreviewRef.current.style.left = `${event.clientX - pointerOffsetRef.current.x}px`;
+        pointerPreviewRef.current.style.top = `${event.clientY - pointerOffsetRef.current.y}px`;
+        onReorderPointerMove?.(event);
+      }}
+      onPointerUp={event => {
+        if (event.pointerType === 'mouse' || !pointerPreviewRef.current) return;
+        event.preventDefault();
+
+        pointerPreviewRef.current.remove();
+        pointerPreviewRef.current = null;
+        setDragging(false);
+        onReorderPointerEnd?.(event);
+      }}
+      onPointerCancel={event => {
+        if (event.pointerType === 'mouse' || !pointerPreviewRef.current) return;
+
+        pointerPreviewRef.current.remove();
+        pointerPreviewRef.current = null;
+        setDragging(false);
+        onReorderPointerEnd?.(event);
       }}
       onKeyDown={event => {
         if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !reorderDisabled) {
