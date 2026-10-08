@@ -34,8 +34,8 @@ const asyncAutocomplete = componentDoc({
 - \`debounce\` — задержка;
 - \`limit\` — максимум отображаемых результатов;
 - \`loading / loadError\` — состояние загрузки списка.`,
-  variants: `Loading, Results, Empty и Load Error меняют только содержимое popup. Validation Error поля остается отдельным состоянием.`,
-  behavior: `onFetch запускается после достижения minCharacters и окончания debounce. Локальная фильтрация выключена: источник истины — переданный data. Выбор, Clear, controlled/uncontrolled value и клавиатура совпадают с Autocomplete.`,
+  variants: `Loading, Results, Empty и Load Error меняют только содержимое popup. Validation Error поля остается отдельным состоянием: error-border и текст под полем.`,
+  behavior: `onFetch запускается после достижения minCharacters и окончания debounce. Локальная фильтрация выключена: источник истины — переданный data. Если поисковый запрос не проходит продуктовую валидацию, передайте error, закройте Menu и не запускайте серверный запрос до исправления значения. Например, недопустимые символы показываются как ошибка поля, а не как Load Error. Выбор, Clear, controlled/uncontrolled value и клавиатура совпадают с Autocomplete.`,
   responsive: `Popup сохраняет ширину при переходах Loading → Results → Empty/Error и остается внутри viewport.`,
   accessibility: `Combobox сохраняет роль во время загрузки; состояние загрузки доступно assistive technologies. Клавиатурная модель совпадает с Autocomplete.`,
   checklist: [
@@ -57,8 +57,8 @@ const asyncMultiselect = componentDoc({
 - \`onFetch(value)\`, \`minCharacters\`, \`debounce\`, \`limit\`;
 - \`loading / loadError / idleText / noOptionsText\` — состояния списка;
 - \`selectionPosition\`, \`open / defaultOpen / onOpenChange\`, \`placement / menuMaxHeight\`.`,
-  variants: `Выбранные значения всегда показываются Chips, потому что поле одновременно должно сохранять выбор и принимать новый поисковый запрос. Loading, Load Error, Empty и Idle меняют только содержимое Menu.`,
-  behavior: `Запрос запускается после minCharacters и debounce. options не фильтруются локально повторно. Выбор нового option добавляет Chip, очищает поисковый запрос и сохраняет фокус в поле для следующего поиска. Если очищенный запрос короче minCharacters, Menu скрывается. Новый серверный ответ не сбрасывает уже выбранные значения; для controlled preselected значений передавайте selectedOptions.`,
+  variants: `Выбранные значения всегда показываются Chips, потому что поле одновременно должно сохранять выбор и принимать новый поисковый запрос. Loading, Load Error, Empty и Idle меняют только содержимое Menu. Validation Error поискового запроса показывается border/error-текстом поля и не скрывает уже выбранные Chips.`,
+  behavior: `Запрос запускается после minCharacters и debounce. options не фильтруются локально повторно. Если поисковый запрос не проходит продуктовую валидацию, передайте error, закройте Menu и не запускайте серверный запрос до исправления значения. Выбор нового option добавляет Chip, очищает поисковый запрос и сохраняет фокус в поле для следующего поиска. Если очищенный запрос короче minCharacters, Menu скрывается. Новый серверный ответ не сбрасывает уже выбранные значения; для controlled preselected значений передавайте selectedOptions.`,
   responsive: `Chips переносятся и увеличивают высоту поля. Menu совпадает с шириной поля и остается внутри viewport; типографика не уменьшается.`,
   accessibility: `Поиск использует combobox + listbox/option и aria-activedescendant. Результаты имеют Checkbox-семантику выбора, Loading объявляется через aria-busy и live status. Arrow keys перемещают активный результат, Enter переключает его, Escape закрывает Menu.`,
   checklist: [
