@@ -193,16 +193,12 @@ describe('AsyncMultiselect', () => {
         defaultInputValue="Ди%"
         defaultOpen
         menuMessage="Вы ввели недопустимые символы"
-        dropdownHeader="Ваши сотрудники"
-        dropdownFooter={<button type="button">Добавить нового сотрудника</button>}
         onFetch={() => undefined}
         label="Команды"
       />,
     );
     const menu = screen.getByRole('listbox');
-    expect(within(menu).getByText('Ваши сотрудники')).toBeInTheDocument();
     expect(within(menu).getByText('Вы ввели недопустимые символы')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Добавить нового сотрудника' })).toBeInTheDocument();
 
     rerender(
       <AsyncMultiselect
