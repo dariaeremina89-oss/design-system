@@ -80,7 +80,7 @@ const meta = {
     placement: { control: 'select', options: ['auto', 'top', 'bottom'], table: { category: 'Behavior' } },
     menuMaxHeight: { control: { type: 'number', min: 48 }, table: { category: 'Behavior' } },
     noOptionsText: { control: 'text', table: { category: 'Content' } },
-    idleText: { control: 'text', table: { category: 'Content' } },
+    idleText: { control: 'text', description: 'Текст или функция для состояния до начала поиска. По умолчанию показывает, сколько символов осталось ввести.', table: { category: 'Content' } },
     loadingText: { control: 'text', table: { category: 'Content' } },
     loadError: { control: 'text', description: 'Ошибка загрузки результатов внутри Menu. Не равна validation error поля.', table: { category: 'State' } },
     menuMessage: { control: 'text', description: 'Внешнее сообщение о поисковом запросе внутри Menu. Компонент сам запрос не валидирует.', table: { category: 'State' } },
@@ -256,6 +256,22 @@ export const ExternalValidation: Story = {
         }}
       />
     );
+  },
+};
+
+export const MinimumCharacters: Story = {
+  args: {
+    options: [],
+    minCharacters: 3,
+    debounce: 0,
+    placeholder: 'Начните ввод',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'До достижения minCharacters Menu показывает динамический счетчик оставшихся символов: 3 → 2 → 1. Выбранные Chips при этом сохраняются.',
+      },
+    },
   },
 };
 
