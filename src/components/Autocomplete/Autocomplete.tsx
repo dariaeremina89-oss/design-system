@@ -83,6 +83,8 @@ export interface AutocompleteProps
   loadingText?: string;
   /** Ошибка получения списка. Не равна validation error поля Input. */
   loadError?: ReactNode;
+  /** Внешнее сообщение о текущем поисковом запросе внутри Menu. Компонент не валидирует запрос сам. */
+  menuMessage?: ReactNode;
   dropdownHeader?: ReactNode;
   dropdownFooter?: ReactNode;
   ref?: Ref<HTMLInputElement>;
@@ -117,6 +119,7 @@ export function Autocomplete({
   loading = false,
   loadingText = 'Загрузка вариантов',
   loadError,
+  menuMessage,
   dropdownHeader,
   dropdownFooter,
   clearable = false,
@@ -194,7 +197,7 @@ export function Autocomplete({
   }
 
   function canShowMenu() {
-    return eligible || idleText !== undefined || loading || loadError !== undefined;
+    return eligible || idleText !== undefined || loading || loadError !== undefined || menuMessage !== undefined;
   }
 
   function showMenu(keyboard = false, fromEnd = false) {
@@ -230,7 +233,7 @@ export function Autocomplete({
     setActiveValue(undefined);
 
     const nextEligible = next.length >= threshold;
-    if (nextEligible || idleText !== undefined || loading || loadError !== undefined) changeOpen(true);
+    if (nextEligible || idleText !== undefined || loading || loadError !== undefined || menuMessage !== undefined) changeOpen(true);
     else changeOpen(false);
 
     onChange?.(event);
@@ -285,7 +288,14 @@ export function Autocomplete({
   if (dropdownHeader !== undefined) {
     menuItems.push({ id: '__header', variant: 'header', title: dropdownHeader });
   }
-  if (loading) {
+  if (menuMessage !== undefined) {
+    menuItems.push({
+      id: '__menu-message',
+      variant: 'header',
+      className: 'fdoc-autocomplete__message',
+      title: menuMessage,
+    });
+  } else if (loading) {
     for (let index = 0; index < 5; index += 1) {
       menuItems.push({ id: `__loading-${index}`, state: 'skeleton', title: '' });
     }
@@ -328,9 +338,13 @@ export function Autocomplete({
   }
 
   const showPopup = open && menuItems.length > 0;
-  const accessibleStatus = loading
-    ? loadingText
-    : loadError !== undefined
+  const accessibleStatus = menuMessage !== undefined
+    ? typeof menuMessage === 'string'
+      ? menuMessage
+      : 'Сообщение поиска'
+    : loading
+      ? loadingText
+      : loadError !== undefined
       ? typeof loadError === 'string'
         ? loadError
         : 'Не удалось получить список'
