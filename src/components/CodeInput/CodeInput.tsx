@@ -160,7 +160,7 @@ export function CodeInput({
     const next = replaceFrom(value, effectiveIndex, digits, length);
     commit(next);
     const target = Math.min(effectiveIndex + digits.length, length - 1);
-    if (effectiveIndex + digits.length < length) focusCell(target);
+    if (effectiveIndex + digits.length < length) focusCell(target, true);
   }
 
   function handlePaste(index: number, event: ClipboardEvent<HTMLInputElement>) {
@@ -170,7 +170,7 @@ export function CodeInput({
 
     if (digits.length >= length) {
       commit(digits.slice(0, length));
-      focusCell(length - 1);
+      focusCell(length - 1, true);
       return;
     }
 
