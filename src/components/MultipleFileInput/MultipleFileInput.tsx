@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState, type DragEvent, type PointerEvent, type ReactNode } from 'react';
+import { Fragment, useRef, useState, type PointerEvent, type ReactNode } from 'react';
 import { Button } from '../Button/Button';
 import { Dropzone, type DropzoneProps } from '../Dropzone/Dropzone';
 import { FileRow, type FileRowProps, type FileRowReorderDirection } from '../FileRow/FileRow';
@@ -150,11 +150,6 @@ export function MultipleFileInput({
     const toIndex = fromIndex < slot ? slot - 1 : slot;
     reorderFrom(fromIndex, toIndex);
     clearReorderState();
-  };
-
-  const getDropSlot = (event: DragEvent<HTMLDivElement>, index: number) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    return event.clientY < rect.top + rect.height / 2 ? index : index + 1;
   };
 
   const getClientDropSlot = (clientY: number) => {
