@@ -48,6 +48,7 @@ test('async multiselect exposes loading and load error as Menu states', async ({
   await expect(support).toHaveAttribute('href', 'mailto:support@fdoc.ru');
   await expect(support).toHaveCSS('font-size', '14px');
   await expect(support).toHaveCSS('line-height', '20px');
+  await expect(support).toHaveCSS('color', await error.evaluate(element => getComputedStyle(element).color));
 });
 
 test('async multiselect keeps typography and width on mobile', async ({ page }) => {
