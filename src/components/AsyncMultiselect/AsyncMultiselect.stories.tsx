@@ -15,9 +15,9 @@ function hasExternalValidationError(value: string) {
 }
 
 const employeeOptions: MultiselectOption[] = [
-  { value: 'ivanov', label: 'Иванов Иван Иванович', description: '+7 (913) 000-00-00, pthomsen@icloud.com' },
-  { value: 'sidorov', label: 'Сидоров Иван Иванович', description: '+7 (425) 850-90-97, world@outlook.com' },
-  { value: 'petrov', label: 'Петров Иван Иванович', description: '+7 (838) 969-27-67, mkearl@aol.com' },
+  { value: 'ivanov', label: 'Иванов Иван Иванович', description: '+7 (913) 000-00-00' },
+  { value: 'sidorov', label: 'Сидоров Иван Иванович', description: '+7 (425) 850-90-97' },
+  { value: 'petrov', label: 'Петров Иван Иванович', description: '+7 (838) 969-27-67' },
 ];
 
 const allOptions: MultiselectOption[] = [
@@ -268,6 +268,83 @@ export const MinimumCharacters: Story = {
         story: 'До достижения minCharacters Menu показывает динамический счетчик оставшихся символов: 3 → 2 → 1. Выбранные Chips при этом сохраняются.',
       },
     },
+  },
+};
+
+export const SearchHint: Story = {
+  args: {
+    options: [],
+    minCharacters: 3,
+    debounce: 0,
+    placeholder: 'Начните ввод',
+    idleText: remaining => `Введите ФИО, номер телефона или почту, минимум ${remaining} ${remaining === 1 ? 'символ' : remaining >= 2 && remaining <= 4 ? 'символа' : 'символов'}`,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Вариант Idle, когда вместо нейтрального счетчика продукт подсказывает, что именно можно вводить. Текст полностью задается снаружи через idleText.',
+      },
+    },
+  },
+};
+
+export const Results: Story = {
+  args: {
+    options: employeeOptions,
+    defaultInputValue: 'Ива',
+    defaultOpen: true,
+    minCharacters: 1,
+    debounce: 0,
+    label: 'Сотрудники',
+  },
+};
+
+export const SelectedWithResults: Story = {
+  args: {
+    options: employeeOptions.filter(option => option.value !== 'ivanov'),
+    defaultValue: ['ivanov'],
+    selectedOptions: [employeeOptions[0]],
+    defaultInputValue: 'Ива',
+    defaultOpen: true,
+    minCharacters: 1,
+    debounce: 0,
+    label: 'Сотрудники',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Выбранное значение остается Chip в поле и исключено из результатов текущего запроса.',
+      },
+    },
+  },
+};
+
+export const SelectedInResults: Story = {
+  args: {
+    options: employeeOptions,
+    defaultValue: ['ivanov'],
+    selectedOptions: [employeeOptions[0]],
+    defaultInputValue: 'Ива',
+    defaultOpen: true,
+    minCharacters: 1,
+    debounce: 0,
+    label: 'Сотрудники',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Выбранное значение остается Chip и одновременно присутствует в текущем серверном ответе как выбранный option.',
+      },
+    },
+  },
+};
+
+export const Filled: Story = {
+  args: {
+    options: [],
+    defaultValue: ['ivanov', 'petrov'],
+    selectedOptions: [employeeOptions[0], employeeOptions[2]],
+    label: 'Сотрудники',
   },
 };
 
