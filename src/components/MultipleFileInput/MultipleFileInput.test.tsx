@@ -191,4 +191,29 @@ describe('MultipleFileInput', () => {
     fireEvent.keyDown(screen.getByRole('button', { name: 'Изменить порядок файла Первый.pdf' }), { key: 'ArrowDown' });
     expect(onReorder).toHaveBeenCalledWith(0, 1);
   });
+
+  it('keeps partial reorder inside the reorderable rows', () => {
+    const onReorder = vi.fn();
+    render(
+      <MultipleFileInput
+        files={[
+          { id: 'template-a', fileName: 'Шаблон A.docx', additionalContent: 'Шаблон', reorderable: true },
+          { id: 'template-b', fileName: 'Шаблон B.docx', additionalContent: 'Шаблон', reorderable: true },
+          { id: 'document', fileName: 'Документ.pdf', weight: '2,7 МБ' },
+        ]}
+        onReorder={onReorder}
+      />,
+    );
+
+    const handles = screen.getAllByTestId('file-row-reorder-handle');
+    expect(handles).toHaveLength(2);
+    expect(screen.queryByRole('button', { name: 'Изменить порядок файла Документ.pdf' })).not.toBeInTheDocument();
+
+    fireEvent.keyDown(handles[0], { key: 'ArrowDown' });
+    expect(onReorder).toHaveBeenCalledWith(0, 1);
+
+    onReorder.mockClear();
+    fireEvent.keyDown(handles[1], { key: 'ArrowDown' });
+    expect(onReorder).not.toHaveBeenCalled();
+  });
 });
