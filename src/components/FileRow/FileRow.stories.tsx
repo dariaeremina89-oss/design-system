@@ -128,8 +128,12 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
                   event.dataTransfer.effectAllowed = 'move';
                 }}
                 onReorderDragEnd={() => {
-                  updateDragIndex(null);
-                  updateDropSlot(null);
+                  const fromIndex = dragIndexRef.current;
+                  const slot = dropSlotRef.current;
+                  if (fromIndex !== null && slot !== null) {
+                    moveRow(fromIndex, fromIndex < slot ? slot - 1 : slot);
+                  }
+                  clearReorderState();
                 }}
                 onReorderPointerStart={() => {
                   updateDragIndex(index);
