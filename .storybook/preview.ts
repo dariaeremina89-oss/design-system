@@ -21,7 +21,10 @@ const preview: Preview = {
 
       return createElement(
         'div',
-        { className: 'fdoc-story-stage' },
+        {
+          className: 'fdoc-story-stage',
+          'data-layout': context.parameters.layout ?? 'centered',
+        },
         createElement(
           'div',
           { className: 'fdoc-story-check', 'data-testid': 'story-check' },
