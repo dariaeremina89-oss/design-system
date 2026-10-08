@@ -2,15 +2,23 @@ import { componentDocs } from '../../docs/bulk-components';
 import { qualityDocs } from '../../docs/quality';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { ButtonLink } from '../Link/Link';
 import { AsyncAutocomplete } from './AsyncAutocomplete';
 import type { AutocompleteItem } from './Autocomplete';
 import { controlsParameters, pickFieldControls } from '../../docs/story-controls';
 
-const INVALID_QUERY_ERROR = 'Недопустимые символы. Используйте буквы, цифры, пробелы и дефис.';
+const SEARCH_IDLE_TEXT = 'Начните вводить ФИО, номер телефона или почту, чтобы найти сотрудника. Допустимы кириллица или латиница, цифры, пробел, символы + - @ .';
+const SEARCH_VALIDATION_TEXT = 'Вы ввели недопустимые символы. Допустимы кириллица или латиница, цифры, пробел, символы + - @ .';
 
-function hasInvalidQuery(value: string) {
-  return /[^\p{L}\p{N}\s-]/u.test(value);
+function hasExternalValidationError(value: string) {
+  return /[^\p{L}\p{N}\s+@.\-]/u.test(value);
 }
+
+const employeeItems: AutocompleteItem[] = [
+  { value: 'ivanov', label: 'Иванов Иван Иванович', description: '+7 (913) 000-00-00, pthomsen@icloud.com' },
+  { value: 'sidorov', label: 'Сидоров Иван Иванович', description: '+7 (425) 850-90-97, world@outlook.com' },
+  { value: 'petrov', label: 'Петров Иван Иванович', description: '+7 (838) 969-27-67, mkearl@aol.com' },
+];
 
 const allItems: AutocompleteItem[] = [
   { value: 'apple', label: 'Яблоки' },
@@ -27,7 +35,7 @@ const controlOrder = [
   'placeholder', 'description', 'caption', 'error', 'counter', 'size',
   'clearable', 'disabled', 'skeleton', 'loading',
   'minCharacters', 'debounce', 'limit', 'highlightMatches', 'showSelectedIcon', 'placement', 'menuMaxHeight',
-  'noOptionsText', 'idleText', 'loadingText', 'loadError',
+  'noOptionsText', 'idleText', 'loadingText', 'loadError', 'menuMessage', 'dropdownHeader', 'dropdownFooter',
   'onValueChange', 'onInputValueChange', 'onClear', 'onOpenChange',
 ] as const;
 
@@ -71,6 +79,9 @@ const meta = {
     idleText: { control: 'text', description: 'Сообщение до достижения minCharacters.', table: { category: 'Content' } },
     loadingText: { control: 'text', description: 'Доступное текстовое описание Loading.', table: { category: 'Content' } },
     loadError: { control: 'text', description: 'Ошибка загрузки результатов внутри Menu. Не равна validation error поля.', table: { category: 'State' } },
+    menuMessage: { control: 'text', description: 'Внешнее сообщение о поисковом запросе внутри Menu. Компонент сам запрос не валидирует.', table: { category: 'State' } },
+    dropdownHeader: { control: 'text', description: 'Неинтерактивный заголовок Menu.', table: { category: 'Content' } },
+    dropdownFooter: { control: 'text', description: 'Контент нижней области Menu.', table: { category: 'Content' } },
   },
 } satisfies Meta<typeof AsyncAutocomplete>;
 
@@ -109,38 +120,48 @@ export const InteractiveRequest: Story = {
   },
 };
 
-export const InvalidCharacters: Story = {
+export const ExternalValidation: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Недопустимый поисковый запрос показывает validation error под полем. Menu закрывается, запрос данных не запускается до исправления значения.',
+        story: 'Пример внешней продуктовой валидации поискового запроса. AsyncAutocomplete не проверяет строку сам: consumer передает menuMessage и решает, запускать ли onFetch.',
       },
     },
   },
   render: args => {
     const [data, setData] = useState<AutocompleteItem[]>([]);
     const [inputValue, setInputValue] = useState('');
-    const invalid = hasInvalidQuery(inputValue);
-    const threshold = Math.max(0, args.minCharacters ?? 1);
-    const showResults = !invalid && inputValue.length >= threshold;
+    const invalid = hasExternalValidationError(inputValue);
 
     return (
       <AsyncAutocomplete
         {...args}
+        label="Сотрудники"
+        placeholder="Введите ФИО, номер телефона или почту"
         data={invalid ? [] : data}
         inputValue={inputValue}
-        error={invalid ? INVALID_QUERY_ERROR : undefined}
-        open={showResults}
+        minCharacters={1}
         debounce={0}
+        dropdownHeader="Ваши сотрудники"
+        dropdownFooter={<ButtonLink size="small" decoration={null}>Добавить нового сотрудника</ButtonLink>}
+        idleText={SEARCH_IDLE_TEXT}
+        menuMessage={invalid ? SEARCH_VALIDATION_TEXT : undefined}
+        noOptionsText="Сотрудники не найдены. Проверьте введенные данные"
         onInputValueChange={(next, reason) => {
           setInputValue(next);
-          if (hasInvalidQuery(next)) setData([]);
+          if (hasExternalValidationError(next)) setData([]);
           args.onInputValueChange?.(next, reason);
         }}
         onFetch={query => {
-          if (hasInvalidQuery(query)) return;
+          if (hasExternalValidationError(query)) return;
           const normalizedQuery = query.toLocaleLowerCase();
-          setData(allItems.filter(item => item.label.toLocaleLowerCase().includes(normalizedQuery)));
+          setData(
+            employeeItems.filter(item =>
+              `${item.label} ${String(item.description ?? '')}`
+                .toLocaleLowerCase()
+                .includes(normalizedQuery),
+            ),
+          );
         }}
       />
     );
@@ -153,7 +174,7 @@ export const Loading: Story = {
 };
 
 export const NoResults: Story = {
-  args: { data: [], defaultInputValue: 'Киви' },
+  args: { data: [], defaultInputValue: 'Киви', noOptionsText: 'Результаты не найдены. Проверьте введенные данные' },
   parameters: { docs: { description: { story: 'Нажмите на поле, чтобы показать состояние без результатов.' } } },
 };
 
