@@ -261,11 +261,12 @@ export const MinimumCharacters: Story = {
     minCharacters: 3,
     debounce: 0,
     placeholder: 'Начните ввод',
+    idleText: 'Введите минимум 3 символа',
   },
   parameters: {
     docs: {
       description: {
-        story: 'До достижения minCharacters Menu показывает динамический счетчик оставшихся символов: 3 → 2 → 1. Выбранные Chips при этом сохраняются.',
+        story: 'Вариант Idle, когда продукт знает минимальный порог и показывает его пользователю до начала поиска.',
       },
     },
   },
@@ -277,7 +278,7 @@ export const SearchHint: Story = {
     minCharacters: 3,
     debounce: 0,
     placeholder: 'Начните ввод',
-    idleText: remaining => `Введите ФИО, номер телефона или почту, минимум ${remaining} ${remaining === 1 ? 'символ' : remaining >= 2 && remaining <= 4 ? 'символа' : 'символов'}`,
+    idleText: 'Введите ФИО, номер телефона или почту, минимум 3 символа',
   },
   parameters: {
     docs: {
