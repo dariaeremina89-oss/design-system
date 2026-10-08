@@ -11,8 +11,11 @@ import {
 } from './PriceInput';
 
 describe('PriceInput helpers', () => {
-  it('normalizes spaces, currency and decimal separators', () => {
-    expect(normalizePriceValue('123 456.78 ₽')).toBe('123456,78');
+  it('normalizes common copied price formats', () => {
+    expect(normalizePriceValue('123 456,78 ₽')).toBe('123456,78');
+    expect(normalizePriceValue('123456.78')).toBe('123456,78');
+    expect(normalizePriceValue('1.234,56')).toBe('1234,56');
+    expect(normalizePriceValue('1,234.56')).toBe('1234,56');
     expect(normalizePriceValue(',5')).toBe('0,5');
   });
 
@@ -43,13 +46,43 @@ describe('PriceInput', () => {
     expect(change).toHaveBeenLastCalledWith('1234,5');
   });
 
-  it('normalizes pasted values', () => {
+  it('normalizes a pasted full value', () => {
     const change = vi.fn();
     render(<PriceInput onValueChange={change} />);
-    fireEvent.paste(screen.getByRole('textbox'), {
+    const input = screen.getByRole('textbox') as HTMLInputElement;
+    input.setSelectionRange(0, 0);
+
+    fireEvent.paste(input, {
       clipboardData: { getData: () => '9 876,54 ₽' },
     });
+
     expect(change).toHaveBeenLastCalledWith('9876,54');
+  });
+
+  it('inserts pasted digits at the caret instead of replacing the full value', () => {
+    const change = vi.fn();
+    render(<PriceInput defaultValue="1234,56" onValueChange={change} />);
+    const input = screen.getByRole('textbox') as HTMLInputElement;
+    input.setSelectionRange(1, 1);
+
+    fireEvent.paste(input, {
+      clipboardData: { getData: () => '99' },
+    });
+
+    expect(change).toHaveBeenLastCalledWith('199234,56');
+  });
+
+  it('replaces only the selected range on paste', () => {
+    const change = vi.fn();
+    render(<PriceInput defaultValue="1234,56" onValueChange={change} />);
+    const input = screen.getByRole('textbox') as HTMLInputElement;
+    input.setSelectionRange(2, 4);
+
+    fireEvent.paste(input, {
+      clipboardData: { getData: () => '99' },
+    });
+
+    expect(change).toHaveBeenLastCalledWith('1994,56');
   });
 
   it('counts only entered digits', () => {
