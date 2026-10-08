@@ -45,7 +45,9 @@ export interface FileRowProps
   /** Preview внутри области Leading. */
   preview?: ReactNode;
   reorderable?: boolean;
-  /** Tooltip для reorder handle. Не показывается, если не передан. */
+  /** Отключает только reorder handle, не всю строку. */
+  reorderDisabled?: boolean;
+  /** Опциональный Tooltip для reorder handle. */
   reorderTooltip?: ReactNode;
   deletable?: boolean;
   onDelete?: () => void;
@@ -99,6 +101,7 @@ export function FileRow({
   leadingIcon = 'doc-paper',
   preview,
   reorderable = false,
+  reorderDisabled = false,
   reorderTooltip,
   deletable = false,
   onDelete,
@@ -181,12 +184,12 @@ export function FileRow({
       size="xsmall"
       iconSize={24}
       color="neutral"
-      disabled={disabled}
-      draggable={!disabled}
+      disabled={disabled || reorderDisabled}
+      draggable={!disabled && !reorderDisabled}
       data-testid="file-row-reorder-handle"
       className="fdoc-file-row__drag fdoc-file-row__button-icon"
       onDragStart={event => {
-        if (disabled) return;
+        if (disabled || reorderDisabled) return;
         setDragging(true);
         createRowDragPreview(event, fileName);
         onReorderDragStart?.(event);
@@ -196,7 +199,7 @@ export function FileRow({
         onReorderDragEnd?.(event);
       }}
       onKeyDown={event => {
-        if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+        if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !reorderDisabled) {
           event.preventDefault();
           onReorderKey?.(event.key === 'ArrowUp' ? 'up' : 'down');
         }
