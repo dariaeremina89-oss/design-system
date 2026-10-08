@@ -19,6 +19,16 @@ html[data-color-mode=dark] .sbdocs-wrapper :is(.sbdocs-table,.sbdocs-pre,.sbdocs
   min-width: 0;
 }
 
+.fdoc-story-stage[data-layout='centered'] {
+  display: inline-grid;
+  width: auto;
+  max-width: 100%;
+}
+
+.fdoc-story-stage[data-layout='centered'] .fdoc-story-stage__content {
+  justify-self: center;
+}
+
 .fdoc-story-check {
   box-sizing: border-box;
   width: fit-content;
