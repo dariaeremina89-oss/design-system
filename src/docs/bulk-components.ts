@@ -49,28 +49,32 @@ const asyncAutocomplete = componentDoc({
 
 const asyncMultiselect = componentDoc({
   purpose: `**AsyncMultiselect** — выбор нескольких значений через серверный поиск. Используйте для больших или удаленных списков, которые нельзя заранее загрузить целиком.`,
-  anatomy: `Поле поиска + выбранные Chips + Menu с ItemRow/Checkbox. Результаты текущего запроса приходят через options; выбранные значения живут независимо от следующего ответа сервера.`,
-  api: `- все основные field props Multiselect: value/defaultValue, label, required, caption/error/counter, size, clearable, disabled/skeleton;
-- \`options\` — результаты текущего серверного запроса;
-- \`selectedOptions\` — данные выбранных значений, которых уже нет в текущем ответе;
+  anatomy: `Поле поиска + выбранные Chips + Menu с ItemRow и визуальным Checkbox-индикатором. Результаты текущего запроса приходят через options; выбранные значения хранятся независимо от следующего ответа сервера.`,
+  api: `- \`options\` — результаты текущего серверного запроса без дополнительной локальной фильтрации;
+- \`selectedOptions\` — данные уже выбранных значений, если их нет среди текущих options;
+- \`value / defaultValue / onValueChange\` — выбранные значения;
 - \`inputValue / defaultInputValue / onInputValueChange\` — поисковый запрос;
-- \`onFetch(value)\`, \`minCharacters\`, \`debounce\`, \`limit\`;
-- \`loading / loadError / idleText / noOptionsText\` — состояния списка;
-- \`selectionPosition\`, \`open / defaultOpen / onOpenChange\`, \`placement / menuMaxHeight\`.`,
-  variants: `Async-состояния: Idle с минимальным количеством символов, Idle с подсказкой что вводить, Loading, Results, Selected + Results без выбранного option в списке, Selected + Results с выбранным option в списке, Filled, Empty, External Menu Message и Load Error. Выбранные значения всегда показываются Chips. Validation Error самого поля остается отдельным состоянием.`,
-  behavior: `До достижения minCharacters Menu остается доступным и по умолчанию показывает, сколько символов осталось ввести. Текст обновляется при каждом вводе и может быть переопределен через idleText. Запрос запускается после minCharacters и debounce. options не фильтруются локально повторно. Валидация поискового запроса находится вне компонента: consumer сам определяет правила, передает menuMessage и при необходимости не выполняет запрос внутри onFetch. AsyncMultiselect не знает, какие символы или форматы допустимы. Выбор нового option добавляет Chip, очищает поисковый запрос и сохраняет фокус в поле для следующего поиска. Если очищенный запрос короче minCharacters, Menu скрывается. Новый серверный ответ не сбрасывает уже выбранные значения; для controlled preselected значений передавайте selectedOptions.`,
-  responsive: `Chips переносятся и увеличивают высоту поля. Menu совпадает с шириной поля и остается внутри viewport; типографика не уменьшается.`,
-  accessibility: `Поиск использует combobox + listbox/option и aria-activedescendant. Результаты имеют Checkbox-семантику выбора, Loading объявляется через aria-busy и live status. Arrow keys перемещают активный результат, Enter переключает его, Escape закрывает Menu.`,
+- \`onFetch(value)\`, \`minCharacters\`, \`debounce\`, \`limit\` — управление серверным поиском;
+- \`idleText\` — текст или функция \`(remaining, minCharacters)\` для состояния до начала поиска;
+- \`loading / loadingText\`, \`menuMessage\`, \`noOptionsText\`, \`loadError\` — состояния и сообщения Menu;
+- \`highlightMatches\`, \`selectionPosition\`;
+- \`open / defaultOpen / onOpenChange\`, \`placement / menuMaxHeight\`;
+- Label, required, caption/error/counter, size, clearable, leadingIcon, disabled и skeleton наследуются от field-контракта Multiselect.`,
+  variants: `Async-состояния: Idle с минимальным количеством символов; Idle с подсказкой, что вводить; Loading; Results; Selected + Results, когда выбранный option исключен из ответа; Selected + Results, когда выбранный option остается в ответе; Filled; No Results; External Menu Message; Load Error. Validation Error самого поля остается отдельным состоянием.`,
+  behavior: `До достижения minCharacters Menu может показывать Idle. idleText можно передать обычным текстом или функцией от remaining/minCharacters; если idleText не передан, используется встроенная динамическая подсказка с оставшимся количеством символов. После достижения порога onFetch запускается с debounce. options не фильтруются локально повторно. Правила валидации поискового запроса находятся вне компонента: consumer передает готовый menuMessage и сам решает, выполнять ли запрос внутри onFetch. Приоритет содержимого Menu: menuMessage → Loading → Load Error → Idle → No Results → Results. Выбор нового option добавляет Chip, очищает запрос, закрывает Menu и возвращает фокус в поле. Если следующий ответ сервера не содержит выбранный option, Chip сохраняется; для controlled значений передавайте selectedOptions. Если выбранный option остается в options, он показывается в Menu выбранным. Clear очищает выбор и запрос; Backspace при пустом запросе удаляет последний Chip.`,
+  responsive: `Chips переносятся и увеличивают высоту поля. Menu совпадает с шириной поля и остается внутри viewport; типографика компонентов не уменьшается на мобильной ширине.`,
+  accessibility: `Поиск использует combobox + listbox/option, aria-expanded, aria-controls и aria-activedescendant. Выбор option передается через aria-selected; Checkbox в строке — визуальный индикатор. Loading передает aria-busy, а Idle, Menu Message, Load Error и No Results объявляются через live status. Arrow keys перемещают активный результат, Enter переключает его, Escape закрывает Menu.`,
   checklist: [
+    'До порога поиска поддерживаются и обычная подсказка, и текст от remaining/minCharacters.',
     'Запрос не стартует раньше minCharacters и соблюдает debounce.',
     'Серверные options не фильтруются повторно на клиенте.',
-    'После выбора нового результата поисковый запрос очищается, выбранный Chip сохраняется.',
-    'Новый ответ сервера не удаляет выбранные Chips.',
-    'Menu Message/Loading/Load Error/Empty не смешиваются с validation Error поля.',
+    'После выбора нового результата запрос очищается, Menu закрывается, фокус остается в поле.',
+    'Выбранный Chip сохраняется и когда option исключен из следующего ответа, и когда остается в options.',
+    'Menu Message/Loading/Load Error/No Results не смешиваются с validation Error поля.',
     'Disabled и Skeleton не запускают onFetch.',
+    'listbox/option и aria-selected соответствуют фактическому выбору.',
   ],
 });
-
 const highlight = componentDoc({
   purpose: `**Highlight** — подсветка буквального совпадения внутри текста через нативный mark. Используйте для результатов поиска и фильтрации.`,
   anatomy: `Компонент не добавляет layout-контейнер: он заменяет совпавшие текстовые фрагменты на mark, сохраняя окружающую React-разметку.`,
