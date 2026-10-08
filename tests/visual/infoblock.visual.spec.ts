@@ -79,7 +79,7 @@ test('InfoBlock single-line horizontal anatomy has no extra bottom space', async
 test('InfoBlock switches both ways without moving the text row', async ({ page }) => {
   await page.setViewportSize({ width: 900, height: 700 });
   await page.goto('/iframe.html?id=components-elements-infoblock--wide-container&viewMode=story&args=text:;title:Title');
-  const host = page.locator('body > #storybook-root > div').first();
+  const host = page.locator('.fdoc-story-stage__content > div').first();
   const block = page.getByTestId('info-block');
   const title = block.locator('.fdoc-info-block__title');
 
@@ -136,7 +136,7 @@ for (const width of [320, 288, 256, 240]) {
   test(`InfoBlock keeps anatomy inside at ${width}px container`, async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 700 });
     await page.goto('/iframe.html?id=components-elements-infoblock--narrow-container&viewMode=story');
-    const host = page.locator('body > #storybook-root > div').first();
+    const host = page.locator('.fdoc-story-stage__content > div').first();
     await host.evaluate((el, value) => { (el as HTMLElement).style.width = `${value}px`; }, width);
     const block = page.getByTestId('info-block');
     await expect(block).toHaveAttribute('data-actions-layout', 'vertical');
