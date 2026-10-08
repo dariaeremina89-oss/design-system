@@ -25,6 +25,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 - Добавлен `menuMessage` для внешней обратной связи по поисковому запросу. Правила валидации не зашиты в компоненты: consumer сам определяет допустимые символы и форматы и решает, выполнять ли `onFetch`.
 - Validation Error самого поля остается отдельным состоянием. В примере внешней валидации сообщение показывается внутри Menu, поле не становится красным, а выбранные Chips в AsyncMultiselect сохраняются.
 - AsyncMultiselect получил `dropdownHeader / dropdownFooter` для той же структуры Menu, что и Autocomplete. Обновлены тексты No Results / Load Error, Controls, Docs и browser-тесты.
+- До достижения `minCharacters` оба async-компонента теперь держат Menu открытым и показывают динамическую подсказку «Введите еще N символов, чтобы начать поиск». `idleText` позволяет заменить ее своим текстом или функцией.
 
 ### PriceInput
 
