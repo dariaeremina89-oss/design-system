@@ -2,7 +2,6 @@ import { componentDocs } from '../../docs/bulk-components';
 import { qualityDocs } from '../../docs/quality';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { ButtonLink } from '../Link/Link';
 import { AsyncAutocomplete } from './AsyncAutocomplete';
 import type { AutocompleteItem } from './Autocomplete';
 import { controlsParameters, pickFieldControls } from '../../docs/story-controls';
@@ -35,7 +34,7 @@ const controlOrder = [
   'placeholder', 'description', 'caption', 'error', 'counter', 'size',
   'clearable', 'disabled', 'skeleton', 'loading',
   'minCharacters', 'debounce', 'limit', 'highlightMatches', 'showSelectedIcon', 'placement', 'menuMaxHeight',
-  'noOptionsText', 'idleText', 'loadingText', 'loadError', 'menuMessage', 'dropdownHeader', 'dropdownFooter',
+  'noOptionsText', 'idleText', 'loadingText', 'loadError', 'menuMessage',
   'onValueChange', 'onInputValueChange', 'onClear', 'onOpenChange',
 ] as const;
 
@@ -80,8 +79,6 @@ const meta = {
     loadingText: { control: 'text', description: 'Доступное текстовое описание Loading.', table: { category: 'Content' } },
     loadError: { control: 'text', description: 'Ошибка загрузки результатов внутри Menu. Не равна validation error поля.', table: { category: 'State' } },
     menuMessage: { control: 'text', description: 'Внешнее сообщение о поисковом запросе внутри Menu. Компонент сам запрос не валидирует.', table: { category: 'State' } },
-    dropdownHeader: { control: 'text', description: 'Неинтерактивный заголовок Menu.', table: { category: 'Content' } },
-    dropdownFooter: { control: 'text', description: 'Контент нижней области Menu.', table: { category: 'Content' } },
   },
 } satisfies Meta<typeof AsyncAutocomplete>;
 
@@ -142,8 +139,6 @@ export const ExternalValidation: Story = {
         inputValue={inputValue}
         minCharacters={1}
         debounce={0}
-        dropdownHeader="Ваши сотрудники"
-        dropdownFooter={<ButtonLink size="small" decoration={null}>Добавить нового сотрудника</ButtonLink>}
         idleText={SEARCH_IDLE_TEXT}
         menuMessage={invalid ? SEARCH_VALIDATION_TEXT : undefined}
         noOptionsText="Сотрудники не найдены. Проверьте введенные данные"
