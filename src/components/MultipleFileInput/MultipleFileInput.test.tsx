@@ -197,8 +197,8 @@ describe('MultipleFileInput', () => {
     render(
       <MultipleFileInput
         files={[
-          { id: 'template-a', fileName: 'Шаблон A.docx', additionalContent: 'Шаблон', reorderable: true },
-          { id: 'template-b', fileName: 'Шаблон B.docx', additionalContent: 'Шаблон', reorderable: true },
+          { id: 'template-a', fileName: 'Шаблон A.docx', additionalContent: 'Шаблон', reorderable: true, reorderTooltip: 'Изменить порядок шаблона' },
+          { id: 'template-b', fileName: 'Шаблон B.docx', additionalContent: 'Шаблон', reorderable: true, reorderTooltip: 'Изменить порядок шаблона' },
           { id: 'document', fileName: 'Документ.pdf', weight: '2,7 МБ' },
         ]}
         onReorder={onReorder}
