@@ -14,15 +14,26 @@ test('CodeInput follows Figma medium and small geometry', async ({ page }) => {
   await expect(small).toHaveCSS('border-radius', '8px');
 });
 
-test('CodeInput accepts a pasted code and supports keyboard navigation', async ({ page }) => {
+test('CodeInput accepts a pasted full code and supports keyboard navigation', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-codeinput--interactive&viewMode=story');
   const first = page.getByTestId('code-input-cell-1');
-  await first.click();
-  await first.pressSequentially('1');
-  await expect(page.getByTestId('code-input-cell-2')).toBeFocused();
 
-  await page.getByTestId('code-input-cell-2').press('ArrowLeft');
-  await expect(first).toBeFocused();
+  await first.evaluate(element => {
+    const data = new DataTransfer();
+    data.setData('text/plain', '12-34 56');
+    element.dispatchEvent(new ClipboardEvent('paste', {
+      bubbles: true,
+      cancelable: true,
+      clipboardData: data,
+    }));
+  });
+
+  await expect(page.getByTestId('code-input-cell-1')).toHaveValue('1');
+  await expect(page.getByTestId('code-input-cell-6')).toHaveValue('6');
+  await expect(page.getByTestId('code-input-cell-6')).toBeFocused();
+
+  await page.getByTestId('code-input-cell-6').press('ArrowLeft');
+  await expect(page.getByTestId('code-input-cell-5')).toBeFocused();
 });
 
 test('CodeInput keeps typography fixed on mobile', async ({ page }) => {
