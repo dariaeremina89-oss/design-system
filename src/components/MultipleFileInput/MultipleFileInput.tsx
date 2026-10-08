@@ -68,8 +68,14 @@ export function MultipleFileInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const dragIndexRef = useRef<number | null>(null);
   const [dropSlot, setDropSlot] = useState<number | null>(null);
   const dropSlotRef = useRef<number | null>(null);
+
+  const updateDragIndex = (index: number | null) => {
+    dragIndexRef.current = index;
+    updateDragIndex(index);
+  };
 
   const updateDropSlot = (slot: number | null) => {
     dropSlotRef.current = slot;
@@ -77,7 +83,7 @@ export function MultipleFileInput({
   };
 
   const clearReorderState = () => {
-    setDragIndex(null);
+    updateDragIndex(null);
     updateDropSlot(null);
   };
 
@@ -135,13 +141,14 @@ export function MultipleFileInput({
   };
 
   const reorderDragged = (slot: number | null = dropSlotRef.current) => {
-    if (dragIndex === null || slot === null) {
+    const fromIndex = dragIndexRef.current;
+    if (fromIndex === null || slot === null) {
       clearReorderState();
       return;
     }
 
-    const toIndex = dragIndex < slot ? slot - 1 : slot;
-    reorderFrom(dragIndex, toIndex);
+    const toIndex = fromIndex < slot ? slot - 1 : slot;
+    reorderFrom(fromIndex, toIndex);
     clearReorderState();
   };
 
@@ -299,19 +306,19 @@ export function MultipleFileInput({
                         onReorderDragStart={event => {
                           file.onReorderDragStart?.(event);
                           if (!rowReorderable) return;
-                          setDragIndex(index);
+                          updateDragIndex(index);
                           updateDropSlot(null);
                           event.dataTransfer.effectAllowed = 'move';
                         }}
                         onReorderDragEnd={event => {
                           file.onReorderDragEnd?.(event);
-                          setDragIndex(null);
+                          updateDragIndex(null);
                           updateDropSlot(null);
                         }}
                         onReorderPointerStart={event => {
                           file.onReorderPointerStart?.(event);
                           if (!rowReorderable || file.reorderDisabled) return;
-                          setDragIndex(index);
+                          updateDragIndex(index);
                           updateDropSlot(null);
                         }}
                         onReorderPointerMove={event => {
@@ -322,7 +329,7 @@ export function MultipleFileInput({
                         onReorderPointerEnd={event => {
                           file.onReorderPointerEnd?.(event);
                           if (!rowReorderable || file.reorderDisabled) {
-                            setDragIndex(null);
+                            updateDragIndex(null);
                             updateDropSlot(null);
                             return;
                           }
