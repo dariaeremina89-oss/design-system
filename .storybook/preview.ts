@@ -1,12 +1,37 @@
+import { createElement } from 'react';
 import type { Preview } from '@storybook/react-vite';
 import '../src/styles/fonts.css';
 import '../src/styles/tokens.css';
 import '../src/styles/storybook.css';
 import { initializePrimaryTheme } from '../src/styles/primary-theme-store';
 import { ThemeDocsContainer } from './ThemeDocsContainer';
+import { resolveStoryCheckDescription } from '../src/docs/story-check';
 initializePrimaryTheme();
 
 const preview: Preview = {
+  decorators: [
+    (Story, context) => {
+      if (context.viewMode !== 'story' || context.parameters.storyCheck === false) return Story();
+
+      const description = resolveStoryCheckDescription(
+        context.name,
+        context.parameters.storyCheck,
+        context.parameters.docs?.description?.story,
+      );
+
+      return createElement(
+        'div',
+        { className: 'fdoc-story-stage' },
+        createElement(
+          'div',
+          { className: 'fdoc-story-check', 'data-testid': 'story-check' },
+          createElement('div', { className: 'fdoc-story-check__label' }, 'Что проверяем'),
+          createElement('div', { className: 'fdoc-story-check__text' }, description),
+        ),
+        createElement('div', { className: 'fdoc-story-stage__content' }, Story()),
+      );
+    },
+  ],
   parameters: {
     layout: 'centered',
     options: {
