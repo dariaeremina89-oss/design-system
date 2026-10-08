@@ -16,6 +16,8 @@ export type {
 } from './components/ProgressIndicator/ProgressIndicator';
 export { Input } from './components/Input/Input';
 export type { InputProps, InputSize } from './components/Input/Input';
+export { CodeInput } from './components/CodeInput/CodeInput';
+export type { CodeInputProps, CodeInputSize, CodeInputLength } from './components/CodeInput/CodeInput';
 export {
   PhoneInput,
   PHONE_INPUT_REQUIRED_ERROR,
