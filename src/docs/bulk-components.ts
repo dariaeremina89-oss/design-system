@@ -157,6 +157,30 @@ const multiselect = componentDoc({
   ],
 });
 
+const codeInput = componentDoc({
+  purpose: `**CodeInput** — ввод короткого цифрового кода подтверждения в отдельных ячейках. Используйте для OTP и одноразовых кодов из сообщения, а не для обычных числовых значений.`,
+  anatomy: `Label → ряд из 4–6 ячеек → Caption или Error. Каждая ячейка содержит один символ; итоговое значение компонента остается одной строкой.`,
+  api: `- \`value / defaultValue\` — полный код строкой;
+- \`onValueChange(value)\` — изменение полного нормализованного кода;
+- \`length\`: 4 / 5 / 6;
+- \`size\`: medium / small;
+- Label / required / caption / error / disabled / skeleton;
+- \`name\` передает итоговое значение через hidden input формы.`,
+  variants: `Medium: ячейка 48 × 56, radius-large, H3 20/28. Small: 32 × 48, radius-middle, Subtitle Strong 16/24. Error применяется ко всем ячейкам; Focus выделяет активную ячейку. Skeleton сохраняет количество и геометрию ячеек.`,
+  geometry: `Между ячейками gap space-8. Medium из шести ячеек занимает 328 px, Small — 232 px. Label и Helper используют общую геометрию form fields.`,
+  behavior: `После ввода цифры фокус переходит в следующую ячейку. Backspace удаляет текущий символ или предыдущий, если текущая ячейка пуста. Arrow Left / Right, Home и End перемещают фокус. Вставка распределяет цифры по ячейкам и игнорирует разделители и другие нецифровые символы.`,
+  responsive: `Размер ячеек не уменьшается автоматически: для узких контейнеров используйте Small. Типографика каждого size остается постоянной на мобильных.`,
+  accessibility: `Ячейки объединены в group с доступным названием. Каждая ячейка имеет позиционное имя, Error / Caption связаны через aria-describedby, required и invalid доступны программно. Первая ячейка поддерживает one-time-code autocomplete.`,
+  checklist: [
+    'Поддерживаются 4, 5 и 6 ячеек.',
+    'Ввод принимает только цифры и корректно распределяет Paste.',
+    'После ввода фокус переходит вперед, Backspace возвращает назад.',
+    'Controlled и uncontrolled value работают одинаково.',
+    'Error / Disabled / Skeleton сохраняют геометрию Figma.',
+    'Medium и Small не меняют типографику на мобильных.',
+  ],
+});
+
 const phoneInput = componentDoc({
   purpose: `**PhoneInput** — специализированное поле одного телефонного номера на общей основе Input. Поддерживает российский и международный режимы.`,
   anatomy: `Input с переключателем типа номера, mask/placeholder и общей системой Label/Description/Helper. Leading/Trailing управляются самим компонентом и не переопределяются как у обычного Input.`,
@@ -384,6 +408,7 @@ const docs: Record<string, string> = {
   Icon: icon,
   InfoBlock: infoBlock,
   Multiselect: multiselect,
+  CodeInput: codeInput,
   PhoneInput: phoneInput,
   Checkbox: checkbox,
   Radio: radio,
