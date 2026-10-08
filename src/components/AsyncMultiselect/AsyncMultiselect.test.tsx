@@ -164,8 +164,24 @@ describe('AsyncMultiselect', () => {
     expect(screen.getByRole('option', { name: 'Дизайн' })).toBeInTheDocument();
   });
 
-  it('renders Loading and Load Error inside Menu', () => {
+  it('renders external Menu message, Loading and Load Error inside Menu', () => {
     const { rerender } = render(
+      <AsyncMultiselect
+        options={[]}
+        defaultInputValue="Ди%"
+        defaultOpen
+        menuMessage="Вы ввели недопустимые символы"
+        dropdownHeader="Ваши сотрудники"
+        dropdownFooter={<button type="button">Добавить нового сотрудника</button>}
+        onFetch={() => undefined}
+        label="Команды"
+      />,
+    );
+    expect(screen.getByText('Ваши сотрудники')).toBeInTheDocument();
+    expect(screen.getByText('Вы ввели недопустимые символы')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Добавить нового сотрудника' })).toBeInTheDocument();
+
+    rerender(
       <AsyncMultiselect
         options={[]}
         defaultInputValue="Ди"
