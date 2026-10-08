@@ -6,6 +6,12 @@ import { controlsParameters, pickFieldControls } from '../../docs/story-controls
 import type { MultiselectOption } from '../Multiselect/Multiselect';
 import { AsyncMultiselect } from './AsyncMultiselect';
 
+const INVALID_QUERY_ERROR = 'Недопустимые символы. Используйте буквы, цифры, пробелы и дефис.';
+
+function hasInvalidQuery(value: string) {
+  return /[^\p{L}\p{N}\s-]/u.test(value);
+}
+
 const allOptions: MultiselectOption[] = [
   { value: 'design', label: 'Дизайн' },
   { value: 'frontend', label: 'Фронтенд' },
@@ -21,7 +27,7 @@ const controlOrder = [
   'inputValue', 'defaultInputValue', 'options', 'placeholder', 'caption', 'error', 'counter', 'size',
   'clearable', 'disabled', 'skeleton', 'loading',
   'minCharacters', 'debounce', 'limit', 'highlightMatches', 'selectionPosition',
-  'placement', 'menuMaxHeight', 'noOptionsText', 'idleText', 'loadingText',
+  'placement', 'menuMaxHeight', 'noOptionsText', 'idleText', 'loadingText', 'loadError',
   'onFetch', 'onValueChange', 'onInputValueChange', 'onClear', 'onOpenChange',
 ] as const;
 
@@ -68,6 +74,7 @@ const meta = {
     noOptionsText: { control: 'text', table: { category: 'Content' } },
     idleText: { control: 'text', table: { category: 'Content' } },
     loadingText: { control: 'text', table: { category: 'Content' } },
+    loadError: { control: 'text', description: 'Ошибка загрузки результатов внутри Menu. Не равна validation error поля.', table: { category: 'State' } },
     onFetch: { action: 'fetch', table: { category: 'Events' } },
   },
 } satisfies Meta<typeof AsyncMultiselect>;
@@ -175,6 +182,57 @@ export const SelectedAsChipsOnly: Story = {
         onValueChange={setValue}
         debounce={0}
         onFetch={query => {
+          const normalizedQuery = query.toLocaleLowerCase();
+          setOptions(
+            allOptions.filter(option =>
+              !value.includes(option.value)
+              && option.label.toLocaleLowerCase().includes(normalizedQuery),
+            ),
+          );
+        }}
+      />
+    );
+  },
+};
+
+export const InvalidCharacters: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Недопустимый поисковый запрос показывает validation error под полем. Выбранные Chips сохраняются, Menu закрывается, запрос данных не запускается до исправления значения.',
+      },
+    },
+  },
+  render: args => {
+    const [options, setOptions] = useState<MultiselectOption[]>([]);
+    const [inputValue, setInputValue] = useState('');
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState<string[]>(['design']);
+    const invalid = hasInvalidQuery(inputValue);
+
+    return (
+      <AsyncMultiselect
+        {...args}
+        options={invalid ? [] : options}
+        value={value}
+        selectedOptions={allOptions.filter(option => value.includes(option.value))}
+        inputValue={inputValue}
+        error={invalid ? INVALID_QUERY_ERROR : undefined}
+        open={invalid ? false : open}
+        minCharacters={invalid ? Number.MAX_SAFE_INTEGER : args.minCharacters}
+        debounce={0}
+        onValueChange={setValue}
+        onOpenChange={next => setOpen(invalid ? false : next)}
+        onInputValueChange={(next, reason) => {
+          setInputValue(next);
+          if (hasInvalidQuery(next)) {
+            setOptions([]);
+            setOpen(false);
+          }
+          args.onInputValueChange?.(next, reason);
+        }}
+        onFetch={query => {
+          if (hasInvalidQuery(query)) return;
           const normalizedQuery = query.toLocaleLowerCase();
           setOptions(
             allOptions.filter(option =>
