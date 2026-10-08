@@ -40,7 +40,14 @@ test('async multiselect exposes loading and load error as Menu states', async ({
 
   await page.goto('/iframe.html?id=components-selection-asyncmultiselect--load-error&viewMode=story');
   await page.getByRole('combobox').click();
-  await expect(page.locator('.fdoc-async-multiselect__message--error')).toContainText('Не удалось получить список');
+  const error = page.locator('.fdoc-async-multiselect__message--error .fdoc-item-row__title');
+  await expect(error).toContainText('Не удалось получить список');
+  await expect(error).toHaveCSS('font-size', '14px');
+  await expect(error).toHaveCSS('line-height', '20px');
+  const support = page.getByRole('link', { name: 'support@fdoc.ru' });
+  await expect(support).toHaveAttribute('href', 'mailto:support@fdoc.ru');
+  await expect(support).toHaveCSS('font-size', '14px');
+  await expect(support).toHaveCSS('line-height', '20px');
 });
 
 test('async multiselect keeps typography and width on mobile', async ({ page }) => {
@@ -67,7 +74,12 @@ test('async multiselect keeps chips while showing external query validation in M
 
   await input.fill('Сид');
   await expect(menu).not.toContainText('Вы ввели недопустимые символы');
-  await expect(page.getByRole('option', { name: /Сидоров Иван Иванович/ })).toBeVisible();
+  const option = page.getByRole('option', { name: /Сидоров Иван Иванович/ });
+  await expect(option).toBeVisible();
+  await expect(option.locator('.fdoc-item-row__title')).toHaveCSS('font-size', '14px');
+  await expect(option.locator('.fdoc-item-row__title')).toHaveCSS('line-height', '20px');
+  await expect(option.locator('.fdoc-item-row__description')).toHaveCSS('font-size', '12px');
+  await expect(option.locator('.fdoc-item-row__description')).toHaveCSS('line-height', '16px');
 });
 
 
