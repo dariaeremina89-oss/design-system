@@ -83,17 +83,44 @@ test('async multiselect keeps chips while showing external query validation in M
 });
 
 
-test('async multiselect shows remaining characters before search starts', async ({ page }) => {
+test('async multiselect supports both Figma idle guidance variants', async ({ page }) => {
   await page.goto('/iframe.html?id=components-selection-asyncmultiselect--minimum-characters&viewMode=story');
-  const input = page.getByRole('combobox');
-
+  let input = page.getByRole('combobox');
   await input.focus();
-  const menu = page.getByRole('listbox');
-  await expect(menu).toContainText('Введите еще 3 символа, чтобы начать поиск');
+  let menu = page.getByRole('listbox');
+  await expect(menu).toContainText('Введите минимум 3 символа');
 
   await input.fill('И');
-  await expect(menu).toContainText('Введите еще 2 символа, чтобы начать поиск');
+  await expect(menu).toContainText('Введите минимум 3 символа');
 
-  await input.fill('Ив');
-  await expect(menu).toContainText('Введите еще 1 символ, чтобы начать поиск');
+  await page.goto('/iframe.html?id=components-selection-asyncmultiselect--search-hint&viewMode=story');
+  input = page.getByRole('combobox');
+  await input.focus();
+  menu = page.getByRole('listbox');
+  await expect(menu).toContainText('Введите ФИО, номер телефона или почту, минимум 3 символа');
+});
+
+
+test('async multiselect exposes explicit Figma result and filled states', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-selection-asyncmultiselect--results&viewMode=story');
+  await expect(page.getByRole('option', { name: /Иванов Иван Иванович/ })).toBeVisible();
+  await expect(page.getByRole('option', { name: /Сидоров Иван Иванович/ })).toBeVisible();
+  await expect(page.getByRole('option', { name: /Петров Иван Иванович/ })).toBeVisible();
+
+  await page.goto('/iframe.html?id=components-selection-asyncmultiselect--selected-with-results&viewMode=story');
+  await expect(page.getByRole('button', { name: 'Удалить: Иванов Иван Иванович' })).toBeVisible();
+  await expect(page.getByRole('option', { name: /Иванов Иван Иванович/ })).toHaveCount(0);
+  await expect(page.getByRole('option', { name: /Сидоров Иван Иванович/ })).toBeVisible();
+  await expect(page.getByRole('option', { name: /Петров Иван Иванович/ })).toBeVisible();
+
+  await page.goto('/iframe.html?id=components-selection-asyncmultiselect--selected-in-results&viewMode=story');
+  await expect(page.getByRole('button', { name: 'Удалить: Иванов Иван Иванович' })).toBeVisible();
+  const selected = page.getByRole('option', { name: /Иванов Иван Иванович/ });
+  await expect(selected).toBeVisible();
+  await expect(selected).toHaveAttribute('aria-selected', 'true');
+
+  await page.goto('/iframe.html?id=components-selection-asyncmultiselect--filled&viewMode=story');
+  await expect(page.getByRole('button', { name: 'Удалить: Иванов Иван Иванович' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Удалить: Петров Иван Иванович' })).toBeVisible();
+  await expect(page.getByRole('listbox')).toHaveCount(0);
 });
