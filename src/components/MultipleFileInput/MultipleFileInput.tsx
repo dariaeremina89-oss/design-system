@@ -306,8 +306,15 @@ export function MultipleFileInput({
                         }}
                         onReorderDragEnd={event => {
                           file.onReorderDragEnd?.(event);
-                          updateDragIndex(null);
-                          updateDropSlot(null);
+                          if (
+                            rowReorderable &&
+                            dragIndexRef.current !== null &&
+                            dropSlotRef.current !== null
+                          ) {
+                            reorderDragged();
+                          } else {
+                            clearReorderState();
+                          }
                         }}
                         onReorderPointerStart={event => {
                           file.onReorderPointerStart?.(event);
