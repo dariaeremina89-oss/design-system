@@ -37,8 +37,14 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
   const [rows, setRows] = useState(reorderableRows);
   const listRef = useRef<HTMLDivElement>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const dragIndexRef = useRef<number | null>(null);
   const [dropSlot, setDropSlot] = useState<number | null>(null);
   const dropSlotRef = useRef<number | null>(null);
+
+  const updateDragIndex = (index: number | null) => {
+    dragIndexRef.current = index;
+    updateDragIndex(index);
+  };
 
   const updateDropSlot = (slot: number | null) => {
     dropSlotRef.current = slot;
@@ -46,7 +52,7 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
   };
 
   const clearReorderState = () => {
-    setDragIndex(null);
+    updateDragIndex(null);
     updateDropSlot(null);
   };
 
@@ -124,16 +130,16 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
                 fileName={row.fileName}
                 weight={row.weight}
                 onReorderDragStart={event => {
-                  setDragIndex(index);
+                  updateDragIndex(index);
                   updateDropSlot(null);
                   event.dataTransfer.effectAllowed = 'move';
                 }}
                 onReorderDragEnd={() => {
-                  setDragIndex(null);
+                  updateDragIndex(null);
                   updateDropSlot(null);
                 }}
                 onReorderPointerStart={() => {
-                  setDragIndex(index);
+                  updateDragIndex(index);
                   updateDropSlot(null);
                 }}
                 onReorderPointerMove={event => {
