@@ -45,6 +45,18 @@
   cursor: grabbing;
 }
 
+.fdoc-file-row__pointer-preview {
+  position: fixed !important;
+  z-index: 2147483647;
+  opacity: 1 !important;
+  pointer-events: none !important;
+  will-change: left, top;
+}
+
+.fdoc-file-row__pointer-preview .fdoc-file-row__drag {
+  cursor: grabbing;
+}
+
 .fdoc-file-item--disabled .fdoc-file-row__drag {
   cursor: default;
   color: var(--icon-base-secondary-disabled);
