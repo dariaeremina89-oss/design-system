@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { componentDocs } from '../../docs/bulk-components';
 import { qualityDocs } from '../../docs/quality';
 import { controlsParameters, pickFieldControls } from '../../docs/story-controls';
+import { Link } from '../Link/Link';
 import type { MultiselectOption } from '../Multiselect/Multiselect';
 import { AsyncMultiselect } from './AsyncMultiselect';
 
@@ -287,7 +288,10 @@ export const LoadError: Story = {
   args: {
     options: [],
     defaultInputValue: 'Ком',
-    loadError: 'Не удалось получить список. Попробуйте вернуться позже. Если ошибка сохраняется, обратитесь в техподдержку support@fdoc.ru',
+    loadError: <>
+      Не удалось получить список. Попробуйте вернуться позже. Если ошибка сохраняется, обратитесь в техподдержку{' '}
+      <Link href="mailto:support@fdoc.ru" typography="inherit">support@fdoc.ru</Link>
+    </>,
   },
 };
 
