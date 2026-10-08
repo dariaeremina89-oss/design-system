@@ -2,6 +2,7 @@ import { componentDocs } from '../../docs/bulk-components';
 import { qualityDocs } from '../../docs/quality';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Link } from '../Link/Link';
 import { AsyncAutocomplete } from './AsyncAutocomplete';
 import type { AutocompleteItem } from './Autocomplete';
 import { controlsParameters, pickFieldControls } from '../../docs/story-controls';
@@ -195,7 +196,7 @@ export const LoadError: Story = {
     defaultInputValue: 'Яб',
     loadError: <>
       Не удалось получить список. Попробуйте вернуться позже. Если ошибка сохраняется, обратитесь в техподдержку{' '}
-      <u>support@fdoc.ru</u>
+      <Link href="mailto:support@fdoc.ru" typography="inherit">support@fdoc.ru</Link>
     </>,
   },
   parameters: { docs: { description: { story: 'Нажмите на поле, чтобы показать ошибку загрузки Menu.' } } },
