@@ -202,3 +202,71 @@ test('Disabled reorder handle still explains why reorder is unavailable', async 
   await handle.hover();
   await expect(page.getByRole('tooltip')).toHaveText('Порядок можно изменить, когда шаблонов несколько');
 });
+
+
+test('MultipleFileInput reorders template rows with touch pointer events at 320px', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 700 });
+  await page.goto('/iframe.html?id=components-inputs-multiplefileinput--templates-reorderable&viewMode=story');
+
+  const rows = page.locator('.fdoc-multiple-file-input__item');
+  const names = rows.locator('.fdoc-file-item__name');
+  await expect(names).toHaveText([
+    'Договор.docx',
+    'Заявление.docx',
+    'Согласие.docx',
+    'Паспорт.pdf',
+    'Приложение.pdf',
+  ]);
+
+  const handle = rows.nth(0).getByTestId('file-row-reorder-handle');
+  const sourceRow = rows.nth(0).getByTestId('file-row');
+  const sourceBox = await sourceRow.boundingBox();
+  const targetBox = await rows.nth(2).boundingBox();
+  if (!sourceBox || !targetBox) throw new Error('Reorder rows are not measurable');
+
+  const pointerX = sourceBox.x + 16;
+  const startY = sourceBox.y + sourceBox.height / 2;
+  const targetY = targetBox.y + targetBox.height - 2;
+
+  await handle.dispatchEvent('pointerdown', {
+    pointerId: 11,
+    pointerType: 'touch',
+    isPrimary: true,
+    clientX: pointerX,
+    clientY: startY,
+    bubbles: true,
+  });
+
+  await expect(sourceRow).toHaveAttribute('data-file-row-dragging', 'true');
+  await expect(sourceRow).toHaveCSS('opacity', '0');
+  await expect(page.locator('.fdoc-file-row__pointer-preview')).toHaveCount(1);
+
+  await handle.dispatchEvent('pointermove', {
+    pointerId: 11,
+    pointerType: 'touch',
+    isPrimary: true,
+    clientX: pointerX,
+    clientY: targetY,
+    bubbles: true,
+  });
+
+  await expect(page.getByTestId('file-row-drop-indicator')).toBeVisible();
+
+  await handle.dispatchEvent('pointerup', {
+    pointerId: 11,
+    pointerType: 'touch',
+    isPrimary: true,
+    clientX: pointerX,
+    clientY: targetY,
+    bubbles: true,
+  });
+
+  await expect(page.locator('.fdoc-file-row__pointer-preview')).toHaveCount(0);
+  await expect(names).toHaveText([
+    'Заявление.docx',
+    'Согласие.docx',
+    'Договор.docx',
+    'Паспорт.pdf',
+    'Приложение.pdf',
+  ]);
+});
