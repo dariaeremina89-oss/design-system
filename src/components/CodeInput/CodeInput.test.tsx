@@ -30,16 +30,39 @@ describe('CodeInput', () => {
     expect(second).toHaveFocus();
   });
 
-  it('pastes digits across cells and ignores non-digits', () => {
+  it('pastes a full code across all cells and ignores separators', () => {
     const change = vi.fn();
-    render(<CodeInput length={6} onValueChange={change} />);
-    const first = screen.getByTestId('code-input-cell-1');
+    render(<CodeInput length={6} defaultValue="12" onValueChange={change} />);
 
-    fireEvent.paste(first, {
-      clipboardData: { getData: () => '12-34 56' },
+    fireEvent.paste(screen.getByTestId('code-input-cell-2'), {
+      clipboardData: { getData: () => '98-76 54' },
     });
 
-    expect(change).toHaveBeenLastCalledWith('123456');
+    expect(change).toHaveBeenLastCalledWith('987654');
+    expect(screen.getByTestId('code-input-cell-6')).toHaveFocus();
+  });
+
+  it('pastes a short fragment from the active position without creating gaps', () => {
+    const change = vi.fn();
+    render(<CodeInput length={6} defaultValue="12" onValueChange={change} />);
+
+    fireEvent.paste(screen.getByTestId('code-input-cell-3'), {
+      clipboardData: { getData: () => '34' },
+    });
+
+    expect(change).toHaveBeenLastCalledWith('1234');
+    expect(screen.getByTestId('code-input-cell-5')).toHaveFocus();
+  });
+
+  it('redirects focus from a future empty cell to the first empty cell', () => {
+    vi.useFakeTimers();
+    render(<CodeInput length={6} defaultValue="12" />);
+
+    screen.getByTestId('code-input-cell-6').focus();
+    vi.runAllTimers();
+
+    expect(screen.getByTestId('code-input-cell-3')).toHaveFocus();
+    vi.useRealTimers();
   });
 
   it('removes the previous value on Backspace from an empty next cell', () => {
