@@ -85,6 +85,11 @@ test('async autocomplete shows remaining characters before search starts', async
   await input.focus();
   const menu = page.getByRole('listbox');
   await expect(menu).toContainText('Введите еще 3 символа, чтобы начать поиск');
+  const idle = page.locator('.fdoc-autocomplete__message--idle .fdoc-item-row__title');
+  await expect(idle).toHaveCSS('font-size', '14px');
+  await expect(idle).toHaveCSS('line-height', '20px');
+  await expect(idle).toHaveCSS('font-weight', '400');
+  await expect(idle).toHaveCSS('color', 'rgb(112, 116, 124)');
 
   await input.fill('И');
   await expect(menu).toContainText('Введите еще 2 символа, чтобы начать поиск');
