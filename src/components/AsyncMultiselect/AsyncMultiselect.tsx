@@ -315,7 +315,7 @@ export function AsyncMultiselect({
       menuItems.push({
         id: '__idle',
         variant: 'header',
-        className: 'fdoc-async-multiselect__message',
+        className: 'fdoc-async-multiselect__message fdoc-async-multiselect__message--idle',
         title: resolvedIdleText,
       });
     }
