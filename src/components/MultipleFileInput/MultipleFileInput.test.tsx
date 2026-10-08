@@ -192,6 +192,28 @@ describe('MultipleFileInput', () => {
     expect(onReorder).toHaveBeenCalledWith(0, 1);
   });
 
+  it('can disable only the reorder handle while keeping the row active', () => {
+    render(
+      <MultipleFileInput
+        files={[
+          {
+            id: 'template',
+            fileName: 'Шаблон.docx',
+            additionalContent: 'Шаблон',
+            reorderable: true,
+            reorderDisabled: true,
+            reorderTooltip: 'Порядок можно изменить, когда шаблонов несколько',
+          },
+          { id: 'document', fileName: 'Документ.pdf', weight: '2,7 МБ' },
+        ]}
+      />,
+    );
+
+    const handle = screen.getByRole('button', { name: 'Изменить порядок файла Шаблон.docx' });
+    expect(handle).toBeDisabled();
+    expect(screen.getByText('Шаблон.docx').closest('[data-testid="file-row"]')).not.toHaveAttribute('aria-disabled', 'true');
+  });
+
   it('keeps partial reorder inside the reorderable rows', () => {
     const onReorder = vi.fn();
     render(
