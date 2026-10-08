@@ -6,6 +6,12 @@ import { AsyncAutocomplete } from './AsyncAutocomplete';
 import type { AutocompleteItem } from './Autocomplete';
 import { controlsParameters, pickFieldControls } from '../../docs/story-controls';
 
+const INVALID_QUERY_ERROR = 'Недопустимые символы. Используйте буквы, цифры, пробелы и дефис.';
+
+function hasInvalidQuery(value: string) {
+  return /[^\p{L}\p{N}\s-]/u.test(value);
+}
+
 const allItems: AutocompleteItem[] = [
   { value: 'apple', label: 'Яблоки' },
   { value: 'banana', label: 'Бананы' },
@@ -21,7 +27,7 @@ const controlOrder = [
   'placeholder', 'description', 'caption', 'error', 'counter', 'size',
   'clearable', 'disabled', 'skeleton', 'loading',
   'minCharacters', 'debounce', 'limit', 'highlightMatches', 'showSelectedIcon', 'placement', 'menuMaxHeight',
-  'noOptionsText', 'idleText', 'loadingText',
+  'noOptionsText', 'idleText', 'loadingText', 'loadError',
   'onValueChange', 'onInputValueChange', 'onClear', 'onOpenChange',
 ] as const;
 
@@ -64,6 +70,7 @@ const meta = {
     noOptionsText: { control: 'text', description: 'Сообщение, когда результатов нет.', table: { category: 'Content' } },
     idleText: { control: 'text', description: 'Сообщение до достижения minCharacters.', table: { category: 'Content' } },
     loadingText: { control: 'text', description: 'Доступное текстовое описание Loading.', table: { category: 'Content' } },
+    loadError: { control: 'text', description: 'Ошибка загрузки результатов внутри Menu. Не равна validation error поля.', table: { category: 'State' } },
   },
 } satisfies Meta<typeof AsyncAutocomplete>;
 
@@ -96,6 +103,48 @@ export const InteractiveRequest: Story = {
             setData(allItems.filter(item => item.label.toLocaleLowerCase().includes(query.toLocaleLowerCase())));
           }
           setLoading(false);
+        }}
+      />
+    );
+  },
+};
+
+export const InvalidCharacters: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Недопустимый поисковый запрос показывает validation error под полем. Menu закрывается, запрос данных не запускается до исправления значения.',
+      },
+    },
+  },
+  render: args => {
+    const [data, setData] = useState<AutocompleteItem[]>([]);
+    const [inputValue, setInputValue] = useState('');
+    const [open, setOpen] = useState(false);
+    const invalid = hasInvalidQuery(inputValue);
+
+    return (
+      <AsyncAutocomplete
+        {...args}
+        data={invalid ? [] : data}
+        inputValue={inputValue}
+        error={invalid ? INVALID_QUERY_ERROR : undefined}
+        open={invalid ? false : open}
+        minCharacters={invalid ? Number.MAX_SAFE_INTEGER : args.minCharacters}
+        debounce={0}
+        onOpenChange={next => setOpen(invalid ? false : next)}
+        onInputValueChange={(next, reason) => {
+          setInputValue(next);
+          if (hasInvalidQuery(next)) {
+            setData([]);
+            setOpen(false);
+          }
+          args.onInputValueChange?.(next, reason);
+        }}
+        onFetch={query => {
+          if (hasInvalidQuery(query)) return;
+          const normalizedQuery = query.toLocaleLowerCase();
+          setData(allItems.filter(item => item.label.toLocaleLowerCase().includes(normalizedQuery)));
         }}
       />
     );
