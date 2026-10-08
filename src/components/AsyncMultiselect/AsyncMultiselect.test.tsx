@@ -1,6 +1,6 @@
 import { act } from 'react';
 import { beforeAll, afterEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { AsyncMultiselect } from './AsyncMultiselect';
 
 beforeAll(() => {
@@ -177,8 +177,9 @@ describe('AsyncMultiselect', () => {
         label="Команды"
       />,
     );
-    expect(screen.getByText('Ваши сотрудники')).toBeInTheDocument();
-    expect(screen.getByText('Вы ввели недопустимые символы')).toBeInTheDocument();
+    const menu = screen.getByRole('listbox');
+    expect(within(menu).getByText('Ваши сотрудники')).toBeInTheDocument();
+    expect(within(menu).getByText('Вы ввели недопустимые символы')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Добавить нового сотрудника' })).toBeInTheDocument();
 
     rerender(
