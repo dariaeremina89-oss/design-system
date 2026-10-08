@@ -257,7 +257,6 @@ export const ExternalValidation: Story = {
 
 export const MinimumCharacters: Story = {
   args: {
-    options: [],
     minCharacters: 3,
     debounce: 0,
     placeholder: 'Начните ввод',
@@ -266,15 +265,34 @@ export const MinimumCharacters: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Вариант Idle, когда продукт знает минимальный порог и показывает его пользователю до начала поиска.',
+        story: 'Вариант Idle, когда продукт знает минимальный порог и показывает его пользователю до начала поиска. После достижения порога показываются результаты.',
       },
     },
+  },
+  render: args => {
+    const [options, setOptions] = useState<MultiselectOption[]>([]);
+
+    return (
+      <AsyncMultiselect
+        {...args}
+        options={options}
+        onFetch={query => {
+          const normalizedQuery = query.toLocaleLowerCase();
+          setOptions(
+            employeeOptions.filter(option =>
+              `${option.label} ${String(option.description ?? '')}`
+                .toLocaleLowerCase()
+                .includes(normalizedQuery),
+            ),
+          );
+        }}
+      />
+    );
   },
 };
 
 export const SearchHint: Story = {
   args: {
-    options: [],
     minCharacters: 3,
     debounce: 0,
     placeholder: 'Начните ввод',
@@ -283,9 +301,29 @@ export const SearchHint: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Вариант Idle, когда вместо нейтрального счетчика продукт подсказывает, что именно можно вводить. Текст полностью задается снаружи через idleText.',
+        story: 'Вариант Idle, когда вместо нейтрального счетчика продукт подсказывает, что именно можно вводить. После достижения порога показываются результаты.',
       },
     },
+  },
+  render: args => {
+    const [options, setOptions] = useState<MultiselectOption[]>([]);
+
+    return (
+      <AsyncMultiselect
+        {...args}
+        options={options}
+        onFetch={query => {
+          const normalizedQuery = query.toLocaleLowerCase();
+          setOptions(
+            employeeOptions.filter(option =>
+              `${option.label} ${String(option.description ?? '')}`
+                .toLocaleLowerCase()
+                .includes(normalizedQuery),
+            ),
+          );
+        }}
+      />
+    );
   },
 };
 
