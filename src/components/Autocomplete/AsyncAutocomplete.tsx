@@ -4,9 +4,10 @@ import {
   type AutocompleteInputChangeReason,
   type AutocompleteProps,
 } from './Autocomplete';
+import { resolveAsyncIdleText, type AsyncIdleText } from './asyncSearch';
 
 export interface AsyncAutocompleteProps
-  extends Omit<AutocompleteProps, 'filterData' | 'minCharacters' | 'onInputValueChange'> {
+  extends Omit<AutocompleteProps, 'filterData' | 'minCharacters' | 'onInputValueChange' | 'idleText'> {
   /** Минимальное количество символов для запроса. Значение 0 запускает загрузку при монтировании. */
   minCharacters?: number;
   /** Задержка перед вызовом onFetch, мс. */
@@ -19,6 +20,8 @@ export interface AsyncAutocompleteProps
   onInputValueChange?: AutocompleteProps['onInputValueChange'];
   /** Ошибка загрузки списка. */
   loadError?: ReactNode;
+  /** Сообщение до начала поиска. По умолчанию показывает, сколько символов осталось ввести. */
+  idleText?: AsyncIdleText;
 }
 
 export function AsyncAutocomplete({
@@ -31,6 +34,7 @@ export function AsyncAutocomplete({
   debounce = 500,
   limit = 10,
   loadError,
+  idleText,
   ...props
 }: AsyncAutocompleteProps) {
   const [internalInputValue, setInternalInputValue] = useState(defaultInputValue);
@@ -59,6 +63,11 @@ export function AsyncAutocomplete({
   }
 
   const visibleData = limit > 0 ? data.slice(0, limit) : data;
+  const resolvedIdleText = resolveAsyncIdleText(
+    idleText,
+    effectiveInputValue.length,
+    minCharacters,
+  );
 
   return (
     <Autocomplete
@@ -69,6 +78,7 @@ export function AsyncAutocomplete({
       minCharacters={minCharacters}
       filterData={false}
       loadError={loadError}
+      idleText={resolvedIdleText}
     />
   );
 }
