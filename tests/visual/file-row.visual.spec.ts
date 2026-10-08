@@ -172,3 +172,21 @@ test('FileRow keeps its slot but hides the source row while dragging', async ({ 
   await expect(row).not.toHaveAttribute('data-file-row-dragging');
   await expect(row).toHaveCSS('opacity', '1');
 });
+
+
+test('MultipleFileInput shows consumer-provided reorder tooltip for templates', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-multiplefileinput--templates-reorderable&viewMode=story');
+
+  const handle = page.getByRole('button', { name: 'Изменить порядок файла Договор.docx' });
+  await handle.hover();
+  await expect(page.getByRole('tooltip')).toHaveText('Изменить порядок шаблона');
+});
+
+test('Disabled reorder handle still explains why reorder is unavailable', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-multiplefileinput--single-template-reorder&viewMode=story');
+
+  const handle = page.getByRole('button', { name: 'Изменить порядок файла Договор.docx' });
+  await expect(handle).toBeDisabled();
+  await handle.hover();
+  await expect(page.getByRole('tooltip')).toHaveText('Порядок можно изменить, когда шаблонов несколько');
+});
