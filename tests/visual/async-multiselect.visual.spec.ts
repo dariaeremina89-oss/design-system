@@ -52,19 +52,20 @@ test('async multiselect keeps typography and width on mobile', async ({ page }) 
 });
 
 
-test('async multiselect keeps chips while showing query validation error', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-selection-asyncmultiselect--invalid-characters&viewMode=story');
+test('async multiselect keeps chips while showing external query validation in Menu', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-selection-asyncmultiselect--external-validation&viewMode=story');
   const input = page.getByRole('combobox');
 
-  await expect(page.getByRole('button', { name: 'Удалить: Дизайн' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Удалить: Иванов Иван Иванович' })).toBeVisible();
 
-  await input.fill('Фр@');
-  await expect(input).toHaveAttribute('aria-invalid', 'true');
-  await expect(page.getByTestId('input-error')).toContainText('Недопустимые символы');
-  await expect(page.getByRole('listbox')).toBeHidden();
-  await expect(page.getByRole('button', { name: 'Удалить: Дизайн' })).toBeVisible();
-
-  await input.fill('Фр');
+  await input.fill('Сид%');
   await expect(input).not.toHaveAttribute('aria-invalid', 'true');
-  await expect(page.getByRole('option', { name: 'Фронтенд' })).toBeVisible();
+  const menu = page.getByRole('listbox');
+  await expect(menu).toBeVisible();
+  await expect(menu).toContainText('Вы ввели недопустимые символы');
+  await expect(page.getByRole('button', { name: 'Удалить: Иванов Иван Иванович' })).toBeVisible();
+
+  await input.fill('Сид');
+  await expect(menu).not.toContainText('Вы ввели недопустимые символы');
+  await expect(page.getByRole('option', { name: /Сидоров Иван Иванович/ })).toBeVisible();
 });
