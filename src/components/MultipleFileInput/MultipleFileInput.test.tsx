@@ -162,7 +162,7 @@ describe('MultipleFileInput', () => {
     expect(onDeleteAll).toHaveBeenCalledOnce();
   });
 
-  it('reorders only from the handle and shows the Figma insertion indicator', () => {
+  it.each(['mouse', 'touch'] as const)('reorders from the handle with %s pointer and commits the shown indicator', pointerType => {
     const onReorder = vi.fn();
     const onDelete = vi.fn();
     const { container } = render(
@@ -175,31 +175,29 @@ describe('MultipleFileInput', () => {
     const items = container.querySelectorAll('.fdoc-multiple-file-input__item');
     const firstHandle = screen.getByRole('button', { name: 'Изменить порядок файла Первый.pdf' });
     expect(items[0]).not.toHaveAttribute('draggable', 'true');
-    expect(firstHandle).toHaveAttribute('draggable', 'true');
+    expect(firstHandle).not.toHaveAttribute('draggable', 'true');
 
-    fireEvent.dragStart(firstHandle, { dataTransfer: { effectAllowed: '', setData: vi.fn() } });
-    fireEvent.dragOver(items[1], { clientY: 1, dataTransfer: { dropEffect: '' } });
-    expect(screen.getByTestId('file-row-drop-indicator')).toBeInTheDocument();
-    fireEvent.drop(items[1], { clientY: 1, dataTransfer: { dropEffect: '' } });
-    expect(onReorder).toHaveBeenCalledWith(0, 1);
-    expect(screen.queryByTestId('file-row-drop-indicator')).not.toBeInTheDocument();
-  });
-
-  it('commits the visible drop position even when dragend fires without drop', () => {
-    const onReorder = vi.fn();
-    const { container } = render(
-      <MultipleFileInput files={files} reorderable onReorder={onReorder} />,
-    );
-
-    const list = container.querySelector('.fdoc-multiple-file-input__list') as HTMLElement;
-    const firstHandle = screen.getByRole('button', { name: 'Изменить порядок файла Первый.pdf' });
-
-    fireEvent.dragStart(firstHandle, { dataTransfer: { effectAllowed: '', setData: vi.fn() } });
-    fireEvent.dragOver(list, { clientY: Number.MAX_SAFE_INTEGER, dataTransfer: { dropEffect: '' } });
+    fireEvent.pointerDown(firstHandle, {
+      pointerId: 1,
+      pointerType,
+      clientX: 0,
+      clientY: 0,
+    });
+    fireEvent.pointerMove(firstHandle, {
+      pointerId: 1,
+      pointerType,
+      clientX: 0,
+      clientY: Number.MAX_SAFE_INTEGER,
+    });
 
     expect(screen.getByTestId('file-row-drop-indicator')).toBeInTheDocument();
 
-    fireEvent.dragEnd(firstHandle);
+    fireEvent.pointerUp(firstHandle, {
+      pointerId: 1,
+      pointerType,
+      clientX: 0,
+      clientY: Number.MAX_SAFE_INTEGER,
+    });
 
     expect(onReorder).toHaveBeenCalledWith(0, 1);
     expect(screen.queryByTestId('file-row-drop-indicator')).not.toBeInTheDocument();
