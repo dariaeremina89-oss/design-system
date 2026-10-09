@@ -133,44 +133,56 @@ describe('FileRow', () => {
     expect(row.querySelector('[data-file-item-slot="message"]')).toHaveTextContent('Проверьте файл');
   });
 
-  it('drags only by the reorder handle, uses the whole row as drag image and supports keyboard reorder', () => {
+  it('reorders only by the handle with Pointer Events and supports keyboard reorder', () => {
     const onReorderKey = vi.fn();
-    const onReorderDragStart = vi.fn();
-    const onReorderDragEnd = vi.fn();
-    const setDragImage = vi.fn();
-    const setData = vi.fn();
-    const dataTransfer = {
-      effectAllowed: 'none',
-      setDragImage,
-      setData,
-    } as unknown as DataTransfer;
+    const onReorderPointerStart = vi.fn();
+    const onReorderPointerMove = vi.fn();
+    const onReorderPointerEnd = vi.fn();
 
     const { container } = render(
       <FileRow
         fileName="Договор.pdf"
         reorderable
         onReorderKey={onReorderKey}
-        onReorderDragStart={onReorderDragStart}
-        onReorderDragEnd={onReorderDragEnd}
+        onReorderPointerStart={onReorderPointerStart}
+        onReorderPointerMove={onReorderPointerMove}
+        onReorderPointerEnd={onReorderPointerEnd}
       />,
     );
     const row = screen.getByTestId('file-row');
     const handle = screen.getByTestId('file-row-reorder-handle');
 
     expect(row).not.toHaveAttribute('draggable', 'true');
-    expect(handle).toHaveAttribute('draggable', 'true');
+    expect(handle).not.toHaveAttribute('draggable', 'true');
     expect(handle).toHaveAttribute('aria-keyshortcuts', 'ArrowUp ArrowDown');
 
-    fireEvent.dragStart(handle, { dataTransfer, clientX: 10, clientY: 10 });
-    expect(setDragImage).toHaveBeenCalledOnce();
-    expect(setDragImage.mock.calls[0][0]).toHaveClass('fdoc-file-row__drag-preview');
-    expect(setData).toHaveBeenCalledWith('text/plain', 'Договор.pdf');
-    expect(onReorderDragStart).toHaveBeenCalledOnce();
+    fireEvent.pointerDown(handle, {
+      pointerId: 1,
+      pointerType: 'mouse',
+      clientX: 10,
+      clientY: 10,
+    });
+    expect(onReorderPointerStart).toHaveBeenCalledOnce();
     expect(row).toHaveAttribute('data-file-row-dragging', 'true');
+    expect(document.querySelector('.fdoc-file-row__pointer-preview')).toBeInTheDocument();
 
-    fireEvent.dragEnd(handle, { dataTransfer });
-    expect(onReorderDragEnd).toHaveBeenCalledOnce();
+    fireEvent.pointerMove(handle, {
+      pointerId: 1,
+      pointerType: 'mouse',
+      clientX: 20,
+      clientY: 30,
+    });
+    expect(onReorderPointerMove).toHaveBeenCalledOnce();
+
+    fireEvent.pointerUp(handle, {
+      pointerId: 1,
+      pointerType: 'mouse',
+      clientX: 20,
+      clientY: 30,
+    });
+    expect(onReorderPointerEnd).toHaveBeenCalledOnce();
     expect(row).not.toHaveAttribute('data-file-row-dragging');
+    expect(document.querySelector('.fdoc-file-row__pointer-preview')).not.toBeInTheDocument();
 
     fireEvent.keyDown(handle, { key: 'ArrowUp' });
     fireEvent.keyDown(handle, { key: 'ArrowDown' });
