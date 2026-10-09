@@ -338,6 +338,7 @@ test('MultipleFileInput Reorderable story matches the Figma 8,1 MB example', asy
   await expect(page.locator('.fdoc-multiple-file-input__total')).toHaveText('Общий объем: 8,1 МБ');
   await expect(page.locator('.fdoc-file-item__additional-text')).toHaveText([
     '2,7 МБ',
+    'Шаблон',
     '2,7 МБ',
     '2,7 МБ',
   ]);
@@ -355,4 +356,6 @@ test('SingleTemplateReorder tooltip respects the 288px design-system maximum', a
   await expect(tooltip).toHaveText('Порядок можно изменить, когда шаблонов несколько');
   const box = await tooltip.boundingBox();
   expect(box?.width).toBeLessThanOrEqual(288);
+  expect(box?.height).toBeGreaterThan(32);
+  await expect(tooltip).toHaveCSS('white-space', 'normal');
 });
