@@ -37,14 +37,8 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
   const [rows, setRows] = useState(reorderableRows);
   const listRef = useRef<HTMLDivElement>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
-  const dragIndexRef = useRef<number | null>(null);
   const [dropSlot, setDropSlot] = useState<number | null>(null);
   const dropSlotRef = useRef<number | null>(null);
-
-  const updateDragIndex = (index: number | null) => {
-    dragIndexRef.current = index;
-    setDragIndex(index);
-  };
 
   const updateDropSlot = (slot: number | null) => {
     dropSlotRef.current = slot;
@@ -52,7 +46,7 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
   };
 
   const clearReorderState = () => {
-    updateDragIndex(null);
+    setDragIndex(null);
     updateDropSlot(null);
   };
 
@@ -99,19 +93,6 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
       <div
         ref={listRef}
         style={{ display: 'flex', width: '100%', minWidth: 0, flexDirection: 'column', gap: 4 }}
-        onDragOver={event => {
-          if (dragIndex === null) return;
-          event.preventDefault();
-          event.dataTransfer.dropEffect = 'move';
-          updateDropSlot(getClientDropSlot(event.clientY));
-        }}
-        onDrop={event => {
-          if (dragIndex === null) return;
-          event.preventDefault();
-          const slot = dropSlotRef.current;
-          if (slot !== null) moveRow(dragIndex, dragIndex < slot ? slot - 1 : slot);
-          clearReorderState();
-        }}
       >
         {dropIndicator(0)}
         {rows.map((row, index) => (
@@ -122,21 +103,8 @@ function ReorderableFileRows(args: ComponentProps<typeof FileRow>) {
                 reorderable
                 fileName={row.fileName}
                 weight={row.weight}
-                onReorderDragStart={event => {
-                  updateDragIndex(index);
-                  updateDropSlot(null);
-                  event.dataTransfer.effectAllowed = 'move';
-                }}
-                onReorderDragEnd={() => {
-                  const fromIndex = dragIndexRef.current;
-                  const slot = dropSlotRef.current;
-                  if (fromIndex !== null && slot !== null) {
-                    moveRow(fromIndex, fromIndex < slot ? slot - 1 : slot);
-                  }
-                  clearReorderState();
-                }}
                 onReorderPointerStart={() => {
-                  updateDragIndex(index);
+                  setDragIndex(index);
                   updateDropSlot(null);
                 }}
                 onReorderPointerMove={event => {
@@ -191,8 +159,6 @@ const meta = {
     menuAriaLabel: { control: 'text', description: 'Доступное название кнопки меню файла.' },
     onDelete: { action: 'delete' },
     onMenuAction: { action: 'menuAction' },
-    onReorderDragStart: { action: 'reorderDragStart' },
-    onReorderDragEnd: { action: 'reorderDragEnd' },
     onReorderPointerStart: { action: 'reorderPointerStart' },
     onReorderPointerMove: { action: 'reorderPointerMove' },
     onReorderPointerEnd: { action: 'reorderPointerEnd' },
