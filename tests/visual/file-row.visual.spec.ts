@@ -320,12 +320,25 @@ test('MultipleFileInput reorders immediately to the shown edge position with mou
 });
 
 
-test('MultipleFileInput recalculates total size after deleting a file', async ({ page }) => {
+test('MultipleFileInput total size excludes templates and recalculates uploaded files', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-multiplefileinput--templates-reorderable&viewMode=story');
 
-  await expect(page.locator('.fdoc-multiple-file-input__total')).toHaveText('Общий объем: 9,1 МБ');
+  await expect(page.locator('.fdoc-multiple-file-input__total')).toHaveText('Общий объем: 4,0 МБ');
 
   await page.getByRole('button', { name: 'Удалить файл Договор.docx' }).click();
+  await expect(page.locator('.fdoc-multiple-file-input__total')).toHaveText('Общий объем: 4,0 МБ');
 
-  await expect(page.locator('.fdoc-multiple-file-input__total')).toHaveText('Общий объем: 7,0 МБ');
+  await page.getByRole('button', { name: 'Удалить файл Паспорт.pdf' }).click();
+  await expect(page.locator('.fdoc-multiple-file-input__total')).toHaveText('Общий объем: 1,3 МБ');
+});
+
+test('MultipleFileInput Reorderable story matches the Figma 8,1 MB example', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-multiplefileinput--reorderable&viewMode=story');
+
+  await expect(page.locator('.fdoc-multiple-file-input__total')).toHaveText('Общий объем: 8,1 МБ');
+  await expect(page.locator('.fdoc-file-item__additional-text')).toHaveText([
+    '2,7 МБ',
+    '2,7 МБ',
+    '2,7 МБ',
+  ]);
 });
