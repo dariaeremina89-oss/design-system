@@ -318,3 +318,14 @@ test('MultipleFileInput reorders immediately to the shown edge position with mou
     'Приложение.pdf',
   ]);
 });
+
+
+test('MultipleFileInput recalculates total size after deleting a file', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-multiplefileinput--templates-reorderable&viewMode=story');
+
+  await expect(page.locator('.fdoc-multiple-file-input__total')).toHaveText('Общий объем: 9,1 МБ');
+
+  await page.getByRole('button', { name: 'Удалить файл Договор.docx' }).click();
+
+  await expect(page.locator('.fdoc-multiple-file-input__total')).toHaveText('Общий объем: 7,0 МБ');
+});
