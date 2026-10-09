@@ -6,11 +6,23 @@ import { MultipleFileInput } from './MultipleFileInput';
 
 const MB = 1024 * 1024;
 
+const demoFileSizes: Record<string, number> = {
+  contract: 2.7 * MB,
+  form: 2.7 * MB,
+  application: 1.3 * MB,
+  agreement: 1.4 * MB,
+  'template-contract': 2.1 * MB,
+  'template-application': 1.8 * MB,
+  'template-consent': 1.2 * MB,
+  passport: 2.7 * MB,
+  attachment: 1.3 * MB,
+};
+
 const files = [
-  { id: 'contract', fileName: 'Договор.pdf', weight: '2,7 МБ', sizeBytes: 2.7 * MB },
-  { id: 'form', fileName: 'Анкета.docx', additionalContent: 'Шаблон', sizeBytes: 2.7 * MB },
-  { id: 'application', fileName: 'Заявление.pdf', weight: '1,3 МБ', sizeBytes: 1.3 * MB },
-  { id: 'agreement', fileName: 'Согласие.pdf', weight: '1,4 МБ', sizeBytes: 1.4 * MB },
+  { id: 'contract', fileName: 'Договор.pdf', weight: '2,7 МБ' },
+  { id: 'form', fileName: 'Анкета.docx', additionalContent: 'Шаблон' },
+  { id: 'application', fileName: 'Заявление.pdf', weight: '1,3 МБ' },
+  { id: 'agreement', fileName: 'Согласие.pdf', weight: '1,4 МБ' },
 ];
 
 const formatFileSize = (bytes: number) => {
@@ -25,7 +37,10 @@ function Interactive(args: any) {
 
   const removeAt = (index: number) => setCurrentFiles((current: any[]) => current.filter((_, i) => i !== index));
   const totalSize = formatFileSize(
-    currentFiles.reduce((sum: number, file: any) => sum + (file.sizeBytes ?? 0), 0),
+    currentFiles.reduce(
+      (sum: number, file: any) => sum + (file.sizeBytes ?? demoFileSizes[String(file.id)] ?? 0),
+      0,
+    ),
   );
   const wired = currentFiles.map((file: any, index: number) => {
     const { sizeBytes: _sizeBytes, ...row } = file;
@@ -56,7 +71,7 @@ function Interactive(args: any) {
       <MultipleFileInput
         {...args}
         files={wired}
-        totalSize={args.totalSize ?? totalSize}
+        totalSize={totalSize}
         collapsed={collapsed}
         onToggleCollapse={() => setCollapsed((value: boolean) => !value)}
         onDeleteAll={() => setCurrentFiles([])}
@@ -154,7 +169,6 @@ export const TemplatesReorderable: Story = {
       },
     ],
     reorderable: false,
-    totalSize: '9,1 МБ',
   },
   parameters: {
     docs: {
@@ -187,7 +201,6 @@ export const SingleTemplateReorder: Story = {
       },
     ],
     reorderable: false,
-    totalSize: '5,5 МБ',
   },
   parameters: {
     docs: {
