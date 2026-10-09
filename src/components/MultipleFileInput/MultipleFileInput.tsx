@@ -68,12 +68,10 @@ export function MultipleFileInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
-  const dragIndexRef = useRef<number | null>(null);
   const [dropSlot, setDropSlot] = useState<number | null>(null);
   const dropSlotRef = useRef<number | null>(null);
 
   const updateDragIndex = (index: number | null) => {
-    dragIndexRef.current = index;
     setDragIndex(index);
   };
 
