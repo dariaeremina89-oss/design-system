@@ -61,15 +61,16 @@ export const multipleFileInputDocs = componentDoc({
 - \`groupErrorText / errorCount\` — ошибки уровня группы;
 - \`totalSize\` — отображение и входные данные для следующей валидации.`,
   variants: `Группа может состоять только из списка, списка с кнопками, Dropzone или всех областей вместе. Reorder включается отдельно и не меняет contract FileRow.`,
-  behavior: `Кнопка выбора и Dropzone используют один validation contract. \`onChooseFiles\` сообщает о клике, но не обходит picker/валидацию. При reorder drag начинается за handle FileRow: место исходной строки сохраняется, но ее содержимое скрывается; переносимая строка показывается только в drag-preview, а DropIndicator отмечает будущую позицию. Родитель переставляет целый объект файла. ArrowUp/ArrowDown на handle вызывает тот же reorder callback.`,
-  responsive: `Список и Dropzone занимают ширину родителя. FileRow сохраняют размеры controls, а имя файла отдает ширину первым. Группа не создает horizontal overflow на мобильных.`,
+  behavior: `Кнопка выбора и Dropzone используют один validation contract. \`onChooseFiles\` сообщает о клике, но не обходит picker/валидацию. Reorder начинается за handle FileRow и использует один Pointer Events contract для mouse, touch и pen. Место исходной строки сохраняется, но ее содержимое скрывается; переносимая строка идет за указателем, а DropIndicator отмечает будущую позицию. При pointerup строка всегда вставляется в позицию, которую показывает DropIndicator. Родитель переставляет целый объект файла. ArrowUp/ArrowDown на handle вызывает тот же reorder callback.`,
+  responsive: `Список и Dropzone занимают ширину родителя. FileRow сохраняют размеры controls, а имя файла отдает ширину первым. Reorder одинаково работает мышью и на touch/pen без отдельной мобильной реализации. Группа не создает horizontal overflow на мобильных.`,
   accessibility: `Добавление и удаление файлов доступны с клавиатуры. Reorder имеет клавиатурную альтернативу через handle; Disabled FileRow не меняют порядок.`,
   checklist: [
     'Кнопка и Dropzone применяют одинаковые ограничения.',
     'Group Error не подменяет Message конкретного FileRow.',
     'Delete одной строки и Delete All обновляют управляемый список через callbacks.',
-    'Во время drag исходная строка сохраняет место, но не дублируется визуально с drag-preview.',
-    'Drag переносит весь объект файла вместе с Message/Additional content.',
-    'Клавиатурный reorder дает тот же результат, что drag&drop.',
+    'Во время pointer reorder исходная строка сохраняет место, но не дублируется визуально с preview.',
+    'Pointer reorder переносит весь объект файла вместе с Message/Additional content.',
+    'Mouse, touch/pen и клавиатурный reorder дают одинаковый результат.',
+    'После pointerup строка встает ровно в позицию, которую показывал DropIndicator.',
   ],
 });
