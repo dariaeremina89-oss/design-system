@@ -140,18 +140,6 @@ export function MultipleFileInput({
     onReorder?.(fromIndex, toIndex);
   };
 
-  const reorderDragged = (slot: number | null = dropSlotRef.current) => {
-    const fromIndex = dragIndexRef.current;
-    if (fromIndex === null || slot === null) {
-      clearReorderState();
-      return;
-    }
-
-    const toIndex = fromIndex < slot ? slot - 1 : slot;
-    reorderFrom(fromIndex, toIndex);
-    clearReorderState();
-  };
-
   const getClientDropSlot = (clientY: number) => {
     const items = listRef.current?.querySelectorAll<HTMLElement>('.fdoc-multiple-file-input__item');
     if (!items) return null;
@@ -273,21 +261,7 @@ export function MultipleFileInput({
           )}
 
           <div className="fdoc-multiple-file-input__files">
-            <div
-              ref={listRef}
-              className="fdoc-multiple-file-input__list"
-              onDragOver={event => {
-                if (dragIndex === null) return;
-                event.preventDefault();
-                event.dataTransfer.dropEffect = 'move';
-                updateDropSlot(getClientDropSlot(event.clientY));
-              }}
-              onDrop={event => {
-                if (dragIndex === null) return;
-                event.preventDefault();
-                reorderDragged();
-              }}
-            >
+            <div ref={listRef} className="fdoc-multiple-file-input__list">
               {dropIndicator(0)}
               {files.map((file, index) => {
                 const rowReorderable = reorderable || file.reorderable;
@@ -297,25 +271,6 @@ export function MultipleFileInput({
                       <FileRow
                         {...file}
                         reorderable={rowReorderable}
-                        onReorderDragStart={event => {
-                          file.onReorderDragStart?.(event);
-                          if (!rowReorderable) return;
-                          updateDragIndex(index);
-                          updateDropSlot(null);
-                          event.dataTransfer.effectAllowed = 'move';
-                        }}
-                        onReorderDragEnd={event => {
-                          file.onReorderDragEnd?.(event);
-                          if (
-                            rowReorderable &&
-                            dragIndexRef.current !== null &&
-                            dropSlotRef.current !== null
-                          ) {
-                            reorderDragged();
-                          } else {
-                            clearReorderState();
-                          }
-                        }}
                         onReorderPointerStart={event => {
                           file.onReorderPointerStart?.(event);
                           if (!rowReorderable || file.reorderDisabled) return;
