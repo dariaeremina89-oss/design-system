@@ -342,3 +342,17 @@ test('MultipleFileInput Reorderable story matches the Figma 8,1 MB example', asy
     '2,7 МБ',
   ]);
 });
+
+
+test('SingleTemplateReorder tooltip respects the 288px design-system maximum', async ({ page }) => {
+  await page.setViewportSize({ width: 700, height: 600 });
+  await page.goto('/iframe.html?id=components-inputs-multiplefileinput--single-template-reorder&viewMode=story');
+
+  const handle = page.getByRole('button', { name: 'Изменить порядок файла Договор.docx' });
+  await handle.hover();
+
+  const tooltip = page.getByRole('tooltip');
+  await expect(tooltip).toHaveText('Порядок можно изменить, когда шаблонов несколько');
+  const box = await tooltip.boundingBox();
+  expect(box?.width).toBeLessThanOrEqual(288);
+});
