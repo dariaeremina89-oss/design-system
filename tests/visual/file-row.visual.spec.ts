@@ -83,20 +83,27 @@ test('FileRow additional components preserve their own geometry', async ({ page 
   expect(await chipsExample.getByTestId('file-row').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
 });
 
-test('FileRow reorder moves the actual row, not only the drop indicator', async ({ page }) => {
+test('FileRow reorder moves the actual row with mouse Pointer Events', async ({ page }) => {
   await page.setViewportSize({ width: 600, height: 700 });
   await page.goto('/iframe.html?id=components-elements-filerow--reorderable&viewMode=story');
 
   const names = page.locator('[data-testid^="reorder-row-"] .fdoc-file-item__name');
   await expect(names).toHaveText(['Договор.pdf', 'Заявление.pdf', 'Согласие.pdf']);
 
-  const source = page.getByTestId('file-row-reorder-handle').first();
-  const target = page.getByTestId('reorder-row-agreement');
-  await source.dragTo(target);
+  const handle = page.getByTestId('reorder-row-contract').getByTestId('file-row-reorder-handle');
+  const handleBox = await handle.boundingBox();
+  const targetBox = await page.getByTestId('reorder-row-agreement').boundingBox();
+  if (!handleBox || !targetBox) throw new Error('Reorder rows are not measurable');
 
+  await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(handleBox.x + handleBox.width / 2, targetBox.y + targetBox.height - 2, { steps: 4 });
+
+  await expect(page.getByTestId('file-row-drop-indicator')).toBeVisible();
+
+  await page.mouse.up();
   await expect(names).toHaveText(['Заявление.pdf', 'Согласие.pdf', 'Договор.pdf']);
 });
-
 
 test('FileRow disabled examples use the nested Badge and Chips states', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 600 });
@@ -141,57 +148,47 @@ test('FileRow menu glyphs stay 24px in built-in and custom slots, including disa
 });
 
 
-test('FileRow keeps its slot but hides the source row while dragging', async ({ page }) => {
+test('FileRow keeps its slot but hides the source row during pointer reorder', async ({ page }) => {
   await page.goto('/iframe.html?id=components-elements-filerow--reorderable&viewMode=story');
 
   const row = page.getByTestId('file-row').first();
   const handle = row.getByTestId('file-row-reorder-handle');
   const before = await row.boundingBox();
+  const handleBox = await handle.boundingBox();
+  if (!before || !handleBox) throw new Error('Reorder row is not measurable');
 
-  await handle.evaluate(element => {
-    const data = new DataTransfer();
-    element.dispatchEvent(new DragEvent('dragstart', {
-      bubbles: true,
-      cancelable: true,
-      dataTransfer: data,
-      clientX: 8,
-      clientY: 8,
-    }));
-  });
+  await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
+  await page.mouse.down();
 
   await expect(row).toHaveAttribute('data-file-row-dragging', 'true');
   await expect(row).toHaveCSS('opacity', '0');
-  const during = await row.boundingBox();
-  expect(during?.width).toBe(before?.width);
-  expect(during?.height).toBe(before?.height);
+  await expect(page.locator('.fdoc-file-row__pointer-preview')).toHaveCount(1);
 
-  await handle.evaluate(element => {
-    element.dispatchEvent(new DragEvent('dragend', { bubbles: true, cancelable: true }));
-  });
+  const during = await row.boundingBox();
+  expect(during?.width).toBe(before.width);
+  expect(during?.height).toBe(before.height);
+
+  await page.mouse.up();
 
   await expect(row).not.toHaveAttribute('data-file-row-dragging');
   await expect(row).toHaveCSS('opacity', '1');
+  await expect(page.locator('.fdoc-file-row__pointer-preview')).toHaveCount(0);
 });
 
-
-test('MultipleFileInput shows consumer-provided reorder tooltip for templates', async ({ page }) => {
+test('MultipleFileInput closes reorder tooltip when pointer reorder starts', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-multiplefileinput--templates-reorderable&viewMode=story');
 
   const handle = page.getByRole('button', { name: 'Изменить порядок файла Договор.docx' });
   await handle.hover();
   await expect(page.getByRole('tooltip')).toHaveText('Изменить порядок шаблона');
 
-  await handle.evaluate(element => {
-    const data = new DataTransfer();
-    element.dispatchEvent(new DragEvent('dragstart', {
-      bubbles: true,
-      cancelable: true,
-      dataTransfer: data,
-      clientX: 8,
-      clientY: 8,
-    }));
-  });
+  const box = await handle.boundingBox();
+  if (!box) throw new Error('Reorder handle is not measurable');
+
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
   await expect(page.getByRole('tooltip')).toHaveCount(0);
+  await page.mouse.up();
 });
 
 test('Disabled reorder handle still explains why reorder is unavailable', async ({ page }) => {
@@ -272,57 +269,35 @@ test('MultipleFileInput reorders template rows with touch pointer events at 320p
 });
 
 
-test('MultipleFileInput commits the same position shown by DropIndicator at list edges', async ({ page }) => {
+test('MultipleFileInput reorders immediately to the shown edge position with mouse Pointer Events', async ({ page }) => {
   await page.setViewportSize({ width: 700, height: 800 });
   await page.goto('/iframe.html?id=components-inputs-multiplefileinput--templates-reorderable&viewMode=story');
 
-  const list = page.locator('.fdoc-multiple-file-input__list');
   const rows = page.locator('.fdoc-multiple-file-input__item');
   const names = rows.locator('.fdoc-file-item__name');
 
-  const drag = async (sourceIndex: number, clientY: number) => {
+  const pointerReorder = async (sourceIndex: number, targetY: number) => {
     const handle = rows.nth(sourceIndex).getByTestId('file-row-reorder-handle');
+    const handleBox = await handle.boundingBox();
+    if (!handleBox) throw new Error('Reorder handle is not measurable');
 
-    await handle.evaluate(element => {
-      const data = new DataTransfer();
-      element.dispatchEvent(new DragEvent('dragstart', {
-        bubbles: true,
-        cancelable: true,
-        dataTransfer: data,
-        clientX: 12,
-        clientY: 12,
-      }));
-    });
+    const x = handleBox.x + handleBox.width / 2;
+    const y = handleBox.y + handleBox.height / 2;
 
-    await list.evaluate((element, y) => {
-      const data = new DataTransfer();
-      element.dispatchEvent(new DragEvent('dragover', {
-        bubbles: true,
-        cancelable: true,
-        dataTransfer: data,
-        clientX: 12,
-        clientY: y,
-      }));
-    }, clientY);
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x, targetY, { steps: 5 });
 
     await expect(page.getByTestId('file-row-drop-indicator')).toBeVisible();
 
-    await list.evaluate((element, y) => {
-      const data = new DataTransfer();
-      element.dispatchEvent(new DragEvent('drop', {
-        bubbles: true,
-        cancelable: true,
-        dataTransfer: data,
-        clientX: 12,
-        clientY: y,
-      }));
-    }, clientY);
+    await page.mouse.up();
+    await expect(page.getByTestId('file-row-drop-indicator')).toHaveCount(0);
   };
 
   const thirdTemplateBox = await rows.nth(2).boundingBox();
   if (!thirdTemplateBox) throw new Error('Third template row is not measurable');
 
-  await drag(0, thirdTemplateBox.y + thirdTemplateBox.height + 12);
+  await pointerReorder(0, thirdTemplateBox.y + thirdTemplateBox.height + 2);
   await expect(names).toHaveText([
     'Заявление.docx',
     'Согласие.docx',
@@ -334,64 +309,11 @@ test('MultipleFileInput commits the same position shown by DropIndicator at list
   const firstTemplateBox = await rows.nth(0).boundingBox();
   if (!firstTemplateBox) throw new Error('First template row is not measurable');
 
-  await drag(2, firstTemplateBox.y - 12);
+  await pointerReorder(2, firstTemplateBox.y - 2);
   await expect(names).toHaveText([
     'Договор.docx',
     'Заявление.docx',
     'Согласие.docx',
-    'Паспорт.pdf',
-    'Приложение.pdf',
-  ]);
-});
-
-
-test('MultipleFileInput commits the shown DropIndicator position on dragend without drop', async ({ page }) => {
-  await page.setViewportSize({ width: 700, height: 800 });
-  await page.goto('/iframe.html?id=components-inputs-multiplefileinput--templates-reorderable&viewMode=story');
-
-  const list = page.locator('.fdoc-multiple-file-input__list');
-  const rows = page.locator('.fdoc-multiple-file-input__item');
-  const names = rows.locator('.fdoc-file-item__name');
-  const handle = rows.nth(0).getByTestId('file-row-reorder-handle');
-  const thirdTemplate = await rows.nth(2).boundingBox();
-  if (!thirdTemplate) throw new Error('Third template row is not measurable');
-
-  await handle.evaluate(element => {
-    const data = new DataTransfer();
-    element.dispatchEvent(new DragEvent('dragstart', {
-      bubbles: true,
-      cancelable: true,
-      dataTransfer: data,
-      clientX: 12,
-      clientY: 12,
-    }));
-  });
-
-  await list.evaluate((element, y) => {
-    const data = new DataTransfer();
-    element.dispatchEvent(new DragEvent('dragover', {
-      bubbles: true,
-      cancelable: true,
-      dataTransfer: data,
-      clientX: 12,
-      clientY: y,
-    }));
-  }, thirdTemplate.y + thirdTemplate.height + 8);
-
-  await expect(page.getByTestId('file-row-drop-indicator')).toBeVisible();
-
-  await handle.evaluate(element => {
-    element.dispatchEvent(new DragEvent('dragend', {
-      bubbles: true,
-      cancelable: true,
-    }));
-  });
-
-  await expect(page.getByTestId('file-row-drop-indicator')).toHaveCount(0);
-  await expect(names).toHaveText([
-    'Заявление.docx',
-    'Согласие.docx',
-    'Договор.docx',
     'Паспорт.pdf',
     'Приложение.pdf',
   ]);
