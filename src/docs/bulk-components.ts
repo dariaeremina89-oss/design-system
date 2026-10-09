@@ -350,7 +350,7 @@ const tooltip = componentDoc({
   purpose: `**Tooltip** — краткое пояснение к Icon, статусу, сокращению или обрезанному тексту. Не используйте для Error, важной информации или интерактивного содержимого.`,
   anatomy: `Portal-поверхность с коротким текстом; Arrow по умолчанию отсутствует.`,
   api: `placement, trigger hover/focus/hover+focus, delayShow 200 ms, delayHide 120 ms и варианты ширины String / Area / Area max.`,
-  variants: `String подстраивается под текст, Area — 216 px, Area max — 288 px с ограничением viewport.`,
+  variants: `String подстраивается под текст, но не превышает 288 px. Area — 216 px, Area max — 288 px; все варианты дополнительно ограничиваются viewport.`,
   geometry: `background-base-inverse, text-base-inverse, Caption Base, padding space-8, radius-small, shadow-m.`,
   behavior: `Hover/focus показывают Tooltip с задержкой. Hover по самому Tooltip сохраняет его. Placement пересчитывается у края viewport и при scroll.`,
   responsive: `Ширина ограничивается viewport; длинные слова переносятся внутри.`,
