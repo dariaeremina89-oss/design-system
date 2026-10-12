@@ -87,12 +87,11 @@ export const TextStyles: Story = {
           gridTemplateColumns: '104px minmax(0, 1fr) minmax(0, 1fr)',
           gap: 12,
           color: 'var(--text-base-secondary)',
-          font: 'var(--page-caption)',
         }}
       >
-        <span>Style</span>
-        <span>Typography</span>
-        <span>Skeleton</span>
+        <Typography as="span" variant="caption" strong>Style</Typography>
+        <Typography as="span" variant="caption" strong>Typography</Typography>
+        <Typography as="span" variant="caption" strong>Skeleton</Typography>
       </div>
       {textSizes.map(size => (
         <div
@@ -105,7 +104,7 @@ export const TextStyles: Story = {
           }}
         >
           <code style={{ overflowWrap: 'anywhere' }}>{size}</code>
-          <Typography as="span" variant={size}>Пример текста</Typography>
+          <Typography as="span" variant={size} data-testid={`typography-${size}`}>Пример текста</Typography>
           <Skeleton
             shape="text"
             width="100%"
@@ -188,7 +187,11 @@ export const ComponentSkeletonStates: Story = {
         }}
       >
         {examples.map(example => (
-          <div key={example.name} style={{ display: 'grid', alignContent: 'start', gap: 8, minWidth: 0 }}>
+          <div
+            key={example.name}
+            data-testid={`component-skeleton-${example.name.toLocaleLowerCase()}`}
+            style={{ display: 'grid', alignContent: 'start', gap: 8, minWidth: 0 }}
+          >
             <Typography as="div" variant="caption" strong>{example.name}</Typography>
             <div style={{ minWidth: 0 }}>{example.view}</div>
           </div>
