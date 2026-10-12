@@ -1,18 +1,35 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { coreDocs } from '../docs/core-components';
 import { qualityDocs } from '../docs/quality';
+import { AsyncMultiselect } from '../components/AsyncMultiselect/AsyncMultiselect';
 import { Autocomplete } from '../components/Autocomplete/Autocomplete';
+import { AsyncAutocomplete } from '../components/Autocomplete/AsyncAutocomplete';
 import { Badge } from '../components/Badge/Badge';
+import { Breadcrumbs } from '../components/Breadcrumbs/Breadcrumbs';
 import { Button } from '../components/Button/Button';
 import { ButtonFAB } from '../components/ButtonFAB/ButtonFAB';
 import { ButtonIcon } from '../components/ButtonIcon/ButtonIcon';
+import { ButtonToggle } from '../components/ButtonToggle/ButtonToggle';
+import { Chips } from '../components/Chips/Chips';
+import { ChipsGroup } from '../components/Chips/ChipsGroup';
 import { CodeInput } from '../components/CodeInput/CodeInput';
+import { Dropzone } from '../components/Dropzone/Dropzone';
 import { FileRow } from '../components/FileRow/FileRow';
 import { Input } from '../components/Input/Input';
+import { ItemRow } from '../components/ItemRow/ItemRow';
+import { ButtonLink, Link } from '../components/Link/Link';
+import { Menu } from '../components/Menu/Menu';
 import { Multiselect } from '../components/Multiselect/Multiselect';
+import { Pagination } from '../components/Pagination/Pagination';
+import { PhoneInput } from '../components/PhoneInput/PhoneInput';
+import { PriceInput } from '../components/PriceInput/PriceInput';
+import { Search } from '../components/Search/Search';
 import { Select } from '../components/Select/Select';
+import { Checkbox, Radio, Switch } from '../components/SelectionControl/SelectionControl';
+import { CheckboxGroup, RadioGroup, SwitchGroup } from '../components/SelectionControl/SelectionGroup';
 import { SingleFileInput } from '../components/SingleFileInput/SingleFileInput';
 import { Skeleton, type SkeletonShape, type SkeletonTextSize } from '../components/Skeleton/Skeleton';
+import { Tabs } from '../components/Tabs/Tabs';
 import { Textarea } from '../components/Textarea/Textarea';
 import { Typography } from '../components/Typography/Typography';
 
@@ -144,44 +161,151 @@ export const ComponentSkeletonStates: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Skeleton-состояния составных компонентов. Каждый пример использует публичный skeleton API самого компонента, а не отдельную декоративную заглушку в story.',
+        story: 'Готовые skeleton-состояния компонентов дизайн-системы. Каждый пример ниже рендерится через публичный skeleton / state / isLoading API самого компонента; вручную из атома Skeleton эти примеры не собираются.',
       },
     },
   },
   render: () => {
-    const examples = [
-      { name: 'Button', view: <Button state="skeleton" skeletonWidth={132} /> },
-      { name: 'ButtonIcon', view: <ButtonIcon aria-label="Действие" icon="plus" state="skeleton" /> },
-      { name: 'ButtonFAB', view: <ButtonFAB aria-label="Создать" icon="plus" state="skeleton" position="inline" /> },
-      { name: 'Badge', view: <Badge state="skeleton" size="medium" /> },
-      { name: 'Input', view: <Input label="Label" caption="Caption" skeleton /> },
-      { name: 'Textarea', view: <Textarea label="Label" caption="Caption" skeleton /> },
-      { name: 'Select', view: <Select label="Label" options={[]} skeleton /> },
-      { name: 'Autocomplete', view: <Autocomplete label="Label" data={[]} skeleton /> },
-      { name: 'Multiselect', view: <Multiselect label="Label" options={[]} skeleton /> },
-      { name: 'CodeInput', view: <CodeInput label="Код подтверждения" skeleton /> },
-      { name: 'FileRow', view: <FileRow state="skeleton" /> },
-      { name: 'SingleFileInput', view: <SingleFileInput type="skeleton" /> },
+    const selectionOptions = [
+      { value: 'one', label: 'Первый вариант', description: 'Описание' },
+      { value: 'two', label: 'Второй вариант' },
+    ];
+    const tabsItems = [
+      { value: 'one', label: 'Первый раздел', content: '' },
+      { value: 'two', label: 'Второй раздел', content: '' },
+      { value: 'three', label: 'Третий раздел', content: '' },
+    ];
+    const breadcrumbItems = [
+      { label: 'Документы', href: '#documents' },
+      { label: 'Шаблоны', href: '#templates' },
+      { label: 'Создание шаблона' },
+    ];
+    const chipOptions = [
+      { value: 'all', text: 'Все документы' },
+      { value: 'signed', text: 'Подписанные' },
+    ];
+    const menuItems = [
+      { id: 'one', title: 'Первый пункт' },
+      { id: 'two', title: 'Второй пункт' },
+    ];
+
+    const groups = [
+      {
+        title: 'Actions',
+        examples: [
+          { name: 'Button', view: <Button state="skeleton" skeletonWidth={132} /> },
+          { name: 'ButtonIcon', view: <ButtonIcon aria-label="Действие" icon="plus" state="skeleton" /> },
+          { name: 'ButtonFAB', view: <ButtonFAB aria-label="Создать" icon="plus" state="skeleton" position="inline" /> },
+          {
+            name: 'ButtonToggle',
+            view: (
+              <ButtonToggle
+                aria-label="Период"
+                options={[
+                  { value: 'day', label: 'День' },
+                  { value: 'week', label: 'Неделя' },
+                ]}
+                isLoading
+              />
+            ),
+          },
+          { name: 'Link', view: <Link href="#details" text="Подробнее" state="skeleton" /> },
+          { name: 'ButtonLink', view: <ButtonLink text="Подробнее" state="skeleton" /> },
+        ],
+      },
+      {
+        title: 'Inputs',
+        examples: [
+          { name: 'Input', view: <Input label="Label" caption="Caption" skeleton /> },
+          { name: 'Textarea', view: <Textarea label="Label" caption="Caption" skeleton /> },
+          { name: 'Search', view: <Search label="Поиск" skeleton /> },
+          { name: 'PriceInput', view: <PriceInput label="Сумма" skeleton /> },
+          { name: 'PhoneInput', view: <PhoneInput label="Номер телефона" skeleton /> },
+          { name: 'Select', view: <Select label="Label" options={[]} skeleton /> },
+          { name: 'Autocomplete', view: <Autocomplete label="Label" data={[]} skeleton /> },
+          {
+            name: 'AsyncAutocomplete',
+            view: <AsyncAutocomplete label="Label" data={[]} skeleton onFetch={() => undefined} />,
+          },
+          { name: 'Multiselect', view: <Multiselect label="Label" options={[]} skeleton /> },
+          {
+            name: 'AsyncMultiselect',
+            view: <AsyncMultiselect label="Label" options={[]} skeleton onFetch={() => undefined} />,
+          },
+          { name: 'CodeInput', view: <CodeInput label="Код подтверждения" skeleton /> },
+          { name: 'SingleFileInput', view: <SingleFileInput type="skeleton" /> },
+          { name: 'Dropzone', view: <Dropzone state="skeleton" /> },
+          { name: 'FileRow', view: <FileRow state="skeleton" /> },
+        ],
+      },
+      {
+        title: 'Selection',
+        examples: [
+          { name: 'Badge', view: <Badge state="skeleton" size="medium" /> },
+          { name: 'Chips', view: <Chips text="Chips" state="skeleton" /> },
+          {
+            name: 'ChipsGroup',
+            view: <ChipsGroup aria-label="Статусы" options={chipOptions} isLoading />,
+          },
+          { name: 'Checkbox', view: <Checkbox label="Checkbox" description="Описание" state="skeleton" /> },
+          { name: 'Radio', view: <Radio label="Radio" description="Описание" state="skeleton" /> },
+          { name: 'Switch', view: <Switch label="Switch" description="Описание" state="skeleton" /> },
+          {
+            name: 'CheckboxGroup',
+            view: <CheckboxGroup label="CheckboxGroup" options={selectionOptions} state="skeleton" />,
+          },
+          {
+            name: 'RadioGroup',
+            view: <RadioGroup label="RadioGroup" options={selectionOptions} state="skeleton" />,
+          },
+          {
+            name: 'SwitchGroup',
+            view: <SwitchGroup label="SwitchGroup" options={selectionOptions} state="skeleton" />,
+          },
+          { name: 'ItemRow', view: <ItemRow title="Название пункта" state="skeleton" /> },
+          { name: 'Menu', view: <Menu aria-label="Меню" items={menuItems} skeleton /> },
+        ],
+      },
+      {
+        title: 'Navigation',
+        examples: [
+          { name: 'Tabs', view: <Tabs aria-label="Разделы" items={tabsItems} isLoading /> },
+          { name: 'Breadcrumbs', view: <Breadcrumbs items={breadcrumbItems} isLoading /> },
+          {
+            name: 'Pagination',
+            view: <Pagination totalElements={400} size={10} page={1} isLoading />,
+          },
+        ],
+      },
     ];
 
     return (
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
-          gap: 24,
-          width: '100%',
-        }}
-      >
-        {examples.map(example => (
-          <div
-            key={example.name}
-            data-testid={`component-skeleton-${example.name.toLocaleLowerCase()}`}
-            style={{ display: 'grid', alignContent: 'start', gap: 8, minWidth: 0 }}
-          >
-            <Typography as="div" variant="caption" strong>{example.name}</Typography>
-            <div style={{ minWidth: 0 }}>{example.view}</div>
-          </div>
+      <div style={{ display: 'grid', gap: 32, width: '100%' }}>
+        {groups.map(group => (
+          <section key={group.title} style={{ display: 'grid', gap: 16, minWidth: 0 }}>
+            <Typography as="h3" variant="h3-heading">{group.title}</Typography>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))',
+                gap: 24,
+                width: '100%',
+              }}
+            >
+              {group.examples.map(example => (
+                <div
+                  key={example.name}
+                  data-testid={`component-skeleton-${example.name.toLocaleLowerCase()}`}
+                  style={{ display: 'grid', alignContent: 'start', gap: 8, minWidth: 0 }}
+                >
+                  <Typography as="div" variant="caption" strong>{example.name}</Typography>
+                  <div style={{ minWidth: 0, maxWidth: '100%', overflowX: 'auto', paddingBottom: 2 }}>
+                    {example.view}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
         ))}
       </div>
     );
