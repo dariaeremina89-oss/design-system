@@ -11,6 +11,25 @@ describe('Selection controls',()=>{
  it('supports native form data and reset',()=>{render(<form data-testid="form"><Checkbox label="Почта" name="channel" value="email" defaultChecked/></form>);const form=screen.getByTestId('form') as HTMLFormElement;expect(new FormData(form).get('channel')).toBe('email');fireEvent.click(screen.getByRole('checkbox'));expect(new FormData(form).get('channel')).toBe(null);form.reset();expect(screen.getByRole('checkbox')).toBeChecked();});
  it('switch responds to Enter and Space',async()=>{const user=userEvent.setup();render(<Switch label="Автосохранение"/>);await user.tab();await user.keyboard('{Enter}');expect(screen.getByRole('switch')).toBeChecked();await user.keyboard(' ');expect(screen.getByRole('switch')).not.toBeChecked();});
  it.each([Checkbox,Radio,Switch])('disabled and skeleton are not interactive',async Control=>{const user=userEvent.setup(),onChange=vi.fn();const {rerender}=render(<Control label="Опция" disabled onChange={onChange}/>);await user.click(screen.getByText('Опция'));await user.tab();expect(onChange).not.toHaveBeenCalled();expect(document.activeElement).toBe(document.body);rerender(<Control label="Опция" state="skeleton"/>);expect(document.querySelector('input')).toBe(null);});
+ it('matches Figma skeleton geometry',()=>{
+  const {container,rerender}=render(<Checkbox label="Опция" description="Описание" state="skeleton"/>);
+  let shape=container.querySelector('.fdoc-control > .fdoc-skeleton') as HTMLElement;
+  let label=container.querySelector('.fdoc-control__label .fdoc-skeleton') as HTMLElement;
+  let description=container.querySelector('.fdoc-control__description .fdoc-skeleton') as HTMLElement;
+  expect(shape.style.width).toBe('24px');expect(shape.style.height).toBe('24px');
+  expect(label.style.width).toBe('64px');expect(label).toHaveAttribute('data-text-size','body');
+  expect(description.style.width).toBe('80px');expect(description).toHaveAttribute('data-text-size','caption');
+  rerender(<Switch label="Опция" description="Описание" state="skeleton"/>);
+  shape=container.querySelector('.fdoc-control > .fdoc-skeleton') as HTMLElement;
+  expect(shape.style.width).toBe('36px');expect(shape.style.height).toBe('20px');
+ });
+ it('matches Figma skeleton widths in groups',()=>{
+  const {container}=render(<CheckboxGroup label="Группа" description="Описание" options={[{value:'a',label:'Почта',description:'Рабочая'}]} state="skeleton"/>);
+  const title=container.querySelector('.fdoc-selection-group__label .fdoc-skeleton') as HTMLElement;
+  const description=container.querySelector('.fdoc-selection-group__description .fdoc-skeleton') as HTMLElement;
+  expect(title.style.width).toBe('64px');expect(title).toHaveAttribute('data-text-size','subtitle');
+  expect(description.style.width).toBe('64px');expect(description).toHaveAttribute('data-text-size','caption');
+ });
  it('connects option error instead of description',()=>{render(<Checkbox label="Опция" description="Описание" errorText="Ошибка"/>);expect(screen.queryByText('Описание')).toBe(null);expect(screen.getByRole('checkbox')).toHaveAccessibleDescription('Ошибка');expect(screen.getByRole('checkbox')).toHaveAttribute('aria-invalid','true');});
  it('radio group enforces one selection',async()=>{const user=userEvent.setup();render(<RadioGroup label="Способ" options={options} defaultValue="a"/>);await user.click(screen.getByLabelText('Телефон'));expect(screen.getByLabelText('Телефон')).toBeChecked();expect(screen.getByLabelText('Почта')).not.toBeChecked();});
  it.each([CheckboxGroup,SwitchGroup])('group keeps independent selected values',async Group=>{const user=userEvent.setup(),change=vi.fn();render(<Group label="Способы" options={options} defaultValue={['a']} onValueChange={change}/>);await user.click(screen.getByText('Телефон'));expect(change).toHaveBeenLastCalledWith(['a','b']);await user.click(screen.getByText('Почта'));expect(change).toHaveBeenLastCalledWith(['b']);});
