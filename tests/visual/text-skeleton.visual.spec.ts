@@ -45,7 +45,7 @@ for (const name of ['link', 'buttonlink']) {
 }
 
 for (const kind of ['checkbox', 'radio', 'switch']) {
-  test(`${kind} group skeleton separates Subtitle and Caption`, async ({ page }) => {
+  test(`${kind} group skeleton follows Figma typography and control geometry`, async ({ page }) => {
     await page.goto(`/iframe.html?id=components-selection-${kind}group--skeleton&viewMode=story`);
     const title = page.locator('.fdoc-selection-group__label .fdoc-skeleton');
     const label = page.locator('.fdoc-control__label .fdoc-skeleton').first();
@@ -54,8 +54,14 @@ for (const kind of ['checkbox', 'radio', 'switch']) {
     for (const width of [1280, 320]) {
       await page.setViewportSize({width,height:800});
       expect(await metrics(title)).toEqual({line:'24px',bar:'11px',top:'7px'});
-      expect(await metrics(label)).toEqual({line:'24px',bar:'11px',top:'7px'});
+      expect(await metrics(label)).toEqual({line:'20px',bar:'10px',top:'5px'});
       expect(await metrics(description)).toEqual({line:'16px',bar:'8px',top:'4px'});
+      await expect(title).toHaveCSS('width', '64px');
+      await expect(label).toHaveCSS('width', '64px');
+      await expect(description).toHaveCSS('width', '80px');
+      const control = page.locator('.fdoc-control > .fdoc-skeleton').first();
+      await expect(control).toHaveCSS('width', kind === 'switch' ? '36px' : '24px');
+      await expect(control).toHaveCSS('height', kind === 'switch' ? '20px' : '24px');
     }
     await expect(page.locator('input')).toHaveCount(0);
   });
@@ -84,31 +90,74 @@ test('navigation skeletons use Caption for breadcrumbs and Body for counter', as
 });
 
 
-test('Skeleton text styles match the corresponding Typography line height', async ({ page }) => {
+test('Skeleton text styles match Figma line, bar and offset geometry', async ({ page }) => {
   await page.goto('/iframe.html?id=atoms-skeleton--text-styles&viewMode=story');
 
   const sizes = [
-    'h0-heading',
-    'h1-heading',
-    'h2-heading',
-    'h3-heading',
-    'subtitle',
-    'body',
-    'caption',
-    'overline',
-    'code',
-  ];
+    ['h0-heading', 48, 28, 11],
+    ['h1-heading', 40, 22, 10],
+    ['h2-heading', 32, 17, 8],
+    ['h3-heading', 28, 14, 8],
+    ['subtitle', 24, 11, 7],
+    ['body', 20, 10, 5],
+    ['caption', 16, 8, 4],
+    ['overline', 14, 7, 4],
+  ] as const;
 
-  for (const size of sizes) {
+  for (const [size, line, bar, top] of sizes) {
     const typography = page.getByTestId(`typography-${size}`);
     const skeleton = page.getByTestId(`skeleton-${size}`);
 
     await expect(typography).toBeVisible();
     await expect(skeleton).toBeVisible();
 
-    const lineHeight = await typography.evaluate(element => getComputedStyle(element).lineHeight);
-    await expect(skeleton).toHaveCSS('height', lineHeight);
+    await expect(typography).toHaveCSS('line-height', `${line}px`);
+    expect(await metrics(skeleton)).toEqual({
+      line: `${line}px`,
+      bar: `${bar}px`,
+      top: `${top}px`,
+    });
   }
+});
+
+test('Input skeleton follows Figma empty and description content rules', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-input--skeleton&viewMode=story');
+  await expect(page.getByTestId('input-skeleton-text')).toHaveCount(0);
+  await expect(page.getByTestId('input-skeleton-field')).toHaveCSS('min-height', '56px');
+  await expect(page.getByTestId('input-skeleton-label')).toHaveCSS('padding-left', '12px');
+  await expect(page.getByTestId('input-skeleton-helper')).toHaveCSS('padding-left', '12px');
+
+  await page.goto('/iframe.html?id=components-inputs-input--skeleton-with-all-content&viewMode=story');
+  const inputText = page.getByTestId('input-skeleton-text');
+  const description = page.getByTestId('input-skeleton-description');
+  expect(await metrics(inputText)).toEqual({line:'24px',bar:'11px',top:'7px'});
+  expect(await metrics(description)).toEqual({line:'16px',bar:'8px',top:'4px'});
+  await expect(inputText).toHaveCSS('width', '80px');
+  await expect(description).toHaveCSS('width', '88px');
+});
+
+test('CodeInput skeleton follows Figma empty and filled geometry', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-codeinput--skeleton&viewMode=story');
+  await expect(page.locator('.fdoc-code-input__cell')).toHaveCount(6);
+  await expect(page.locator('.fdoc-code-input__cell .fdoc-skeleton')).toHaveCount(0);
+  await expect(page.locator('.fdoc-code-input > .fdoc-field__label')).toHaveCSS('padding-left', '4px');
+  await expect(page.locator('.fdoc-code-input > .fdoc-field__helper')).toHaveCSS('padding-left', '4px');
+  await expect(page.locator('.fdoc-code-input__cell').first()).toHaveCSS('width', '48px');
+  await expect(page.locator('.fdoc-code-input__cell').first()).toHaveCSS('height', '56px');
+
+  await page.goto('/iframe.html?id=components-inputs-codeinput--skeleton-filled&viewMode=story');
+  const medium = page.locator('.fdoc-code-input__cell .fdoc-skeleton');
+  await expect(medium).toHaveCount(6);
+  await expect(medium.first()).toHaveCSS('width', '16px');
+  expect(await metrics(medium.first())).toEqual({line:'28px',bar:'14px',top:'8px'});
+
+  await page.goto('/iframe.html?id=components-inputs-codeinput--skeleton-small-filled&viewMode=story');
+  const small = page.locator('.fdoc-code-input__cell .fdoc-skeleton');
+  await expect(small).toHaveCount(6);
+  await expect(page.locator('.fdoc-code-input__cell').first()).toHaveCSS('width', '32px');
+  await expect(page.locator('.fdoc-code-input__cell').first()).toHaveCSS('height', '48px');
+  await expect(small.first()).toHaveCSS('width', '16px');
+  expect(await metrics(small.first())).toEqual({line:'24px',bar:'11px',top:'7px'});
 });
 
 test('Skeleton docs show real component skeleton states without interactive controls', async ({ page }) => {
