@@ -26,6 +26,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 - Исправлена сетка галереи: широкие skeleton-state, включая CodeInput, больше не заходят на соседние карточки и не создают общий horizontal overflow.
 - Fixed And Fluid Sizes теперь явно объясняет разницу между фиксированными width / height в px и адаптивной шириной 100%.
 - Добавлены browser-проверки совпадения высоты Typography и Skeleton, отсутствия интерактивных controls внутри skeleton-state компонентов и отсутствия общего horizontal overflow.
+- Сверена внутренняя геометрия skeleton-state с Figma: исправлены Input, Checkbox / Radio / Switch, SelectionGroup и CodeInput. Для H0–Overline зафиксированы точные line-height / bar height / vertical offset из Figma; Text Styles больше не выдает Code за Figma-вариант, потому что отдельного Code Skeleton в макете нет.
 
 ## 09.10.2026
 
