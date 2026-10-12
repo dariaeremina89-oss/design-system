@@ -13,7 +13,7 @@ test('Typography platform previews keep their own sizes at both viewport widths'
   }
 });
 
-test('Skeleton typography and icon shapes match the atom contract', async ({ page }) => {
+test('Skeleton States shows one example of every shape', async ({ page }) => {
   await page.goto('/iframe.html?id=atoms-skeleton--states&viewMode=story');
   const root = page.locator('#storybook-root');
   await expect(root).toBeVisible();
@@ -25,8 +25,11 @@ test('Skeleton typography and icon shapes match the atom contract', async ({ pag
       }
     `,
   });
-  await expect(root.locator('.fdoc-skeleton--text-caption')).toHaveCount(1);
-  await expect(root.locator('.fdoc-skeleton--text-subtitle')).toHaveCount(1);
+
+  await expect(root.locator('.fdoc-skeleton--text')).toHaveCount(1);
+  await expect(root.locator('.fdoc-skeleton--text-body')).toHaveCount(1);
+  await expect(root.locator('.fdoc-skeleton--rounded')).toHaveCount(1);
+  await expect(root.locator('.fdoc-skeleton--circle')).toHaveCount(1);
   await expect(root.locator('.fdoc-skeleton--icon')).toHaveCount(1);
 });
 
