@@ -59,7 +59,7 @@ export const AllColors: Story = {
 };
 export const States: Story = {
   render: (args) => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 16 }}>
       {(['default', 'hover', 'focused', 'pressed', 'disabled', 'skeleton'] as const).map((state) => (
         <ButtonIcon {...args} key={state} state={state} aria-label={state} />
       ))}
