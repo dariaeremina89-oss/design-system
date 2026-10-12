@@ -20,9 +20,12 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 ### Skeleton
 
-- В Docs добавлено наглядное сравнение каждого текстового Skeleton с реальным Typography того же page style, чтобы было видно совпадение line-height и вертикальной геометрии.
-- Добавлена галерея skeleton-состояний составных компонентов: Button, ButtonIcon, ButtonFAB, Badge, Input, Textarea, Select, Autocomplete, Multiselect, CodeInput, FileRow и SingleFileInput.
-- Добавлены browser-проверки совпадения высоты Typography и Skeleton и отсутствия интерактивных controls внутри skeleton-state компонентов.
+- В Docs добавлено наглядное сравнение каждого текстового Skeleton с реальным Typography того же page style, чтобы было видно совпадение line-height и вертикальной геометрии; текст примера сокращен, чтобы крупные heading-стили не ломали строку.
+- States упрощен до одного примера каждой формы Skeleton: Text, Rounded, Circle и Icon. Полная матрица текстовых размеров остается только в Text Styles.
+- Component Skeleton States расширен до 34 готовых skeleton-состояний публичных компонентов и сгруппирован по Actions / Inputs / Selection / Navigation. Каждый пример рендерится через публичный skeleton / state / isLoading API самого компонента, без ручной сборки из атома Skeleton.
+- Исправлена сетка галереи: широкие skeleton-state, включая CodeInput, больше не заходят на соседние карточки и не создают общий horizontal overflow.
+- Fixed And Fluid Sizes теперь явно объясняет разницу между фиксированными width / height в px и адаптивной шириной 100%.
+- Добавлены browser-проверки совпадения высоты Typography и Skeleton, отсутствия интерактивных controls внутри skeleton-state компонентов и отсутствия общего horizontal overflow.
 
 ## 09.10.2026
 
