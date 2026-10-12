@@ -33,7 +33,7 @@ import { Tabs } from '../components/Tabs/Tabs';
 import { Textarea } from '../components/Textarea/Textarea';
 import { Typography } from '../components/Typography/Typography';
 
-const textSizes: Exclude<SkeletonTextSize, 'inherit'>[] = [
+const figmaTextSizes = [
   'h0-heading',
   'h1-heading',
   'h2-heading',
@@ -42,8 +42,9 @@ const textSizes: Exclude<SkeletonTextSize, 'inherit'>[] = [
   'body',
   'caption',
   'overline',
-  'code',
-];
+] as const satisfies readonly Exclude<SkeletonTextSize, 'inherit' | 'code'>[];
+
+const textSizes: Exclude<SkeletonTextSize, 'inherit'>[] = [...figmaTextSizes, 'code'];
 
 const meta = {
   title: 'Components/Elements/Skeleton',
@@ -114,7 +115,7 @@ export const TextStyles: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Слева показан реальный Typography, справа — текстовый Skeleton того же стиля. Высота строки Skeleton синхронизирована с line-height соответствующего page style.',
+        story: 'Слева показан реальный Typography, справа — текстовый Skeleton того же стиля. Здесь выведены варианты, которые есть в Figma Skeleton set: H0–H3, Subtitle, Body, Caption и Overline. Высота строки, высота полоски и вертикальный offset совпадают с Figma.',
       },
     },
   },
@@ -133,7 +134,7 @@ export const TextStyles: Story = {
         <Typography as="span" variant="caption" strong>Typography</Typography>
         <Typography as="span" variant="caption" strong>Skeleton</Typography>
       </div>
-      {textSizes.map(size => (
+      {figmaTextSizes.map(size => (
         <div
           key={size}
           style={{
