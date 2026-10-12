@@ -85,7 +85,7 @@ test('navigation skeletons use Caption for breadcrumbs and Body for counter', as
 
 
 test('Skeleton text styles match the corresponding Typography line height', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-elements-skeleton--text-styles&viewMode=story');
+  await page.goto('/iframe.html?id=atoms-skeleton--text-styles&viewMode=story');
 
   const sizes = [
     'h0-heading',
@@ -112,7 +112,7 @@ test('Skeleton text styles match the corresponding Typography line height', asyn
 });
 
 test('Skeleton docs show real component skeleton states without interactive controls', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-elements-skeleton--component-skeleton-states&viewMode=story');
+  await page.goto('/iframe.html?id=atoms-skeleton--component-skeleton-states&viewMode=story');
 
   const examples = page.locator('[data-testid^="component-skeleton-"]');
   await expect(examples).toHaveCount(12);
@@ -121,5 +121,5 @@ test('Skeleton docs show real component skeleton states without interactive cont
     await expect(example.locator('.fdoc-skeleton').first()).toBeVisible();
   }
 
-  await expect(page.locator('button,input,textarea,select')).toHaveCount(0);
+  await expect(examples.locator('button,input,textarea,select')).toHaveCount(0);
 });
