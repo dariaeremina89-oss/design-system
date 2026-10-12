@@ -61,25 +61,34 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const States: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'По одному примеру каждой формы Skeleton. Полная матрица текстовых размеров вынесена отдельно в Text Styles.',
+      },
+    },
+  },
   render: () => (
-    <div style={{ display: 'grid', gap: 16 }}>
-      {textSizes.map(textSize => (
+    <div style={{ display: 'grid', width: 'min(456px, 100%)', gap: 16 }}>
+      {[
+        { name: 'Text', view: <Skeleton width={160} shape="text" textSize="body" /> },
+        { name: 'Rounded', view: <Skeleton width={160} height={32} shape="rounded" /> },
+        { name: 'Circle', view: <Skeleton width={48} height={48} shape="circle" /> },
+        { name: 'Icon', view: <Skeleton width={24} height={24} shape="icon" /> },
+      ].map(item => (
         <div
-          key={textSize}
+          key={item.name}
           style={{
             display: 'grid',
-            gridTemplateColumns: 'minmax(0, 280px) 104px',
+            gridTemplateColumns: '88px minmax(0, 1fr)',
             alignItems: 'center',
             gap: 16,
           }}
         >
-          <Skeleton width="100%" shape="text" textSize={textSize} />
-          <code>{textSize}</code>
+          <Typography as="span" variant="caption" strong>{item.name}</Typography>
+          <div>{item.view}</div>
         </div>
       ))}
-      <Skeleton width="100%" height={56} />
-      <Skeleton width={48} height={48} shape="circle" />
-      <Skeleton width={24} height={24} shape="icon" />
     </div>
   ),
 };
@@ -118,7 +127,7 @@ export const TextStyles: Story = {
           }}
         >
           <code style={{ overflowWrap: 'anywhere' }}>{size}</code>
-          <Typography as="span" variant={size} data-testid={`typography-${size}`}>Пример текста</Typography>
+          <Typography as="span" variant={size} data-testid={`typography-${size}`}>Текст</Typography>
           <Skeleton
             shape="text"
             width="100%"
