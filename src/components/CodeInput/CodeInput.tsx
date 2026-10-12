@@ -254,11 +254,13 @@ export function CodeInput({
                 key={index}
                 data-testid={`code-input-cell-${index + 1}`}
               >
-                <Skeleton
-                  width={size === 'medium' ? 16 : 12}
-                  shape="text"
-                  textSize={size === 'medium' ? 'h3-heading' : 'subtitle'}
-                />
+                {value.length > 0 && (
+                  <Skeleton
+                    width={16}
+                    shape="text"
+                    textSize={size === 'medium' ? 'h3-heading' : 'subtitle'}
+                  />
+                )}
               </span>
             );
           }
