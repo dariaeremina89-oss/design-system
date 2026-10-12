@@ -163,6 +163,22 @@ describe('Input', () => {
     expect(container.querySelector('.fdoc-input__clear')).toBeInTheDocument();
   });
 
+  it('matches Figma skeleton content visibility', () => {
+    const { rerender } = render(<Input skeleton label="Поле" caption="Подсказка" />);
+
+    expect(screen.queryByTestId('input-skeleton-text')).not.toBeInTheDocument();
+
+    rerender(<Input skeleton label="Поле" description="Описание" caption="Подсказка" />);
+    expect(screen.getByTestId('input-skeleton-text')).toHaveAttribute('data-text-size', 'subtitle');
+    expect(screen.getByTestId('input-skeleton-description')).toHaveAttribute('data-text-size', 'caption');
+
+    rerender(<Input skeleton label="Поле" defaultValue="Значение" caption="Подсказка" />);
+    expect(screen.getByTestId('input-skeleton-text')).toBeInTheDocument();
+
+    rerender(<Input skeleton type="search" label="Поиск" caption="Подсказка" />);
+    expect(screen.getByTestId('input-skeleton-text')).toBeInTheDocument();
+  });
+
   it('has no accessibility violations in the default state', async () => {
     const { container } = render(<Input label="Имя" placeholder="Введите имя" />);
     const violations = await axe(container);
