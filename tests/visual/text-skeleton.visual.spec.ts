@@ -82,3 +82,44 @@ test('navigation skeletons use Caption for breadcrumbs and Body for counter', as
   await expect(counter).toBeVisible();
   expect(await metrics(counter)).toEqual({line:'20px',bar:'10px',top:'5px'});
 });
+
+
+test('Skeleton text styles match the corresponding Typography line height', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-elements-skeleton--text-styles&viewMode=story');
+
+  const sizes = [
+    'h0-heading',
+    'h1-heading',
+    'h2-heading',
+    'h3-heading',
+    'subtitle',
+    'body',
+    'caption',
+    'overline',
+    'code',
+  ];
+
+  for (const size of sizes) {
+    const typography = page.getByTestId(`typography-${size}`);
+    const skeleton = page.getByTestId(`skeleton-${size}`);
+
+    await expect(typography).toBeVisible();
+    await expect(skeleton).toBeVisible();
+
+    const lineHeight = await typography.evaluate(element => getComputedStyle(element).lineHeight);
+    await expect(skeleton).toHaveCSS('height', lineHeight);
+  }
+});
+
+test('Skeleton docs show real component skeleton states without interactive controls', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-elements-skeleton--component-skeleton-states&viewMode=story');
+
+  const examples = page.locator('[data-testid^="component-skeleton-"]');
+  await expect(examples).toHaveCount(12);
+
+  for (const example of await examples.all()) {
+    await expect(example.locator('.fdoc-skeleton').first()).toBeVisible();
+  }
+
+  await expect(page.locator('button,input,textarea,select')).toHaveCount(0);
+});
