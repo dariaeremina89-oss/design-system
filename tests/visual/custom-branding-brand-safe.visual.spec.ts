@@ -88,16 +88,17 @@ test('Brand-safe Focus keeps the Default fill and adds only the focus outline',a
   await page.goto(pageUrl);
   const button=page.getByTestId('brand-safe-primary-button');
   await expect(button).toBeVisible();
+  await page.addStyleTag({content:'*, *::before, *::after { transition: none !important; }'});
 
   const before=await button.evaluate(el=>getComputedStyle(el).backgroundColor);
   await button.focus();
+
+  await expect.poll(async()=>button.evaluate(el=>getComputedStyle(el).backgroundColor)).toBe(before);
   const focused=await button.evaluate(el=>({
-    background:getComputedStyle(el).backgroundColor,
     outlineStyle:getComputedStyle(el).outlineStyle,
     outlineWidth:getComputedStyle(el).outlineWidth,
   }));
 
-  expect(focused.background).toBe(before);
   expect(focused.outlineStyle).not.toBe('none');
   expect(focused.outlineWidth).not.toBe('0px');
   await expect(page.getByTestId('brand-safe-focus')).toBeVisible();
