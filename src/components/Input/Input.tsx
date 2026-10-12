@@ -143,6 +143,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         defaultValue={defaultValue}
         placeholder={placeholder}
         maxLength={maxLength}
+        showText={hasValue || hasDescription || inputProps.type === 'search'}
         testId={inputTestId}
         wrapperClassName={wrapperClassName}
       />
