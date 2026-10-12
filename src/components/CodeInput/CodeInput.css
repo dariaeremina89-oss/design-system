@@ -4,6 +4,11 @@
   min-width: 0;
 }
 
+.fdoc-code-input > .fdoc-field__label,
+.fdoc-code-input > .fdoc-field__helper {
+  padding-inline: var(--space-4);
+}
+
 .fdoc-code-input__row {
   display: flex;
   align-items: center;
