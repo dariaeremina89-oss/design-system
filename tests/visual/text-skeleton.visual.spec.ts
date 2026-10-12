@@ -115,11 +115,16 @@ test('Skeleton docs show real component skeleton states without interactive cont
   await page.goto('/iframe.html?id=atoms-skeleton--component-skeleton-states&viewMode=story');
 
   const examples = page.locator('[data-testid^="component-skeleton-"]');
-  await expect(examples).toHaveCount(12);
+  await expect(examples).toHaveCount(34);
 
   for (const example of await examples.all()) {
     await expect(example.locator('.fdoc-skeleton').first()).toBeVisible();
   }
 
   await expect(examples.locator('button,input,textarea,select')).toHaveCount(0);
+
+  for (const width of [1280, 320]) {
+    await page.setViewportSize({ width, height: 1200 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  }
 });
