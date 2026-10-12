@@ -23,6 +23,7 @@ export interface InputSkeletonProps {
   defaultValue?: unknown;
   placeholder?: string;
   maxLength?: number;
+  showText?: boolean;
   testId?: string;
   wrapperClassName?: string;
 }
@@ -74,6 +75,7 @@ export function InputSkeleton({
   clearable = false,
   value,
   defaultValue,
+  showText = false,
   testId,
   wrapperClassName,
 }: InputSkeletonProps) {
@@ -135,13 +137,15 @@ export function InputSkeleton({
         )}
 
         <span className="fdoc-input__content" data-testid="input-skeleton-content">
-          <Skeleton
-            className="fdoc-input__skeleton--input-text"
-            data-testid="input-skeleton-text"
-            width="80px"
-            textSize="subtitle"
-            shape="text"
-          />
+          {(showText || hasValue || hasDescription) && (
+            <Skeleton
+              className="fdoc-input__skeleton--input-text"
+              data-testid="input-skeleton-text"
+              width="80px"
+              textSize="subtitle"
+              shape="text"
+            />
+          )}
           {hasDescription && (
             <Skeleton
               className="fdoc-input__skeleton--description"
