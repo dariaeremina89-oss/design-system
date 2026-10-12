@@ -189,14 +189,28 @@ export const ComponentSkeletonStates: Story = {
 };
 
 export const FixedAndFluid: Story = {
+  name: 'Fixed And Fluid Sizes',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Показывает два способа задавать размеры Skeleton через width / height. Fixed использует конкретные значения в px и сохраняет заданную геометрию. Fluid использует относительную ширину и подстраивается под доступную ширину родителя.',
+      },
+    },
+  },
   render: () => (
-    <div style={{ display: 'grid', width: 'min(456px, 100%)', gap: 16 }}>
-      <div>
-        <Typography as="div" variant="caption">Fixed 160 × 32</Typography>
+    <div style={{ display: 'grid', width: 'min(456px, 100%)', gap: 24 }}>
+      <div style={{ display: 'grid', gap: 8 }}>
+        <Typography as="div" variant="caption" strong>Fixed — фиксированный размер</Typography>
+        <Typography as="div" variant="caption">
+          width 160 px, height 32 px. Размер не зависит от ширины контейнера.
+        </Typography>
         <Skeleton width={160} height={32} />
       </div>
-      <div>
-        <Typography as="div" variant="caption">Fluid 100% × 48</Typography>
+      <div style={{ display: 'grid', gap: 8 }}>
+        <Typography as="div" variant="caption" strong>Fluid — адаптивная ширина</Typography>
+        <Typography as="div" variant="caption">
+          width 100%, height 48 px. Skeleton занимает доступную ширину родителя.
+        </Typography>
         <Skeleton width="100%" height={48} />
       </div>
     </div>
