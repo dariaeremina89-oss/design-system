@@ -108,9 +108,27 @@ describe('CodeInput', () => {
     expect(screen.getByText('Неверный код')).toBeInTheDocument();
   });
 
-  it('renders skeleton cells without interactive textboxes', () => {
+  it('renders empty skeleton cells without interactive textboxes', () => {
     render(<CodeInput length={6} skeleton label="Код" caption="Введите код" />);
     expect(screen.queryAllByRole('textbox')).toHaveLength(0);
-    expect(screen.getAllByTestId('skeleton').length).toBeGreaterThanOrEqual(6);
+    expect(document.querySelectorAll('.fdoc-code-input__cell .fdoc-skeleton')).toHaveLength(0);
+  });
+
+  it('renders Figma filled skeleton geometry for both sizes', () => {
+    const { rerender } = render(<CodeInput length={6} skeleton defaultValue="420615" label="Код" caption="Введите код" />);
+    let skeletons = Array.from(document.querySelectorAll('.fdoc-code-input__cell .fdoc-skeleton')) as HTMLElement[];
+    expect(skeletons).toHaveLength(6);
+    skeletons.forEach(skeleton => {
+      expect(skeleton.style.width).toBe('16px');
+      expect(skeleton).toHaveAttribute('data-text-size', 'h3-heading');
+    });
+
+    rerender(<CodeInput length={6} skeleton defaultValue="420615" size="small" label="Код" caption="Введите код" />);
+    skeletons = Array.from(document.querySelectorAll('.fdoc-code-input__cell .fdoc-skeleton')) as HTMLElement[];
+    expect(skeletons).toHaveLength(6);
+    skeletons.forEach(skeleton => {
+      expect(skeleton.style.width).toBe('16px');
+      expect(skeleton).toHaveAttribute('data-text-size', 'subtitle');
+    });
   });
 });
