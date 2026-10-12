@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { componentDocs } from '../../docs/bulk-components';
 import { qualityDocs } from '../../docs/quality';
@@ -121,10 +121,19 @@ export const Required: Story = {
 };
 
 export const InteractiveRequest: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Интерактивный серверный поиск: при каждом новом запросе прежние результаты сразу скрываются, Menu показывает Loading, затем новые результаты или Load Error.',
+      },
+    },
+  },
   render: args => {
     const [options, setOptions] = useState<MultiselectOption[]>([]);
     const [loading, setLoading] = useState(false);
     const [loadError, setLoadError] = useState<string>();
+    const latestQueryRef = useRef('');
+    const threshold = Math.max(0, args.minCharacters ?? 1);
 
     return (
       <AsyncMultiselect
@@ -132,10 +141,25 @@ export const InteractiveRequest: Story = {
         options={options}
         loading={loading}
         loadError={loadError}
-        onFetch={async query => {
-          setLoading(true);
+        onInputValueChange={(next, reason) => {
+          latestQueryRef.current = next;
           setLoadError(undefined);
+
+          if (reason === 'input' && next.length >= threshold) {
+            setOptions([]);
+            setLoading(true);
+          } else {
+            setOptions([]);
+            setLoading(false);
+          }
+
+          args.onInputValueChange?.(next, reason);
+        }}
+        onFetch={async query => {
           await new Promise(resolve => window.setTimeout(resolve, 500));
+
+          if (latestQueryRef.current !== query) return;
+
           if (query.toLocaleLowerCase() === 'ошибка') {
             setOptions([]);
             setLoadError('Не удалось получить список. Попробуйте вернуться позже.');
