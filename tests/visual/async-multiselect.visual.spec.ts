@@ -33,6 +33,22 @@ test('async multiselect keeps field height stable between chip remove and text i
   expect(afterRemovalHeight).toBe(inputFocusedHeight);
 });
 
+test('interactive async multiselect hides stale results before showing loading', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-selection-asyncmultiselect--interactive-request&viewMode=story');
+  const input = page.getByRole('combobox');
+
+  await input.fill('Фр');
+  await expect(page.getByRole('option', { name: 'Фронтенд' })).toBeVisible();
+
+  await input.fill('Д');
+
+  await expect(page.getByRole('option', { name: 'Фронтенд' })).toHaveCount(0);
+  await expect(page.locator('.fdoc-popup .fdoc-item-row[data-state="skeleton"]')).toHaveCount(5);
+
+  await expect(page.getByRole('option', { name: 'Дизайн' })).toBeVisible();
+  await expect(page.locator('.fdoc-popup .fdoc-item-row[data-state="skeleton"]')).toHaveCount(0);
+});
+
 test('async multiselect exposes loading and load error as Menu states', async ({ page }) => {
   await page.goto('/iframe.html?id=components-selection-asyncmultiselect--loading&viewMode=story');
   await page.getByRole('combobox').click();
