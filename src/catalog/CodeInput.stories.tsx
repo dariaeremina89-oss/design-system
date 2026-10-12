@@ -75,6 +75,14 @@ export const Skeleton: Story = {
   args: { skeleton: true },
 };
 
+export const SkeletonFilled: Story = {
+  args: { skeleton: true, defaultValue: '420615' },
+};
+
+export const SkeletonSmallFilled: Story = {
+  args: { skeleton: true, defaultValue: '420615', size: 'small' },
+};
+
 export const Small: Story = {
   args: { size: 'small' },
 };
