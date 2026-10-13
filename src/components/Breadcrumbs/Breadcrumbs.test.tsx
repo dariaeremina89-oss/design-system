@@ -1,50 +1,57 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import { Breadcrumbs } from './Breadcrumbs';
 
-beforeEach(() => {
-  vi.stubGlobal('ResizeObserver', undefined);
-  vi.stubGlobal('matchMedia', () => ({
-    matches: true,
-    addEventListener() {},
-    removeEventListener() {},
-  }));
-});
-
-afterEach(() => vi.unstubAllGlobals());
-
 describe('Breadcrumbs', () => {
-  it('hides one level and collapses compact history without hidden links', () => {
-    const { rerender } = render(<Breadcrumbs items={[{ label: 'Домой' }]} />);
+  it('hides the component for a single level', () => {
+    render(<Breadcrumbs items={[{ label: 'Домой' }]} />);
     expect(screen.queryByRole('navigation')).toBe(null);
-
-    rerender(
-      <Breadcrumbs items={['Главная', 'Компания', 'Документы', 'Текущая'].map(label => ({ label, href: `#${label}` }))} />,
-    );
-
-    expect(screen.getAllByRole('link')).toHaveLength(1);
-    expect(screen.getByRole('link')).toHaveAccessibleName('Документы');
-    expect(screen.getByText('Текущая')).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByLabelText('Пропущены уровни навигации')).not.toHaveAttribute('tabindex');
   });
 
-  it('uses its own container width instead of the viewport', () => {
-    let resize: ((entries: Array<{ contentRect: { width: number } }>) => void) | undefined;
-    vi.stubGlobal('matchMedia', () => ({ matches: false, addEventListener() {}, removeEventListener() {} }));
-    vi.stubGlobal('ResizeObserver', class {
-      constructor(callback: typeof resize) { resize = callback; }
-      observe() { resize?.([{ contentRect: { width: 320 } }]); }
-      disconnect() {}
-    });
-
+  it('shows all levels when the hierarchy contains no more than three items', () => {
     render(
-      <Breadcrumbs items={['Главная', 'Компания', 'Документы', 'Текущая'].map(label => ({ label, href: `#${label}` }))} />,
+      <Breadcrumbs
+        items={[
+          { label: 'Главная', href: '#home' },
+          { label: 'Документы', href: '#documents' },
+          { label: 'Текущая' },
+        ]}
+      />,
     );
 
-    expect(screen.getByRole('navigation')).toHaveAttribute('data-compact', 'true');
+    expect(screen.getAllByRole('link')).toHaveLength(2);
+    expect(screen.getByRole('link', { name: 'Главная' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Документы' })).toBeInTheDocument();
+    expect(screen.getByText('Текущая')).toHaveAttribute('aria-current', 'page');
+    expect(screen.queryByLabelText('Пропущены уровни навигации')).toBe(null);
+  });
+
+  it('always collapses hierarchies deeper than three levels to ellipsis + previous + current', () => {
+    render(
+      <Breadcrumbs
+        items={[
+          { label: 'Главная', href: '#home' },
+          { label: 'Компания', href: '#company' },
+          { label: 'Документы', href: '#documents' },
+          { label: 'Договоры', href: '#contracts' },
+          { label: 'Текущая' },
+        ]}
+      />,
+    );
+
+    expect(screen.queryByText('Главная')).toBe(null);
+    expect(screen.queryByText('Компания')).toBe(null);
+    expect(screen.queryByText('Документы')).toBe(null);
+
     expect(screen.getAllByRole('link')).toHaveLength(1);
-    expect(screen.getByRole('link')).toHaveAccessibleName('Документы');
+    expect(screen.getByRole('link', { name: 'Договоры' })).toBeInTheDocument();
+    expect(screen.getByText('Текущая')).toHaveAttribute('aria-current', 'page');
+
+    const ellipsis = screen.getByLabelText('Пропущены уровни навигации');
+    expect(ellipsis).toHaveTextContent('…');
+    expect(ellipsis.closest('a,button')).toBe(null);
+    expect(ellipsis).not.toHaveAttribute('tabindex');
   });
 
   it('keeps full text and accessible navigation', async () => {
