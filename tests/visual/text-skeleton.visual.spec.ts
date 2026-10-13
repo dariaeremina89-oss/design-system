@@ -83,6 +83,10 @@ test('navigation skeletons use Caption for breadcrumbs and Body for counter', as
   const crumb = page.locator('.fdoc-skeleton--text').first();
   await expect(crumb).toBeVisible();
   expect(await metrics(crumb)).toEqual({line:'16px',bar:'8px',top:'4px'});
+  await expect(page.locator('.fdoc-breadcrumbs__separator-skeleton')).toHaveCount(2);
+  await expect(page.locator('.fdoc-breadcrumbs__separator-skeleton').first()).toHaveCSS('width', '16px');
+  await expect(page.locator('.fdoc-breadcrumbs__separator-skeleton').first()).toHaveCSS('height', '16px');
+  await expect(page.locator('.fdoc-breadcrumbs .fdoc-icon')).toHaveCount(0);
   await page.goto('/iframe.html?id=components-navigation-pagination--skeleton&viewMode=story');
   const counter = page.locator('.fdoc-pagination__counter .fdoc-skeleton');
   await expect(counter).toBeVisible();
