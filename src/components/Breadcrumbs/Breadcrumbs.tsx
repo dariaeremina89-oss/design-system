@@ -77,7 +77,9 @@ export function Breadcrumbs({
             <span aria-label="Пропущены уровни навигации">
               <span aria-hidden="true">…</span>
             </span>
-            <Icon name="arrow-chevron-right" size={16} aria-hidden="true" />
+            {isLoading
+              ? <Skeleton className="fdoc-breadcrumbs__separator-skeleton" width={16} height={16} shape="icon" />
+              : <Icon name="arrow-chevron-right" size={16} aria-hidden="true" />}
           </li>
         )}
         {visible.map((item, index) => {
@@ -95,7 +97,10 @@ export function Breadcrumbs({
                   {item.label}
                 </Link>
               )}
-              {!current && <Icon name="arrow-chevron-right" size={16} aria-hidden="true" />}
+              {!current && (isLoading
+                ? <Skeleton className="fdoc-breadcrumbs__separator-skeleton" width={16} height={16} shape="icon" />
+                : <Icon name="arrow-chevron-right" size={16} aria-hidden="true" />
+              )}
             </li>
           );
         })}
