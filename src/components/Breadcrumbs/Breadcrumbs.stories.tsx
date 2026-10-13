@@ -34,9 +34,25 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
-export const Deep: Story = { args: { items: deepItems } };
+export const Deep: Story = {
+  args: { items: deepItems },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Если иерархия глубже трех уровней, Breadcrumbs всегда показывает только некликабельное многоточие, предыдущий уровень и текущий.',
+      },
+    },
+  },
+};
 export const NarrowContainer: Story = {
   args: { items: deepItems },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Узкий контейнер не меняет количество уровней: правило максимум трех видимых элементов действует на любой ширине.',
+      },
+    },
+  },
   render: args => (
     <div style={{ width: 320, maxWidth: '100%' }}>
       <Breadcrumbs {...args} />
