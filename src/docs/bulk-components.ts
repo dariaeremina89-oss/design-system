@@ -394,13 +394,13 @@ const accordionGroup = componentDoc({
 
 const breadcrumbs = componentDoc({
   purpose: `**Breadcrumbs** отражает иерархию текущей страницы, а не историю переходов. Показывается начиная с двух уровней.`,
-  anatomy: `Nav → список уровней. Previous — Link Neutral Small, Current — текст с aria-current=page, separators — декоративные Chevron; на глубокой mobile-цепочке появляется Ellipsis.`,
+  anatomy: `Nav → максимум три видимых элемента. Previous — Link Neutral Small, Current — текст с aria-current=page, separators — декоративные Chevron. Если исходная иерархия глубже трех уровней, начало заменяется некликабельным Ellipsis.`,
   api: `Breadcrumbs — основной компонент. Breadcrumb — совместимый алиас без отдельной логики. API: items / aria-label / isLoading / className.`,
   geometry: `Caption Base, gap space-4, Chevron 16 px, icon-base-secondary. Current text-base-default, Ellipsis text-base-secondary.`,
-  behavior: `Последний уровень не ссылка. Цепочка в одну строку; длинный текст сокращается ellipsis, полное название остается в DOM/title.`,
-  responsive: `До трех уровней на мобильном показываются все; глубже — Ellipsis + Previous + Current. Previous max 30%, Current max 40% доступной ширины.`,
-  accessibility: `Nav имеет доступное имя, Current — aria-current=page. Hidden mobile-уровни исключаются из DOM и Tab.`,
-  checklist: ['Один уровень скрывает компонент.','Current не ссылка.','Длинный текст не создает overflow.','Mobile-сокращение не оставляет скрытые Tab-links.'],
+  behavior: `До трех уровней показываются все элементы. При четырех и более уровнях отображаются только Ellipsis + Previous + Current; скрытые ранние уровни не остаются в DOM. Последний уровень не ссылка. Длинный текст сокращается ellipsis, полное название остается в DOM/title.`,
+  responsive: `Количество видимых уровней не зависит от viewport или ширины контейнера: максимум три элемента сохраняется на desktop и mobile. Текст сокращается внутри доступной ширины без уменьшения типографики.`,
+  accessibility: `Nav имеет доступное имя, Current — aria-current=page. Ellipsis не ссылка, не кнопка и не получает фокус. Скрытые ранние уровни исключаются из DOM и Tab.`,
+  checklist: ['Один уровень скрывает компонент.','До трех уровней показываются полностью.','Четыре и более уровней сворачиваются в Ellipsis + Previous + Current.','Ellipsis не интерактивен.','Current не ссылка.','Длинный текст не создает overflow.'],
 });
 
 const tabs = componentDoc({
