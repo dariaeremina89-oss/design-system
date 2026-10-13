@@ -9,7 +9,7 @@ export const Default:Story={};
 export const Disabled:Story={args:{disabled:true}};
 export const Skeleton:Story={args:{state:'skeleton'}};
 export const States:Story={render:args=><div style={{overflowX:'auto',padding:8}}><table style={{borderSpacing:24}}><thead><tr><th>Color</th>{(['default','hover','focused','pressed','disabled','skeleton'] as const).map(s=><th key={s}>{s}</th>)}</tr></thead><tbody>{(['base','primary','accent','neutral','inverse'] as const).map(color=><tr key={color} style={{background:color==='inverse'?'var(--background-base-inverse)':undefined}}><th>{color}</th>{(['default','hover','focused','pressed','disabled','skeleton'] as const).map(state=><td key={state}><ButtonLink {...args} color={color} state={state} /></td>)}</tr>)}</tbody></table></div>};
-export const Sizes:Story={render:args=><div style={{display:'flex',gap:24,alignItems:'center'}}>{(['small','medium','large','giant'] as const).map(size=><ButtonLink {...args} key={size} size={size}/>)}</div>};
+export const Sizes:Story={render:args=><div style={{display:'flex',flexWrap:'wrap',gap:24,alignItems:'center'}}>{(['small','medium','large','giant'] as const).map(size=><ButtonLink {...args} key={size} size={size}/>)}</div>};
 
 export const InParagraph:Story={
  args:{typography:'inherit',iconRight:undefined},
