@@ -53,6 +53,10 @@
   color: var(--icon-base-secondary);
 }
 
+.fdoc-breadcrumbs__separator-skeleton {
+  flex: 0 0 16px;
+}
+
 .fdoc-breadcrumbs li.fdoc-breadcrumbs__ellipsis {
   flex-shrink: 0;
   color: var(--text-base-secondary);
