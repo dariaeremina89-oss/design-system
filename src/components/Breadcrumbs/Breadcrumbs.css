@@ -61,11 +61,3 @@
   flex-shrink: 0;
   color: var(--text-base-secondary);
 }
-
-.fdoc-breadcrumbs[data-compact=true] li:not([data-current=true]):not(.fdoc-breadcrumbs__ellipsis) {
-  max-width: 30%;
-}
-
-.fdoc-breadcrumbs[data-compact=true] li[data-current=true] {
-  max-width: 40%;
-}
