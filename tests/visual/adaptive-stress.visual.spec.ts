@@ -1,14 +1,14 @@
 import { expect, test } from '@playwright/test';
 
-test('Breadcrumbs collapses from its container width on a wide viewport', async ({ page }) => {
+test('Breadcrumbs keeps the fixed three-level depth in a narrow container on a wide viewport', async ({ page }) => {
   await page.setViewportSize({ width: 1000, height: 500 });
   await page.goto('/iframe.html?id=components-navigation-breadcrumbs--narrow-container&viewMode=story');
 
   const nav = page.getByRole('navigation', { name: 'Навигационная цепочка' });
   await expect(nav).toBeVisible();
-  await expect(nav).toHaveAttribute('data-compact', 'true');
   await expect(page.getByLabel('Пропущены уровни навигации')).toBeVisible();
   await expect(nav.getByRole('link')).toHaveCount(1);
+  await expect(nav.locator('[aria-current="page"]')).toBeVisible();
   expect(await nav.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
 });
 
