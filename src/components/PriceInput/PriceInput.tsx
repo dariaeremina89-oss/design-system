@@ -212,7 +212,7 @@ export function PriceInput({
         name={undefined}
         type="text"
         inputMode="decimal"
-        pattern="[0-9\\s,]*"
+        pattern="[0-9\s,]*"
         autoComplete={props.autoComplete ?? 'off'}
         clearable={clearable}
         counter={resolvedCounter}
