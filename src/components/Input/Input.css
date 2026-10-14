@@ -74,6 +74,15 @@
   max-width: 100%;
 }
 
+.fdoc-input__value-row--empty {
+  width: 100%;
+}
+
+.fdoc-input__value-row--empty .fdoc-input__control-shell {
+  flex: 1 1 auto;
+  width: 100%;
+}
+
 .fdoc-input__control-shell {
   position: relative;
   display: inline-grid;
