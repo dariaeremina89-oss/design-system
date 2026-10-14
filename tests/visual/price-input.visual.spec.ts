@@ -96,6 +96,27 @@ test('PriceInput accepts common copied price formats', async ({ page }) => {
 });
 
 
+test('PriceInput validates the allowed amount range and clears the error again', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-priceinput--error-limit&viewMode=story');
+  const input = page.getByRole('textbox');
+  const error = page.getByTestId('input-error');
+
+  await expect(input).toHaveValue('10\u00a0000\u00a0000');
+  await expect(error).toContainText('Введите сумму от 1 до 9 999 999,99 ₽');
+
+  await input.fill('9999999.99');
+  await expect(input).toHaveValue('9\u00a0999\u00a0999,99');
+  await expect(error).toHaveCount(0);
+
+  await input.fill('0.99');
+  await expect(input).toHaveValue('0,99');
+  await expect(page.getByTestId('input-error')).toContainText('Введите сумму от 1 до 9 999 999,99 ₽');
+
+  await input.fill('1');
+  await expect(input).toHaveValue('1');
+  await expect(page.getByTestId('input-error')).toHaveCount(0);
+});
+
 test('PriceInput normalizes decimal dot and rejects unsupported manual input', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-priceinput--interactive&viewMode=story');
   const input = page.getByRole('textbox');
