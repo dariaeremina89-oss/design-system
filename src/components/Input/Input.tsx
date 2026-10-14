@@ -106,6 +106,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const hasLeading = leadingContent !== undefined && leadingContent !== null
     ? true
     : leadingIcon !== undefined;
+  const hasInlineSuffix = inlineSuffix !== undefined && inlineSuffix !== null;
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     updateValue(event);
@@ -197,8 +198,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         )}
 
         <span className="fdoc-input__content" data-testid="input-content">
-          {inlineSuffix !== undefined && inlineSuffix !== null ? (
-            <span className="fdoc-input__value-row">
+          {hasInlineSuffix ? (
+            <span className={joinClassNames('fdoc-input__value-row', !hasValue && 'fdoc-input__value-row--empty')}>
               <span
                 className="fdoc-input__control-shell"
                 data-value={controlValue === undefined || controlValue === null ? '' : String(controlValue)}
@@ -208,6 +209,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
               <span
                 className={joinClassNames('fdoc-input__inline-suffix', disabled && 'fdoc-input__inline-suffix--disabled')}
                 data-testid="input-inline-suffix"
+                hidden={!hasValue}
               >
                 {inlineSuffix}
               </span>
