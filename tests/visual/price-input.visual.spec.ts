@@ -29,6 +29,18 @@ test('PriceInput formats amount and preserves shared Input geometry', async ({ p
   await expect(page.getByTestId('input-field')).toHaveCSS('min-height', '56px');
 });
 
+test('PriceInput keeps focus after the first character', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-priceinput--interactive&viewMode=story');
+  const input = page.getByRole('textbox');
+
+  await input.click();
+  await input.press('1');
+
+  await expect(input).toBeFocused();
+  await expect(input).toHaveValue('1');
+  await expect(page.getByTestId('input-inline-suffix')).toContainText('₽');
+});
+
 test('PriceInput uses the shared small Input size', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-priceinput--small&viewMode=story');
   await expect(page.getByTestId('input-field')).toHaveCSS('min-height', '48px');
