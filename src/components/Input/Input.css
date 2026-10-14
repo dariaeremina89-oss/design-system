@@ -88,6 +88,7 @@
   display: inline-grid;
   flex: 0 1 auto;
   min-width: 0;
+  min-height: var(--line-height-24);
   max-width: 100%;
   overflow: hidden;
   font-family: var(--font-family-sans);
