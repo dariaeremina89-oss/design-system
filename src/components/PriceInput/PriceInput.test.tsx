@@ -61,6 +61,36 @@ describe('PriceInput', () => {
     expect(screen.getByTestId('input-inline-suffix')).toHaveTextContent('₽');
   });
 
+  it('shows range error below the minimum and above the maximum', () => {
+    const { rerender } = render(<PriceInput value="0,99" />);
+    expect(screen.getByText(PRICE_INPUT_RANGE_ERROR)).toBeInTheDocument();
+
+    rerender(<PriceInput value="10000000" />);
+    expect(screen.getByText(PRICE_INPUT_RANGE_ERROR)).toBeInTheDocument();
+  });
+
+  it('removes range error when the value returns to the allowed range', () => {
+    const { rerender } = render(<PriceInput value="10000000" />);
+    expect(screen.getByText(PRICE_INPUT_RANGE_ERROR)).toBeInTheDocument();
+
+    rerender(<PriceInput value="9999999,99" />);
+    expect(screen.queryByText(PRICE_INPUT_RANGE_ERROR)).toBe(null);
+  });
+
+  it('does not treat an empty or incomplete decimal value as a range error', () => {
+    const { rerender } = render(<PriceInput value="" />);
+    expect(screen.queryByText(PRICE_INPUT_RANGE_ERROR)).toBe(null);
+
+    rerender(<PriceInput value="1," />);
+    expect(screen.queryByText(PRICE_INPUT_RANGE_ERROR)).toBe(null);
+  });
+
+  it('keeps external validation above the built-in range validation', () => {
+    render(<PriceInput value="0" error="Внешняя ошибка" />);
+    expect(screen.getByText('Внешняя ошибка')).toBeInTheDocument();
+    expect(screen.queryByText(PRICE_INPUT_RANGE_ERROR)).toBe(null);
+  });
+
   it('shows format error and keeps the previous value for unsupported typed characters', () => {
     render(<PriceInput defaultValue="12" />);
     const input = screen.getByRole('textbox');
