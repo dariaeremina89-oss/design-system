@@ -217,7 +217,7 @@ export function PriceInput({
         clearable={clearable}
         counter={resolvedCounter}
         maxLength={undefined}
-        inlineSuffix={normalizedValue ? currency : undefined}
+        inlineSuffix={currency}
         error={formatError ? PRICE_INPUT_FORMAT_ERROR : externalError}
         onChange={handleChange}
         onClear={handleClear}
