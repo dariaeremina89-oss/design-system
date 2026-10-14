@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
-  PRICE_INPUT_RANGE_ERROR,
   PRICE_INPUT_REQUIRED_ERROR,
   PriceInput,
 } from '../components/PriceInput/PriceInput';
@@ -68,7 +67,14 @@ export const ErrorRequired: Story = {
 };
 
 export const ErrorLimit: Story = {
-  args: { defaultValue: '10000000', error: PRICE_INPUT_RANGE_ERROR },
+  args: { defaultValue: '10000000' },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Диапазон проверяется самим PriceInput: значения меньше 1 ₽ и больше 9 999 999,99 ₽ показывают ошибку. При возврате в допустимый диапазон ошибка снимается.',
+      },
+    },
+  },
 };
 
 export const ErrorFormat: Story = {
