@@ -47,6 +47,8 @@ export interface InputProps
   sum?: ReactNode;
   /** Имя иконки из библиотеки рядом со значением sum. */
   sumIcon?: IconName;
+  /** Контент сразу после введенного значения: валюта или единица измерения. */
+  inlineSuffix?: ReactNode;
   /** Показывает кнопку очистки при непустом значении. */
   clearable?: boolean;
   /** Обработчик очистки значения. */
@@ -79,6 +81,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     trailingSkeleton,
     sum,
     sumIcon,
+    inlineSuffix,
     clearable = false,
     onClear,
     clearIcon = 'filled/cross_circle_filled',
@@ -151,6 +154,25 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   }
 
   const resolvedPlaceholder = hasValue ? undefined : placeholder;
+  const controlValue = isControlled ? value : internalValue;
+  const control = (
+    <input
+      {...inputPropsWithoutTestId}
+      ref={ref}
+      id={inputId}
+      className={joinClassNames('fdoc-input__control fdoc-field__control', className)}
+      data-testid={inputTestId ?? 'input-control'}
+      disabled={disabled}
+      value={controlValue}
+      placeholder={resolvedPlaceholder}
+      maxLength={maxLength}
+      required={required}
+      aria-required={required || undefined}
+      aria-invalid={isError || undefined}
+      aria-describedby={helperId}
+      onChange={handleChange}
+    />
+  );
 
   return (
     <div
@@ -175,22 +197,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         )}
 
         <span className="fdoc-input__content" data-testid="input-content">
-          <input
-            {...inputPropsWithoutTestId}
-            ref={ref}
-            id={inputId}
-            className={joinClassNames('fdoc-input__control fdoc-field__control', className)}
-            data-testid={inputTestId ?? 'input-control'}
-            disabled={disabled}
-            value={isControlled ? value : internalValue}
-            placeholder={resolvedPlaceholder}
-            maxLength={maxLength}
-            required={required}
-            aria-required={required || undefined}
-            aria-invalid={isError || undefined}
-            aria-describedby={helperId}
-            onChange={handleChange}
-          />
+          {inlineSuffix !== undefined && inlineSuffix !== null ? (
+            <span className="fdoc-input__value-row">
+              <span
+                className="fdoc-input__control-shell"
+                data-value={controlValue === undefined || controlValue === null ? '' : String(controlValue)}
+              >
+                {control}
+              </span>
+              <span
+                className={joinClassNames('fdoc-input__inline-suffix', disabled && 'fdoc-input__inline-suffix--disabled')}
+                data-testid="input-inline-suffix"
+              >
+                {inlineSuffix}
+              </span>
+            </span>
+          ) : control}
           {hasDescription && (
             <span
               id={descriptionId}

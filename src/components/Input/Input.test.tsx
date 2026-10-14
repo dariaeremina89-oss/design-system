@@ -107,6 +107,15 @@ describe('Input', () => {
     expect(screen.queryByRole('button', { name: 'Очистить поле' })).not.toBeInTheDocument();
   });
 
+  it('keeps inline suffix next to the value and separate from sum', () => {
+    render(<Input label="Сумма" defaultValue="123" inlineSuffix="₽" sum="10 000" />);
+
+    expect(screen.getByTestId('input-inline-suffix')).toHaveTextContent('₽');
+    expect(screen.getByTestId('input-sum')).toHaveTextContent('10 000');
+    expect(screen.getByTestId('input-inline-suffix').closest('.fdoc-input__content')).toBeInTheDocument();
+    expect(screen.getByTestId('input-sum').closest('.fdoc-input__content')).toBe(null);
+  });
+
   it('renders a selected library icon in a slot', () => {
     render(<Input label="Поиск" leadingIcon="magnifying-glass" />);
     expect(document.querySelector('[data-icon="magnifying-glass"]')).toBeInTheDocument();

@@ -26,6 +26,7 @@ export interface PriceInputProps extends Omit<
   | 'inputMode'
   | 'sum'
   | 'sumIcon'
+  | 'inlineSuffix'
   | 'name'
 > {
   /** Нормализованное значение без разделителей тысяч, с запятой перед копейками. */
@@ -118,6 +119,7 @@ export function PriceInput({
   currency = '₽',
   onValueChange,
   onClear,
+  error: externalError,
   clearable = true,
   counter,
   maxLength,
@@ -129,6 +131,7 @@ export function PriceInput({
 }: PriceInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [internalValue, setInternalValue] = useState(() => normalizePriceValue(defaultValue, maxLength));
+  const [formatError, setFormatError] = useState(false);
   const isControlled = controlledValue !== undefined;
   const normalizedValue = normalizePriceValue(
     isControlled ? controlledValue : internalValue,
@@ -151,10 +154,21 @@ export function PriceInput({
   }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    commit(event.currentTarget.value);
+    const typedValue = event.currentTarget.value.replace(/\u00a0/g, '');
+    const normalizedDecimalSeparator = typedValue.replace(/\./g, ',');
+    const validFormat = /^\d*(?:,\d{0,2})?$/.test(normalizedDecimalSeparator);
+
+    if (!validFormat) {
+      setFormatError(true);
+      return;
+    }
+
+    setFormatError(false);
+    commit(normalizedDecimalSeparator);
   }
 
   function handleClear() {
+    setFormatError(false);
     commit('');
     onClear?.();
   }
@@ -164,8 +178,14 @@ export function PriceInput({
     if (event.defaultPrevented) return;
 
     const text = event.clipboardData.getData('text');
-    if (!/\d/.test(text)) return;
+    if (!/\d/.test(text)) {
+      event.preventDefault();
+      setFormatError(true);
+      return;
+    }
 
+    const hasUnsupportedCharacters = /[^\d.,\s₽]/.test(text);
+    setFormatError(hasUnsupportedCharacters);
     event.preventDefault();
     const start = event.currentTarget.selectionStart ?? displayValue.length;
     const end = event.currentTarget.selectionEnd ?? start;
@@ -192,11 +212,13 @@ export function PriceInput({
         name={undefined}
         type="text"
         inputMode="decimal"
+        pattern="[0-9\\s,]*"
         autoComplete={props.autoComplete ?? 'off'}
         clearable={clearable}
         counter={resolvedCounter}
         maxLength={undefined}
-        sum={normalizedValue ? currency : undefined}
+        inlineSuffix={normalizedValue ? currency : undefined}
+        error={formatError ? PRICE_INPUT_FORMAT_ERROR : externalError}
         onChange={handleChange}
         onClear={handleClear}
         onPaste={handlePaste}

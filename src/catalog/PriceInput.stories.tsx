@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
-  PRICE_INPUT_FORMAT_ERROR,
   PRICE_INPUT_RANGE_ERROR,
   PRICE_INPUT_REQUIRED_ERROR,
   PriceInput,
@@ -45,7 +44,7 @@ const meta = {
     ),
     currency: {
       control: 'text',
-      description: 'Символ валюты справа от значения.',
+      description: 'Символ валюты сразу после введенного значения.',
       table: { category: 'Content' },
     },
   },
@@ -73,7 +72,18 @@ export const ErrorLimit: Story = {
 };
 
 export const ErrorFormat: Story = {
-  args: { defaultValue: '12', error: PRICE_INPUT_FORMAT_ERROR },
+  args: { defaultValue: '12' },
+  render: args => {
+    const [value, setValue] = useState(args.defaultValue ?? '');
+    return <PriceInput {...args} value={value} onValueChange={setValue} autoFocus />;
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Введите букву, пробел или другой недопустимый символ: значение не изменится, а поле покажет ошибку формата. Точка преобразуется в запятую для клавиатур с другим десятичным разделителем.',
+      },
+    },
+  },
 };
 
 export const Small: Story = {

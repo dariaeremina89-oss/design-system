@@ -126,27 +126,29 @@ const dialog = componentDoc({
 
 const input = componentDoc({
   purpose: `**Input** — нативное однострочное текстовое поле F.Doc. Используйте для свободного ввода; для выбора из списка используйте Select/Autocomplete, для многострочного текста — Textarea.`,
-  anatomy: `Label → поле ввода с опциональными Leading/Trailing → Description → Helper (Caption или Error + Counter). Clear — отдельный ButtonIcon внутри поля.`,
+  anatomy: `Label → поле ввода с опциональными Leading/Trailing → Description → Helper (Caption или Error + Counter). InlineSuffix визуально продолжает введенное значение; Sum остается отдельной правой зоной поля. Clear — отдельный ButtonIcon внутри поля.`,
   api: `- \`size\`: medium / small;
 - \`leadingIcon / trailingIcon / sumIcon / clearIcon\` — библиотечные иконки;
+- \`inlineSuffix\` — контент сразу после значения, например валюта или единица измерения;
+- \`sum\` — независимое дополнительное значение справа внутри поля;
 - \`clearable\` включает ButtonIcon очистки;
 - \`counter\` показывает длину значения и учитывает maxLength;
 - \`error\` заменяет caption;
 - \`label / description / caption / required / disabled / skeleton\` управляют соответствующими зонами;
 - value/defaultValue и стандартные input props сохраняют нативное поведение.`,
   variants: `Поддерживаются Default, Hover, Focused, Disabled, Error и Skeleton. Error меняет validation-оформление, но не перекрашивает Value, Placeholder, Description, Counter и обычные иконки.`,
-  geometry: `Medium — 56 px, Small — 48 px. Focus-обводка входит в геометрию и не меняет внешний размер. Clear использует ButtonIcon 24 px, Neutral, с иконкой \`filled/cross_circle_filled\` по умолчанию.`,
+  geometry: `Medium — 56 px, Small — 48 px. Focus-обводка входит в геометрию и не меняет внешний размер. InlineSuffix расположен через space-4 сразу после текста значения. Clear использует ButtonIcon 24 px, Neutral, с иконкой \`filled/cross_circle_filled\` по умолчанию.`,
   behavior: `Caret остается нативным курсором HTML input и не моделируется отдельной иконкой. Очистка возвращает пустое значение через тот же contract изменения значения.`,
   responsive: `Типографика и размеры внутренних элементов не уменьшаются на мобильных. Поле занимает доступную ширину родителя и не создает горизонтальный overflow.`,
   accessibility: `Нативный input связан с Label через htmlFor. Description, Error и Counter подключаются через aria-describedby; Error устанавливает aria-invalid.`,
   checklist: [
     'Label, Description, Caption/Error и Counter появляются без лишних пустых зон.',
+    'InlineSuffix идет сразу после значения, Sum остается независимой правой зоной.',
     'Focus не меняет размер поля.',
     'Clear доступен с клавиатуры и очищает значение один раз.',
     'Skeleton не содержит интерактивного input.',
   ],
 });
-
 const skeleton = componentDoc({
   purpose: `**Skeleton** — базовый плейсхолдер загрузки. Используйте его при первичной отрисовке, когда геометрия будущего контента уже известна; не используйте как постоянный индикатор фоновой операции.`,
   anatomy: `Одна неинтерактивная форма без вложенных controls. В составных компонентах Skeleton повторяет геометрию конкретного загружаемого элемента.`,

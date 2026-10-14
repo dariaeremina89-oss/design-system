@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import {
+  PRICE_INPUT_FORMAT_ERROR,
   PRICE_INPUT_MAX,
   PRICE_INPUT_RANGE_ERROR,
   PriceInput,
@@ -33,17 +34,47 @@ describe('PriceInput helpers', () => {
 });
 
 describe('PriceInput', () => {
-  it('renders formatted value and currency through Input anatomy', () => {
+  it('renders formatted value with currency immediately after the value', () => {
     render(<PriceInput defaultValue="123456,78" />);
     expect(screen.getByRole('textbox')).toHaveValue('123\u00a0456,78');
-    expect(screen.getByTestId('input-sum')).toHaveTextContent('₽');
+    expect(screen.getByTestId('input-inline-suffix')).toHaveTextContent('₽');
+    expect(screen.queryByTestId('input-sum')).toBe(null);
   });
 
   it('reports normalized value while typing', () => {
     const change = vi.fn();
     render(<PriceInput onValueChange={change} />);
-    fireEvent.change(screen.getByRole('textbox'), { target: { value: '1 234,5' } });
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '1234,5' } });
     expect(change).toHaveBeenLastCalledWith('1234,5');
+  });
+
+  it('shows format error and keeps the previous value for unsupported typed characters', () => {
+    render(<PriceInput defaultValue="12" />);
+    const input = screen.getByRole('textbox');
+
+    fireEvent.change(input, { target: { value: '12a' } });
+    expect(input).toHaveValue('12');
+    expect(screen.getByText(PRICE_INPUT_FORMAT_ERROR)).toBeInTheDocument();
+
+    fireEvent.change(input, { target: { value: '12,3' } });
+    expect(input).toHaveValue('12,3');
+    expect(screen.queryByText(PRICE_INPUT_FORMAT_ERROR)).toBe(null);
+  });
+
+  it('normalizes a typed decimal dot to a comma for alternate mobile locales', () => {
+    render(<PriceInput defaultValue="12" />);
+    const input = screen.getByRole('textbox');
+
+    fireEvent.change(input, { target: { value: '12.5' } });
+    expect(input).toHaveValue('12,5');
+    expect(screen.queryByText(PRICE_INPUT_FORMAT_ERROR)).toBe(null);
+  });
+
+  it('keeps decimal keyboard hint and a pattern compatible with formatted values', () => {
+    render(<PriceInput />);
+    const input = screen.getByRole('textbox');
+    expect(input).toHaveAttribute('inputmode', 'decimal');
+    expect(input).toHaveAttribute('pattern', '[0-9\\s,]*');
   });
 
   it('normalizes a pasted full value', () => {

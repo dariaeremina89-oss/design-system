@@ -8,7 +8,7 @@ import { controlsParameters, pickFieldControls } from '../../docs/story-controls
 const controlOrder = [
   'label', 'required', 'value', 'defaultValue', 'placeholder', 'description', 'caption', 'error',
   'counter', 'maxLength', 'size', 'clearable', 'disabled', 'skeleton',
-  'leadingIcon', 'trailingIcon', 'sum', 'sumIcon', 'clearIcon',
+  'leadingIcon', 'trailingIcon', 'inlineSuffix', 'sum', 'sumIcon', 'clearIcon',
   'onChange', 'onFocus', 'onBlur', 'onKeyDown', 'onClear',
 ] as const;
 
@@ -39,7 +39,8 @@ const meta = {
     ),
     leadingIcon: { control: 'select', options: iconNames, description: 'Иконка слева из библиотеки Icon.', table: { category: 'Appearance' } },
     trailingIcon: { control: 'select', options: iconNames, description: 'Иконка справа из библиотеки Icon.', table: { category: 'Appearance' } },
-    sum: { control: 'text', description: 'Дополнительное значение справа внутри поля.', table: { category: 'Content' } },
+    inlineSuffix: { control: 'text', description: 'Контент сразу после введенного значения, например валюта или единица измерения.', table: { category: 'Content' } },
+    sum: { control: 'text', description: 'Отдельное дополнительное значение справа внутри поля.', table: { category: 'Content' } },
     sumIcon: { control: 'select', options: iconNames, description: 'Иконка рядом с Sum.', table: { category: 'Appearance' } },
     clearIcon: { control: 'select', options: iconNames, description: 'Иконка действия очистки.', table: { category: 'Appearance' } },
   },
@@ -56,6 +57,10 @@ export const Required: Story = { args: { required: true } };
 export const WithDescriptionAndCounter: Story = {
   args: { defaultValue: 'Input text', description: 'Description text', caption: 'Caption text', maxLength: 100, counter: true },
 };
+export const WithInlineSuffix: Story = {
+  args: { defaultValue: '123 456,78', inlineSuffix: '₽' },
+};
+
 export const WithSlots: Story = {
   args: {
     defaultValue: 'Input text',
