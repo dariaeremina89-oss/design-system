@@ -138,6 +138,11 @@ export function PriceInput({
     maxLength,
   );
   const displayValue = formatPriceValue(normalizedValue);
+  const hasCompleteValue = normalizedValue !== '' && !normalizedValue.endsWith(',');
+  const hasRangeError = hasCompleteValue && !isValidPriceValue(normalizedValue);
+  const resolvedError = formatError
+    ? PRICE_INPUT_FORMAT_ERROR
+    : externalError ?? (hasRangeError ? PRICE_INPUT_RANGE_ERROR : undefined);
   const digitCount = normalizedValue.replace(/\D/g, '').length;
   const resolvedCounter = counter === true
     ? maxLength !== undefined
@@ -218,7 +223,7 @@ export function PriceInput({
         counter={resolvedCounter}
         maxLength={undefined}
         inlineSuffix={currency}
-        error={formatError ? PRICE_INPUT_FORMAT_ERROR : externalError}
+        error={resolvedError}
         onChange={handleChange}
         onClear={handleClear}
         onPaste={handlePaste}
