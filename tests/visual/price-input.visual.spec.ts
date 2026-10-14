@@ -16,6 +16,16 @@ test('PriceInput formats amount and preserves shared Input geometry', async ({ p
   expect(gap).toBeGreaterThanOrEqual(3);
   expect(gap).toBeLessThanOrEqual(5);
 
+  const valueWidth = await input.evaluate(element => {
+    const target = element as HTMLInputElement;
+    const styles = getComputedStyle(target);
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d')!;
+    context.font = `${styles.fontWeight} ${styles.fontSize} ${styles.fontFamily}`;
+    return context.measureText(target.value).width;
+  });
+  expect(Math.abs(inputBox!.width - valueWidth)).toBeLessThanOrEqual(2);
+
   await expect(page.getByTestId('input-field')).toHaveCSS('min-height', '56px');
 });
 
