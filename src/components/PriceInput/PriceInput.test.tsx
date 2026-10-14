@@ -48,6 +48,19 @@ describe('PriceInput', () => {
     expect(change).toHaveBeenLastCalledWith('1234,5');
   });
 
+  it('keeps the same focused input after the first character', () => {
+    render(<PriceInput />);
+    const input = screen.getByRole('textbox');
+    input.focus();
+
+    fireEvent.change(input, { target: { value: '1' } });
+
+    expect(screen.getByRole('textbox')).toBe(input);
+    expect(input).toHaveFocus();
+    expect(input).toHaveValue('1');
+    expect(screen.getByTestId('input-inline-suffix')).toHaveTextContent('₽');
+  });
+
   it('shows format error and keeps the previous value for unsupported typed characters', () => {
     render(<PriceInput defaultValue="12" />);
     const input = screen.getByRole('textbox');
