@@ -30,7 +30,7 @@ const meta = {
   args: {
     label: 'Сумма',
     caption: 'Укажите сумму в рублях',
-    currency: '₽',
+    currency: 'RUB',
     min: 1,
     max: 9_999_999.99,
     counter: true,
@@ -45,7 +45,7 @@ const meta = {
     ),
     currency: {
       control: 'text',
-      description: 'Символ валюты сразу после введенного значения.',
+      description: 'ISO-код валюты или готовый символ/текст. ISO-код автоматически преобразуется в отображаемый символ.',
       table: { category: 'Content' },
     },
     min: {
@@ -72,6 +72,21 @@ export const Typing: Story = {
 
 export const Filled: Story = {
   args: { defaultValue: '123456,78' },
+};
+
+export const CurrencyCode: Story = {
+  args: {
+    currency: 'USD',
+    defaultValue: '1234,56',
+    caption: 'ISO-код USD отображается как символ валюты',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Currency принимает ISO-код или готовый символ. Например, USD отображается как $, RUB как ₽, EUR как €. Кастомный текст также остается доступен.',
+      },
+    },
+  },
 };
 
 export const ErrorRequired: Story = {
