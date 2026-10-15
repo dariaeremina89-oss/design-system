@@ -33,7 +33,7 @@ test('Snackbar stack places newest at bottom and actions remove only their own i
   const add = page.getByRole('button', { name: 'Добавить уведомление' });
   await add.click(); await add.click();
   await expect(page.getByTestId('snackbar')).toHaveCount(2);
-  await page.getByTestId('snackbar-stack').hover();
+  await page.getByTestId('snackbar').first().hover();
   const boxes = await page.getByTestId('snackbar').evaluateAll(nodes => nodes.map(x => { const r = x.getBoundingClientRect(); return { top: r.top, bottom: r.bottom }; }));
   expect(boxes[1].top - boxes[0].bottom).toBeCloseTo(8, 0);
   await page.getByRole('button', { name: 'Отменить' }).first().click();
