@@ -12,8 +12,8 @@
 .fdoc-dialog__footer[data-align="center"] { justify-content:center; }
 .fdoc-dialog__footer[data-align="edges"] { justify-content:space-between; }
 .fdoc-dialog[data-variant="scroll"] .fdoc-dialog__content { height:256px; }
-.fdoc-dialog[data-variant="scroll"] .fdoc-dialog__header { box-shadow:var(--shadow-s); z-index:1; }
-.fdoc-dialog[data-variant="scroll"] .fdoc-dialog__footer { box-shadow:var(--shadow-s); z-index:1; }
+.fdoc-dialog__header[data-shadow="true"] { box-shadow:var(--shadow-s); z-index:1; }
+.fdoc-dialog__footer[data-shadow="true"] { box-shadow:var(--shadow-s); z-index:1; }
 .fdoc-dialog[data-variant="image"] .fdoc-dialog__header { justify-content:flex-end; padding-top:var(--space-8); padding-bottom:var(--space-8); }
 .fdoc-dialog[data-variant="image"] .fdoc-dialog__title { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); padding:0; }
 .fdoc-dialog[data-variant="image"] .fdoc-dialog__content { align-items:center; text-align:center; }

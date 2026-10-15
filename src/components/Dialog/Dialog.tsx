@@ -38,6 +38,8 @@ export function Dialog({ open, onClose, title, children, footer, size = 'small',
   const ref = useRef<HTMLDialogElement>(null);
   const [portal, setPortal] = useState<HTMLDivElement | null>(null);
   const pointerOutside = useRef(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [scrollEdges, setScrollEdges] = useState({ top: false, bottom: false });
   const initialFocus = useRef(initialFocusRef);
   initialFocus.current = initialFocusRef;
   useLayoutEffect(() => {
@@ -55,6 +57,34 @@ export function Dialog({ open, onClose, title, children, footer, size = 'small',
   useLayoutEffect(() => {
     if (open && portal) (initialFocus.current?.current ?? ref.current?.querySelector<HTMLElement>('[data-dialog-title]'))?.focus();
   }, [open, portal]);
+  useLayoutEffect(() => {
+    const content = contentRef.current;
+    if (!open || !content) return;
+    const measure = () => {
+      const overflow = content.scrollHeight - content.clientHeight > 1;
+      const top = overflow && content.scrollTop > 1;
+      const bottom = overflow && content.scrollHeight - content.clientHeight - content.scrollTop > 1;
+      setScrollEdges(previous => previous.top === top && previous.bottom === bottom ? previous : { top, bottom });
+    };
+    const resize = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure);
+    const observeContent = () => {
+      resize?.disconnect();
+      resize?.observe(content);
+      for (const child of Array.from(content.children)) resize?.observe(child);
+      measure();
+    };
+    const mutation = new MutationObserver(observeContent);
+    mutation.observe(content, { childList: true, subtree: true, characterData: true, attributes: true });
+    content.addEventListener('scroll', measure, { passive: true });
+    window.addEventListener('resize', measure);
+    observeContent();
+    return () => {
+      resize?.disconnect();
+      mutation.disconnect();
+      content.removeEventListener('scroll', measure);
+      window.removeEventListener('resize', measure);
+    };
+  }, [open, portal, children, footer, size, variant]);
   if (!open || typeof document === 'undefined') return null;
   const outside = (x: number, y: number) => {
     const box = ref.current!.getBoundingClientRect();
@@ -76,16 +106,16 @@ export function Dialog({ open, onClose, title, children, footer, size = 'small',
     onClick={event => { if (closeOnBackdrop && pointerOutside.current && event.target === event.currentTarget && outside(event.clientX, event.clientY)) onClose('backdrop'); pointerOutside.current = false; }}>
     <PortalContainer.Provider value={portal}>
       {portal && <div className="fdoc-dialog__layout">
-        <header className="fdoc-dialog__header" data-testid={`${testId}-header`}>
+        <header className="fdoc-dialog__header" data-shadow={scrollEdges.top} data-testid={`${testId}-header`}>
           <Typography as="h2" variant="h3-heading" id={titleId} tabIndex={-1} data-dialog-title="" className="fdoc-dialog__title">{title}</Typography>
           <ButtonIcon icon="cross" size="medium" color="neutral" aria-label={closeLabel} data-testid={`${testId}-close`} onClick={() => onClose('close-button')} />
         </header>
-        <div className="fdoc-dialog__content" data-testid={`${testId}-content`}>
+        <div ref={contentRef} className="fdoc-dialog__content" data-testid={`${testId}-content`}>
           {variant === 'image' && image && <div className="fdoc-dialog__image">{image}</div>}
           {variant === 'image' && <Typography as="h3" variant="h3-heading" aria-hidden="true">{title}</Typography>}
           {children}
         </div>
-        {footer && <footer className="fdoc-dialog__footer" data-align={footerAlign} data-testid={`${testId}-footer`}>{footer}</footer>}
+        {footer && <footer className="fdoc-dialog__footer" data-shadow={scrollEdges.bottom} data-align={footerAlign} data-testid={`${testId}-footer`}>{footer}</footer>}
       </div>}
       <div ref={setPortal} className="fdoc-dialog__portals" />
     </PortalContainer.Provider>

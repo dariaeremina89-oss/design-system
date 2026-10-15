@@ -44,3 +44,34 @@ test('initially open nested dialogs preserve top layer and close independently',
   await page.keyboard.press('Escape'); await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.getByRole('button',{name:'Открыть вложенные диалоги'})).toBeFocused();
 });
+
+test('shadows follow actual scroll edges and update when content shrinks', async ({ page }) => {
+  await page.goto(story('scroll'));
+  await page.getByRole('button', { name: 'Открыть диалог' }).click();
+  const content = page.getByTestId('dialog-content');
+  const header = page.getByTestId('dialog-header'), footer = page.getByTestId('dialog-footer');
+  await expect(header).toHaveCSS('box-shadow', 'none');
+  await expect(footer).not.toHaveCSS('box-shadow', 'none');
+  await content.evaluate(node => { node.scrollTop = (node.scrollHeight - node.clientHeight) / 2; });
+  await expect(header).not.toHaveCSS('box-shadow', 'none');
+  await expect(footer).not.toHaveCSS('box-shadow', 'none');
+  await content.evaluate(node => { node.scrollTop = node.scrollHeight; });
+  await expect(header).not.toHaveCSS('box-shadow', 'none');
+  await expect(footer).toHaveCSS('box-shadow', 'none');
+  await content.evaluate(node => { node.textContent = 'Короткий текст'; });
+  await expect(header).toHaveCSS('box-shadow', 'none');
+  await expect(footer).toHaveCSS('box-shadow', 'none');
+});
+test('basic dialog also shows shadows if the viewport forces content to scroll', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto(story('default'));
+  await page.getByRole('button', { name: 'Открыть диалог' }).click();
+  const header = page.getByTestId('dialog-header'), footer = page.getByTestId('dialog-footer');
+  await expect(header).toHaveCSS('box-shadow', 'none');
+  await expect(footer).toHaveCSS('box-shadow', 'none');
+  await page.setViewportSize({ width: 1280, height: 210 });
+  await expect(footer).not.toHaveCSS('box-shadow', 'none');
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await expect(header).toHaveCSS('box-shadow', 'none');
+  await expect(footer).toHaveCSS('box-shadow', 'none');
+});
