@@ -127,9 +127,21 @@ test('PhoneInput skeleton does not render a phone prefix', async ({ page }) => {
   await expect(page.getByText('+7', { exact: true })).toHaveCount(0);
 });
 
-test('PhoneInput keeps 16px input typography and width on mobile', async ({ page }) => {
+test('PhoneInput keeps 16px input typography and has no horizontal overflow on mobile', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 });
-  await page.goto('/iframe.html?id=components-inputs-phoneinput--default&viewMode=story');
-  await expect(page.getByLabel('Номер телефона')).toHaveCSS('font-size', '16px');
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+
+  for (const story of [
+    'components-inputs-phoneinput--default',
+    'components-inputs-phoneinput--international',
+  ]) {
+    await page.goto(`/iframe.html?id=${story}&viewMode=story`);
+    await expect(page.getByLabel('Номер телефона')).toHaveCSS('font-size', '16px');
+
+    const overflow = await page.locator('.fdoc-input__content').first().evaluate(element => ({
+      clientWidth: element.clientWidth,
+      scrollWidth: element.scrollWidth,
+    }));
+    expect(overflow.scrollWidth).toBeLessThanOrEqual(overflow.clientWidth);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+  }
 });
