@@ -17,6 +17,39 @@
   max-width: 100%;
 }
 
+.fdoc-code-input__row--phone {
+  gap: var(--space-4);
+}
+
+.fdoc-code-input__phone-parts {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.fdoc-code-input__phone-group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.fdoc-code-input__phone-affix {
+  flex: 0 0 auto;
+  color: var(--text-base-default);
+  font-family: var(--page-h3-heading-family);
+  font-size: var(--page-h3-heading-size);
+  font-weight: var(--page-h3-heading-weight);
+  line-height: var(--page-h3-heading-line-height);
+  white-space: nowrap;
+}
+
+.fdoc-code-input--small .fdoc-code-input__phone-affix {
+  font-family: var(--page-subtitle-family);
+  font-size: var(--page-subtitle-size);
+  font-weight: var(--page-subtitle-weight-strong);
+  line-height: var(--page-subtitle-line-height);
+}
+
 .fdoc-code-input__cell {
   box-sizing: border-box;
   display: inline-flex;
