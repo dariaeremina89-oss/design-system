@@ -21,6 +21,7 @@ import './CodeInput.css';
 
 export type CodeInputSize = 'medium' | 'small';
 export type CodeInputLength = 4 | 5 | 6;
+export type CodeInputType = 'code' | 'phone';
 
 export interface CodeInputProps {
   /** Стабильный id группы. Ячейки получают суффиксы -1 ... -6. */
@@ -31,8 +32,16 @@ export interface CodeInputProps {
   value?: string;
   /** Начальное значение uncontrolled-компонента. */
   defaultValue?: string;
-  /** Количество ячеек. Figma поддерживает 4, 5 или 6. */
+  /** Тип ввода: обычный код или часть номера телефона. */
+  type?: CodeInputType;
+  /** Количество ячеек для Type=code. Figma поддерживает 4, 5 или 6. */
   length?: CodeInputLength;
+  /** Группировка вводимых цифр для Type=phone. Сумма значений задает количество ячеек. */
+  phoneGroups?: readonly number[];
+  /** Неизменяемая часть номера перед вводимыми цифрами. */
+  phonePrefix?: ReactNode;
+  /** Неизменяемая часть номера после вводимых цифр. */
+  phoneSuffix?: ReactNode;
   /** Размер ячеек: Medium 56 или Small 48. */
   size?: CodeInputSize;
   /** Подпись над кодом. */
@@ -71,7 +80,7 @@ export interface CodeInputProps {
   ref?: Ref<HTMLInputElement>;
 }
 
-function normalizeCode(value: string | undefined, length: CodeInputLength) {
+function normalizeCode(value: string | undefined, length: number) {
   return String(value ?? '').replace(/\D/g, '').slice(0, length);
 }
 
@@ -90,7 +99,11 @@ export function CodeInput({
   name,
   value: controlledValue,
   defaultValue = '',
+  type = 'code',
   length = 6,
+  phoneGroups = [2, 3, 2],
+  phonePrefix,
+  phoneSuffix,
   size = 'medium',
   label = 'Код',
   caption,
@@ -112,9 +125,22 @@ export function CodeInput({
 }: CodeInputProps) {
   const generatedId = useId();
   const id = providedId ?? generatedId;
-  const [internalValue, setInternalValue] = useState(() => normalizeCode(defaultValue, length));
+  const normalizedPhoneGroups = phoneGroups.filter(
+    groupLength => Number.isInteger(groupLength) && groupLength > 0,
+  );
+  const resolvedPhoneGroups = normalizedPhoneGroups.length > 0 ? normalizedPhoneGroups : [1];
+  const cellCount = type === 'phone'
+    ? resolvedPhoneGroups.reduce((sum, groupLength) => sum + groupLength, 0)
+    : length;
+  let phoneOffset = 0;
+  const phoneGroupIndexes = resolvedPhoneGroups.map(groupLength => {
+    const indexes = Array.from({ length: groupLength }, (_, index) => phoneOffset + index);
+    phoneOffset += groupLength;
+    return indexes;
+  });
+  const [internalValue, setInternalValue] = useState(() => normalizeCode(defaultValue, cellCount));
   const isControlled = controlledValue !== undefined;
-  const value = normalizeCode(isControlled ? controlledValue : internalValue, length);
+  const value = normalizeCode(isControlled ? controlledValue : internalValue, cellCount);
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const skipFocusGuard = useRef(false);
 
@@ -128,13 +154,13 @@ export function CodeInput({
   useImperativeHandle(ref, () => inputRefs.current[0]!, [skeleton]);
 
   function commit(next: string) {
-    const normalized = normalizeCode(next, length);
+    const normalized = normalizeCode(next, cellCount);
     if (!isControlled) setInternalValue(normalized);
     onValueChange?.(normalized);
   }
 
   function focusCell(index: number, allowFutureCell = false) {
-    const next = Math.max(0, Math.min(length - 1, index));
+    const next = Math.max(0, Math.min(cellCount - 1, index));
     if (allowFutureCell) skipFocusGuard.current = true;
     inputRefs.current[next]?.focus();
   }
@@ -151,16 +177,16 @@ export function CodeInput({
     const digits = raw.replace(/\D/g, '');
     if (!digits) return;
 
-    if (digits.length >= length) {
-      commit(digits.slice(0, length));
-      focusCell(length - 1, true);
+    if (digits.length >= cellCount) {
+      commit(digits.slice(0, cellCount));
+      focusCell(cellCount - 1, true);
       return;
     }
 
-    const next = replaceFrom(value, effectiveIndex, digits, length);
+    const next = replaceFrom(value, effectiveIndex, digits, cellCount);
     commit(next);
-    const target = Math.min(effectiveIndex + digits.length, length - 1);
-    if (effectiveIndex + digits.length < length) focusCell(target, true);
+    const target = Math.min(effectiveIndex + digits.length, cellCount - 1);
+    if (effectiveIndex + digits.length < cellCount) focusCell(target, true);
   }
 
   function handlePaste(index: number, event: ClipboardEvent<HTMLInputElement>) {
@@ -168,15 +194,15 @@ export function CodeInput({
     if (!digits) return;
     event.preventDefault();
 
-    if (digits.length >= length) {
-      commit(digits.slice(0, length));
-      focusCell(length - 1, true);
+    if (digits.length >= cellCount) {
+      commit(digits.slice(0, cellCount));
+      focusCell(cellCount - 1, true);
       return;
     }
 
     const effectiveIndex = Math.min(index, value.length);
-    commit(replaceFrom(value, effectiveIndex, digits, length));
-    focusCell(Math.min(effectiveIndex + digits.length, length - 1), true);
+    commit(replaceFrom(value, effectiveIndex, digits, cellCount));
+    focusCell(Math.min(effectiveIndex + digits.length, cellCount - 1), true);
   }
 
   function handleKey(index: number, event: KeyboardEvent<HTMLInputElement>) {
@@ -200,7 +226,7 @@ export function CodeInput({
     }
     if (event.key === 'End') {
       event.preventDefault();
-      focusCell(length - 1);
+      focusCell(cellCount - 1);
       return;
     }
     if (event.key === 'Backspace') {
@@ -220,7 +246,74 @@ export function CodeInput({
     }
   }
 
-  const groupLabel = ariaLabel ?? (typeof label === 'string' ? label : 'Код');
+  const groupLabel = ariaLabel ?? (
+    typeof label === 'string'
+      ? label
+      : type === 'phone'
+        ? 'Часть номера телефона'
+        : 'Код'
+  );
+
+  function renderCell(index: number) {
+    if (skeleton) {
+      return (
+        <span
+          className="fdoc-code-input__cell fdoc-code-input__cell--skeleton"
+          key={index}
+          data-testid={`code-input-cell-${index + 1}`}
+        >
+          {value.length > 0 && (
+            <Skeleton
+              width={16}
+              shape="text"
+              textSize={size === 'medium' ? 'h3-heading' : 'subtitle'}
+            />
+          )}
+        </span>
+      );
+    }
+
+    return (
+      <input
+        key={index}
+        id={`${id}-${index + 1}`}
+        ref={node => { inputRefs.current[index] = node; }}
+        className="fdoc-code-input__cell"
+        value={value[index] ?? ''}
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        maxLength={1}
+        autoComplete={type === 'code' && index === 0 ? 'one-time-code' : 'off'}
+        autoFocus={autoFocus && index === 0}
+        disabled={disabled}
+        required={required}
+        aria-required={required || undefined}
+        aria-invalid={hasError || undefined}
+        aria-describedby={helperId}
+        aria-label={`Символ ${index + 1} из ${cellCount}`}
+        data-testid={`code-input-cell-${index + 1}`}
+        onChange={event => handleChange(index, event.currentTarget.value)}
+        onPaste={event => handlePaste(index, event)}
+        onKeyDown={event => handleKey(index, event)}
+        onFocus={event => {
+          if (skipFocusGuard.current) {
+            skipFocusGuard.current = false;
+            event.currentTarget.select();
+            onFocus?.(event);
+            return;
+          }
+          if (index > value.length) {
+            requestAnimationFrame(() => focusCell(value.length));
+            return;
+          }
+          event.currentTarget.select();
+          onFocus?.(event);
+        }}
+        onBlur={onBlur}
+      />
+    );
+  }
 
   return (
     <div
@@ -240,72 +333,43 @@ export function CodeInput({
       />
 
       <div
-        className={joinClassNames('fdoc-code-input__row', className)}
+        className={joinClassNames(
+          'fdoc-code-input__row',
+          type === 'phone' && 'fdoc-code-input__row--phone',
+          className,
+        )}
         role="group"
         aria-label={groupLabel}
         aria-describedby={helperId}
         data-testid="code-input-row"
       >
-        {Array.from({ length }, (_, index) => {
-          if (skeleton) {
-            return (
-              <span
-                className="fdoc-code-input__cell fdoc-code-input__cell--skeleton"
-                key={index}
-                data-testid={`code-input-cell-${index + 1}`}
-              >
-                {value.length > 0 && (
-                  <Skeleton
-                    width={16}
-                    shape="text"
-                    textSize={size === 'medium' ? 'h3-heading' : 'subtitle'}
-                  />
-                )}
+        {type === 'phone' ? (
+          <>
+            {hasRenderableContent(phonePrefix) && (
+              <span className="fdoc-code-input__phone-affix" data-testid="code-input-phone-prefix">
+                {phonePrefix}
               </span>
-            );
-          }
-
-          return (
-            <input
-              key={index}
-              id={`${id}-${index + 1}`}
-              ref={node => { inputRefs.current[index] = node; }}
-              className="fdoc-code-input__cell"
-              value={value[index] ?? ''}
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={1}
-              autoComplete={index === 0 ? 'one-time-code' : 'off'}
-              autoFocus={autoFocus && index === 0}
-              disabled={disabled}
-              required={required}
-              aria-required={required || undefined}
-              aria-invalid={hasError || undefined}
-              aria-describedby={helperId}
-              aria-label={`Символ ${index + 1} из ${length}`}
-              data-testid={`code-input-cell-${index + 1}`}
-              onChange={event => handleChange(index, event.currentTarget.value)}
-              onPaste={event => handlePaste(index, event)}
-              onKeyDown={event => handleKey(index, event)}
-              onFocus={event => {
-                if (skipFocusGuard.current) {
-                  skipFocusGuard.current = false;
-                  event.currentTarget.select();
-                  onFocus?.(event);
-                  return;
-                }
-                if (index > value.length) {
-                  requestAnimationFrame(() => focusCell(value.length));
-                  return;
-                }
-                event.currentTarget.select();
-                onFocus?.(event);
-              }}
-              onBlur={onBlur}
-            />
-          );
-        })}
+            )}
+            <span className="fdoc-code-input__phone-parts" data-testid="code-input-phone-parts">
+              {phoneGroupIndexes.map((indexes, groupIndex) => (
+                <span
+                  className="fdoc-code-input__phone-group"
+                  data-testid={`code-input-phone-group-${groupIndex + 1}`}
+                  key={groupIndex}
+                >
+                  {indexes.map(renderCell)}
+                </span>
+              ))}
+            </span>
+            {hasRenderableContent(phoneSuffix) && (
+              <span className="fdoc-code-input__phone-affix" data-testid="code-input-phone-suffix">
+                {phoneSuffix}
+              </span>
+            )}
+          </>
+        ) : (
+          Array.from({ length: cellCount }, (_, index) => renderCell(index))
+        )}
       </div>
 
       {name && <input type="hidden" name={name} value={value} disabled={disabled} />}
