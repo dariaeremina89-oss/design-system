@@ -125,7 +125,7 @@ test('PhoneInput shows synthetic empty prefixes without putting them into value'
   const russianPrefix = await page.locator('.fdoc-phone-input__field--empty-russian .fdoc-input__content').evaluate(
     element => getComputedStyle(element, '::before').content,
   );
-  expect(russianPrefix).toBe('" +7"'.replace(' ', ''));
+  expect(russianPrefix).toBe('"+7"');
 
   await page.goto('/iframe.html?id=components-inputs-phoneinput--international&viewMode=story');
   const international = page.getByLabel('Номер телефона');
