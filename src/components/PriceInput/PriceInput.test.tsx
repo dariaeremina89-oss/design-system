@@ -25,7 +25,16 @@ describe('PriceInput helpers', () => {
 
   it('resolves ISO currency codes and keeps custom symbols', () => {
     expect(resolveCurrencySymbol('RUB')).toBe('₽');
-    expect(resolveCurrencySymbol('USD')).toBe('
+    expect(resolveCurrencySymbol('USD')).toBe('$');
+    expect(resolveCurrencySymbol('EUR')).toBe('€');
+    expect(resolveCurrencySymbol('руб.')).toBe('руб.');
+  });
+
+  it('uses the resolved currency symbol in range errors', () => {
+    expect(getPriceRangeError(1, 1000, 'USD')).toBe('Введите сумму от 1 до 1 000 $');
+  });
+
+  it('formats thousands with non-breaking spaces', () => {
     expect(formatPriceValue('123456,78')).toBe('123\u00a0456,78');
   });
 
