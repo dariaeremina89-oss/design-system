@@ -101,7 +101,7 @@ export function CodeInput({
   defaultValue = '',
   type = 'code',
   length = 6,
-  phoneGroups = [2, 3, 2],
+  phoneGroups = [7],
   phonePrefix,
   phoneSuffix,
   size = 'medium',
