@@ -21,12 +21,13 @@ describe('PhoneInput', () => {
   });
 
   it('keeps synthetic empty prefixes out of the normalized value', () => {
-    const { rerender } = render(<PhoneInput label="Телефон" />);
+    const russian = render(<PhoneInput label="Телефон" />);
 
     expect(screen.getByLabelText('Телефон')).toHaveValue('');
     expect(document.querySelector('.fdoc-phone-input__field--empty-russian')).toBeInTheDocument();
 
-    rerender(<PhoneInput label="Телефон" defaultPhoneType="international" />);
+    russian.unmount();
+    render(<PhoneInput label="Телефон" defaultPhoneType="international" />);
     expect(screen.getByLabelText('Телефон')).toHaveValue('');
     expect(document.querySelector('.fdoc-phone-input__field--empty-international')).toBeInTheDocument();
   });
