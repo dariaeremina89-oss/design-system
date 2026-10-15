@@ -168,7 +168,7 @@ test('Skeleton docs show real component skeleton states without interactive cont
   await page.goto('/iframe.html?id=atoms-skeleton--component-skeleton-states&viewMode=story');
 
   const examples = page.locator('[data-testid^="component-skeleton-"]');
-  await expect(examples).toHaveCount(34);
+  await expect(examples).toHaveCount(35);
 
   for (const example of await examples.all()) {
     await expect(example.locator('.fdoc-skeleton').first()).toBeVisible();
