@@ -28,7 +28,35 @@ export const Narrow:Story = {args:{count:16},decorators:[Story=><div style={{wid
 export const Disabled:Story = {args:{disabled:true}};
 export const OneItem:Story = {args:{count:1,defaultIndex:0},parameters:{storyCheck:'Один элемент контента: навигация скрыта.'}};
 export const InverseLight:Story = {args:{color:'inverse-light'}};
+function PanelState({color, defaultIndex = 2, disabled = false}: Pick<CarouselProps, 'color' | 'defaultIndex' | 'disabled'>) {
+  const [index, setIndex] = useState(defaultIndex);
+  const id = useId();
+  return <div style={{display:'grid',gap:8,justifyItems:'start',minWidth:0}}>
+    <Typography id={id}>Элемент {index + 1} из 6</Typography>
+    <Carousel count={6} index={index} onIndexChange={setIndex} controlsId={id} color={color} disabled={disabled}/>
+  </div>;
+}
 export const States:Story = {
+  parameters:{storyCheck:'Собранные Carousel в Secondary и Inverse light: обычное состояние, начало, конец и Disabled. Ниже — Skeleton для первичной загрузки.'},
+  render:()=> <div style={{display:'grid',gap:32,maxWidth:'100%'}}>
+    {(['secondary','inverse-light'] as const).map(color=><section key={color} style={{display:'grid',gap:16,minWidth:0}}>
+      <Typography variant="h3-heading">{color === 'secondary' ? 'Secondary' : 'Inverse light'}</Typography>
+      <div style={{display:'flex',gap:32,flexWrap:'wrap'}}>
+        {[{name:'Default',index:2},{name:'Первый элемент',index:0},{name:'Последний элемент',index:5},{name:'Disabled',index:2,disabled:true}].map(state=><div key={state.name} style={{display:'grid',gap:8,minWidth:0,maxWidth:'100%'}}>
+          <Typography>{state.name}</Typography>
+          <PanelState color={color} defaultIndex={state.index} disabled={state.disabled}/>
+        </div>)}
+      </div>
+    </section>)}
+    <section style={{display:'grid',gap:16,justifyItems:'start',minWidth:0}}>
+      <Typography variant="h3-heading">Skeleton</Typography>
+      <Carousel count={6} controlsId="carousel-states-loading" isLoading/>
+    </section>
+  </div>,
+};
+
+export const DotStates:Story = {
+  parameters:{storyCheck:"Состояния отдельных Dot: без выбора и с выбором, в обеих цветовых схемах."},
   render:()=> <div style={{display:'grid',gap:24,justifyItems:'start'}}>
     {(['secondary','inverse-light'] as const).map(color=><div key={color} style={{display:'grid',gap:16,maxWidth:'100%'}}>
       <Typography>{color}</Typography>
