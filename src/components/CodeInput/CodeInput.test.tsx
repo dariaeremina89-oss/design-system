@@ -11,6 +11,58 @@ beforeAll(() => {
 });
 
 describe('CodeInput', () => {
+  it('renders configurable phone groups with independent prefix and suffix', () => {
+    render(
+      <CodeInput
+        type="phone"
+        phonePrefix="+7 9"
+        phoneGroups={[2, 3, 2]}
+        phoneSuffix="88"
+        label="Телефон"
+      />,
+    );
+
+    expect(screen.getAllByRole('textbox')).toHaveLength(7);
+    expect(screen.getByTestId('code-input-phone-prefix')).toHaveTextContent('+7 9');
+    expect(screen.getByTestId('code-input-phone-suffix')).toHaveTextContent('88');
+    expect(screen.getByTestId('code-input-phone-group-1').querySelectorAll('input')).toHaveLength(2);
+    expect(screen.getByTestId('code-input-phone-group-2').querySelectorAll('input')).toHaveLength(3);
+    expect(screen.getByTestId('code-input-phone-group-3').querySelectorAll('input')).toHaveLength(2);
+  });
+
+  it('derives phone length from groups instead of Code length', () => {
+    render(
+      <CodeInput
+        type="phone"
+        length={4}
+        phonePrefix="+44"
+        phoneGroups={[4, 3, 3]}
+        label="Телефон"
+      />,
+    );
+
+    expect(screen.getAllByRole('textbox')).toHaveLength(10);
+  });
+
+  it('pastes across phone groups as one normalized value', () => {
+    const change = vi.fn();
+    render(
+      <CodeInput
+        type="phone"
+        phoneGroups={[2, 3, 2]}
+        onValueChange={change}
+        label="Телефон"
+      />,
+    );
+
+    fireEvent.paste(screen.getByTestId('code-input-cell-1'), {
+      clipboardData: { getData: () => '12 345 67' },
+    });
+
+    expect(change).toHaveBeenLastCalledWith('1234567');
+    expect(screen.getByTestId('code-input-cell-7')).toHaveFocus();
+  });
+
   it('renders the requested number of cells and normalizes default value', () => {
     render(<CodeInput length={4} defaultValue="1a23x4" label="Код" />);
     expect(screen.getAllByRole('textbox')).toHaveLength(4);
