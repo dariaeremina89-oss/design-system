@@ -32,7 +32,7 @@ const meta = {
     caption: 'Укажите сумму в рублях',
     currency: '₽',
     counter: true,
-    maxLength: 100,
+    maxLength: 9,
     clearable: true,
   },
   argTypes: {
