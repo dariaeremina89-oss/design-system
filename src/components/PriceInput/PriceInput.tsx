@@ -17,6 +17,41 @@ export const PRICE_INPUT_MIN = 1;
 export const PRICE_INPUT_MAX = 9_999_999.99;
 export const PRICE_INPUT_MAX_DIGITS = 9;
 
+export function resolveCurrencySymbol(currency: string) {
+  const value = currency.trim();
+  if (!/^[A-Za-z]{3}$/.test(value)) return value;
+
+  try {
+    const currencyPart = new Intl.NumberFormat('ru-RU', {
+      style: 'currency',
+      currency: value.toUpperCase(),
+      currencyDisplay: 'symbol',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })
+      .formatToParts(0)
+      .find(part => part.type === 'currency');
+
+    return currencyPart?.value || value;
+  } catch {
+    return value;
+  }
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^$()|[\]\\{}]/g, '\\export const PRICE_INPUT_MAX_DIGITS = 9;
+
+');
+}
+
+function stripAcceptedCurrency(value: string, currency: string, currencySymbol: string) {
+  return [currency, currencySymbol]
+    .filter(Boolean)
+    .reduce(
+      (result, token) => result.replace(new RegExp(escapeRegExp(token), 'gi'), ''),
+      value,
+    );
+}
 
 function formatPriceLimit(value: number) {
   const normalized = Number.isInteger(value)
@@ -30,14 +65,15 @@ export function getPriceRangeError(
   max?: number,
   currency = '₽',
 ) {
+  const currencySymbol = resolveCurrencySymbol(currency);
   if (min !== undefined && max !== undefined) {
-    return `Введите сумму от ${formatPriceLimit(min)} до ${formatPriceLimit(max)} ${currency}`;
+    return `Введите сумму от ${formatPriceLimit(min)} до ${formatPriceLimit(max)} ${currencySymbol}`;
   }
   if (min !== undefined) {
-    return `Введите сумму не меньше ${formatPriceLimit(min)} ${currency}`;
+    return `Введите сумму не меньше ${formatPriceLimit(min)} ${currencySymbol}`;
   }
   if (max !== undefined) {
-    return `Введите сумму не больше ${formatPriceLimit(max)} ${currency}`;
+    return `Введите сумму не больше ${formatPriceLimit(max)} ${currencySymbol}`;
   }
   return undefined;
 }
@@ -63,7 +99,7 @@ export interface PriceInputProps extends Omit<
   defaultValue?: string;
   /** Имя итогового hidden input формы. */
   name?: string;
-  /** Символ валюты справа от введенного значения. */
+  /** ISO-код валюты или готовый символ/текст справа от введенного значения. */
   currency?: string;
   /** Минимально допустимая сумма. */
   min?: number;
@@ -175,12 +211,13 @@ export function PriceInput({
     maxLength,
   );
   const displayValue = formatPriceValue(normalizedValue);
+  const currencySymbol = resolveCurrencySymbol(currency);
   const hasCompleteValue = normalizedValue !== '' && !normalizedValue.endsWith(',');
   const hasRangeValidation = min !== undefined || max !== undefined;
   const hasRangeError = hasRangeValidation
     && hasCompleteValue
     && !isValidPriceValue(normalizedValue, min, max);
-  const rangeError = getPriceRangeError(min, max, currency);
+  const rangeError = getPriceRangeError(min, max, currencySymbol);
   const resolvedError = formatError
     ? PRICE_INPUT_FORMAT_ERROR
     : externalError ?? (hasRangeError ? rangeError : undefined);
@@ -230,7 +267,8 @@ export function PriceInput({
       return;
     }
 
-    const hasUnsupportedCharacters = /[^\d.,\s₽]/.test(text);
+    const textWithoutCurrency = stripAcceptedCurrency(text, currency, currencySymbol);
+    const hasUnsupportedCharacters = /[^\d.,\s]/.test(textWithoutCurrency);
     setFormatError(hasUnsupportedCharacters);
     event.preventDefault();
     const start = event.currentTarget.selectionStart ?? displayValue.length;
@@ -263,7 +301,7 @@ export function PriceInput({
         clearable={clearable}
         counter={resolvedCounter}
         maxLength={undefined}
-        inlineSuffix={currency}
+        inlineSuffix={currencySymbol}
         error={resolvedError}
         onChange={handleChange}
         onClear={handleClear}
