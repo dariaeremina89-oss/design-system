@@ -30,6 +30,20 @@ describe('CodeInput', () => {
     expect(screen.getByTestId('code-input-phone-group-3').querySelectorAll('input')).toHaveLength(2);
   });
 
+  it('always renders Phone with the Small geometry even if Medium is requested', () => {
+    render(
+      <CodeInput
+        type="phone"
+        size="medium"
+        phoneGroups={[2, 3, 2]}
+        label="Телефон"
+      />,
+    );
+
+    expect(screen.getByTestId('code-input')).toHaveClass('fdoc-code-input--small');
+    expect(screen.getByTestId('code-input')).not.toHaveClass('fdoc-code-input--medium');
+  });
+
   it('derives phone length from groups instead of Code length', () => {
     render(
       <CodeInput
