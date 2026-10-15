@@ -20,6 +20,17 @@ describe('PhoneInput', () => {
     expect(document.querySelector('[data-icon="flag_chevron/Country=Rus, State=Default"]')).toBeInTheDocument();
   });
 
+  it('keeps synthetic empty prefixes out of the normalized value', () => {
+    const { rerender } = render(<PhoneInput label="Телефон" />);
+
+    expect(screen.getByLabelText('Телефон')).toHaveValue('');
+    expect(document.querySelector('.fdoc-phone-input__field--empty-russian')).toBeInTheDocument();
+
+    rerender(<PhoneInput label="Телефон" defaultPhoneType="international" />);
+    expect(screen.getByLabelText('Телефон')).toHaveValue('');
+    expect(document.querySelector('.fdoc-phone-input__field--empty-international')).toBeInTheDocument();
+  });
+
   it('inherits field click focus from Input', async () => {
     const user = userEvent.setup();
     render(<PhoneInput label="Телефон" />);
