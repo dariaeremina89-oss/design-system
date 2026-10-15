@@ -118,6 +118,15 @@ test('PhoneInput switches selector assets between Russian, International and Dis
   await expect(disabled.locator('[data-icon="flag_chevron/Country=Rus, State=Disabled"]')).toBeVisible();
 });
 
+test('PhoneInput skeleton does not render a phone prefix', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-phoneinput--skeleton&viewMode=story');
+
+  await expect(page.getByTestId('input-skeleton-field')).toBeVisible();
+  await expect(page.locator('.fdoc-phone-input__field--empty-russian')).toHaveCount(0);
+  await expect(page.locator('.fdoc-phone-input__field--empty-international')).toHaveCount(0);
+  await expect(page.getByText('+7', { exact: true })).toHaveCount(0);
+});
+
 test('PhoneInput keeps 16px input typography and width on mobile', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 });
   await page.goto('/iframe.html?id=components-inputs-phoneinput--default&viewMode=story');
