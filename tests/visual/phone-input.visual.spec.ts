@@ -118,6 +118,25 @@ test('PhoneInput switches selector assets between Russian, International and Dis
   await expect(disabled.locator('[data-icon="flag_chevron/Country=Rus, State=Disabled"]')).toBeVisible();
 });
 
+test('PhoneInput shows synthetic empty prefixes without putting them into value', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-phoneinput--default&viewMode=story');
+  const russian = page.getByLabel('Номер телефона');
+  await expect(russian).toHaveValue('');
+  const russianPrefix = await page.locator('.fdoc-phone-input__field--empty-russian .fdoc-input__content').evaluate(
+    element => getComputedStyle(element, '::before').content,
+  );
+  expect(russianPrefix).toBe('" +7"'.replace(' ', ''));
+
+  await page.goto('/iframe.html?id=components-inputs-phoneinput--international&viewMode=story');
+  const international = page.getByLabel('Номер телефона');
+  await international.fill('');
+  await expect(international).toHaveValue('');
+  const internationalPrefix = await page.locator('.fdoc-phone-input__field--empty-international .fdoc-input__content').evaluate(
+    element => getComputedStyle(element, '::before').content,
+  );
+  expect(internationalPrefix).toBe('"+"');
+});
+
 test('PhoneInput skeleton does not render a phone prefix', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-phoneinput--skeleton&viewMode=story');
 
