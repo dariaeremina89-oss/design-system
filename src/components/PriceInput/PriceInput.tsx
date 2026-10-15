@@ -17,6 +17,26 @@ export const PRICE_INPUT_MIN = 1;
 export const PRICE_INPUT_MAX = 9_999_999.99;
 export const PRICE_INPUT_MAX_DIGITS = 9;
 
+export function getPriceMaxDigits(max: number) {
+  const integerDigits = Math.max(1, Math.floor(Math.abs(max)).toString().length);
+  return integerDigits + 2;
+}
+
+function formatPriceLimit(value: number) {
+  const normalized = Number.isInteger(value)
+    ? String(value)
+    : String(value).replace('.', ',');
+  return formatPriceValue(normalized).replace(/\u00a0/g, ' ');
+}
+
+export function getPriceRangeError(
+  min = PRICE_INPUT_MIN,
+  max = PRICE_INPUT_MAX,
+  currency = '₽',
+) {
+  return `Введите сумму от ${formatPriceLimit(min)} до ${formatPriceLimit(max)} ${currency}`;
+}
+
 export interface PriceInputProps extends Omit<
   InputProps,
   | 'value'
@@ -29,6 +49,8 @@ export interface PriceInputProps extends Omit<
   | 'sumIcon'
   | 'inlineSuffix'
   | 'name'
+  | 'min'
+  | 'max'
 > {
   /** Нормализованное значение без разделителей тысяч, с запятой перед копейками. */
   value?: string;
@@ -38,6 +60,10 @@ export interface PriceInputProps extends Omit<
   name?: string;
   /** Символ валюты справа от введенного значения. */
   currency?: string;
+  /** Минимально допустимая сумма. */
+  min?: number;
+  /** Максимально допустимая сумма. */
+  max?: number;
   /** Изменение нормализованного значения. */
   onValueChange?: (value: string) => void;
   /** Вызывается после очистки значения. */
@@ -118,12 +144,14 @@ export function PriceInput({
   defaultValue = '',
   name,
   currency = '₽',
+  min = PRICE_INPUT_MIN,
+  max = PRICE_INPUT_MAX,
   onValueChange,
   onClear,
   error: externalError,
   clearable = true,
   counter,
-  maxLength = PRICE_INPUT_MAX_DIGITS,
+  maxLength,
   label = 'Сумма',
   wrapperClassName = '',
   onPaste,
@@ -131,30 +159,33 @@ export function PriceInput({
   ...props
 }: PriceInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [internalValue, setInternalValue] = useState(() => normalizePriceValue(defaultValue, maxLength));
+  const rangeMaxLength = getPriceMaxDigits(max);
+  const resolvedMaxLength = maxLength === undefined
+    ? rangeMaxLength
+    : Math.min(maxLength, rangeMaxLength);
+  const [internalValue, setInternalValue] = useState(() => normalizePriceValue(defaultValue, resolvedMaxLength));
   const [formatError, setFormatError] = useState(false);
   const isControlled = controlledValue !== undefined;
   const normalizedValue = normalizePriceValue(
     isControlled ? controlledValue : internalValue,
-    maxLength,
+    resolvedMaxLength,
   );
   const displayValue = formatPriceValue(normalizedValue);
   const hasCompleteValue = normalizedValue !== '' && !normalizedValue.endsWith(',');
-  const hasRangeError = hasCompleteValue && !isValidPriceValue(normalizedValue);
+  const hasRangeError = hasCompleteValue && !isValidPriceValue(normalizedValue, min, max);
+  const rangeError = getPriceRangeError(min, max, currency);
   const resolvedError = formatError
     ? PRICE_INPUT_FORMAT_ERROR
-    : externalError ?? (hasRangeError ? PRICE_INPUT_RANGE_ERROR : undefined);
+    : externalError ?? (hasRangeError ? rangeError : undefined);
   const digitCount = normalizedValue.replace(/\D/g, '').length;
   const resolvedCounter = counter === true
-    ? maxLength !== undefined
-      ? `${digitCount} / ${maxLength}`
-      : String(digitCount)
+    ? `${digitCount} / ${resolvedMaxLength}`
     : counter;
 
   useImperativeHandle(ref, () => inputRef.current!, [props.skeleton]);
 
   function commit(next: string) {
-    const normalized = normalizePriceValue(next, maxLength);
+    const normalized = normalizePriceValue(next, resolvedMaxLength);
     if (!isControlled) setInternalValue(normalized);
     if (normalized !== normalizedValue) onValueChange?.(normalized);
   }
