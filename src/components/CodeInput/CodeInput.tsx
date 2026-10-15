@@ -24,7 +24,7 @@ export type CodeInputLength = 4 | 5 | 6;
 export type CodeInputType = 'code' | 'phone';
 
 export interface CodeInputProps {
-  /** Стабильный id группы. Ячейки получают суффиксы -1 ... -6. */
+  /** Стабильный id группы. Ячейки получают последовательные суффиксы -1, -2 и далее. */
   id?: string;
   /** Имя итогового hidden input для отправки формы. */
   name?: string;
