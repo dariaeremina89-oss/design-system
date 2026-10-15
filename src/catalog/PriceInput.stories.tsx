@@ -10,7 +10,7 @@ import { controlsParameters, pickFieldControls } from '../docs/story-controls';
 
 const controlOrder = [
   'label', 'required', 'value', 'defaultValue', 'currency',
-  'caption', 'error', 'counter', 'maxLength', 'size',
+  'min', 'max', 'caption', 'error', 'counter', 'maxLength', 'size',
   'clearable', 'disabled', 'skeleton',
   'onValueChange', 'onClear', 'onFocus', 'onBlur', 'onKeyDown',
 ] as const;
@@ -31,6 +31,8 @@ const meta = {
     label: 'Сумма',
     caption: 'Укажите сумму в рублях',
     currency: '₽',
+    min: 1,
+    max: 9_999_999.99,
     counter: true,
     maxLength: 9,
     clearable: true,
@@ -45,6 +47,16 @@ const meta = {
       control: 'text',
       description: 'Символ валюты сразу после введенного значения.',
       table: { category: 'Content' },
+    },
+    min: {
+      control: 'number',
+      description: 'Минимально допустимая сумма. Не передавайте, если нижней границы нет.',
+      table: { category: 'Validation' },
+    },
+    max: {
+      control: 'number',
+      description: 'Максимально допустимая сумма. Не передавайте, если верхней границы нет.',
+      table: { category: 'Validation' },
     },
   },
 } satisfies Meta<typeof PriceInput>;
