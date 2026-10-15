@@ -50,6 +50,10 @@
   line-height: var(--page-subtitle-line-height);
 }
 
+.fdoc-code-input[data-disabled] .fdoc-code-input__phone-affix {
+  color: var(--text-base-default-disabled);
+}
+
 .fdoc-code-input__cell {
   box-sizing: border-box;
   display: inline-flex;
