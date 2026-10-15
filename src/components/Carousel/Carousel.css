@@ -1,0 +1,67 @@
+.fdoc-carousel {
+  --carousel-selected: var(--icon-base-secondary);
+  --carousel-hover: var(--icon-base-secondary-hover);
+  --carousel-pressed: var(--icon-base-secondary-pressed);
+  --carousel-disabled: var(--icon-base-secondary-disabled);
+  --carousel-focus: var(--border-base-secondary-focused);
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-full);
+  background: var(--background-base-secondary);
+}
+.fdoc-carousel[data-color='inverse-light'], [data-color-mode='dark'] .fdoc-carousel[data-color='auto'] {
+  --carousel-selected: var(--icon-base-inverse);
+  --carousel-hover: var(--icon-base-inverse-hover);
+  --carousel-pressed: var(--icon-base-inverse-pressed);
+  --carousel-disabled: var(--icon-base-inverse-disabled);
+  --carousel-focus: var(--border-base-inverse-focused);
+  background: var(--background-base-inverse-light);
+}
+.fdoc-carousel[data-color='inverse-light'] .fdoc-carousel__arrow,
+[data-color-mode='dark'] .fdoc-carousel[data-color='auto'] .fdoc-carousel__arrow {
+  --fdoc-button-icon-background: var(--background-base-inverse-light);
+  --fdoc-button-icon-background-hover: var(--background-base-inverse-light-hover);
+  --fdoc-button-icon-background-pressed: var(--background-base-inverse-light-pressed);
+  --fdoc-button-icon-background-disabled: var(--background-base-inverse-light-disabled);
+  --fdoc-button-icon-icon: var(--icon-base-inverse);
+  --fdoc-button-icon-icon-hover: var(--icon-base-inverse);
+  --fdoc-button-icon-icon-pressed: var(--icon-base-inverse);
+  --fdoc-button-icon-icon-disabled: var(--icon-base-inverse-disabled);
+  --fdoc-button-icon-focus-border: var(--border-base-inverse-focused);
+}
+.fdoc-carousel__indicators {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding-inline: var(--space-8);
+  height: var(--elements-32);
+  min-width: 0;
+  max-width: calc(8 * var(--elements-8) + 7 * var(--space-8) + var(--elements-8) + 2 * var(--space-8));
+  box-sizing: border-box;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.fdoc-carousel__indicators::-webkit-scrollbar { display: none; }
+.fdoc-carousel__dot {
+  position: relative;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: var(--elements-8);
+  height: var(--elements-8);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--icon-base-inverse-secondary);
+  cursor: pointer;
+  transition: width var(--transition-duration-normal) var(--transition-easing-standard), background-color var(--transition-duration-normal) var(--transition-easing-standard);
+}
+.fdoc-carousel__dot::after { content: ''; position: absolute; inset: -12px -4px; }
+.fdoc-carousel__dot[data-selected='true'] { width: var(--elements-16); background: var(--carousel-selected); }
+.fdoc-carousel__dot:hover:not(:disabled), .fdoc-carousel__dot[data-state='hover'] { background: var(--carousel-hover); }
+.fdoc-carousel__dot:active:not(:disabled), .fdoc-carousel__dot[data-state='pressed'] { background: var(--carousel-pressed); }
+.fdoc-carousel__dot:focus-visible, .fdoc-carousel__dot[data-state='focused'] { background: var(--carousel-selected); outline: var(--border-small) solid var(--carousel-focus); outline-offset: 0; }
+.fdoc-carousel__dot:disabled { background: var(--carousel-disabled); outline: none; cursor: default; }
+@media (prefers-reduced-motion: reduce) { .fdoc-carousel__dot { transition: none; } }

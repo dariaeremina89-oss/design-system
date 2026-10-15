@@ -888,3 +888,9 @@ body {
   color: var(--text-base-default);
   background: var(--background-base-default);
 }
+
+/* Shared motion timing; consumers honor prefers-reduced-motion. */
+:root {
+  --transition-duration-normal: 200ms;
+  --transition-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+}

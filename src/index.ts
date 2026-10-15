@@ -165,3 +165,7 @@ export type {
 
 export { Dialog } from './components/Dialog/Dialog';
 export type { DialogProps } from './components/Dialog/Dialog';
+export { Carousel, CarouselDot } from './components/Carousel/Carousel';
+export type { CarouselProps, CarouselColor, CarouselDotProps, CarouselDotState } from './components/Carousel/Carousel';
+export { CarouselViewport } from './components/Carousel/CarouselViewport';
+export type { CarouselViewportProps } from './components/Carousel/CarouselViewport';
