@@ -82,6 +82,48 @@ describe('CodeInput', () => {
     vi.useRealTimers();
   });
 
+  it('respects a custom maskDelay', () => {
+    vi.useFakeTimers();
+    render(<CodeInput length={4} mask maskDelay={250} />);
+
+    const first = screen.getByTestId('code-input-cell-1');
+    fireEvent.change(first, { target: { value: '4' } });
+
+    act(() => vi.advanceTimersByTime(249));
+    expect(first).toHaveValue('4');
+
+    act(() => vi.advanceTimersByTime(1));
+    expect(first).toHaveValue('*');
+    vi.useRealTimers();
+  });
+
+  it('masks immediately when maskDelay is zero', () => {
+    render(<CodeInput length={4} mask maskDelay={0} />);
+    const first = screen.getByTestId('code-input-cell-1');
+
+    fireEvent.change(first, { target: { value: '4' } });
+
+    expect(first).toHaveValue('*');
+  });
+
+  it('keeps pasted PIN digits as value and masks their display after the delay', () => {
+    vi.useFakeTimers();
+    const change = vi.fn();
+    render(<CodeInput length={4} mask maskDelay={300} onValueChange={change} />);
+
+    fireEvent.paste(screen.getByTestId('code-input-cell-1'), {
+      clipboardData: { getData: () => '12-34' },
+    });
+
+    expect(change).toHaveBeenLastCalledWith('1234');
+    expect(screen.getByTestId('code-input-cell-1')).toHaveValue('1');
+    expect(screen.getByTestId('code-input-cell-4')).toHaveValue('4');
+
+    act(() => vi.advanceTimersByTime(300));
+    screen.getAllByRole('textbox').forEach(cell => expect(cell).toHaveValue('*'));
+    vi.useRealTimers();
+  });
+
   it('masks an existing PIN immediately without changing the stored value', () => {
     render(<CodeInput length={4} mask defaultValue="4206" name="pin" />);
 
