@@ -89,6 +89,22 @@ export const ErrorLimit: Story = {
   },
 };
 
+export const LengthLimitOnly: Story = {
+  args: {
+    min: undefined,
+    max: undefined,
+    maxLength: 6,
+    defaultValue: '1234',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Пример без числового диапазона: maxLength ограничивает только количество цифр, а автоматический Counter показывает введенное количество относительно этого лимита.',
+      },
+    },
+  },
+};
+
 export const ErrorFormat: Story = {
   args: { defaultValue: '12' },
   render: args => {
