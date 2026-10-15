@@ -167,8 +167,8 @@ describe('PriceInput', () => {
   });
 
   it('limits the normalized value to nine digits by default', () => {
-    render(<PriceInput defaultValue="9999999,999" counter />);
-    expect(screen.getByRole('textbox')).toHaveValue('9\u00a0999\u00a0999,99');
+    render(<PriceInput defaultValue="1234567890" counter />);
+    expect(screen.getByRole('textbox')).toHaveValue('123\u00a0456\u00a0789');
     expect(screen.getByTestId('input-counter')).toHaveTextContent('9 / 9');
   });
 
