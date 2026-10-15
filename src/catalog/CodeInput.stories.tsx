@@ -54,6 +54,12 @@ const meta = {
       description: 'Количество ячеек только для Type=code.',
       table: { category: 'Appearance' },
     },
+    size: {
+      control: 'radio',
+      options: ['medium', 'small'],
+      description: 'Размер Type=code. Для Type=phone всегда используется Small 48, как в Figma.',
+      table: { category: 'Appearance' },
+    },
     phoneGroups: {
       control: 'object',
       description: 'Размеры групп вводимых цифр для Type=phone. Сумма значений определяет количество ячеек.',
@@ -205,6 +211,7 @@ export const PhoneFigmaError: Story = {
 export const PhoneCustomGrouping: Story = {
   args: {
     type: 'phone',
+    size: 'small',
     length: undefined,
     label: 'Номер телефона',
     caption: 'Группировка и количество цифр задаются сценарием',
