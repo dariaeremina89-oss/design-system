@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import {
   PRICE_INPUT_FORMAT_ERROR,
   PRICE_INPUT_MAX,
+  PRICE_INPUT_MAX_DIGITS,
   PRICE_INPUT_RANGE_ERROR,
   PriceInput,
   formatPriceValue,
@@ -159,9 +160,16 @@ describe('PriceInput', () => {
     expect(change).toHaveBeenLastCalledWith('1994,56');
   });
 
-  it('counts only entered digits', () => {
-    render(<PriceInput defaultValue="1234,5" counter maxLength={100} />);
-    expect(screen.getByTestId('input-counter')).toHaveTextContent('5 / 100');
+  it('counts only entered digits against the default price limit', () => {
+    render(<PriceInput defaultValue="1234,5" counter />);
+    expect(PRICE_INPUT_MAX_DIGITS).toBe(9);
+    expect(screen.getByTestId('input-counter')).toHaveTextContent('5 / 9');
+  });
+
+  it('limits the normalized value to nine digits by default', () => {
+    render(<PriceInput defaultValue="9999999,999" counter />);
+    expect(screen.getByRole('textbox')).toHaveValue('9\u00a0999\u00a0999,99');
+    expect(screen.getByTestId('input-counter')).toHaveTextContent('9 / 9');
   });
 
   it('clears the normalized value through the shared Input clear action', () => {
