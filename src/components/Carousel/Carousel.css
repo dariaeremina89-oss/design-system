@@ -26,7 +26,7 @@
   --fdoc-button-icon-background: var(--background-base-inverse-light);
   --fdoc-button-icon-background-hover: var(--background-base-inverse-light-hover);
   --fdoc-button-icon-background-pressed: var(--background-base-inverse-light-pressed);
-  --fdoc-button-icon-background-disabled: var(--background-base-inverse-light-disabled);
+  --fdoc-button-icon-background-disabled: transparent;
   --fdoc-button-icon-icon: var(--icon-base-inverse);
   --fdoc-button-icon-icon-hover: var(--icon-base-inverse);
   --fdoc-button-icon-icon-pressed: var(--icon-base-inverse);
