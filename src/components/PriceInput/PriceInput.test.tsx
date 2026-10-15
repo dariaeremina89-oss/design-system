@@ -74,6 +74,20 @@ describe('PriceInput', () => {
     expect(screen.queryByText(PRICE_INPUT_FORMAT_ERROR)).toBe(null);
   });
 
+  it('accepts the ISO currency code itself on paste', () => {
+    const change = vi.fn();
+    render(<PriceInput currency="USD" onValueChange={change} />);
+    const input = screen.getByRole('textbox') as HTMLInputElement;
+    input.setSelectionRange(0, 0);
+
+    fireEvent.paste(input, {
+      clipboardData: { getData: () => '1 234,56 USD' },
+    });
+
+    expect(change).toHaveBeenLastCalledWith('1234,56');
+    expect(screen.queryByText(PRICE_INPUT_FORMAT_ERROR)).toBe(null);
+  });
+
   it('reports normalized value while typing', () => {
     const change = vi.fn();
     render(<PriceInput onValueChange={change} />);
@@ -190,6 +204,14 @@ describe('PriceInput', () => {
     });
 
     expect(change).toHaveBeenLastCalledWith('1994,56');
+  });
+
+  it('keeps maxLength independent from the numeric max', () => {
+    render(<PriceInput defaultValue="12345" max={1000} maxLength={9} counter />);
+
+    expect(screen.getByRole('textbox')).toHaveValue('12\u00a0345');
+    expect(screen.getByTestId('input-counter')).toHaveTextContent('5 / 9');
+    expect(screen.getByTestId('input-error')).toHaveTextContent('Введите сумму не больше 1 000 ₽');
   });
 
   it('counts only entered digits against maxLength when it is provided', () => {
