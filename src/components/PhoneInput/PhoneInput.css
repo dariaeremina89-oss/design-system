@@ -72,12 +72,14 @@
 }
 
 .fdoc-phone-input__field--empty-russian .fdoc-input__control {
+  box-sizing: border-box;
   position: relative;
   z-index: 1;
   padding-left: calc(var(--elements-24) - var(--space-4));
 }
 
 .fdoc-phone-input__field--empty-international .fdoc-input__control {
+  box-sizing: border-box;
   position: relative;
   z-index: 1;
   padding-left: var(--space-8);
