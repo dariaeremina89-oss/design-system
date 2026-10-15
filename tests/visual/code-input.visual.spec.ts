@@ -77,6 +77,20 @@ test('CodeInput Phone matches Figma grouping and supports configurable masks', a
   await expect(page.getByRole('textbox')).toHaveCount(10);
   await expect(page.getByTestId('code-input-phone-prefix')).toHaveText('+44');
   await expect(page.getByTestId('code-input-phone-suffix')).toHaveCount(0);
+
+  const customFirstCell = page.getByTestId('code-input-cell-1');
+  await expect(customFirstCell).toHaveCSS('width', '32px');
+  await expect(customFirstCell).toHaveCSS('height', '48px');
+  await expect(customFirstCell).toHaveCSS('font-size', '16px');
+
+  const row = page.getByTestId('code-input-row');
+  const wrapper = row.locator('xpath=..');
+  const widths = await Promise.all([
+    row.evaluate(element => ({ clientWidth: element.clientWidth, scrollWidth: element.scrollWidth })),
+    wrapper.evaluate(element => ({ clientWidth: element.clientWidth, scrollWidth: element.scrollWidth })),
+  ]);
+  expect(widths[0].scrollWidth).toBeLessThanOrEqual(widths[1].clientWidth);
+  expect(widths[1].scrollWidth).toBeLessThanOrEqual(widths[1].clientWidth);
 });
 
 test('CodeInput keeps typography fixed on mobile', async ({ page }) => {
