@@ -7,6 +7,8 @@ type QualityInfo = {
 const sharedResponsive = 'tests/visual/responsive-overflow.visual.spec.ts';
 
 export const componentQuality = {
+  Snackbar: { unit: 'src/components/Snackbar/Snackbar.test.tsx', browser: 'tests/visual/snackbar.visual.spec.ts', selectors: [['data-testid="snackbar"', 'Корень'], ['role="status" / role="alert"', 'Сообщение'], ['data-testid="snackbar-close"', 'Закрытие']] },
+  SnackbarStack: { unit: 'src/components/Snackbar/Snackbar.test.tsx', browser: 'tests/visual/snackbar.visual.spec.ts', selectors: [['data-testid="snackbar-stack"', 'Независимый стек']] },
   CarouselDot: { unit: 'src/components/Carousel/Carousel.test.tsx', browser: 'tests/visual/carousel.visual.spec.ts', selectors: [['aria-current="true"', 'Выбранная точка']] },
   CarouselViewport: { unit: 'src/components/Carousel/Carousel.test.tsx', browser: 'tests/visual/carousel.visual.spec.ts', selectors: [['aria-roledescription="карусель"', 'Область контента'], ['data-dragging', 'Активный жест']] },
   Carousel: { unit: 'src/components/Carousel/Carousel.test.tsx', browser: 'tests/visual/carousel.visual.spec.ts', selectors: [['data-testid="carousel"', 'Панель навигации'], ['aria-current="true"', 'Выбранный Dot'], ['aria-controls', 'Связь с областью контента']] },
