@@ -96,6 +96,20 @@ test('PriceInput accepts common copied price formats', async ({ page }) => {
 });
 
 
+test('PriceInput maxLength works without a numeric max', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-priceinput--length-limit-only&viewMode=story');
+  const input = page.getByRole('textbox');
+  const counter = page.getByTestId('input-counter');
+
+  await expect(input).toHaveValue('1\u00a0234');
+  await expect(counter).toHaveText('4 / 6');
+
+  await input.fill('1234567');
+  await expect(input).toHaveValue('123\u00a0456');
+  await expect(counter).toHaveText('6 / 6');
+  await expect(page.getByTestId('input-error')).toHaveCount(0);
+});
+
 test('PriceInput counter uses the nine-digit amount limit', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-priceinput--interactive&viewMode=story');
   const input = page.getByRole('textbox');
