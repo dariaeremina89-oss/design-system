@@ -39,7 +39,10 @@ export function resolveCurrencySymbol(currency: string) {
 }
 
 function escapeRegExp(value: string) {
-  return value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+  const specialCharacters = '\\\\^$.*+?()[]{}|/';
+  return Array.from(value, character =>
+    specialCharacters.includes(character) ? `\\${character}` : character,
+  ).join('');
 }
 
 function stripAcceptedCurrency(value: string, currency: string, currencySymbol: string) {
