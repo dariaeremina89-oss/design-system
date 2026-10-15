@@ -7,6 +7,9 @@ type QualityInfo = {
 const sharedResponsive = 'tests/visual/responsive-overflow.visual.spec.ts';
 
 export const componentQuality = {
+  CarouselDot: { unit: 'src/components/Carousel/Carousel.test.tsx', browser: 'tests/visual/carousel.visual.spec.ts', selectors: [['aria-current="true"', 'Выбранная точка']] },
+  CarouselViewport: { unit: 'src/components/Carousel/Carousel.test.tsx', browser: 'tests/visual/carousel.visual.spec.ts', selectors: [['aria-roledescription="карусель"', 'Область контента'], ['data-dragging', 'Активный жест']] },
+  Carousel: { unit: 'src/components/Carousel/Carousel.test.tsx', browser: 'tests/visual/carousel.visual.spec.ts', selectors: [['data-testid="carousel"', 'Панель навигации'], ['aria-current="true"', 'Выбранный Dot'], ['aria-controls', 'Связь с областью контента']] },
   Dialog: { unit: 'src/components/Dialog/Dialog.test.tsx', browser: 'tests/visual/dialog.visual.spec.ts', selectors: [['role="dialog"', 'Модальное окно с доступным названием'], ['data-testid="dialog-header / dialog-content / dialog-footer / dialog-close"', 'Части Dialog; префикс задается data-testid']] },
   Icon: { unit: 'src/components/Icon/Icon.test.tsx', browser: 'tests/visual/atoms.visual.spec.ts', selectors: [['data-icon', 'Имя библиотечной иконки'], ['data-testid', 'Опциональный пользовательский ID']] },
   Skeleton: { unit: 'src/components/Skeleton/Skeleton.test.tsx', browser: 'tests/visual/text-skeleton.visual.spec.ts', selectors: [['data-testid="skeleton"', 'Корень Skeleton'], ['data-text-size', 'Типографический размер текстового Skeleton']] },

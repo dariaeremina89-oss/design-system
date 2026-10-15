@@ -1,0 +1,6 @@
+.fdoc-carousel-viewport { overflow: hidden; width: 100%; min-width: 0; touch-action: pan-y; }
+.fdoc-carousel-viewport__track { display: flex; transition: transform var(--transition-duration-normal) var(--transition-easing-standard); }
+.fdoc-carousel-viewport__track[data-dragging='true'] { transition: none; user-select: none; cursor: grabbing; }
+.fdoc-carousel-viewport__slide { flex: 0 0 100%; min-width: 0; overflow-wrap: anywhere; }
+.fdoc-carousel-viewport__status { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .fdoc-carousel-viewport__track { transition: none; } }
