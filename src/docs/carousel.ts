@@ -22,7 +22,7 @@ CarouselViewport принимает index, onIndexChange, disabled, id и childr
 Secondary в светлой теме; Inverse light в темной. Dot: Default, Hover, Focused, Pressed, Disabled, с выбором и без. Первый элемент отключает Previous, последний — Next. Циклического переключения и автопрокрутки нет.
 
 ### Геометрия и токены
-Контейнер: горизонтальный padding space-4, radius-full, background-base-secondary / background-base-inverse-light. Группа: padding space-8, gap space-8. Dot: elements-8 × elements-8, выбранный — elements-16 × elements-8. Прозрачная зона нажатия расширена по вертикали до 32 px.
+Контейнер: без боковых отступов, кнопки стрелок стоят у краев, radius-full, background-base-secondary / background-base-inverse-light. Группа: padding space-8, gap space-8. Dot: elements-8 × elements-8, выбранный — elements-16 × elements-8. Прозрачная зона нажатия расширена по вертикали до 32 px.
 
 Secondary: icon-base-inverse-secondary для обычной точки; icon-base-secondary для выбранной и Focused, суффиксы -hover/-pressed/-disabled для состояний. Focus: border-small и border-base-secondary-focused, без изменения размеров.
 
@@ -44,5 +44,5 @@ Inverse light: icon-base-inverse-secondary для обычной точки; ico
 ### Чеклист
 Проверьте переключение кнопками, точками, клавиатурой и свайпом; первый/последний элемент; короткий и отмененный drag; быстрые повторные действия; более восьми точек; узкую область; обе темы и reduced motion.
 
-Источники: [Figma](https://www.figma.com/design/qfWNJqugbOC6RmiKKEv9Bb/F.Doc-Design-System?node-id=9881-8287), [описание](https://app.notion.com/p/2fe7ab6fc5d3809eaad0c758fb4e85e1), [референс Motion](https://examples.motion.dev/react/carousel-pagination-arrows). Отступы и цвет выбранной точки Inverse light взяты из более свежего описания от 15.10.2026.
+Источники: [Figma](https://www.figma.com/design/qfWNJqugbOC6RmiKKEv9Bb/F.Doc-Design-System?node-id=9881-8287), [описание](https://app.notion.com/p/2fe7ab6fc5d3809eaad0c758fb4e85e1), [референс Motion](https://examples.motion.dev/react/carousel-pagination-arrows). Боковые отступы панели убраны по уточнению. Отступы группы индикаторов и цвет выбранной точки Inverse light взяты из описания от 15.10.2026.
 `;
