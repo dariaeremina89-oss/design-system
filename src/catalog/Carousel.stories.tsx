@@ -17,7 +17,7 @@ function Demo(args: CarouselProps) {
     <Carousel {...args} controlsId={id} index={current} onIndexChange={change}/>
   </div>;
 }
-const meta = { title: 'Components/Navigation/Carousel', component: Carousel, tags:['autodocs','ready'], parameters:{layout:'padded',docs:{description:{component:carouselDocs + qualityDocs('Carousel')}}}, args:{count:6,defaultIndex:2,controlsId:'carousel-content',color:'auto',disabled:false}, argTypes:{count:{control:{type:'number',min:0,max:50}},index:{control:'number'},defaultIndex:{control:'number'},color:{control:'radio',options:['auto','secondary','inverse-light']},disabled:{control:'boolean'},onIndexChange:{action:'indexChange'}}, render:args=><Demo {...args}/> } satisfies Meta<typeof Carousel>;
+const meta = { title: 'Components/Navigation/Carousel', component: Carousel, tags:['autodocs','ready'], parameters:{layout:'padded',docs:{description:{component:carouselDocs + qualityDocs('Carousel')}}}, args:{count:6,defaultIndex:2,controlsId:'carousel-content',color:'auto',disabled:false,isLoading:false}, argTypes:{count:{control:{type:'number',min:0,max:50}},index:{control:'number'},defaultIndex:{control:'number'},color:{control:'radio',options:['auto','secondary','inverse-light']},disabled:{control:'boolean'},isLoading:{control:'boolean'},onIndexChange:{action:'indexChange'}}, render:args=><Demo {...args}/> } satisfies Meta<typeof Carousel>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default:Story = {parameters:{storyCheck:'Переключение кнопками и точками, плавное изменение ширины и цвета. Перетаскивание мышью и свайп по карточке.'}};
@@ -29,3 +29,5 @@ export const Disabled:Story = {args:{disabled:true}};
 export const OneItem:Story = {args:{count:1,defaultIndex:0},parameters:{storyCheck:'Один элемент контента: навигация скрыта.'}};
 export const InverseLight:Story = {args:{color:'inverse-light'}};
 export const States:Story = {render:()=> <div style={{display:'grid',gap:16}}>{(['secondary','inverse-light'] as const).map(color=><div key={color} style={{display:'grid',gap:8}}><Typography>{color}</Typography>{[false,true].map(selected=><div key={String(selected)} className="fdoc-carousel" data-color={color} style={{gap:24,padding:16,flexWrap:'wrap'}}>{(['default','hover','focused','pressed','disabled'] as const).map(state=><div key={state} style={{display:'grid',gap:16,justifyItems:'center'}}><CarouselDot state={state} selected={selected} aria-label={`${state}, ${selected ? 'выбран' : 'не выбран'}`}/><Typography>{state}</Typography></div>)}</div>)}</div>)}</div>};
+
+export const Skeleton:Story = {args:{isLoading:true},render:args=><Carousel {...args}/>,parameters:{storyCheck:'Первичная загрузка: цельная плашка 168 × 32, radius-full, background-base-skeleton. Кнопок и точек нет.'}};

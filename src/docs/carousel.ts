@@ -15,11 +15,14 @@ Previous и Next — существующие ButtonIcon 32 с иконками 
 | controlsId | string | ID связанной области контента |
 | color | auto / secondary / inverse-light | auto учитывает тему |
 | disabled | boolean = false | Отключает все кнопки |
+| isLoading | boolean = false | Скелетон при первичной загрузке |
 
 CarouselViewport принимает index, onIndexChange, disabled, id и children. Его index должен совпадать с индексом панели. CarouselDot поддерживает selected и state для демонстрации состояний.
 
 ### Варианты и состояния
 Secondary в светлой теме; Inverse light в темной. Dot: Default, Hover, Focused, Pressed, Disabled, с выбором и без. Первый элемент отключает Previous, последний — Next. Циклического переключения и автопрокрутки нет.
+
+Skeleton: цельная плашка 168 × 32, radius-full, background-base-skeleton, без кнопок и точек. Используется при первичной загрузке, в том числе пока количество элементов неизвестно; в узком контейнере сжимается до доступной ширины. Собран через общий компонент Skeleton.
 
 ### Геометрия и токены
 Контейнер: без боковых отступов, кнопки стрелок стоят у краев, radius-full, background-base-secondary / background-base-inverse-light. Группа: padding space-8, gap space-8. Dot: elements-8 × elements-8, выбранный — elements-16 × elements-8. Прозрачная зона нажатия расширена по вертикали до 32 px.

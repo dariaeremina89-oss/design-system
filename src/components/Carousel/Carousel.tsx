@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type Ref, type ButtonHTMLAttributes, type HTMLAttributes } from 'react';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
+import { Skeleton } from '../Skeleton/Skeleton';
 import './Carousel.css';
 
 export type CarouselColor = 'auto' | 'secondary' | 'inverse-light';
@@ -23,8 +24,10 @@ export interface CarouselProps extends Omit<HTMLAttributes<HTMLElement>, 'onChan
   controlsId: string;
   color?: CarouselColor;
   disabled?: boolean;
+  /** Скелетон панели при первичной загрузке. */
+  isLoading?: boolean;
 }
-export function Carousel({ count, index, defaultIndex = 0, onIndexChange, controlsId, color = 'auto', disabled = false, className = '', ...props }: CarouselProps) {
+export function Carousel({ count, index, defaultIndex = 0, onIndexChange, controlsId, color = 'auto', disabled = false, isLoading = false, className = '', ...props }: CarouselProps) {
   const total = Number.isFinite(count) ? Math.max(0, Math.floor(count)) : 0;
   const clamp = (n: number) => Math.max(0, Math.min(total - 1, Number.isFinite(n) ? Math.floor(n) : 0));
   const [localIndex, setLocalIndex] = useState(defaultIndex);
@@ -46,13 +49,14 @@ export function Carousel({ count, index, defaultIndex = 0, onIndexChange, contro
     const resize = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => reveal(current)) : null;
     if (viewport.current) resize?.observe(viewport.current);
     return () => resize?.disconnect();
-  }, [current, total]);
+  }, [current, total, isLoading]);
   function select(next: number) {
     next = clamp(next);
     if (disabled || next === current) return;
     if (index === undefined) setLocalIndex(next);
     onIndexChange?.(next);
   }
+  if (isLoading) return <Skeleton {...props} className={className} width={168} height="var(--elements-32)" style={{minWidth: 0, maxWidth: '100%', borderRadius: 'var(--radius-full)', ...props.style}} />;
   if (total < 2) return null;
   return <nav {...props} aria-label={props['aria-label'] ?? 'Навигация по элементам'} aria-controls={controlsId} className={`fdoc-carousel ${className}`} data-color={color} data-testid="carousel">
     <ButtonIcon className="fdoc-carousel__arrow" size="small" color={color === 'inverse-light' ? 'inverse-light' : 'neutral'} icon="arrow-chevron-left" aria-label="Предыдущий элемент" aria-controls={controlsId} disabled={disabled || current === 0} onClick={() => select(current - 1)} />

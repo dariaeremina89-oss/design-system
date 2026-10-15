@@ -20,6 +20,7 @@ import { ItemRow } from '../components/ItemRow/ItemRow';
 import { ButtonLink, Link } from '../components/Link/Link';
 import { Menu } from '../components/Menu/Menu';
 import { Multiselect } from '../components/Multiselect/Multiselect';
+import { Carousel } from '../components/Carousel/Carousel';
 import { Pagination } from '../components/Pagination/Pagination';
 import { PhoneInput } from '../components/PhoneInput/PhoneInput';
 import { PriceInput } from '../components/PriceInput/PriceInput';
@@ -271,6 +272,7 @@ export const ComponentSkeletonStates: Story = {
         title: 'Navigation',
         examples: [
           { name: 'Tabs', view: <Tabs aria-label="Разделы" items={tabsItems} isLoading /> },
+          { name: 'Carousel', view: <Carousel count={6} controlsId="carousel-skeleton-content" isLoading /> },
           { name: 'Breadcrumbs', view: <Breadcrumbs items={breadcrumbItems} isLoading /> },
           {
             name: 'Pagination',
