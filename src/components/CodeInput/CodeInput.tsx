@@ -43,7 +43,7 @@ export interface CodeInputProps {
   phonePrefix?: ReactNode;
   /** Неизменяемая часть номера после вводимых цифр. */
   phoneSuffix?: ReactNode;
-  /** Размер ячеек: Medium 56 или Small 48. */
+  /** Размер ячеек для Type=code: Medium 56 или Small 48. Type=phone всегда использует Small. */
   size?: CodeInputSize;
   /** Подпись над кодом. */
   label?: ReactNode;
@@ -132,6 +132,7 @@ export function CodeInput({
 }: CodeInputProps) {
   const generatedId = useId();
   const id = providedId ?? generatedId;
+  const resolvedSize: CodeInputSize = type === 'phone' ? 'small' : size;
   const normalizedPhoneGroups = phoneGroups.filter(
     groupLength => Number.isInteger(groupLength) && groupLength > 0,
   );
@@ -339,7 +340,7 @@ export function CodeInput({
             <Skeleton
               width={16}
               shape="text"
-              textSize={size === 'medium' ? 'h3-heading' : 'subtitle'}
+              textSize={resolvedSize === 'medium' ? 'h3-heading' : 'subtitle'}
             />
           )}
         </span>
@@ -395,7 +396,7 @@ export function CodeInput({
 
   return (
     <div
-      className={joinClassNames('fdoc-code-input fdoc-field', `fdoc-code-input--${size}`, wrapperClassName)}
+      className={joinClassNames('fdoc-code-input fdoc-field', `fdoc-code-input--${resolvedSize}`, wrapperClassName)}
       data-error={hasError || undefined}
       data-disabled={disabled || undefined}
       data-testid={testId}
