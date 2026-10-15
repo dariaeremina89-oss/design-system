@@ -51,7 +51,7 @@ export function CarouselViewport({ index, onIndexChange, disabled = false, child
     g.lastX = event.clientX; g.lastTime = event.timeStamp;
     const raw = g.base + dx, min = -(slides.length - 1) * g.width;
     setOffset(raw > 0 ? raw * .2 : raw < min ? min + (raw - min) * .2 : raw);
-  }} onPointerUp={event => finish(event)} onPointerCancel={event => finish(event, true)} onLostPointerCapture={event => { if (gesture.current) finish(event, true); }}>
+  }} onPointerUp={event => finish(event)} onPointerCancel={event => finish(event, true)} onLostPointerCapture={event => { if (event.target === event.currentTarget && gesture.current) finish(event, true); }}>
     <div ref={track} className="fdoc-carousel-viewport__track" data-dragging={offset !== null} style={{ transform: offset === null ? `translateX(${-current * 100}%)` : `translateX(${offset}px)` } as CSSProperties}>
       {slides.map((slide, i) => <div key={(slide as {key?: string}).key ?? i} className="fdoc-carousel-viewport__slide" role="group" aria-roledescription="слайд" aria-label={`${i + 1} из ${slides.length}`} aria-hidden={current !== i} inert={current !== i}>{slide}</div>)}
     </div>

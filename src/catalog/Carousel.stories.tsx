@@ -10,7 +10,7 @@ function Demo(args: CarouselProps) {
   const id = useId();
   const current = args.index ?? Math.min(index, Math.max(0, args.count - 1));
   const change = (next: number) => { setIndex(next); args.onIndexChange?.(next); };
-  return <div style={{width: 'min(100%, 480px)', display: 'grid', gap: 16, justifyItems: 'center'}}>
+  return <div style={{width: 'min(100%, 480px)', display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0, gap: 16, justifyItems: 'center'}}>
     <CarouselViewport id={id} index={current} onIndexChange={change} disabled={args.disabled}>
       {Array.from({length: args.count}, (_, i) => <div key={i} style={{boxSizing:'border-box',minHeight:200,padding:32,background:'var(--background-base-secondary)',borderRadius:'var(--radius-large)',display:'grid',alignContent:'center',gap:8}}><Typography variant="h3-heading">Элемент {i + 1}</Typography><Typography>Перетащи карточку или используй навигацию ниже.</Typography></div>)}
     </CarouselViewport>
