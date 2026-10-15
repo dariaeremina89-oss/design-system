@@ -15,6 +15,7 @@ export const PRICE_INPUT_FORMAT_ERROR = 'Введите сумму цифрам�
 
 export const PRICE_INPUT_MIN = 1;
 export const PRICE_INPUT_MAX = 9_999_999.99;
+export const PRICE_INPUT_MAX_DIGITS = 9;
 
 export interface PriceInputProps extends Omit<
   InputProps,
@@ -122,7 +123,7 @@ export function PriceInput({
   error: externalError,
   clearable = true,
   counter,
-  maxLength,
+  maxLength = PRICE_INPUT_MAX_DIGITS,
   label = 'Сумма',
   wrapperClassName = '',
   onPaste,
