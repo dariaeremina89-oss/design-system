@@ -57,7 +57,24 @@ describe('PriceInput', () => {
 
   it('renders an ISO currency code as its symbol', () => {
     render(<PriceInput defaultValue="1234,56" currency="USD" />);
-    expect(screen.getByTestId('input-inline-suffix')).toHaveTextContent('
+    expect(screen.getByTestId('input-inline-suffix')).toHaveTextContent(String.fromCharCode(36));
+  });
+
+  it('accepts the interpreted currency symbol on paste', () => {
+    const change = vi.fn();
+    render(<PriceInput currency="USD" onValueChange={change} />);
+    const input = screen.getByRole('textbox') as HTMLInputElement;
+    input.setSelectionRange(0, 0);
+
+    fireEvent.paste(input, {
+      clipboardData: { getData: () => `1 234,56 ${String.fromCharCode(36)}` },
+    });
+
+    expect(change).toHaveBeenLastCalledWith('1234,56');
+    expect(screen.queryByText(PRICE_INPUT_FORMAT_ERROR)).toBe(null);
+  });
+
+  it('reports normalized value while typing', () => {
     const change = vi.fn();
     render(<PriceInput onValueChange={change} />);
     fireEvent.change(screen.getByRole('textbox'), { target: { value: '1234,5' } });
