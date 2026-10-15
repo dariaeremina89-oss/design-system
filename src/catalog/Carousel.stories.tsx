@@ -28,6 +28,23 @@ export const Narrow:Story = {args:{count:16},decorators:[Story=><div style={{wid
 export const Disabled:Story = {args:{disabled:true}};
 export const OneItem:Story = {args:{count:1,defaultIndex:0},parameters:{storyCheck:'Один элемент контента: навигация скрыта.'}};
 export const InverseLight:Story = {args:{color:'inverse-light'}};
-export const States:Story = {render:()=> <div style={{display:'grid',gap:16}}>{(['secondary','inverse-light'] as const).map(color=><div key={color} style={{display:'grid',gap:8}}><Typography>{color}</Typography>{[false,true].map(selected=><div key={String(selected)} className="fdoc-carousel" data-color={color} style={{gap:24,padding:16,flexWrap:'wrap'}}>{(['default','hover','focused','pressed','disabled'] as const).map(state=><div key={state} style={{display:'grid',gap:16,justifyItems:'center'}}><CarouselDot state={state} selected={selected} aria-label={`${state}, ${selected ? 'выбран' : 'не выбран'}`}/><Typography>{state}</Typography></div>)}</div>)}</div>)}</div>};
+export const States:Story = {
+  render:()=> <div style={{display:'grid',gap:24,justifyItems:'start'}}>
+    {(['secondary','inverse-light'] as const).map(color=><div key={color} style={{display:'grid',gap:16,maxWidth:'100%'}}>
+      <Typography>{color}</Typography>
+      {[false,true].map(selected=><div key={String(selected)} style={{display:'grid',gap:8}}>
+        <Typography>{selected ? 'Выбран' : 'Не выбран'}</Typography>
+        <div style={{display:'flex',gap:24,flexWrap:'wrap'}}>
+          {(['default','hover','focused','pressed','disabled'] as const).map(state=><div key={state} style={{display:'grid',gap:8,justifyItems:'center'}}>
+            <div className="fdoc-carousel" data-color={color} style={{width:48,height:32,justifyContent:'center'}}>
+              <CarouselDot state={state} selected={selected} aria-label={`${state}, ${selected ? 'выбран' : 'не выбран'}`}/>
+            </div>
+            <Typography>{state}</Typography>
+          </div>)}
+        </div>
+      </div>)}
+    </div>)}
+  </div>,
+};
 
 export const Skeleton:Story = {args:{isLoading:true},render:args=><Carousel {...args}/>,parameters:{storyCheck:'Первичная загрузка: цельная плашка 168 × 32, radius-full, background-base-skeleton. Кнопок и точек нет.'}};
