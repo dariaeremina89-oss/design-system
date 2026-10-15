@@ -39,9 +39,7 @@ export function resolveCurrencySymbol(currency: string) {
 }
 
 function escapeRegExp(value: string) {
-  return value.replace(/[.*+?^$()|[\]\\{}]/g, '\\export const PRICE_INPUT_MAX_DIGITS = 9;
-
-');
+  return value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
 function stripAcceptedCurrency(value: string, currency: string, currencySymbol: string) {
