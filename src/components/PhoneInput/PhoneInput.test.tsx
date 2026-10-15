@@ -159,10 +159,12 @@ describe('PhoneInput', () => {
     expect(document.querySelector('[data-icon="flag_chevron/Country=Rus, State=Disabled"]')).toBeInTheDocument();
   });
 
-  it('uses Input skeleton anatomy without interactive controls', () => {
+  it('uses Input skeleton anatomy without interactive controls or phone prefix', () => {
     render(<PhoneInput label="Телефон" skeleton />);
     expect(screen.getByTestId('input-skeleton-field')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Тип номера/ })).not.toBeInTheDocument();
+    expect(document.querySelector('.fdoc-phone-input__field--empty-russian')).toBe(null);
+    expect(document.querySelector('.fdoc-phone-input__field--empty-international')).toBe(null);
   });
 
   it('validates the fixed Russian mask and leaves International length to product validation', () => {
