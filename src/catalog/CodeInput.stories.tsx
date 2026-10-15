@@ -8,7 +8,7 @@ import { controlsParameters, pickFieldControls } from '../docs/story-controls';
 const controlOrder = [
   'label', 'required', 'value', 'defaultValue', 'type', 'length',
   'phoneGroups', 'phonePrefix', 'phoneSuffix', 'size',
-  'caption', 'error', 'disabled', 'skeleton', 'autoFocus',
+  'mask', 'maskDelay', 'caption', 'error', 'disabled', 'skeleton', 'autoFocus',
   'onValueChange', 'onFocus', 'onBlur', 'onKeyDown',
 ] as const;
 
@@ -69,6 +69,16 @@ const meta = {
       description: 'Неизменяемая часть номера после ячеек.',
       table: { category: 'Content' },
     },
+    mask: {
+      control: 'boolean',
+      description: 'Маскирует введенные цифры звездочкой. Используется только для Type=code.',
+      table: { category: 'Behavior' },
+    },
+    maskDelay: {
+      control: { type: 'number', min: 0, step: 100 },
+      description: 'Задержка перед маскированием введенной цифры, мс. По умолчанию 800.',
+      table: { category: 'Behavior' },
+    },
     autoFocus: {
       control: 'boolean',
       description: 'Автоматически ставит фокус в первую ячейку.',
@@ -112,6 +122,35 @@ export const Small: Story = {
 
 export const FourDigits: Story = {
   args: { length: 4 },
+};
+
+export const PinMasking: Story = {
+  args: {
+    label: 'PIN-код',
+    caption: 'Введенная цифра скрывается через 800 мс',
+    length: 4,
+    mask: true,
+    maskDelay: 800,
+    autoFocus: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Сценарий маскирования из Figma: введенная цифра сначала отображается открыто, затем через maskDelay заменяется на *. Значение onValueChange и hidden input остается исходным цифровым кодом.',
+      },
+    },
+  },
+};
+
+export const PinMaskedFilled: Story = {
+  args: {
+    label: 'PIN-код',
+    caption: undefined,
+    length: 4,
+    mask: true,
+    maskDelay: 800,
+    defaultValue: '4206',
+  },
 };
 
 export const PhoneFigmaExample: Story = {
