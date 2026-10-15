@@ -39,21 +39,24 @@ export const LongText: Story = { args: { type: 'error', direction: 'vertical', t
 export const UnbrokenText: Story = { args: { text: 'ОченьДлинноеНазваниеДокументаБезПробелов'.repeat(5), onClose: () => {} } };
 export const CustomIcon: Story = { args: { icon: { name: 'info_circle' }, text: 'Начинаем подготовку отчета' } };
 export const States: Story = { render: args => <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>{(['small', 'medium'] as const).map(size => <div key={size} style={{ display: 'grid', gap: 16, maxWidth: '100%' }}><strong>{size}</strong>{(['default', 'success', 'error'] as const).map(type => <Snackbar {...args} key={type} size={size} type={type} text="Результат действия" />)}<Snackbar {...args} size={size} direction="vertical" text="Шаблон перемещен в корзину"><Button size="small" color="inverse-primary">Отменить</Button></Snackbar></div>)}</div> };
-function StackDemo({ label = 'Добавить уведомление' }: { label?: string }) {
+function StackDemo({ label = 'Добавить уведомление', position = 'viewport' }: { label?: string; position?: 'container' | 'viewport' }) {
   const [items, setItems] = useState<SnackbarItem[]>([]);
   const next = useRef(0);
   const remove = (id: string) => setItems(current => current.filter(item => item.id !== id));
-  return <div style={{ position: 'relative', height: 440, minWidth: 0 }}>
+  return <div data-testid="snackbar-demo-container" style={position === 'container'
+    ? { position: 'relative', height: 440, minWidth: 0, boxSizing: 'border-box', padding: 16, background: 'var(--background-base-secondary)', borderRadius: 'var(--radius-middle)' }
+    : { minWidth: 0 }}>
     <Button onClick={() => { const id = String(++next.current); setItems(current => [...current, { id, text: `Шаблон ${id} удален`, children: <Button size="small" color="inverse-primary" onClick={() => remove(id)}>Отменить</Button> }]); }}>{label}</Button>
     <p>Скрывается через 5 секунд. Наведение и фокус приостанавливают таймер</p>
-    <SnackbarStack items={items} onDismiss={remove} />
+    <SnackbarStack items={items} onDismiss={remove} position={position} />
   </div>;
 }
-export const Stack: Story = { render: () => <StackDemo /> };
+export const Stack: Story = { parameters: { docs: { description: { story: 'Стек страницы: 16 px от нижней границы области просмотра. Новые уведомления добавляются снизу, расстояние между ними 8 px.' } } }, render: () => <StackDemo /> };
+export const InContainer: Story = { parameters: { docs: { description: { story: 'Стек внутри блока: 16 px от его нижнего края. Фон показывает границы контейнера.' } } }, render: () => <StackDemo position="container" /> };
 export const InDialog: Story = { render: () => <DialogDemo /> };
 function DialogDemo() {
   const [open, setOpen] = useState(false);
   return <><Button onClick={() => setOpen(true)}>Открыть диалог</Button><StackDemo label="Уведомление страницы" />
-    <Dialog open={open} onClose={() => setOpen(false)} title="Работа с документами"><StackDemo label="Уведомление диалога" /></Dialog></>;
+    <Dialog open={open} onClose={() => setOpen(false)} title="Работа с документами"><StackDemo label="Уведомление диалога" position="container" /></Dialog></>;
 }
 export const NarrowContainer: Story = { render: args => <div style={{ width: 288, maxWidth: '100%' }}><Snackbar {...args} size="medium" direction="vertical" text="Не удалось отправить документ. Повторите попытку" type="error"><Button size="small" color="inverse-primary">Отправить повторно</Button></Snackbar></div> };

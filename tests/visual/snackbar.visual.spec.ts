@@ -40,3 +40,23 @@ test('Snackbar stack places newest at bottom and actions remove only their own i
   await expect(page.getByTestId('snackbar')).toHaveCount(1);
   await expect(page.getByRole('status')).toHaveText('Шаблон 2 удален');
 });
+
+for (const placement of ['stack', 'in-container']) {
+  test(`Snackbar has a 16px bottom inset in ${placement}`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(`/iframe.html?id=components-elements-snackbar--${placement}&viewMode=story`);
+    await page.getByRole('button', { name: 'Добавить уведомление' }).click();
+    await expect(page.getByTestId('snackbar')).toBeVisible();
+    const geometry = await page.getByTestId('snackbar-stack').evaluate(node => {
+      const box = node.getBoundingClientRect();
+      const parent = node.parentElement!.getBoundingClientRect();
+      const viewport = node.getAttribute('data-position') === 'viewport';
+      return {
+        bottom: (viewport ? innerHeight : parent.bottom) - box.bottom,
+        center: (box.left + box.right) / 2 - (viewport ? innerWidth / 2 : (parent.left + parent.right) / 2),
+      };
+    });
+    expect(geometry.bottom).toBeCloseTo(16, 0);
+    expect(geometry.center).toBeCloseTo(0, 0);
+  });
+}
