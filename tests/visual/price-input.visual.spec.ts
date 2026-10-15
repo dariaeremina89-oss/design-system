@@ -96,6 +96,22 @@ test('PriceInput accepts common copied price formats', async ({ page }) => {
 });
 
 
+test('PriceInput counter uses the nine-digit amount limit', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-priceinput--interactive&viewMode=story');
+  const input = page.getByRole('textbox');
+  const counter = page.getByTestId('input-counter');
+
+  await expect(counter).toHaveText('0 / 9');
+
+  await input.fill('9999999.99');
+  await expect(input).toHaveValue('9\u00a0999\u00a0999,99');
+  await expect(counter).toHaveText('9 / 9');
+
+  await input.fill('1234567890');
+  await expect(input).toHaveValue('123\u00a0456\u00a0789');
+  await expect(counter).toHaveText('9 / 9');
+});
+
 test('PriceInput validates the allowed amount range and clears the error again', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-priceinput--error-limit&viewMode=story');
   const input = page.getByRole('textbox');
