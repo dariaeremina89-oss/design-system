@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { CodeInput } from './CodeInput';
 
 beforeAll(() => {
@@ -61,6 +61,49 @@ describe('CodeInput', () => {
 
     expect(change).toHaveBeenLastCalledWith('1234567');
     expect(screen.getByTestId('code-input-cell-7')).toHaveFocus();
+  });
+
+  it('shows a typed PIN digit before masking it after maskDelay', () => {
+    vi.useFakeTimers();
+    const change = vi.fn();
+    render(<CodeInput length={4} mask maskDelay={800} onValueChange={change} />);
+
+    const first = screen.getByTestId('code-input-cell-1');
+    fireEvent.change(first, { target: { value: '4' } });
+
+    expect(first).toHaveValue('4');
+    expect(change).toHaveBeenLastCalledWith('4');
+
+    act(() => vi.advanceTimersByTime(799));
+    expect(first).toHaveValue('4');
+
+    act(() => vi.advanceTimersByTime(1));
+    expect(first).toHaveValue('*');
+    vi.useRealTimers();
+  });
+
+  it('masks an existing PIN immediately without changing the stored value', () => {
+    render(<CodeInput length={4} mask defaultValue="4206" name="pin" />);
+
+    screen.getAllByRole('textbox').forEach(cell => {
+      expect(cell).toHaveValue('*');
+    });
+    expect(document.querySelector('input[type="hidden"][name="pin"]')).toHaveValue('4206');
+  });
+
+  it('keeps Phone values visible even when mask is passed', () => {
+    render(
+      <CodeInput
+        type="phone"
+        phoneGroups={[2, 2]}
+        defaultValue="1234"
+        mask
+        label="Телефон"
+      />,
+    );
+
+    expect(screen.getByTestId('code-input-cell-1')).toHaveValue('1');
+    expect(screen.getByTestId('code-input-cell-4')).toHaveValue('4');
   });
 
   it('renders the requested number of cells and normalizes default value', () => {
