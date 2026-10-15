@@ -26,9 +26,9 @@ describe('PriceInput helpers', () => {
   });
 
   it('validates the Figma price range', () => {
-    expect(isValidPriceValue('1')).toBe(true);
-    expect(isValidPriceValue('0,99')).toBe(false);
-    expect(isValidPriceValue(String(PRICE_INPUT_MAX).replace('.', ','))).toBe(true);
+    expect(isValidPriceValue('1', 1, PRICE_INPUT_MAX)).toBe(true);
+    expect(isValidPriceValue('0,99', 1, PRICE_INPUT_MAX)).toBe(false);
+    expect(isValidPriceValue(String(PRICE_INPUT_MAX).replace('.', ','), 1, PRICE_INPUT_MAX)).toBe(true);
     expect(priceValueToNumber('123,45')).toBe(123.45);
     expect(PRICE_INPUT_RANGE_ERROR).toContain('9 999 999,99');
   });
@@ -63,31 +63,31 @@ describe('PriceInput', () => {
   });
 
   it('shows range error below the minimum and above the maximum', () => {
-    const { rerender } = render(<PriceInput value="0,99" />);
+    const { rerender } = render(<PriceInput value="0,99" min={1} max={PRICE_INPUT_MAX} />);
     expect(screen.getByText(PRICE_INPUT_RANGE_ERROR)).toBeInTheDocument();
 
-    rerender(<PriceInput value="10000000" />);
+    rerender(<PriceInput value="10000000" min={1} max={PRICE_INPUT_MAX} />);
     expect(screen.getByText(PRICE_INPUT_RANGE_ERROR)).toBeInTheDocument();
   });
 
   it('removes range error when the value returns to the allowed range', () => {
-    const { rerender } = render(<PriceInput value="10000000" />);
+    const { rerender } = render(<PriceInput value="10000000" min={1} max={PRICE_INPUT_MAX} />);
     expect(screen.getByText(PRICE_INPUT_RANGE_ERROR)).toBeInTheDocument();
 
-    rerender(<PriceInput value="9999999,99" />);
+    rerender(<PriceInput value="9999999,99" min={1} max={PRICE_INPUT_MAX} />);
     expect(screen.queryByText(PRICE_INPUT_RANGE_ERROR)).toBe(null);
   });
 
   it('does not treat an empty or incomplete decimal value as a range error', () => {
-    const { rerender } = render(<PriceInput value="" />);
+    const { rerender } = render(<PriceInput value="" min={1} max={PRICE_INPUT_MAX} />);
     expect(screen.queryByText(PRICE_INPUT_RANGE_ERROR)).toBe(null);
 
-    rerender(<PriceInput value="1," />);
+    rerender(<PriceInput value="1," min={1} max={PRICE_INPUT_MAX} />);
     expect(screen.queryByText(PRICE_INPUT_RANGE_ERROR)).toBe(null);
   });
 
   it('keeps external validation above the built-in range validation', () => {
-    render(<PriceInput value="0" error="Внешняя ошибка" />);
+    render(<PriceInput value="0" min={1} max={PRICE_INPUT_MAX} error="Внешняя ошибка" />);
     expect(screen.getByText('Внешняя ошибка')).toBeInTheDocument();
     expect(screen.queryByText(PRICE_INPUT_RANGE_ERROR)).toBe(null);
   });
@@ -160,16 +160,26 @@ describe('PriceInput', () => {
     expect(change).toHaveBeenLastCalledWith('1994,56');
   });
 
-  it('counts only entered digits against the default price limit', () => {
-    render(<PriceInput defaultValue="1234,5" counter />);
-    expect(PRICE_INPUT_MAX_DIGITS).toBe(9);
+  it('counts only entered digits against maxLength when it is provided', () => {
+    render(<PriceInput defaultValue="1234,5" counter maxLength={PRICE_INPUT_MAX_DIGITS} />);
     expect(screen.getByTestId('input-counter')).toHaveTextContent('5 / 9');
   });
 
-  it('limits the normalized value to nine digits by default', () => {
-    render(<PriceInput defaultValue="1234567890" counter />);
+  it('limits digits by maxLength even without a numeric max', () => {
+    render(<PriceInput defaultValue="1234567890" counter maxLength={9} />);
     expect(screen.getByRole('textbox')).toHaveValue('123\u00a0456\u00a0789');
     expect(screen.getByTestId('input-counter')).toHaveTextContent('9 / 9');
+    expect(screen.queryByTestId('input-error')).toBe(null);
+  });
+
+  it('shows only the digit count when counter is automatic and maxLength is absent', () => {
+    render(<PriceInput defaultValue="1234,5" counter />);
+    expect(screen.getByTestId('input-counter')).toHaveTextContent('5');
+  });
+
+  it('keeps a custom counter independent from maxLength and range', () => {
+    render(<PriceInput defaultValue="123" counter="Свое значение" maxLength={9} max={1000} />);
+    expect(screen.getByTestId('input-counter')).toHaveTextContent('Свое значение');
   });
 
   it('clears the normalized value through the shared Input clear action', () => {
