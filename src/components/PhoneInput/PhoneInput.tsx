@@ -393,7 +393,7 @@ export function PhoneInput({
         data-prefix-only={prefixOnly || undefined}
         disabled={disabled}
         skeleton={skeleton}
-        wrapperClassName={`fdoc-phone-input__field${empty ? ` fdoc-phone-input__field--empty-${phoneType}` : ''}`}
+        wrapperClassName={`fdoc-phone-input__field${empty && !skeleton ? ` fdoc-phone-input__field--empty-${phoneType}` : ''}`}
         type="tel"
         inputMode="tel"
         autoComplete={props.autoComplete ?? 'tel'}
