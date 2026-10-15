@@ -41,11 +41,28 @@ test('PriceInput keeps focus after the first character', async ({ page }) => {
   await expect(page.getByTestId('input-inline-suffix')).toContainText('₽');
 });
 
-test('PriceInput resolves ISO currency code to a symbol', async ({ page }) => {
+test('PriceInput resolves ISO currency code to a symbol and accepts the code on paste', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-priceinput--currency-code&viewMode=story');
 
-  await expect(page.getByRole('textbox')).toHaveValue('1\u00a0234,56');
+  const input = page.getByRole('textbox');
+  await expect(input).toHaveValue('1\u00a0234,56');
   await expect(page.getByTestId('input-inline-suffix')).toHaveText(String.fromCharCode(36));
+
+  await input.evaluate(element => {
+    const target = element as HTMLInputElement;
+    target.setSelectionRange(0, target.value.length);
+    const data = new DataTransfer();
+    data.setData('text/plain', '9 876,54 USD');
+    target.dispatchEvent(new ClipboardEvent('paste', {
+      bubbles: true,
+      cancelable: true,
+      clipboardData: data,
+    }));
+  });
+
+  await expect(input).toHaveValue('9\u00a0876,54');
+  await expect(page.getByTestId('input-inline-suffix')).toHaveText(String.fromCharCode(36));
+  await expect(page.getByTestId('input-error')).toHaveCount(0);
 });
 
 test('PriceInput uses the shared small Input size', async ({ page }) => {
