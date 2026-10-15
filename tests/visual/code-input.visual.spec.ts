@@ -36,6 +36,27 @@ test('CodeInput accepts a pasted full code and supports keyboard navigation', as
   await expect(page.getByTestId('code-input-cell-5')).toBeFocused();
 });
 
+test('CodeInput masks a PIN digit after the configured delay', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-codeinput--pin-masking&viewMode=story');
+
+  const first = page.getByTestId('code-input-cell-1');
+  await first.fill('4');
+  await expect(first).toHaveValue('4');
+  await expect(page.getByTestId('code-input-cell-2')).toBeFocused();
+
+  await page.waitForTimeout(850);
+  await expect(first).toHaveValue('*');
+});
+
+test('CodeInput shows an existing masked PIN without changing cell count', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-codeinput--pin-masked-filled&viewMode=story');
+
+  await expect(page.getByRole('textbox')).toHaveCount(4);
+  for (let index = 1; index <= 4; index += 1) {
+    await expect(page.getByTestId(`code-input-cell-${index}`)).toHaveValue('*');
+  }
+});
+
 test('CodeInput Phone matches Figma grouping and supports configurable masks', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-codeinput--phone-figma-example&viewMode=story');
 
