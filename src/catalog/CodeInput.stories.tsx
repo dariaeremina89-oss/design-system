@@ -6,7 +6,8 @@ import { qualityDocs } from '../docs/quality';
 import { controlsParameters, pickFieldControls } from '../docs/story-controls';
 
 const controlOrder = [
-  'label', 'required', 'value', 'defaultValue', 'length', 'size',
+  'label', 'required', 'value', 'defaultValue', 'type', 'length',
+  'phoneGroups', 'phonePrefix', 'phoneSuffix', 'size',
   'caption', 'error', 'disabled', 'skeleton', 'autoFocus',
   'onValueChange', 'onFocus', 'onBlur', 'onKeyDown',
 ] as const;
@@ -32,6 +33,7 @@ const meta = {
   args: {
     label: 'Код подтверждения',
     caption: 'Введите код из сообщения',
+    type: 'code',
     length: 6,
     size: 'medium',
   },
@@ -40,11 +42,32 @@ const meta = {
       'label', 'required', 'value', 'defaultValue', 'caption', 'error',
       'size', 'disabled', 'skeleton', 'onValueChange', 'onFocus', 'onBlur', 'onKeyDown',
     ),
+    type: {
+      control: 'radio',
+      options: ['code', 'phone'],
+      description: 'Тип ввода: код подтверждения или часть номера телефона.',
+      table: { category: 'Value' },
+    },
     length: {
       control: 'radio',
       options: [4, 5, 6],
-      description: 'Количество ячеек кода.',
+      description: 'Количество ячеек только для Type=code.',
       table: { category: 'Appearance' },
+    },
+    phoneGroups: {
+      control: 'object',
+      description: 'Размеры групп вводимых цифр для Type=phone. Сумма значений определяет количество ячеек.',
+      table: { category: 'Appearance' },
+    },
+    phonePrefix: {
+      control: 'text',
+      description: 'Неизменяемая часть номера перед ячейками.',
+      table: { category: 'Content' },
+    },
+    phoneSuffix: {
+      control: 'text',
+      description: 'Неизменяемая часть номера после ячеек.',
+      table: { category: 'Content' },
     },
     autoFocus: {
       control: 'boolean',
@@ -89,6 +112,74 @@ export const Small: Story = {
 
 export const FourDigits: Story = {
   args: { length: 4 },
+};
+
+export const PhoneFigmaExample: Story = {
+  args: {
+    type: 'phone',
+    size: 'small',
+    length: undefined,
+    label: 'Введите пропущенные цифры',
+    caption: undefined,
+    phonePrefix: '+7 9',
+    phoneGroups: [2, 3, 2],
+    phoneSuffix: '88',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Структура Type=Phone из Figma: статичная часть номера + группы вводимых цифр 2 / 3 / 2 + статичная часть справа. Между ячейками внутри группы space-4, между группами space-12.',
+      },
+    },
+  },
+};
+
+export const PhoneFigmaFilled: Story = {
+  args: {
+    type: 'phone',
+    size: 'small',
+    length: undefined,
+    label: 'Введите пропущенные цифры',
+    caption: undefined,
+    phonePrefix: '+7 9',
+    phoneGroups: [2, 3, 2],
+    phoneSuffix: '88',
+    defaultValue: '1234567',
+  },
+};
+
+export const PhoneFigmaError: Story = {
+  args: {
+    type: 'phone',
+    size: 'small',
+    length: undefined,
+    label: 'Введите пропущенные цифры',
+    caption: undefined,
+    phonePrefix: '+7 9',
+    phoneGroups: [2, 3, 2],
+    phoneSuffix: '88',
+    defaultValue: '1234567',
+    error: 'Проверьте введенные цифры',
+  },
+};
+
+export const PhoneCustomGrouping: Story = {
+  args: {
+    type: 'phone',
+    length: undefined,
+    label: 'Номер телефона',
+    caption: 'Группировка и количество цифр задаются сценарием',
+    phonePrefix: '+44',
+    phoneGroups: [4, 3, 3],
+    phoneSuffix: undefined,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Phone не привязан к российской маске: количество цифр задается суммой phoneGroups, их визуальное расположение — размерами групп, prefix и suffix настраиваются отдельно.',
+      },
+    },
+  },
 };
 
 export const Interactive: Story = {
