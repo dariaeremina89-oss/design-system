@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useId,
   useImperativeHandle,
   useRef,
@@ -58,6 +59,10 @@ export interface CodeInputProps {
   skeleton?: boolean;
   /** Ставит фокус в первую доступную ячейку после монтирования. */
   autoFocus?: boolean;
+  /** Маскирует введенные цифры звездочкой после задержки. Используется только для Type=code. */
+  mask?: boolean;
+  /** Задержка перед маскированием введенной цифры, мс. По умолчанию 800. */
+  maskDelay?: number;
   /** Вызывается с полным нормализованным значением. */
   onValueChange?: (value: string) => void;
   /** Событие фокуса любой ячейки. */
@@ -112,6 +117,8 @@ export function CodeInput({
   disabled = false,
   skeleton = false,
   autoFocus = false,
+  mask = false,
+  maskDelay = 800,
   onValueChange,
   onFocus,
   onBlur,
@@ -143,6 +150,10 @@ export function CodeInput({
   const value = normalizeCode(isControlled ? controlledValue : internalValue, cellCount);
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const skipFocusGuard = useRef(false);
+  const maskTimers = useRef(new Map<number, ReturnType<typeof setTimeout>>());
+  const [revealedCells, setRevealedCells] = useState<Set<number>>(() => new Set());
+  const maskEnabled = mask && type === 'code';
+  const resolvedMaskDelay = Number.isFinite(maskDelay) ? Math.max(0, maskDelay) : 800;
 
   const hasError = hasRenderableContent(error);
   const hasCaption = hasRenderableContent(caption);
@@ -152,6 +163,51 @@ export function CodeInput({
   const firstInputId = `${id}-1`;
 
   useImperativeHandle(ref, () => inputRefs.current[0]!, [skeleton]);
+
+  useEffect(() => () => {
+    maskTimers.current.forEach(timer => clearTimeout(timer));
+    maskTimers.current.clear();
+  }, []);
+
+  useEffect(() => {
+    if (maskEnabled) return;
+    maskTimers.current.forEach(timer => clearTimeout(timer));
+    maskTimers.current.clear();
+    setRevealedCells(new Set());
+  }, [maskEnabled]);
+
+  function clearMaskReveal() {
+    maskTimers.current.forEach(timer => clearTimeout(timer));
+    maskTimers.current.clear();
+    setRevealedCells(new Set());
+  }
+
+  function revealCells(indexes: number[]) {
+    if (!maskEnabled || resolvedMaskDelay === 0 || indexes.length === 0) return;
+
+    setRevealedCells(current => {
+      const next = new Set(current);
+      indexes.forEach(index => next.add(index));
+      return next;
+    });
+
+    indexes.forEach(index => {
+      const currentTimer = maskTimers.current.get(index);
+      if (currentTimer) clearTimeout(currentTimer);
+
+      const timer = setTimeout(() => {
+        maskTimers.current.delete(index);
+        setRevealedCells(current => {
+          if (!current.has(index)) return current;
+          const next = new Set(current);
+          next.delete(index);
+          return next;
+        });
+      }, resolvedMaskDelay);
+
+      maskTimers.current.set(index, timer);
+    });
+  }
 
   function commit(next: string) {
     const normalized = normalizeCode(next, cellCount);
@@ -169,6 +225,7 @@ export function CodeInput({
     const effectiveIndex = Math.min(index, value.length);
     if (raw === '') {
       if (effectiveIndex < value.length) {
+        clearMaskReveal();
         commit(value.slice(0, effectiveIndex) + value.slice(effectiveIndex + 1));
       }
       return;
@@ -179,12 +236,19 @@ export function CodeInput({
 
     if (digits.length >= cellCount) {
       commit(digits.slice(0, cellCount));
+      revealCells(Array.from({ length: cellCount }, (_, cellIndex) => cellIndex));
       focusCell(cellCount - 1, true);
       return;
     }
 
     const next = replaceFrom(value, effectiveIndex, digits, cellCount);
     commit(next);
+    revealCells(
+      Array.from(
+        { length: Math.min(digits.length, cellCount - effectiveIndex) },
+        (_, offset) => effectiveIndex + offset,
+      ),
+    );
     const target = Math.min(effectiveIndex + digits.length, cellCount - 1);
     if (effectiveIndex + digits.length < cellCount) focusCell(target, true);
   }
@@ -196,12 +260,19 @@ export function CodeInput({
 
     if (digits.length >= cellCount) {
       commit(digits.slice(0, cellCount));
+      revealCells(Array.from({ length: cellCount }, (_, cellIndex) => cellIndex));
       focusCell(cellCount - 1, true);
       return;
     }
 
     const effectiveIndex = Math.min(index, value.length);
     commit(replaceFrom(value, effectiveIndex, digits, cellCount));
+    revealCells(
+      Array.from(
+        { length: Math.min(digits.length, cellCount - effectiveIndex) },
+        (_, offset) => effectiveIndex + offset,
+      ),
+    );
     focusCell(Math.min(effectiveIndex + digits.length, cellCount - 1), true);
   }
 
@@ -231,6 +302,7 @@ export function CodeInput({
     }
     if (event.key === 'Backspace') {
       event.preventDefault();
+      clearMaskReveal();
       if (index < value.length) {
         commit(value.slice(0, index) + value.slice(index + 1));
         focusCell(index);
@@ -242,6 +314,7 @@ export function CodeInput({
     }
     if (event.key === 'Delete' && index < value.length) {
       event.preventDefault();
+      clearMaskReveal();
       commit(value.slice(0, index) + value.slice(index + 1));
     }
   }
@@ -273,13 +346,18 @@ export function CodeInput({
       );
     }
 
+    const cellValue = value[index] ?? '';
+    const displayValue = maskEnabled && cellValue && !revealedCells.has(index)
+      ? '*'
+      : cellValue;
+
     return (
       <input
         key={index}
         id={`${id}-${index + 1}`}
         ref={node => { inputRefs.current[index] = node; }}
         className="fdoc-code-input__cell"
-        value={value[index] ?? ''}
+        value={displayValue}
         type="text"
         inputMode="numeric"
         pattern="[0-9]*"
