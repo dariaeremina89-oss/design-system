@@ -328,6 +328,31 @@ export function CodeInput({
         : 'Код'
   );
 
+  function renderPhoneAffix(content: ReactNode, testId: string) {
+    return (
+      <span
+        className={joinClassNames(
+          'fdoc-code-input__phone-affix',
+          skeleton && 'fdoc-code-input__phone-affix--skeleton',
+        )}
+        data-testid={testId}
+        aria-hidden={skeleton || undefined}
+      >
+        {skeleton ? (
+          <>
+            <span className="fdoc-code-input__phone-affix-measure">{content}</span>
+            <Skeleton
+              className="fdoc-code-input__phone-affix-skeleton"
+              width="100%"
+              shape="text"
+              textSize="subtitle"
+            />
+          </>
+        ) : content}
+      </span>
+    );
+  }
+
   function renderCell(index: number) {
     if (skeleton) {
       return (
@@ -424,10 +449,9 @@ export function CodeInput({
       >
         {type === 'phone' ? (
           <>
-            {hasRenderableContent(phonePrefix) && (
-              <span className="fdoc-code-input__phone-affix" data-testid="code-input-phone-prefix">
-                {phonePrefix}
-              </span>
+            {hasRenderableContent(phonePrefix) && renderPhoneAffix(
+              phonePrefix,
+              'code-input-phone-prefix',
             )}
             <span className="fdoc-code-input__phone-parts" data-testid="code-input-phone-parts">
               {phoneGroupIndexes.map((indexes, groupIndex) => (
@@ -440,10 +464,9 @@ export function CodeInput({
                 </span>
               ))}
             </span>
-            {hasRenderableContent(phoneSuffix) && (
-              <span className="fdoc-code-input__phone-affix" data-testid="code-input-phone-suffix">
-                {phoneSuffix}
-              </span>
+            {hasRenderableContent(phoneSuffix) && renderPhoneAffix(
+              phoneSuffix,
+              'code-input-phone-suffix',
             )}
           </>
         ) : (
