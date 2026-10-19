@@ -110,15 +110,20 @@ export const Disabled: Story = {
 };
 
 export const Skeleton: Story = {
-  args: { skeleton: true },
-};
-
-export const SkeletonFilled: Story = {
-  args: { skeleton: true, defaultValue: '420615' },
-};
-
-export const SkeletonSmallFilled: Story = {
-  args: { skeleton: true, defaultValue: '420615', size: 'small' },
+  render: args => (
+    <div style={{ display: 'grid', gap: 24 }}>
+      <CodeInput {...args} label="Medium · Empty" skeleton caption={undefined} />
+      <CodeInput {...args} label="Medium · Filled" skeleton defaultValue="420615" caption={undefined} />
+      <CodeInput {...args} label="Small · Filled" skeleton defaultValue="420615" size="small" caption={undefined} />
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Все варианты Skeleton собраны в одной story: пустой Medium, заполненный Medium и заполненный Small.',
+      },
+    },
+  },
 };
 
 export const Small: Story = {
