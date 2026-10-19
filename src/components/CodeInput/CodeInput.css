@@ -54,6 +54,22 @@
   color: var(--text-base-default-disabled);
 }
 
+.fdoc-code-input__phone-affix--skeleton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.fdoc-code-input__phone-affix-measure {
+  visibility: hidden;
+}
+
+.fdoc-code-input__phone-affix-skeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .fdoc-code-input__cell {
   box-sizing: border-box;
   display: inline-flex;
