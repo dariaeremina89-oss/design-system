@@ -15,7 +15,7 @@ test('CodeInput follows Figma medium and small geometry', async ({ page }) => {
 });
 
 test('CodeInput accepts a pasted full code and supports keyboard navigation', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-inputs-codeinput--interactive&viewMode=story');
+  await page.goto('/iframe.html?id=components-inputs-codeinput--default&viewMode=story');
   const first = page.getByTestId('code-input-cell-1');
 
   await first.evaluate(element => {
