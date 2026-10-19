@@ -176,8 +176,14 @@ test('CodeInput skeleton follows Figma empty and filled geometry', async ({ page
   const emptyPhone = examples.nth(4);
   await expect(emptyPhone.locator('.fdoc-code-input__cell')).toHaveCount(7);
   await expect(emptyPhone.locator('.fdoc-code-input__cell .fdoc-skeleton')).toHaveCount(0);
-  await expect(emptyPhone.getByTestId('code-input-phone-prefix')).toHaveText('+7 9');
-  await expect(emptyPhone.getByTestId('code-input-phone-suffix')).toHaveText('88');
+  const emptyPrefix = emptyPhone.getByTestId('code-input-phone-prefix');
+  const emptySuffix = emptyPhone.getByTestId('code-input-phone-suffix');
+  await expect(emptyPrefix.locator('.fdoc-code-input__phone-affix-skeleton')).toBeVisible();
+  await expect(emptySuffix.locator('.fdoc-code-input__phone-affix-skeleton')).toBeVisible();
+  await expect(emptyPrefix.locator('.fdoc-code-input__phone-affix-measure')).toHaveCSS('visibility', 'hidden');
+  await expect(emptySuffix.locator('.fdoc-code-input__phone-affix-measure')).toHaveCSS('visibility', 'hidden');
+  expect(await metrics(emptyPrefix.locator('.fdoc-code-input__phone-affix-skeleton'))).toEqual({line:'24px',bar:'11px',top:'7px'});
+  expect(await metrics(emptySuffix.locator('.fdoc-code-input__phone-affix-skeleton'))).toEqual({line:'24px',bar:'11px',top:'7px'});
   await expect(emptyPhone.locator('.fdoc-code-input__cell').first()).toHaveCSS('width', '32px');
   await expect(emptyPhone.locator('.fdoc-code-input__cell').first()).toHaveCSS('height', '48px');
 
@@ -185,8 +191,12 @@ test('CodeInput skeleton follows Figma empty and filled geometry', async ({ page
   const phoneSkeletons = filledPhone.locator('.fdoc-code-input__cell .fdoc-skeleton');
   await expect(filledPhone.locator('.fdoc-code-input__cell')).toHaveCount(7);
   await expect(phoneSkeletons).toHaveCount(7);
-  await expect(filledPhone.getByTestId('code-input-phone-prefix')).toHaveText('+7 9');
-  await expect(filledPhone.getByTestId('code-input-phone-suffix')).toHaveText('88');
+  const filledPrefix = filledPhone.getByTestId('code-input-phone-prefix');
+  const filledSuffix = filledPhone.getByTestId('code-input-phone-suffix');
+  await expect(filledPrefix.locator('.fdoc-code-input__phone-affix-skeleton')).toBeVisible();
+  await expect(filledSuffix.locator('.fdoc-code-input__phone-affix-skeleton')).toBeVisible();
+  await expect(filledPrefix.locator('.fdoc-code-input__phone-affix-measure')).toHaveCSS('visibility', 'hidden');
+  await expect(filledSuffix.locator('.fdoc-code-input__phone-affix-measure')).toHaveCSS('visibility', 'hidden');
   await expect(phoneSkeletons.first()).toHaveCSS('width', '16px');
   expect(await metrics(phoneSkeletons.first())).toEqual({line:'24px',bar:'11px',top:'7px'});
 });
