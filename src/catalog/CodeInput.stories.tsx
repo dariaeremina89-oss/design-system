@@ -112,15 +112,37 @@ export const Disabled: Story = {
 export const Skeleton: Story = {
   render: args => (
     <div style={{ display: 'grid', gap: 24 }}>
-      <CodeInput {...args} label="Medium · Empty" skeleton caption={undefined} />
-      <CodeInput {...args} label="Medium · Filled" skeleton defaultValue="420615" caption={undefined} />
-      <CodeInput {...args} label="Small · Filled" skeleton defaultValue="420615" size="small" caption={undefined} />
+      <CodeInput {...args} label="Code · Medium · Empty" skeleton caption={undefined} />
+      <CodeInput {...args} label="Code · Medium · Filled" skeleton defaultValue="420615" caption={undefined} />
+      <CodeInput {...args} label="Code · Small · Empty" skeleton size="small" caption={undefined} />
+      <CodeInput {...args} label="Code · Small · Filled" skeleton defaultValue="420615" size="small" caption={undefined} />
+      <CodeInput
+        {...args}
+        type="phone"
+        label="Phone · Empty"
+        skeleton
+        phonePrefix="+7 9"
+        phoneGroups={[2, 3, 2]}
+        phoneSuffix="88"
+        caption={undefined}
+      />
+      <CodeInput
+        {...args}
+        type="phone"
+        label="Phone · Filled"
+        skeleton
+        defaultValue="1234567"
+        phonePrefix="+7 9"
+        phoneGroups={[2, 3, 2]}
+        phoneSuffix="88"
+        caption={undefined}
+      />
     </div>
   ),
   parameters: {
     docs: {
       description: {
-        story: 'Все варианты Skeleton собраны в одной story: пустой Medium, заполненный Medium и заполненный Small.',
+        story: 'Все Skeleton-варианты собраны в одной story: Empty и Filled для Code Medium, Code Small и Phone Small.',
       },
     },
   },
