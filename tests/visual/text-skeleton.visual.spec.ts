@@ -144,7 +144,7 @@ test('CodeInput skeleton follows Figma empty and filled geometry', async ({ page
   await page.goto('/iframe.html?id=components-inputs-codeinput--skeleton&viewMode=story');
 
   const examples = page.locator('.fdoc-code-input');
-  await expect(examples).toHaveCount(3);
+  await expect(examples).toHaveCount(6);
 
   const emptyMedium = examples.nth(0);
   await expect(emptyMedium.locator('.fdoc-code-input__cell')).toHaveCount(6);
@@ -159,13 +159,36 @@ test('CodeInput skeleton follows Figma empty and filled geometry', async ({ page
   await expect(mediumSkeletons.first()).toHaveCSS('width', '16px');
   expect(await metrics(mediumSkeletons.first())).toEqual({line:'28px',bar:'14px',top:'8px'});
 
-  const filledSmall = examples.nth(2);
+  const emptySmall = examples.nth(2);
+  await expect(emptySmall.locator('.fdoc-code-input__cell')).toHaveCount(6);
+  await expect(emptySmall.locator('.fdoc-code-input__cell .fdoc-skeleton')).toHaveCount(0);
+  await expect(emptySmall.locator('.fdoc-code-input__cell').first()).toHaveCSS('width', '32px');
+  await expect(emptySmall.locator('.fdoc-code-input__cell').first()).toHaveCSS('height', '48px');
+
+  const filledSmall = examples.nth(3);
   const smallSkeletons = filledSmall.locator('.fdoc-code-input__cell .fdoc-skeleton');
   await expect(smallSkeletons).toHaveCount(6);
   await expect(filledSmall.locator('.fdoc-code-input__cell').first()).toHaveCSS('width', '32px');
   await expect(filledSmall.locator('.fdoc-code-input__cell').first()).toHaveCSS('height', '48px');
   await expect(smallSkeletons.first()).toHaveCSS('width', '16px');
   expect(await metrics(smallSkeletons.first())).toEqual({line:'24px',bar:'11px',top:'7px'});
+
+  const emptyPhone = examples.nth(4);
+  await expect(emptyPhone.locator('.fdoc-code-input__cell')).toHaveCount(7);
+  await expect(emptyPhone.locator('.fdoc-code-input__cell .fdoc-skeleton')).toHaveCount(0);
+  await expect(emptyPhone.getByTestId('code-input-phone-prefix')).toHaveText('+7 9');
+  await expect(emptyPhone.getByTestId('code-input-phone-suffix')).toHaveText('88');
+  await expect(emptyPhone.locator('.fdoc-code-input__cell').first()).toHaveCSS('width', '32px');
+  await expect(emptyPhone.locator('.fdoc-code-input__cell').first()).toHaveCSS('height', '48px');
+
+  const filledPhone = examples.nth(5);
+  const phoneSkeletons = filledPhone.locator('.fdoc-code-input__cell .fdoc-skeleton');
+  await expect(filledPhone.locator('.fdoc-code-input__cell')).toHaveCount(7);
+  await expect(phoneSkeletons).toHaveCount(7);
+  await expect(filledPhone.getByTestId('code-input-phone-prefix')).toHaveText('+7 9');
+  await expect(filledPhone.getByTestId('code-input-phone-suffix')).toHaveText('88');
+  await expect(phoneSkeletons.first()).toHaveCSS('width', '16px');
+  expect(await metrics(phoneSkeletons.first())).toEqual({line:'24px',bar:'11px',top:'7px'});
 });
 
 test('Skeleton docs show real component skeleton states without interactive controls', async ({ page }) => {
