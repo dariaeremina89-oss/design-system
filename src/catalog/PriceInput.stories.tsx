@@ -147,9 +147,3 @@ export const Skeleton: Story = {
   args: { skeleton: true },
 };
 
-export const Interactive: Story = {
-  render: args => {
-    const [value, setValue] = useState('');
-    return <PriceInput {...args} value={value} onValueChange={setValue} />;
-  },
-};
