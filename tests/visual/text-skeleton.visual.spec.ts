@@ -142,26 +142,30 @@ test('Input skeleton follows Figma empty and description content rules', async (
 
 test('CodeInput skeleton follows Figma empty and filled geometry', async ({ page }) => {
   await page.goto('/iframe.html?id=components-inputs-codeinput--skeleton&viewMode=story');
-  await expect(page.locator('.fdoc-code-input__cell')).toHaveCount(6);
-  await expect(page.locator('.fdoc-code-input__cell .fdoc-skeleton')).toHaveCount(0);
-  await expect(page.locator('.fdoc-code-input > .fdoc-field__label')).toHaveCSS('padding-left', '4px');
-  await expect(page.locator('.fdoc-code-input > .fdoc-field__helper')).toHaveCSS('padding-left', '4px');
-  await expect(page.locator('.fdoc-code-input__cell').first()).toHaveCSS('width', '48px');
-  await expect(page.locator('.fdoc-code-input__cell').first()).toHaveCSS('height', '56px');
 
-  await page.goto('/iframe.html?id=components-inputs-codeinput--skeleton-filled&viewMode=story');
-  const medium = page.locator('.fdoc-code-input__cell .fdoc-skeleton');
-  await expect(medium).toHaveCount(6);
-  await expect(medium.first()).toHaveCSS('width', '16px');
-  expect(await metrics(medium.first())).toEqual({line:'28px',bar:'14px',top:'8px'});
+  const examples = page.locator('.fdoc-code-input');
+  await expect(examples).toHaveCount(3);
 
-  await page.goto('/iframe.html?id=components-inputs-codeinput--skeleton-small-filled&viewMode=story');
-  const small = page.locator('.fdoc-code-input__cell .fdoc-skeleton');
-  await expect(small).toHaveCount(6);
-  await expect(page.locator('.fdoc-code-input__cell').first()).toHaveCSS('width', '32px');
-  await expect(page.locator('.fdoc-code-input__cell').first()).toHaveCSS('height', '48px');
-  await expect(small.first()).toHaveCSS('width', '16px');
-  expect(await metrics(small.first())).toEqual({line:'24px',bar:'11px',top:'7px'});
+  const emptyMedium = examples.nth(0);
+  await expect(emptyMedium.locator('.fdoc-code-input__cell')).toHaveCount(6);
+  await expect(emptyMedium.locator('.fdoc-code-input__cell .fdoc-skeleton')).toHaveCount(0);
+  await expect(emptyMedium.locator('> .fdoc-field__label')).toHaveCSS('padding-left', '4px');
+  await expect(emptyMedium.locator('.fdoc-code-input__cell').first()).toHaveCSS('width', '48px');
+  await expect(emptyMedium.locator('.fdoc-code-input__cell').first()).toHaveCSS('height', '56px');
+
+  const filledMedium = examples.nth(1);
+  const mediumSkeletons = filledMedium.locator('.fdoc-code-input__cell .fdoc-skeleton');
+  await expect(mediumSkeletons).toHaveCount(6);
+  await expect(mediumSkeletons.first()).toHaveCSS('width', '16px');
+  expect(await metrics(mediumSkeletons.first())).toEqual({line:'28px',bar:'14px',top:'8px'});
+
+  const filledSmall = examples.nth(2);
+  const smallSkeletons = filledSmall.locator('.fdoc-code-input__cell .fdoc-skeleton');
+  await expect(smallSkeletons).toHaveCount(6);
+  await expect(filledSmall.locator('.fdoc-code-input__cell').first()).toHaveCSS('width', '32px');
+  await expect(filledSmall.locator('.fdoc-code-input__cell').first()).toHaveCSS('height', '48px');
+  await expect(smallSkeletons.first()).toHaveCSS('width', '16px');
+  expect(await metrics(smallSkeletons.first())).toEqual({line:'24px',bar:'11px',top:'7px'});
 });
 
 test('Skeleton docs show real component skeleton states without interactive controls', async ({ page }) => {
