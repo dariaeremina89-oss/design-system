@@ -175,7 +175,7 @@ const codeInput = componentDoc({
 - \`maskDelay\` — задержка перед маскированием новой цифры, по умолчанию 800 мс; значение 0 скрывает цифру сразу;
 - Label / required / caption / error / disabled / skeleton;
 - \`name\` передает итоговое значение через hidden input формы.`,
-  variants: `Для Type=code доступны Medium: ячейка 48 × 56, radius-large, H3 20/28 и Small: 32 × 48, radius-middle, Subtitle Strong 16/24. Type=phone в Figma существует только в Small 48, поэтому React-компонент также всегда использует Small независимо от переданного size. Error применяется ко всем ячейкам; Focus выделяет активную ячейку.`,
+  variants: `Для Type=code доступны Medium: ячейка 48 × 56, radius-large, H3 20/28 и Small: 32 × 48, radius-middle, Subtitle Strong 16/24. Type=phone в Figma существует только в Small 48, поэтому React-компонент также всегда использует Small независимо от переданного size. Skeleton поддерживает Empty и Filled для Code Medium, Code Small и Phone Small. Error применяется ко всем ячейкам; Focus выделяет активную ячейку.`,
   geometry: `Для Type=code между ячейками gap space-8. Для Type=phone внутри одной группы используется space-4, между группами — space-12, между prefix / группами / suffix — space-4. Эталонный пример Figma: +7 9 → группы 2 / 3 / 2 → 88, но эта маска не зашита в компонент.`,
   behavior: `После ввода цифры фокус переходит в следующую ячейку независимо от границы группы. В Type=code при mask=true новая цифра сначала отображается открыто, затем через maskDelay заменяется на *. Уже переданное заполненное значение отображается замаскированным сразу. Маскирование меняет только отображение: value, onValueChange и hidden input остаются цифровыми. Paste распределяет цифры по ячейкам и использует ту же задержку маскирования. Backspace удаляет текущий символ или предыдущий, если текущая ячейка пуста. Arrow Left / Right, Home и End перемещают фокус. Для Type=phone длина определяется phoneGroups, а mask не применяется.`,
   responsive: `Для Type=code размер не меняется автоматически на мобильных. Type=phone всегда использует Small 48, что соответствует Figma и уменьшает риск horizontal overflow при группировке номера. Типографика остается постоянной.`,
@@ -193,6 +193,7 @@ const codeInput = componentDoc({
     'Маскирование не меняет цифровое value / hidden input и не применяется к Type=phone.',
     'После ввода фокус переходит вперед, Backspace возвращает назад.',
     'Controlled и uncontrolled value работают одинаково.',
+    'Skeleton покрывает Empty / Filled для Code Medium, Code Small и Phone Small.',
     'Error / Disabled / Skeleton сохраняют геометрию Figma.',
     'Medium и Small для Code не меняют типографику на мобильных.',
   ],
