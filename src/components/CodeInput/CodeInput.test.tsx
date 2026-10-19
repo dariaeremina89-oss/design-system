@@ -265,6 +265,41 @@ describe('CodeInput', () => {
     expect(document.querySelectorAll('.fdoc-code-input__cell .fdoc-skeleton')).toHaveLength(0);
   });
 
+  it('renders empty and filled Phone skeleton states in Small geometry', () => {
+    const empty = render(
+      <CodeInput
+        type="phone"
+        skeleton
+        phonePrefix="+7 9"
+        phoneGroups={[2, 3, 2]}
+        phoneSuffix="88"
+        label="Телефон"
+      />,
+    );
+
+    expect(screen.getAllByTestId(/code-input-cell-/)).toHaveLength(7);
+    expect(document.querySelectorAll('.fdoc-code-input__cell .fdoc-skeleton')).toHaveLength(0);
+    expect(screen.getByTestId('code-input')).toHaveClass('fdoc-code-input--small');
+
+    empty.unmount();
+
+    render(
+      <CodeInput
+        type="phone"
+        skeleton
+        defaultValue="1234567"
+        phonePrefix="+7 9"
+        phoneGroups={[2, 3, 2]}
+        phoneSuffix="88"
+        label="Телефон"
+      />,
+    );
+
+    expect(screen.getAllByTestId(/code-input-cell-/)).toHaveLength(7);
+    expect(document.querySelectorAll('.fdoc-code-input__cell .fdoc-skeleton')).toHaveLength(7);
+    expect(screen.getByTestId('code-input')).toHaveClass('fdoc-code-input--small');
+  });
+
   it('renders Figma filled skeleton geometry for both sizes', () => {
     const { rerender } = render(<CodeInput length={6} skeleton defaultValue="420615" label="Код" caption="Введите код" />);
     let skeletons = Array.from(document.querySelectorAll('.fdoc-code-input__cell .fdoc-skeleton')) as HTMLElement[];
