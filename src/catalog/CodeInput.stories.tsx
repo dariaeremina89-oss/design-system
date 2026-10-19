@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CodeInput } from '../components/CodeInput/CodeInput';
 import { componentDocs } from '../docs/bulk-components';
@@ -225,13 +224,6 @@ export const PhoneCustomGrouping: Story = {
         story: 'Phone не привязан к российской маске: количество цифр задается суммой phoneGroups, их визуальное расположение — размерами групп, prefix и suffix настраиваются отдельно.',
       },
     },
-  },
-};
-
-export const Interactive: Story = {
-  render: args => {
-    const [value, setValue] = useState('');
-    return <CodeInput {...args} value={value} onValueChange={setValue} />;
   },
 };
 
