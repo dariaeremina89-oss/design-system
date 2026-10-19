@@ -279,6 +279,8 @@ describe('CodeInput', () => {
 
     expect(screen.getAllByTestId(/code-input-cell-/)).toHaveLength(7);
     expect(document.querySelectorAll('.fdoc-code-input__cell .fdoc-skeleton')).toHaveLength(0);
+    expect(screen.getByTestId('code-input-phone-prefix').querySelector('.fdoc-skeleton')).toBeInTheDocument();
+    expect(screen.getByTestId('code-input-phone-suffix').querySelector('.fdoc-skeleton')).toBeInTheDocument();
     expect(screen.getByTestId('code-input')).toHaveClass('fdoc-code-input--small');
 
     empty.unmount();
@@ -297,6 +299,8 @@ describe('CodeInput', () => {
 
     expect(screen.getAllByTestId(/code-input-cell-/)).toHaveLength(7);
     expect(document.querySelectorAll('.fdoc-code-input__cell .fdoc-skeleton')).toHaveLength(7);
+    expect(screen.getByTestId('code-input-phone-prefix').querySelector('.fdoc-skeleton')).toBeInTheDocument();
+    expect(screen.getByTestId('code-input-phone-suffix').querySelector('.fdoc-skeleton')).toBeInTheDocument();
     expect(screen.getByTestId('code-input')).toHaveClass('fdoc-code-input--small');
   });
 
