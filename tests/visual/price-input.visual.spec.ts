@@ -30,7 +30,7 @@ test('PriceInput formats amount and preserves shared Input geometry', async ({ p
 });
 
 test('PriceInput keeps focus after the first character', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-inputs-priceinput--interactive&viewMode=story');
+  await page.goto('/iframe.html?id=components-inputs-priceinput--default&viewMode=story');
   const input = page.getByRole('textbox');
 
   await input.click();
@@ -78,7 +78,7 @@ test('PriceInput stays inside a mobile viewport', async ({ page }) => {
 });
 
 test('PriceInput inserts pasted content at the caret', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-inputs-priceinput--interactive&viewMode=story');
+  await page.goto('/iframe.html?id=components-inputs-priceinput--default&viewMode=story');
   const input = page.getByRole('textbox');
 
   await input.fill('1234,56');
@@ -100,7 +100,7 @@ test('PriceInput inserts pasted content at the caret', async ({ page }) => {
 });
 
 test('PriceInput accepts common copied price formats', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-inputs-priceinput--interactive&viewMode=story');
+  await page.goto('/iframe.html?id=components-inputs-priceinput--default&viewMode=story');
   const input = page.getByRole('textbox');
 
   await input.evaluate(element => {
@@ -133,7 +133,7 @@ test('PriceInput maxLength works without a numeric max', async ({ page }) => {
 });
 
 test('PriceInput counter uses the configured nine-digit amount limit', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-inputs-priceinput--interactive&viewMode=story');
+  await page.goto('/iframe.html?id=components-inputs-priceinput--default&viewMode=story');
   const input = page.getByRole('textbox');
   const counter = page.getByTestId('input-counter');
 
@@ -170,7 +170,7 @@ test('PriceInput validates the allowed amount range and clears the error again',
 });
 
 test('PriceInput normalizes decimal dot and rejects unsupported manual input', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-inputs-priceinput--interactive&viewMode=story');
+  await page.goto('/iframe.html?id=components-inputs-priceinput--default&viewMode=story');
   const input = page.getByRole('textbox');
 
   await input.fill('12.5');
