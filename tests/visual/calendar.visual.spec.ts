@@ -32,6 +32,10 @@ test('Calendar matches Figma header and day geometry', async ({ page }) => {
   const day = page.locator('[data-testid^="calendar-day-"]').first();
   await expect(day).toHaveCSS('width', '32px');
   await expect(day).toHaveCSS('height', '32px');
+
+  const selectedValue = calendar.locator('.fdoc-calendar__day--selected .fdoc-calendar__day-value');
+  await expect(selectedValue).toHaveCSS('width', '28px');
+  await expect(selectedValue).toHaveCSS('height', '28px');
 });
 
 test('Calendar Year contains 24 years in a 4-column grid', async ({ page }) => {
@@ -90,6 +94,7 @@ test('DatePicker uses 24px calendar icon and Calendar without buttons by default
   await expect(button).toHaveCSS('height', '32px');
   await expect(button.locator('[data-icon="calendar"]')).toHaveCSS('width', '24px');
   await expect(button.locator('[data-icon="calendar"]')).toHaveCSS('height', '24px');
+  await expect(page.getByTestId('input-field')).toHaveCSS('padding-right', '8px');
 
   await input.fill('23102026');
   await expect(input).toHaveValue('23.10.2026');
