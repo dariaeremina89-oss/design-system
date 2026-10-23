@@ -32,6 +32,8 @@ const meta = {
     minDate: { control: false },
     maxDate: { control: false },
     isDateDisabled: { control: false },
+    minRange: { control: { type: 'number', min: 1 } },
+    maxRange: { control: { type: 'number', min: 1 } },
     months: { control: 'radio', options: ['responsive', 1, 2] },
     showActions: { control: 'boolean' },
     applyText: { control: 'text' },
@@ -60,5 +62,12 @@ export const WithLimits: Story = {
   args: {
     minDate: new Date(2026, 9, 5),
     maxDate: new Date(2026, 10, 20),
+  },
+};
+
+export const MinRange: Story = {
+  args: {
+    defaultValue: { start: null, end: null },
+    minRange: 3,
   },
 };
