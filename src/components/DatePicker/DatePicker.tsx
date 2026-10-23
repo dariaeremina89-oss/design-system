@@ -84,6 +84,7 @@ export function DatePicker({
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const currentValue = controlledValue !== undefined ? controlledValue : internalValue;
   const open = controlledOpen ?? internalOpen;
+  const calendarOpen = open && calendarSelection && !disabled && !skeleton;
   const [textValue, setTextValue] = useState(() => formatDateValue(controlledValue ?? defaultValue));
   const [draftValue, setDraftValue] = useState<Date | null>(controlledValue ?? defaultValue);
   const resolvedManualInput = manualInput || !calendarSelection;
@@ -157,10 +158,10 @@ export function DatePicker({
   return (
     <div
       ref={rootRef}
-      className={joinClassNames('fdoc-date-picker', open && 'fdoc-date-picker--open')}
+      className={joinClassNames('fdoc-date-picker', calendarOpen && 'fdoc-date-picker--open')}
       data-testid={testId}
       onKeyDown={event => {
-        if (event.key === 'Escape' && open) {
+        if (event.key === 'Escape' && calendarOpen) {
           event.stopPropagation();
           closeCalendar(true);
         }
@@ -177,6 +178,7 @@ export function DatePicker({
         inputMode="numeric"
         maxLength={10}
         autoComplete="off"
+        aria-controls={calendarOpen ? popupId : undefined}
         readOnly={!resolvedManualInput}
         onChange={handleInputChange}
         onBlur={onBlur}
@@ -189,8 +191,8 @@ export function DatePicker({
             className="fdoc-date-picker__calendar-button"
             aria-label={open ? 'Закрыть календарь' : 'Открыть календарь'}
             aria-haspopup="dialog"
-            aria-expanded={open}
-            aria-controls={open ? popupId : undefined}
+            aria-expanded={calendarOpen}
+            aria-controls={calendarOpen ? popupId : undefined}
             disabled={disabled}
             onClick={event => {
               calendarButtonRef.current = event.currentTarget;
@@ -212,7 +214,7 @@ export function DatePicker({
         data-testid="date-picker-input"
       />
 
-      {open && calendarSelection && !disabled && !skeleton && (
+      {calendarOpen && (
         <div
           id={popupId}
           className="fdoc-date-picker__popup"
