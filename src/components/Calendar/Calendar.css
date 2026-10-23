@@ -290,9 +290,15 @@
   min-height: 288px;
 }
 
+.fdoc-calendar__choice-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 44px;
+}
+
 .fdoc-calendar__choice {
-  align-self: center;
-  justify-self: center;
   width: 56px;
   min-width: 0;
   height: 28px;
