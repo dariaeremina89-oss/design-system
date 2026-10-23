@@ -13,7 +13,11 @@ import './DatePicker.css';
 export interface DatePickerProps
   extends Omit<
     InputProps,
-    'value' | 'defaultValue' | 'onChange' | 'type' | 'placeholder' | 'trailingContent' | 'trailingIcon'
+    'value' | 'defaultValue' | 'onChange' | 'type' | 'placeholder'
+    | 'description' | 'leadingIcon' | 'leadingContent'
+    | 'clearable' | 'onClear' | 'clearIcon'
+    | 'sum' | 'sumIcon' | 'inlineSuffix'
+    | 'trailingContent' | 'trailingIcon' | 'trailingSkeleton'
   > {
   value?: Date | null;
   defaultValue?: Date | null;
