@@ -29,8 +29,9 @@ const meta = {
     minDate: { control: false },
     maxDate: { control: false },
     isDateDisabled: { control: false },
-    view: { control: 'radio', options: ['date', 'month', 'year'] },
-    defaultView: { control: 'radio', options: ['date', 'month', 'year'] },
+    type: { control: 'radio', options: ['date', 'month', 'year'] },
+    view: { control: false },
+    defaultView: { control: false },
     showActions: { control: 'boolean' },
     applyText: { control: 'text' },
     cancelText: { control: 'text' },
@@ -43,11 +44,11 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const Month: Story = {
-  args: { defaultView: 'month' },
+  args: { type: 'month', defaultValue: new Date(2026, 9, 1) },
 };
 
 export const Year: Story = {
-  args: { defaultView: 'year' },
+  args: { type: 'year', defaultValue: new Date(2026, 0, 1) },
 };
 
 export const WithoutActions: Story = {
