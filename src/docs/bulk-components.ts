@@ -460,7 +460,7 @@ const calendar = componentDoc({
   variants: 'Type=date: Days → Month → Year для навигации, итогом остается дата. Type=month: Month → Year, итогом является месяц. Type=year: Year, итогом является год. Month grid содержит 12 месяцев, Year grid — 24 последовательных года в 4 колонках × 6 строках.',
   geometry: 'Container 288 px, radius-small, shadow-m. Header 56 px с padding 12 / 20. Selection menu 132 × 32 с arrow-drop-down / up 24 px. Previous / Next — интерактивная область 32 × 32, иконка 24 px, gap 8. Day — 32 × 32 с внутренним элементом 28 × 28. Buttons — 56 px.',
   behavior: 'Selection menu переключает внутренний уровень выбора. Previous / Next сдвигают дни на месяц, месяцы на год, годы на диапазон из 24 лет. Недоступный соседний период блокирует соответствующую стрелку. При showActions=false итоговый выбор применяется сразу; при showActions=true значение остается временным до «Выбрать», а «Отменить» не применяет его.',
-  responsive: 'Отдельной mobile-версии нет. Calendar сохраняет ширину 288 px, размеры ячеек и типографику.',
+  responsive: 'Отдельной mobile-версии нет. Calendar сохраняет ширину 288 px, размеры ячеек и типографику. Как popover предпочитает положение под вызывающим элементом, при нехватке места делает flip вверх и смещается внутрь viewport по горизонтали.',
   accessibility: 'Selection menu и навигация — отдельные кнопки. Дни и значения Month / Year — интерактивная grid-модель. Disabled-значения недоступны. Для полноценной клавиатурной модели сетка должна использовать один активный элемент и Arrow / Home / End / Page Up / Page Down.',
   checklist: [
     'Type определяет итоговое значение, а не только стартовый view.',
@@ -498,7 +498,7 @@ const datePicker = componentDoc({
   variants: 'Small 48 и Medium 56 наследуют геометрию базового поля. Manual input=False делает input readonly, но не Disabled. Calendar selection=False полностью убирает Calendar icon. Оба способа ввода одновременно отключить нельзя.',
   geometry: 'Между Label / Container / Helper — 4 px. Между текстом и Calendar icon — 16 px. Calendar icon: glyph 24 × 24 внутри отдельной интерактивной области 32 × 32. Container radius-middle.',
   behavior: 'Ручной ввод использует фиксированный формат ДД.ММ.ГГГГ и placeholder __.__.____; фокус или клик по текстовому полю не открывает Calendar. Calendar открывается только отдельной иконкой. Базовый сценарий использует Calendar Buttons=False: выбор дня сразу обновляет Value и закрывает popup. При Buttons=True выбор остается draft до подтверждения. Пока popup открыт, Container сохраняет Focused.',
-  responsive: 'Отдельной mobile-версии нет: поле не меняет состав, а Calendar остается popover и не превращается в Dialog / Bottom sheet.',
+  responsive: 'Отдельной mobile-версии нет: поле не меняет состав, а Calendar остается popover и не превращается в Dialog / Bottom sheet. Popup привязан к Container поля, а Label / Caption / Error не влияют на его координату.',
   accessibility: 'Field и Calendar icon — разные Tab-stop. Иконка использует aria-haspopup=dialog, aria-expanded и aria-controls. Manual input=False использует readonly. После закрытия с клавиатуры фокус возвращается на Calendar icon.',
   checklist: [
     'Calendar icon — 24 px внутри 32 px.',
@@ -517,7 +517,7 @@ const rangePicker = componentDoc({
   variants: 'Small / Medium наследуют field-геометрию. Manual input=False использует readonly. Calendar selection=False скрывает Calendar icon. Однодневный период хранится как start = end.',
   geometry: 'Calendar icon — glyph 24 px в интерактивной области 32 px, gap до текста 16 px. Field сохраняет единую строку периода. Popup использует RangeCalendar: 576 px desktop и 288 px mobile.',
   behavior: 'Ручной ввод идет последовательно Start → End по маске __.__.____ — __.__.____. RangeCalendar учитывает те же min/max/disabled/minRange/maxRange. При Buttons=True изменения остаются draft до Apply; при Buttons=False полный выбранный Range применяется сразу, а валидный Range single может сохраниться при закрытии после первого выбора.',
-  responsive: 'Field не меняет структуру. На mobile RangeCalendar показывает вертикальный scroll месяцев под общими Weekdays, а не один месяц с переключателями.',
+  responsive: 'Field не меняет структуру. Popup привязан к Container поля, а Helper не участвует в позиционировании. На mobile RangeCalendar показывает вертикальный scroll месяцев под общими Weekdays, а не один месяц с переключателями.',
   accessibility: 'Field и Calendar icon — отдельные Tab-stop. Иконка имеет доступное имя и aria-haspopup / expanded / controls. Esc закрывает popup, после клавиатурного закрытия фокус возвращается на Calendar icon.',
   checklist: [
     'Start и End находятся в одном Container.',
