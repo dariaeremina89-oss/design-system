@@ -165,6 +165,14 @@
   padding: var(--space-6) var(--space-20) var(--space-20);
 }
 
+.fdoc-calendar[data-calendar-view="month"] .fdoc-calendar__choices {
+  min-height: 232px;
+}
+
+.fdoc-calendar[data-calendar-view="year"] {
+  min-height: 344px;
+}
+
 .fdoc-calendar__choice {
   min-width: 0;
   height: 32px;
