@@ -85,6 +85,7 @@ export function RangePicker({
   const calendarButtonRef = useRef<HTMLButtonElement | null>(null);
   const [internalValue, setInternalValue] = useState<DateRange>(defaultValue);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
+  const [calendarButtonFocused, setCalendarButtonFocused] = useState(false);
   const currentValue = controlledValue ?? internalValue;
   const open = controlledOpen ?? internalOpen;
   const calendarOpen = open && calendarSelection && !disabled && !skeleton;
@@ -176,7 +177,7 @@ export function RangePicker({
         placeholder={placeholder}
         disabled={disabled}
         skeleton={skeleton}
-        focused={calendarOpen}
+        focused={calendarOpen || calendarButtonFocused}
         wrapperClassName={wrapperClassName}
         inputMode="numeric"
         maxLength={23}
@@ -198,6 +199,8 @@ export function RangePicker({
             aria-expanded={calendarOpen}
             aria-controls={calendarOpen ? popupId : undefined}
             disabled={disabled}
+            onFocus={() => setCalendarButtonFocused(true)}
+            onBlur={() => setCalendarButtonFocused(false)}
             onClick={event => {
               calendarButtonRef.current = event.currentTarget;
               if (open) closeCalendar(false, !calendarButtons);

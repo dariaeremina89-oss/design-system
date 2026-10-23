@@ -83,6 +83,7 @@ export function DatePicker({
   const calendarButtonRef = useRef<HTMLButtonElement | null>(null);
   const [internalValue, setInternalValue] = useState<Date | null>(defaultValue);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
+  const [calendarButtonFocused, setCalendarButtonFocused] = useState(false);
   const currentValue = controlledValue !== undefined ? controlledValue : internalValue;
   const open = controlledOpen ?? internalOpen;
   const calendarOpen = open && calendarSelection && !disabled && !skeleton;
@@ -165,7 +166,7 @@ export function DatePicker({
         placeholder={placeholder}
         disabled={disabled}
         skeleton={skeleton}
-        focused={calendarOpen}
+        focused={calendarOpen || calendarButtonFocused}
         wrapperClassName={wrapperClassName}
         inputMode="numeric"
         maxLength={10}
@@ -187,6 +188,8 @@ export function DatePicker({
             aria-expanded={calendarOpen}
             aria-controls={calendarOpen ? popupId : undefined}
             disabled={disabled}
+            onFocus={() => setCalendarButtonFocused(true)}
+            onBlur={() => setCalendarButtonFocused(false)}
             onClick={event => {
               calendarButtonRef.current = event.currentTarget;
               setOpen(!open);

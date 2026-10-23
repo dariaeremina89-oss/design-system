@@ -123,11 +123,14 @@ test('DatePicker uses 24px calendar icon and Calendar without buttons by default
   const field = page.getByTestId('input-field');
   await expect(field).toHaveCSS('padding-right', '8px');
 
+  const primaryBorder = await page.evaluate(() =>
+    getComputedStyle(document.documentElement).getPropertyValue('--border-primary-default').trim(),
+  );
   await button.focus();
   await expect(field).toHaveCSS('border-width', '2px');
-  const buttonFocusedBorder = await field.evaluate(element => getComputedStyle(element).borderColor);
+  await expect(field).toHaveCSS('border-color', primaryBorder);
   await field.hover();
-  expect(await field.evaluate(element => getComputedStyle(element).borderColor)).toBe(buttonFocusedBorder);
+  await expect(field).toHaveCSS('border-color', primaryBorder);
 
   await input.fill('23102026');
   await expect(input).toHaveValue('23.10.2026');
@@ -135,10 +138,10 @@ test('DatePicker uses 24px calendar icon and Calendar without buttons by default
   await button.click();
   const popup = page.getByTestId('date-picker-popup');
   await expect(popup).toBeVisible();
-  const focusedBorder = await field.evaluate(element => getComputedStyle(element).borderColor);
-  await field.hover();
-  expect(await field.evaluate(element => getComputedStyle(element).borderColor)).toBe(focusedBorder);
   await expect(field).toHaveCSS('border-width', '2px');
+  await expect(field).toHaveCSS('border-color', primaryBorder);
+  await field.hover();
+  await expect(field).toHaveCSS('border-color', primaryBorder);
 
   const buttonAfterOpen = await button.boundingBox();
   expect(buttonBeforeOpen).not.toBeNull();
