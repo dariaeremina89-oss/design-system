@@ -299,7 +299,7 @@ export function CalendarMonthPanel({
                     onClick={() => onSelectDate(date)}
                     data-testid={`calendar-day-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`}
                   >
-                    {date.getDate()}
+                    <span className="fdoc-calendar__day-value">{date.getDate()}</span>
                   </button>
                 </span>
               );
