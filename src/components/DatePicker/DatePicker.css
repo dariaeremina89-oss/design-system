@@ -7,9 +7,7 @@
 
 .fdoc-date-picker__popup,
 .fdoc-range-picker__popup {
-  position: fixed;
-  z-index: var(--layer-overlay);
-  max-width: calc(100vw - var(--space-32));
+  max-width: 100%;
 }
 
 .fdoc-date-picker__calendar-button,
@@ -54,9 +52,3 @@
   border-color: var(--border-error-default);
 }
 
-@media (max-width: 639px) {
-  .fdoc-date-picker__popup,
-  .fdoc-range-picker__popup {
-    max-width: calc(100vw - var(--space-32));
-  }
-}
