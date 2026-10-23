@@ -439,15 +439,27 @@
 }
 
 .fdoc-range-calendar__month--primary {
-  border-right: var(--border-small) solid var(--border-base-tertiary);
+  position: relative;
+}
+
+.fdoc-range-calendar__month--primary::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--border-small);
+  background: var(--border-base-tertiary);
+  pointer-events: none;
 }
 
 .fdoc-range-calendar--single {
   width: 288px;
 }
 
-.fdoc-range-calendar--single .fdoc-range-calendar__month--primary {
-  border-right: 0;
+.fdoc-range-calendar--single .fdoc-range-calendar__month--primary::after {
+  display: none;
 }
 
 .fdoc-range-calendar--single .fdoc-range-calendar__month--secondary {

@@ -81,7 +81,10 @@ test('RangeCalendar matches desktop Figma structure and mobile scroll', async ({
   await expect(firstMonth.locator('.fdoc-calendar__range-period')).toHaveCSS('width', '180px');
   await expect(secondMonth.locator('.fdoc-calendar__range-period')).toHaveCSS('width', '180px');
   await expect(secondMonth.locator('.fdoc-calendar__header--range-right')).toHaveCSS('column-gap', '8px');
-  await expect(range.locator('.fdoc-range-calendar__month--primary')).toHaveCSS('border-right-width', '1px');
+  const dividerWidth = await range.locator('.fdoc-range-calendar__month--primary').evaluate(element =>
+    getComputedStyle(element, '::after').width,
+  );
+  expect(dividerWidth).toBe('1px');
 
   await page.setViewportSize({ width: 320, height: 700 });
   await expect(range).toHaveCSS('width', '288px');
