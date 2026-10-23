@@ -225,6 +225,18 @@
   display: none;
 }
 
+.fdoc-range-calendar--single {
+  width: 288px;
+}
+
+.fdoc-range-calendar--single .fdoc-range-calendar__month--secondary {
+  display: none;
+}
+
+.fdoc-range-calendar--single .fdoc-range-calendar__mobile-next {
+  display: inline-flex;
+}
+
 @media (max-width: 639px) {
   .fdoc-range-calendar {
     width: 288px;
