@@ -15,7 +15,12 @@ import './DatePicker.css';
 export interface RangePickerProps
   extends Omit<
     InputProps,
-    'value' | 'defaultValue' | 'onChange' | 'type' | 'placeholder' | 'trailingContent' | 'trailingIcon'
+    'value' | 'defaultValue' | 'onChange' | 'type' | 'placeholder'
+    | 'description' | 'counter'
+    | 'leadingIcon' | 'leadingContent'
+    | 'clearable' | 'onClear' | 'clearIcon'
+    | 'sum' | 'sumIcon' | 'inlineSuffix'
+    | 'trailingContent' | 'trailingIcon' | 'trailingSkeleton'
   > {
   value?: DateRange;
   defaultValue?: DateRange;
