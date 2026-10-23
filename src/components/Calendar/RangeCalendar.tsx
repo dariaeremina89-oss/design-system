@@ -165,7 +165,8 @@ export function RangeCalendar({
     setPeriodTarget(current => current === target ? null : target);
   };
 
-  const handlePeriodMonth = (month: Date) => {
+  const handlePeriodMonth = (month: Date | null) => {
+    if (!month) return;
     setVisibleMonth(periodTarget === 'right' ? addMonths(month, -1) : month);
     setPeriodTarget(null);
   };
