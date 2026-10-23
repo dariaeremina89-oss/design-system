@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent } from 'react';
+import { usePickerPopoverPosition } from './usePickerPopoverPosition';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { RangeCalendar, type RangeCalendarProps } from '../Calendar/RangeCalendar';
 import { Input, type InputProps } from '../Input/Input';
@@ -81,6 +82,8 @@ export function RangePicker({
 }: RangePickerProps) {
   const popupId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const fieldRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
   const calendarButtonRef = useRef<HTMLButtonElement | null>(null);
   const [internalValue, setInternalValue] = useState<DateRange>(defaultValue);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
@@ -91,6 +94,7 @@ export function RangePicker({
   const [draftValue, setDraftValue] = useState<DateRange>(controlledValue ?? defaultValue);
   const resolvedManualInput = manualInput || !calendarSelection;
   const calendarButtons = calendarProps?.showActions ?? true;
+  const popupStyle = usePickerPopoverPosition(calendarOpen, fieldRef, popupRef);
 
   const setOpen = (next: boolean) => {
     if (controlledOpen === undefined) setInternalOpen(next);
@@ -193,6 +197,7 @@ export function RangePicker({
         autoComplete="off"
         aria-controls={calendarOpen ? popupId : undefined}
         readOnly={!resolvedManualInput}
+        fieldRef={fieldRef}
         onChange={handleInputChange}
         onBlur={onBlur}
         trailingContent={calendarSelection ? (
@@ -230,8 +235,10 @@ export function RangePicker({
 
       {calendarOpen && (
         <div
+          ref={popupRef}
           id={popupId}
           className="fdoc-range-picker__popup"
+          style={popupStyle}
           role="dialog"
           aria-label="Выбор периода"
           data-testid="range-picker-popup"
