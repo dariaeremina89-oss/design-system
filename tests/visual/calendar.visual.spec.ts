@@ -40,7 +40,7 @@ test('Calendar matches Figma header and day geometry', async ({ page }) => {
   await expect(selectedValue).toHaveCSS('height', '28px');
 });
 
-test('Calendar Year contains 16 years in a 4-column grid', async ({ page }) => {
+test('Calendar Year contains 24 years in a 4-column grid', async ({ page }) => {
   await page.goto('/iframe.html?id=components-datetime-calendar--year&viewMode=story');
 
   const calendar = page.getByTestId('calendar');
@@ -48,7 +48,7 @@ test('Calendar Year contains 16 years in a 4-column grid', async ({ page }) => {
   await expect(calendar).toHaveAttribute('data-calendar-view', 'year');
 
   const yearButtons = calendar.locator('.fdoc-calendar__choice');
-  await expect(yearButtons).toHaveCount(16);
+  await expect(yearButtons).toHaveCount(24);
   const columns = await calendar.locator('.fdoc-calendar__choices').evaluate(element =>
     getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length,
   );
