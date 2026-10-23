@@ -29,6 +29,7 @@ test('Select portal is interactive within the modal and Escape closes it first',
 test('scrolling content preserves header/footer and backdrop closing is configurable', async ({page}) => {
   await page.goto(story('scroll')); await page.getByRole('button',{name:'Открыть диалог'}).click();
   const content=page.getByTestId('dialog-content'); expect(await content.evaluate(n=>n.scrollHeight>n.clientHeight)).toBe(true);
+  await expect(page.getByTestId('dialog-scrollbar')).toBeVisible();await expect(page.getByTestId('dialog-scrollbar').locator('.fdoc-scrollbar__thumb')).toHaveCSS('width','8px');
   await content.evaluate(n=>n.scrollTop=n.scrollHeight); await expect(page.getByTestId('dialog-close')).toBeVisible(); await expect(page.getByTestId('dialog-footer')).toBeVisible();
   await page.mouse.click(2,2); await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.goto(story('explicit-close')); await page.getByRole('button',{name:'Открыть диалог'}).click();

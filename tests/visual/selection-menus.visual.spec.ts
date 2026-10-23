@@ -74,9 +74,11 @@ test('Menu scroll viewport stays inside its bounds and row padding matches the d
   await page.goto(story('components-selection-menu--search-and-scroll'));await expect(page.getByRole('searchbox')).toBeVisible();
   const bounds=(await page.locator('.fdoc-menu').boundingBox())!, scroll=(await page.getByRole('menu').boundingBox())!;
   expect(scroll.x).toBeGreaterThanOrEqual(bounds.x);expect(scroll.x+scroll.width).toBeLessThanOrEqual(bounds.x+bounds.width);
-  // Overlay scrollbars consume no layout width; measure the styled track itself.
-  expect(await page.getByRole('menu').evaluate(el=>getComputedStyle(el,'::-webkit-scrollbar').width)).toBe('16px');
-  expect(await page.getByRole('menu').evaluate(el=>el.scrollHeight>el.clientHeight)).toBe(true);
+  const scrollMenu=page.getByRole('menu'), scrollbar=page.getByTestId('menu-scrollbar');
+  await expect(scrollbar).toBeVisible();await expect(scrollbar).toHaveCSS('width','16px');await expect(scrollbar.locator('.fdoc-scrollbar__thumb')).toHaveCSS('width','8px');
+  expect(await scrollMenu.evaluate(el=>el.scrollHeight>el.clientHeight)).toBe(true);
+  const menuWidth=(await page.locator('.fdoc-menu').boundingBox())!.width,rowWidth=(await page.getByRole('menuitem').first().boundingBox())!.width;
+  expect(rowWidth).toBeCloseTo(menuWidth,1);expect(await scrollMenu.evaluate(el=>getComputedStyle(el).scrollbarWidth)).toBe('none');
   expect((await page.locator('.fdoc-menu__footer').boundingBox())!.height).toBe(56);
  }
 });

@@ -453,12 +453,24 @@ const pagination = componentDoc({
   checklist: ['Проверены 0, 1, 2–4 и много страниц.','Counter корректен на последней странице.','Нет дублирующих Ellipsis.','Arrows блокируются на краях.','Long Numbers не создают overflow.'],
 });
 
+const scrollbar = componentDoc({
+  purpose: '**Scrollbar** — единый визуальный вертикальный индикатор для scroll-area компонентов F.Doc. Нативный механизм прокрутки сохраняется, системная полоса скрывается, а Scrollbar отображается overlay и не уменьшает ширину контента.',
+  anatomy: 'Track 16 px поверх правого края scroll-area → Thumb 8 px с inset 4 px сверху/снизу. Thumb использует background-base-tertiary и radius-middle.',
+  api: '- viewportRef — ref на нативный scroll-container;\n- minThumbSize — минимальная высота Thumb, по умолчанию 32 px.',
+  variants: 'Scrollbar отображается только при фактическом overflow. Размер Thumb пропорционален видимой части контента, но не меньше minThumbSize.',
+  geometry: 'Track 16 px. Thumb 8 px, расположен по центру Track. Верхний/нижний inset — 4 px. Scrollbar лежит поверх контента и не резервирует место в layout.',
+  behavior: 'Wheel, trackpad, keyboard и scrollIntoView работают через нативный scroll-container. Thumb синхронизируется со scrollTop; Thumb можно перетаскивать, клик по Track перемещает viewport.',
+  responsive: 'Геометрия Scrollbar не меняется между desktop и mobile.',
+  accessibility: 'Scrollbar не создает отдельный Tab-stop: клавиатурная прокрутка остается на исходном scroll-container.',
+  checklist: ['Появляется только при overflow.','Не уменьшает ширину контента.','Thumb синхронизирован с нативной прокруткой.','Drag Thumb прокручивает контент.','Menu, Dialog и mobile RangeCalendar используют общий Scrollbar.'],
+});
+
 const calendar = componentDoc({
   purpose: '**Calendar** — самостоятельный компонент выбора одной даты, месяца или года. Он не содержит поле ввода и может открываться из Datepicker, кнопки, меню или другого элемента управления.',
   anatomy: 'Container → Header с Selection menu слева и группой Previous / Next справа → область значений → опциональные Buttons. Для Type=date область значений содержит Weekdays и Day grid; для Month / Year — сетку соответствующих значений.',
   api: '- type: date / month / year — определяет итоговое значение;\n- value / defaultValue — выбранная дата, месяц или год в виде Date;\n- visibleMonth / defaultVisibleMonth — отображаемый период;\n- minDate / maxDate / isDateDisabled — доступность значений;\n- showActions — аналог Buttons в Figma;\n- onValueChange / onApply / onCancel;\n- view используется только для управляемого внутреннего уровня навигации.',
   variants: 'Type=date: Days → Month → Year для навигации, итогом остается дата. Type=month: Month → Year, итогом является месяц. Type=year: Year, итогом является год. Month grid содержит 12 месяцев, Year grid — 24 последовательных года в 4 колонках × 6 строках.',
-  geometry: 'Container 288 px, radius-small, shadow-m. Header 56 px с padding 12 / 20. Selection menu 132 × 32 с arrow-drop-down / up 24 px. Previous / Next — интерактивная область 32 × 32, иконка 24 px, gap 8. Day — 32 × 32 с внутренним элементом 28 × 28. Buttons — 56 px.',
+  geometry: 'Container 288 px, radius-small, shadow-m. Header 56 px с padding 12 / 20. Selection menu имеет высоту 32 px и ширину по контенту; arrow-drop-down / up — 24 px. Previous / Next — интерактивная область 32 × 32, иконка 24 px, gap 8. Day — 32 × 32 с внутренним элементом 28 × 28. Buttons — 56 px.',
   behavior: 'Selection menu переключает внутренний уровень выбора. Previous / Next сдвигают дни на месяц, месяцы на год, годы на диапазон из 24 лет. Недоступный соседний период блокирует соответствующую стрелку. При showActions=false итоговый выбор применяется сразу; при showActions=true значение остается временным до «Выбрать», а «Отменить» не применяет его.',
   responsive: 'Отдельной mobile-версии нет. Calendar сохраняет ширину 288 px, размеры ячеек и типографику. Как popover предпочитает положение под вызывающим элементом, при нехватке места делает flip вверх и смещается внутрь viewport по горизонтали.',
   accessibility: 'Selection menu и навигация — отдельные кнопки. Дни и значения Month / Year — интерактивная grid-модель. Disabled-значения недоступны. Для полноценной клавиатурной модели сетка должна использовать один активный элемент и Arrow / Home / End / Page Up / Page Down.',
@@ -479,7 +491,7 @@ const rangeCalendar = componentDoc({
   variants: 'Range single, start, middle, end и preview существуют независимо от интерактивных состояний Day. Desktop имеет ширину 576 px, mobile — 288 px.',
   geometry: 'Month 288 px, Day 32 × 32. Previous / Next используют иконку 24 px внутри области 32 px. Между desktop-месяцами border-base-tertiary. Mobile Weekdays — 48 px, Scroll area — до 304 px, Month title — 44 px. Container использует shadow-m.',
   behavior: 'Первый выбор задает опорную дату и формирует Range single, если minRange позволяет один день. Второй выбор завершает диапазон и автоматически упорядочивает даты. Новый выбор после готового Range начинает новый период. Preview строится от опорной даты до hover / focus. Потенциальный End блокируется, если период нарушает minRange / maxRange, min / max date или проходит через Disabled date.',
-  responsive: 'В responsive-режиме desktop показывает два месяца рядом. На mobile вместо стрелочного одностраничного календаря используется один столбец с вертикально прокручиваемой последовательностью месяцев; Weekdays остаются сверху, Buttons — вне Scroll area.',
+  responsive: 'В responsive-режиме desktop показывает два месяца рядом. На mobile вместо стрелочного одностраничного календаря используется один столбец с вертикально прокручиваемой последовательностью месяцев; Weekdays остаются сверху, Buttons — вне Scroll area. Scroll area использует единый overlay Scrollbar.',
   accessibility: 'Даты остаются кнопками; Disabled date нельзя выбрать. Start / End имеют aria-pressed. Полная модель предусматривает клавиатурную навигацию по датам и возврат фокуса вызывающему элементу после закрытия.',
   checklist: [
     'Desktop показывает два последовательных месяца с Divider.',
@@ -550,6 +562,7 @@ const docs: Record<string, string> = {
   ButtonLink: linkDoc(true),
   ButtonToggle: buttonToggle,
   Divider: divider,
+  Scrollbar: scrollbar,
   Tooltip: tooltip,
   Accordion: accordion,
   AccordionGroup: accordionGroup,

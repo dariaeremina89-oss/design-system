@@ -74,6 +74,8 @@ export { ButtonToggle } from './components/ButtonToggle/ButtonToggle';
 export type { ButtonToggleProps, ButtonToggleOption } from './components/ButtonToggle/ButtonToggle';
 export { Divider } from './components/Divider/Divider';
 export type { DividerProps } from './components/Divider/Divider';
+export { Scrollbar } from './components/Scrollbar/Scrollbar';
+export type { ScrollbarProps } from './components/Scrollbar/Scrollbar';
 export { Checkbox, CheckboxControl, CheckboxOption, Radio, RadioControl, RadioOption, Switch, SwitchControl, SwitchOption } from './components/SelectionControl/SelectionControl';
 export type { SelectionControlProps, SelectionState } from './components/SelectionControl/SelectionControl';
 export { CheckboxGroup, RadioGroup, SwitchGroup } from './components/SelectionControl/SelectionGroup';
