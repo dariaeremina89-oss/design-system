@@ -1,5 +1,5 @@
 .fdoc-scrollbar-viewport{scrollbar-width:none;-ms-overflow-style:none}
 .fdoc-scrollbar-viewport::-webkit-scrollbar{display:none;width:0;height:0}
 .fdoc-scrollbar{position:absolute;z-index:3;top:0;right:0;bottom:0;width:var(--elements-16);pointer-events:auto;touch-action:none}
-.fdoc-scrollbar[hidden]{display:none}
+.fdoc-scrollbar:not([data-visible]){opacity:0;pointer-events:none}
 .fdoc-scrollbar__thumb{position:absolute;top:var(--space-4);left:5px;width:var(--elements-8);min-height:var(--elements-32);border-radius:var(--radius-middle);background:var(--background-base-tertiary);cursor:default;touch-action:none}
