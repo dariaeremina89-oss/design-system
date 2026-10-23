@@ -6,7 +6,7 @@ import { controlsParameters, pickFieldControls } from '../docs/story-controls';
 
 const controlOrder = [
   'label', 'required', 'value', 'defaultValue', 'placeholder', 'caption', 'error',
-  'size', 'disabled', 'skeleton', 'open', 'defaultOpen',
+  'size', 'manualInput', 'calendarSelection', 'disabled', 'skeleton', 'open', 'defaultOpen',
   'onValueChange', 'onOpenChange', 'onFocus', 'onBlur', 'onKeyDown',
 ] as const;
 
@@ -33,6 +33,8 @@ const meta = {
       'label', 'required', 'placeholder', 'caption', 'error', 'size',
       'disabled', 'skeleton', 'onFocus', 'onBlur', 'onKeyDown',
     ),
+    manualInput: { control: 'boolean', description: 'Разрешает ручной ввод даты.', table: { category: 'Behavior' } },
+    calendarSelection: { control: 'boolean', description: 'Показывает Calendar icon и разрешает выбор через Calendar.', table: { category: 'Behavior' } },
     value: { control: false },
     defaultValue: { control: false },
     open: { control: 'boolean' },
@@ -53,6 +55,22 @@ export const Filled: Story = {
 
 export const Open: Story = {
   args: { defaultValue: new Date(2026, 9, 23), defaultOpen: true },
+};
+
+export const OpenWithButtons: Story = {
+  args: {
+    defaultValue: new Date(2026, 9, 23),
+    defaultOpen: true,
+    calendarProps: { showActions: true },
+  },
+};
+
+export const ManualInputOnly: Story = {
+  args: { calendarSelection: false },
+};
+
+export const CalendarOnly: Story = {
+  args: { manualInput: false, defaultValue: new Date(2026, 9, 23) },
 };
 
 export const Error: Story = {
