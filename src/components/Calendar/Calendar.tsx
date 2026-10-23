@@ -401,14 +401,14 @@ export function Calendar({
   const changePage = (direction: -1 | 1) => {
     if (view === 'date') setVisibleMonth(addMonths(visibleMonth, direction));
     else if (view === 'month') setVisibleMonth(addYears(visibleMonth, direction));
-    else setVisibleMonth(addYears(visibleMonth, direction * 16));
+    else setVisibleMonth(addYears(visibleMonth, direction * 24));
   };
 
   const currentPeriodAvailable = (target: Date) => {
     if (view === 'date') return periodHasAvailableDate(target, minDate, maxDate, isDateDisabled);
     if (view === 'month') return yearHasAvailableDate(target.getFullYear(), minDate, maxDate, isDateDisabled);
-    const rangeStart = Math.floor(target.getFullYear() / 16) * 16;
-    return Array.from({ length: 16 }, (_, index) => rangeStart + index)
+    const rangeStart = target.getFullYear() - 14;
+    return Array.from({ length: 24 }, (_, index) => rangeStart + index)
       .some(year => yearHasAvailableDate(year, minDate, maxDate, isDateDisabled));
   };
 
@@ -416,19 +416,19 @@ export function Calendar({
     ? addMonths(visibleMonth, -1)
     : view === 'month'
       ? addYears(visibleMonth, -1)
-      : addYears(visibleMonth, -16);
+      : addYears(visibleMonth, -24);
   const nextTarget = view === 'date'
     ? addMonths(visibleMonth, 1)
     : view === 'month'
       ? addYears(visibleMonth, 1)
-      : addYears(visibleMonth, 16);
+      : addYears(visibleMonth, 24);
 
-  const yearStart = Math.floor(visibleMonth.getFullYear() / 16) * 16;
-  const years = Array.from({ length: 16 }, (_, index) => yearStart + index);
+  const yearStart = visibleMonth.getFullYear() - 14;
+  const years = Array.from({ length: 24 }, (_, index) => yearStart + index);
 
   const periodLabel = view === 'month'
     ? String(visibleMonth.getFullYear())
-    : `${yearStart}–${yearStart + 15}`;
+    : `${yearStart}–${yearStart + 23}`;
 
   const handlePeriodClick = () => {
     if (view === 'date') setView('month');
