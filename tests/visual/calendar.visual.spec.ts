@@ -123,9 +123,14 @@ test('DatePicker uses 24px calendar icon and Calendar without buttons by default
   const field = page.getByTestId('input-field');
   await expect(field).toHaveCSS('padding-right', '8px');
 
-  const primaryBorder = await page.evaluate(() =>
-    getComputedStyle(document.documentElement).getPropertyValue('--border-primary-default').trim(),
-  );
+  const primaryBorder = await page.evaluate(() => {
+    const probe = document.createElement('div');
+    probe.style.borderColor = 'var(--border-primary-default)';
+    document.body.appendChild(probe);
+    const resolved = getComputedStyle(probe).borderColor;
+    probe.remove();
+    return resolved;
+  });
   await button.focus();
   await expect(field).toHaveCSS('border-width', '2px');
   await expect(field).toHaveCSS('border-color', primaryBorder);
