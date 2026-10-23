@@ -23,6 +23,9 @@ export function usePickerPopoverPosition(
 
       const anchorRect = anchor.getBoundingClientRect();
       const popupRect = popup.getBoundingClientRect();
+
+      // Anchor strictly to the input Container. Label / Caption / Error belong to
+      // the outer field and must never affect the popover origin.
       const viewportWidth = document.documentElement.clientWidth;
       const viewportHeight = window.innerHeight;
 
