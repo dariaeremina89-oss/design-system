@@ -9,7 +9,9 @@ test('Calendar matches Figma header and day geometry', async ({ page }) => {
   const next = page.getByTestId('calendar-next');
 
   await expect(calendar).toHaveCSS('width', '288px');
-  await expect(period).toHaveCSS('width', '132px');
+  const periodText = period.locator('.fdoc-calendar__period-text');
+  expect(await periodText.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  expect(await period.evaluate(element => element.getBoundingClientRect().width)).not.toBe(132);
   await expect(period.locator('[data-icon="arrow-drop-down"]')).toHaveCSS('width', '24px');
   await expect(period.locator('[data-icon="arrow-drop-down"]')).toHaveCSS('height', '24px');
 
@@ -94,6 +96,8 @@ test('RangeCalendar matches desktop Figma structure and mobile scroll', async ({
   const scroll = range.locator('.fdoc-range-calendar__mobile-scroll');
   await expect(scroll).toHaveCSS('overflow-y', 'auto');
   await expect(scroll).toHaveCSS('max-height', '304px');
+  await expect(range.getByTestId('range-calendar-scrollbar')).toBeVisible();
+  await expect(range.getByTestId('range-calendar-scrollbar').locator('.fdoc-scrollbar__thumb')).toHaveCSS('width', '8px');
   expect(await page.getByTestId('range-calendar-mobile-month').count()).toBeGreaterThan(2);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 });
@@ -120,6 +124,10 @@ test('DatePicker uses 24px calendar icon and Calendar without buttons by default
   const popup = page.getByTestId('date-picker-popup');
   const field = page.getByTestId('input-field');
   await expect(popup).toBeVisible();
+  const focusedBorder = await field.evaluate(element => getComputedStyle(element).borderColor);
+  await field.hover();
+  expect(await field.evaluate(element => getComputedStyle(element).borderColor)).toBe(focusedBorder);
+  await expect(field).toHaveCSS('border-width', '2px');
 
   const buttonAfterOpen = await button.boundingBox();
   expect(buttonBeforeOpen).not.toBeNull();

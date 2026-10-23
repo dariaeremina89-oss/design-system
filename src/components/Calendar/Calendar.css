@@ -62,7 +62,8 @@
   flex: 0 0 auto;
   align-items: center;
   min-width: 0;
-  width: 132px;
+  width: auto;
+  max-width: calc(100% - 80px);
   height: 32px;
   padding: var(--space-4);
   border: 0;
@@ -77,15 +78,12 @@
 }
 
 .fdoc-calendar__period--centered {
-  width: auto;
   max-width: 100%;
 }
 
 .fdoc-calendar__period-text {
   min-width: 0;
   padding: var(--space-2) var(--space-4);
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 

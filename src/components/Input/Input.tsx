@@ -55,6 +55,8 @@ export interface InputProps
   onClear?: () => void;
   /** Имя иконки кнопки очистки. */
   clearIcon?: IconName;
+  /** Принудительно сохраняет общее Focused-состояние Container. */
+  focused?: boolean;
   /** Показывает скелетон вместо поля. */
   skeleton?: boolean;
   /** Класс внешнего контейнера компонента. */
@@ -85,6 +87,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     clearable = false,
     onClear,
     clearIcon = 'filled/cross_circle_filled',
+    focused = false,
     skeleton = false,
     disabled = false,
     value,
@@ -187,6 +190,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           'fdoc-input__field fdoc-field__field',
           hasLeading && 'fdoc-input__field--has-leading',
           isError && 'fdoc-input__field--error fdoc-field__field--error',
+          focused && !disabled && 'fdoc-field__field--focused',
           disabled && 'fdoc-input__field--disabled fdoc-field__field--disabled',
         )}
         ref={fieldRef}

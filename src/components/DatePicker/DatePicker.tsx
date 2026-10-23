@@ -165,6 +165,7 @@ export function DatePicker({
         placeholder={placeholder}
         disabled={disabled}
         skeleton={skeleton}
+        focused={calendarOpen}
         wrapperClassName={wrapperClassName}
         inputMode="numeric"
         maxLength={10}

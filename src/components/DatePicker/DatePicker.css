@@ -26,29 +26,9 @@
 }
 
 .fdoc-date-picker .fdoc-input__field:has(.fdoc-input__control:focus),
-.fdoc-range-picker .fdoc-input__field:has(.fdoc-input__control:focus) {
+.fdoc-range-picker .fdoc-input__field:has(.fdoc-input__control:focus),
+.fdoc-date-picker .fdoc-input__field.fdoc-field__field--focused,
+.fdoc-range-picker .fdoc-input__field.fdoc-field__field--focused {
   padding-right: calc(var(--space-8) - var(--border-small));
-}
-
-.fdoc-date-picker--open .fdoc-input__field,
-.fdoc-range-picker--open .fdoc-input__field {
-  border-width: var(--border-middle);
-  border-color: var(--border-primary-default);
-  padding-top: calc(var(--space-12) - var(--border-small));
-  padding-right: calc(var(--space-8) - var(--border-small));
-  padding-bottom: calc(var(--space-12) - var(--border-small));
-  padding-left: calc(var(--space-12) - var(--border-small));
-}
-
-.fdoc-date-picker--open .fdoc-input--small .fdoc-input__field,
-.fdoc-range-picker--open .fdoc-input--small .fdoc-input__field {
-  padding-top: calc(var(--space-8) - var(--border-small));
-  padding-right: calc(var(--space-8) - var(--border-small));
-  padding-bottom: calc(var(--space-8) - var(--border-small));
-}
-
-.fdoc-date-picker--open .fdoc-input__field--error,
-.fdoc-range-picker--open .fdoc-input__field--error {
-  border-color: var(--border-error-default);
 }
 

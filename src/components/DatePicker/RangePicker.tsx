@@ -176,6 +176,7 @@ export function RangePicker({
         placeholder={placeholder}
         disabled={disabled}
         skeleton={skeleton}
+        focused={calendarOpen}
         wrapperClassName={wrapperClassName}
         inputMode="numeric"
         maxLength={23}
