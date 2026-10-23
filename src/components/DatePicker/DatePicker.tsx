@@ -175,6 +175,7 @@ export function DatePicker({
         >
           <Calendar
             {...calendarProps}
+            showActions
             value={draftValue}
             defaultVisibleMonth={draftValue ?? currentValue ?? new Date()}
             minDate={minDate}
