@@ -98,10 +98,13 @@
   cursor: default;
 }
 
-.fdoc-calendar__period:focus-visible,
-.fdoc-calendar__choice:focus-visible,
-.fdoc-calendar__day:focus-visible {
+.fdoc-calendar__period:focus-visible {
   outline: var(--border-middle) solid var(--border-primary-default);
+  outline-offset: 0;
+}
+
+.fdoc-calendar__choice:focus-visible {
+  outline: var(--border-small) solid var(--border-accent-default);
   outline-offset: 0;
 }
 
@@ -156,18 +159,46 @@
   cursor: pointer;
 }
 
-.fdoc-calendar__day:hover:not(:disabled):not(.fdoc-calendar__day--selected) {
+.fdoc-calendar__day-value {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: var(--space-4);
+  border-radius: var(--radius-large);
+}
+
+.fdoc-calendar__day:hover:not(:disabled):not(.fdoc-calendar__day--selected) .fdoc-calendar__day-value {
   background: var(--transparent-background-base-hover);
 }
 
-.fdoc-calendar__day--today {
+.fdoc-calendar__day:active:not(:disabled):not(.fdoc-calendar__day--selected) .fdoc-calendar__day-value {
+  background: var(--transparent-background-base-pressed);
+}
+
+.fdoc-calendar__day--today .fdoc-calendar__day-value {
   border: var(--border-small) solid var(--border-accent-default);
   color: var(--text-accent-secondary);
 }
 
-.fdoc-calendar__day--selected {
+.fdoc-calendar__day--selected .fdoc-calendar__day-value {
   background: var(--background-primary-default);
   color: var(--text-primary-default);
+}
+
+.fdoc-calendar__day:focus-visible {
+  outline: 0;
+}
+
+.fdoc-calendar__day:focus-visible .fdoc-calendar__day-value {
+  outline: var(--border-small) solid var(--border-accent-default);
+  outline-offset: 0;
+}
+
+.fdoc-calendar__day:focus-visible:not(.fdoc-calendar__day--selected) .fdoc-calendar__day-value {
+  color: var(--text-accent-secondary);
 }
 
 .fdoc-calendar__day:disabled {
@@ -231,8 +262,10 @@
 
 .fdoc-calendar__choice {
   align-self: center;
+  justify-self: center;
+  width: 56px;
   min-width: 0;
-  height: 32px;
+  height: 28px;
   padding: var(--space-4);
   border: 0;
   border-radius: var(--radius-large);
