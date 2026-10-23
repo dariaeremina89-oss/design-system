@@ -188,6 +188,36 @@
   color: var(--text-primary-default);
 }
 
+.fdoc-calendar__day--today:hover:not(:disabled) .fdoc-calendar__day-value {
+  background: var(--transparent-background-accent-hover);
+}
+
+.fdoc-calendar__day--today:active:not(:disabled) .fdoc-calendar__day-value {
+  background: var(--transparent-background-accent-pressed);
+}
+
+.fdoc-calendar__day--today:focus-visible .fdoc-calendar__day-value {
+  background: var(--transparent-background-accent-focused);
+}
+
+.fdoc-calendar__day--selected:hover:not(:disabled) .fdoc-calendar__day-value {
+  background: var(--background-primary-default-hover);
+}
+
+.fdoc-calendar__day--selected:active:not(:disabled) .fdoc-calendar__day-value {
+  background: var(--background-primary-default-pressed);
+}
+
+.fdoc-calendar__day--selected:disabled .fdoc-calendar__day-value {
+  background: var(--background-primary-default-disabled);
+  color: var(--text-primary-default-disabled);
+}
+
+.fdoc-calendar__day--today:disabled .fdoc-calendar__day-value {
+  border-color: var(--border-accent-disabled);
+  color: var(--text-accent-secondary-disabled);
+}
+
 .fdoc-calendar__day:focus-visible {
   outline: 0;
 }
@@ -289,6 +319,36 @@
 .fdoc-calendar__choice--today {
   border: var(--border-small) solid var(--border-accent-default);
   color: var(--text-accent-secondary);
+}
+
+.fdoc-calendar__choice--today:hover:not(:disabled) {
+  background: var(--transparent-background-accent-hover);
+}
+
+.fdoc-calendar__choice--today:active:not(:disabled) {
+  background: var(--transparent-background-accent-pressed);
+}
+
+.fdoc-calendar__choice--today:focus-visible {
+  background: var(--transparent-background-accent-focused);
+}
+
+.fdoc-calendar__choice--selected:hover:not(:disabled) {
+  background: var(--background-primary-default-hover);
+}
+
+.fdoc-calendar__choice--selected:active:not(:disabled) {
+  background: var(--background-primary-default-pressed);
+}
+
+.fdoc-calendar__choice--selected:disabled {
+  background: var(--background-primary-default-disabled);
+  color: var(--text-primary-default-disabled);
+}
+
+.fdoc-calendar__choice--today:disabled {
+  border-color: var(--border-accent-disabled);
+  color: var(--text-accent-secondary-disabled);
 }
 
 .fdoc-calendar__choice:disabled {
