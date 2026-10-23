@@ -19,6 +19,10 @@ export interface DatePickerProps
   defaultValue?: Date | null;
   onValueChange?: (value: Date | null) => void;
   placeholder?: string;
+  /** Разрешает ручной ввод. Нельзя отключать одновременно с calendarSelection. */
+  manualInput?: boolean;
+  /** Показывает отдельную Calendar icon и разрешает выбор через Calendar. */
+  calendarSelection?: boolean;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -27,9 +31,13 @@ export interface DatePickerProps
   isDateDisabled?: (date: Date) => boolean;
   calendarProps?: Omit<
     CalendarProps,
-    'value' | 'defaultValue' | 'onValueChange' | 'onApply' | 'onCancel' | 'minDate' | 'maxDate' | 'isDateDisabled'
+    'type' | 'value' | 'defaultValue' | 'onValueChange' | 'onApply' | 'onCancel' | 'minDate' | 'maxDate' | 'isDateDisabled'
   >;
   'data-testid'?: string;
+}
+
+function joinClassNames(...classes: Array<string | false | undefined>) {
+  return classes.filter(Boolean).join(' ');
 }
 
 function isAllowed(
@@ -48,6 +56,8 @@ export function DatePicker({
   defaultValue = null,
   onValueChange,
   placeholder = '__.__.____',
+  manualInput = true,
+  calendarSelection = true,
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
@@ -59,21 +69,35 @@ export function DatePicker({
   disabled = false,
   skeleton = false,
   wrapperClassName,
+  onBlur,
   'data-testid': testId = 'date-picker',
   ...inputProps
 }: DatePickerProps) {
   const popupId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const calendarButtonRef = useRef<HTMLButtonElement | null>(null);
   const [internalValue, setInternalValue] = useState<Date | null>(defaultValue);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const currentValue = controlledValue !== undefined ? controlledValue : internalValue;
   const open = controlledOpen ?? internalOpen;
   const [textValue, setTextValue] = useState(() => formatDateValue(controlledValue ?? defaultValue));
   const [draftValue, setDraftValue] = useState<Date | null>(controlledValue ?? defaultValue);
+  const resolvedManualInput = manualInput || !calendarSelection;
+  const calendarButtons = calendarProps?.showActions ?? false;
 
   const setOpen = (next: boolean) => {
     if (controlledOpen === undefined) setInternalOpen(next);
     onOpenChange?.(next);
+  };
+
+  const restoreCalendarButtonFocus = () => {
+    requestAnimationFrame(() => calendarButtonRef.current?.focus());
+  };
+
+  const closeCalendar = (restoreFocus = false) => {
+    setDraftValue(currentValue);
+    setOpen(false);
+    if (restoreFocus) restoreCalendarButtonFocus();
   };
 
   useEffect(() => {
@@ -88,11 +112,11 @@ export function DatePicker({
   useEffect(() => {
     if (!open) return;
     const handlePointerDown = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+      if (!rootRef.current?.contains(event.target as Node)) closeCalendar();
     };
     document.addEventListener('pointerdown', handlePointerDown);
     return () => document.removeEventListener('pointerdown', handlePointerDown);
-  }, [open]);
+  }, [open, currentValue]);
 
   const commit = (next: Date | null) => {
     if (controlledValue === undefined) setInternalValue(next);
@@ -101,6 +125,7 @@ export function DatePicker({
   };
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!resolvedManualInput) return;
     const nextText = maskDateInput(event.currentTarget.value);
     setTextValue(nextText);
     if (!nextText) {
@@ -114,15 +139,26 @@ export function DatePicker({
     }
   };
 
+  const handleCalendarValueChange = (next: Date | null) => {
+    if (!next) return;
+    if (calendarButtons) {
+      setDraftValue(next);
+      return;
+    }
+    commit(next);
+    setOpen(false);
+    restoreCalendarButtonFocus();
+  };
+
   return (
     <div
       ref={rootRef}
-      className="fdoc-date-picker"
+      className={joinClassNames('fdoc-date-picker', open && 'fdoc-date-picker--open')}
       data-testid={testId}
       onKeyDown={event => {
         if (event.key === 'Escape' && open) {
           event.stopPropagation();
-          setOpen(false);
+          closeCalendar(true);
         }
       }}
     >
@@ -137,10 +173,13 @@ export function DatePicker({
         inputMode="numeric"
         maxLength={10}
         autoComplete="off"
+        readOnly={!resolvedManualInput}
         onChange={handleInputChange}
-        trailingContent={(
+        onBlur={onBlur}
+        trailingContent={calendarSelection ? (
           <ButtonIcon
             icon="calendar"
+            iconSize={24}
             size="small"
             color="neutral"
             className="fdoc-date-picker__calendar-button"
@@ -149,23 +188,27 @@ export function DatePicker({
             aria-expanded={open}
             aria-controls={open ? popupId : undefined}
             disabled={disabled}
-            onClick={() => setOpen(!open)}
+            onClick={event => {
+              calendarButtonRef.current = event.currentTarget;
+              setOpen(!open);
+            }}
             data-testid="date-picker-button"
           />
-        )}
-        trailingSkeleton={(
+        ) : undefined}
+        trailingSkeleton={calendarSelection ? (
           <ButtonIcon
             icon="calendar"
+            iconSize={24}
             size="small"
             color="neutral"
             state="skeleton"
             aria-label="Календарь"
           />
-        )}
+        ) : undefined}
         data-testid="date-picker-input"
       />
 
-      {open && !disabled && !skeleton && (
+      {open && calendarSelection && !disabled && !skeleton && (
         <div
           id={popupId}
           className="fdoc-date-picker__popup"
@@ -175,20 +218,19 @@ export function DatePicker({
         >
           <Calendar
             {...calendarProps}
-            showActions
+            type="date"
+            showActions={calendarButtons}
             value={draftValue}
             defaultVisibleMonth={draftValue ?? currentValue ?? new Date()}
             minDate={minDate}
             maxDate={maxDate}
             isDateDisabled={isDateDisabled}
-            onValueChange={setDraftValue}
-            onCancel={() => {
-              setDraftValue(currentValue);
-              setOpen(false);
-            }}
+            onValueChange={handleCalendarValueChange}
+            onCancel={() => closeCalendar(true)}
             onApply={next => {
               if (next) commit(next);
               setOpen(false);
+              restoreCalendarButtonFocus();
             }}
           />
         </div>
