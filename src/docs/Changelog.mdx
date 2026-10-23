@@ -10,6 +10,17 @@ import { Meta } from '@storybook/addon-docs/blocks';
     Связанные правки объединять в итоговое изменение, не перечислять коммиты.
     Новую дату добавлять сверху только при первом обновлении за этот день. */}
 
+## 23.10.2026
+
+### Calendar / RangeCalendar / DatePicker / RangePicker
+
+- Заглушки Calendar, RangeCalendar и DatePicker заменены рабочими компонентами; добавлен отдельный RangePicker.
+- Calendar и RangeCalendar реализованы как самостоятельные компоненты и не зависят от полей: их можно использовать напрямую в форме, модальном окне или другом контейнере.
+- Calendar поддерживает Date / Month / Year, min/max/custom disabled dates, навигацию и опциональную панель действий.
+- RangeCalendar поддерживает выбор start/end, range-подсветку и responsive-режим: 2 месяца на desktop и 1 на mobile.
+- DatePicker и RangePicker переиспользуют Input, поддерживают ручной ввод с масками __.__.____ и __.__.____ — __.__.____, popup, draft, Apply / Cancel, Escape и outside click.
+- Добавлены stories, public exports, Docs, Quality contract, unit- и browser-проверки.
+
 ## 15.10.2026
 
 ### Carousel
