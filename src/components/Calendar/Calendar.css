@@ -238,16 +238,16 @@
 }
 
 @media (max-width: 639px) {
-  .fdoc-range-calendar {
+  .fdoc-range-calendar[data-months="responsive"] {
     width: 288px;
     max-width: 100%;
   }
 
-  .fdoc-range-calendar__month--secondary {
+  .fdoc-range-calendar[data-months="responsive"] .fdoc-range-calendar__month--secondary {
     display: none;
   }
 
-  .fdoc-range-calendar__mobile-next {
+  .fdoc-range-calendar[data-months="responsive"] .fdoc-range-calendar__mobile-next {
     display: inline-flex;
   }
 }
