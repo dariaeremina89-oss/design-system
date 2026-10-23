@@ -14,12 +14,13 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 ### Calendar / RangeCalendar / DatePicker / RangePicker
 
-- Заглушки Calendar, RangeCalendar и DatePicker заменены рабочими компонентами; добавлен отдельный RangePicker.
-- Calendar и RangeCalendar реализованы как самостоятельные компоненты и не зависят от полей: их можно использовать напрямую в форме, модальном окне или другом контейнере.
-- Calendar поддерживает Date / Month / Year, min/max/custom disabled dates, навигацию и опциональную панель действий.
-- RangeCalendar поддерживает выбор start/end, range-подсветку и responsive-режим: 2 месяца на desktop и 1 на mobile.
-- DatePicker и RangePicker переиспользуют Input, поддерживают ручной ввод с масками __.__.____ и __.__.____ — __.__.____, popup, draft, Apply / Cancel, Escape и outside click.
-- Добавлены stories, public exports, Docs, Quality contract, unit- и browser-проверки.
+- Заглушки Calendar, RangeCalendar и DatePicker заменены рабочими компонентами; добавлен отдельный RangePicker. Calendar и RangeCalendar остаются самостоятельными и не зависят от полей.
+- Calendar синхронизирован с актуальными Figma и Notion: Type=date / month / year определяет итоговое значение, Header содержит Selection menu слева и Previous / Next справа, Selection menu и навигация используют иконки 24 px. Year grid содержит 24 года.
+- RangeCalendar на desktop показывает два последовательных месяца с Divider и навигацией только по внешним краям. На mobile используется отдельная вертикальная последовательность месяцев под Weekdays со Scroll area, а не один месяц с боковой навигацией.
+- RangeCalendar поддерживает Range single, start / middle / end, preview, minRange / maxRange и не позволяет строить период через Disabled date.
+- DatePicker и RangePicker получили Manual input / Calendar selection. Calendar icon использует glyph 24 px внутри области 32 px; геометрия Container синхронизирована с Figma.
+- Базовый DatePicker использует Calendar без Buttons: выбор дня сразу применяет значение и закрывает popup. Buttons=True остается отдельным сценарием с draft и подтверждением.
+- Обновлены stories, public exports, Docs, Quality contract, unit- и browser-проверки Figma-геометрии.
 
 ## 15.10.2026
 
