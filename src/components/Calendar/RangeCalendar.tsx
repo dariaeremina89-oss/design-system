@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   Calendar,
   CalendarActions,
@@ -14,6 +14,7 @@ import {
   startOfMonth,
   type DateRange,
 } from './dateUtils';
+import { Scrollbar } from '../Scrollbar/Scrollbar';
 import './Calendar.css';
 
 export interface RangeCalendarProps {
@@ -98,6 +99,7 @@ export function RangeCalendar({
   const [anchorDate, setAnchorDate] = useState<Date | null>(null);
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
   const [periodTarget, setPeriodTarget] = useState<'left' | 'right' | null>(null);
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
 
   const value = controlledValue ?? internalValue;
   const visibleMonth = startOfMonth(controlledVisibleMonth ?? internalVisibleMonth);
@@ -249,7 +251,8 @@ export function RangeCalendar({
         <div className="fdoc-range-calendar__mobile-weekdays">
           <CalendarWeekdays />
         </div>
-        <div className="fdoc-range-calendar__mobile-scroll">
+        <div className="fdoc-range-calendar__mobile-scroll-area">
+          <div ref={mobileScrollRef} className="fdoc-range-calendar__mobile-scroll fdoc-scrollbar-viewport">
           {mobileMonths.map(month => (
             <section key={month.toISOString()} data-testid="range-calendar-mobile-month">
               <div className="fdoc-range-calendar__mobile-month-title">
@@ -263,6 +266,8 @@ export function RangeCalendar({
               />
             </section>
           ))}
+          </div>
+          <Scrollbar viewportRef={mobileScrollRef} data-testid="range-calendar-scrollbar" />
         </div>
       </div>
 

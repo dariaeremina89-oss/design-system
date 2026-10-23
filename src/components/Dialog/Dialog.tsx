@@ -2,6 +2,7 @@ import { useId, useLayoutEffect, useRef, useState, type ReactNode, type RefObjec
 import { createPortal } from 'react-dom';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { Typography } from '../Typography/Typography';
+import { Scrollbar } from '../Scrollbar/Scrollbar';
 import { PortalContainer } from './PortalContainer';
 import './Dialog.css';
 
@@ -110,10 +111,13 @@ export function Dialog({ open, onClose, title, children, footer, size = 'small',
           <Typography as="h2" variant="h3-heading" id={titleId} tabIndex={-1} data-dialog-title="" className="fdoc-dialog__title">{title}</Typography>
           <ButtonIcon icon="cross" size="medium" color="neutral" aria-label={closeLabel} data-testid={`${testId}-close`} onClick={() => onClose('close-button')} />
         </header>
-        <div ref={contentRef} className="fdoc-dialog__content" data-testid={`${testId}-content`}>
-          {variant === 'image' && image && <div className="fdoc-dialog__image">{image}</div>}
-          {variant === 'image' && <Typography as="h3" variant="h3-heading" aria-hidden="true">{title}</Typography>}
-          {children}
+        <div className="fdoc-dialog__content-scroll">
+          <div ref={contentRef} className="fdoc-dialog__content fdoc-scrollbar-viewport" data-testid={`${testId}-content`}>
+            {variant === 'image' && image && <div className="fdoc-dialog__image">{image}</div>}
+            {variant === 'image' && <Typography as="h3" variant="h3-heading" aria-hidden="true">{title}</Typography>}
+            {children}
+          </div>
+          <Scrollbar viewportRef={contentRef} data-testid={`${testId}-scrollbar`} />
         </div>
         {footer && <footer className="fdoc-dialog__footer" data-shadow={scrollEdges.bottom} data-align={footerAlign} data-testid={`${testId}-footer`}>{footer}</footer>}
       </div>}

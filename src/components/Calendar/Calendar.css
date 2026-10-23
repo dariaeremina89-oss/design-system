@@ -478,6 +478,11 @@
   background: var(--background-base-default);
 }
 
+.fdoc-range-calendar__mobile-scroll-area {
+  position: relative;
+  max-height: 304px;
+}
+
 .fdoc-range-calendar__mobile-scroll {
   max-height: 304px;
   overflow-y: auto;

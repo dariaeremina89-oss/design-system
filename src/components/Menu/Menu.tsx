@@ -2,6 +2,7 @@ import { Children, cloneElement, isValidElement, useEffect, useId, useRef, useSt
 import { ItemRow, type ItemRowProps } from '../ItemRow/ItemRow';
 import { Divider } from '../Divider/Divider';
 import { Button, type ButtonProps } from '../Button/Button';
+import { Scrollbar } from '../Scrollbar/Scrollbar';
 import './Menu.css';
 
 export interface MenuItem extends Omit<ItemRowProps, 'id' | 'role' | 'onClick' | 'onKeyDown' | 'ref' | 'tabIndex'> {
@@ -39,7 +40,7 @@ export function Menu({ items, id: providedId, role = 'menu', selectedId, activeI
   onAction, searchable = false, searchLabel = 'Поиск по меню', footer, maxHeight = 304, className = '',
   autoFocus = false, focusItems = true, emptyText = 'Ничего не найдено', skeleton = false, onTab, ...aria }: MenuProps) {
   const uid = useId(); const id = providedId ?? uid;
-  const root = useRef<HTMLDivElement>(null); const search = useRef<HTMLInputElement>(null);
+  const root = useRef<HTMLDivElement>(null); const search = useRef<HTMLInputElement>(null); const listRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState(''); const [internalActive, setInternalActive] = useState<string>();
   const active = controlledActive ?? internalActive;
   const visible = items.filter(item => !query || String(item.textValue ?? item.title ?? '').toLocaleLowerCase().includes(query.toLocaleLowerCase()));
@@ -91,7 +92,7 @@ export function Menu({ items, id: providedId, role = 'menu', selectedId, activeI
   }
   return <div className={`fdoc-menu ${className}`} ref={root} style={{ maxHeight }} onKeyDown={navigate} aria-hidden={skeleton || undefined} inert={skeleton || undefined}>
     {searchable && <div className="fdoc-menu__search"><ItemRow variant="search" state={skeleton ? 'skeleton' : 'default'} searchProps={{ ref: search, 'aria-label': searchLabel, value: query, onChange: e => setQuery(e.target.value), onClear: () => setQuery(''), onSearch: () => { if (enabled[0]) activate(enabled[0].id, true); } }}/></div>}
-    <div className="fdoc-menu__list" id={id} tabIndex={autoFocus === 'container' && !skeleton ? -1 : undefined} role={skeleton ? undefined : role} aria-label={aria['aria-labelledby'] ? undefined : role === 'menu' ? 'Действия' : 'Варианты выбора'} {...aria}>
+    <div ref={listRef} className="fdoc-menu__list fdoc-scrollbar-viewport" id={id} tabIndex={autoFocus === 'container' && !skeleton ? -1 : undefined} role={skeleton ? undefined : role} aria-label={aria['aria-labelledby'] ? undefined : role === 'menu' ? 'Действия' : 'Варианты выбора'} {...aria}>
       {visible.map(item => {
         const { id: itemId, onAction: itemAction, textValue: _text, ...row } = item;
         const enabledItem = isMenuItemEnabled(item);
@@ -109,6 +110,7 @@ export function Menu({ items, id: providedId, role = 'menu', selectedId, activeI
       })}
       {!visible.length && <div className="fdoc-menu__empty" role="presentation">{emptyText}</div>}
     </div>
+    <Scrollbar viewportRef={listRef} className="fdoc-menu__scrollbar" data-testid="menu-scrollbar" />
     {footer && <div className="fdoc-menu__footer"><Divider/><div className="fdoc-menu__buttons">{skeleton ? Children.map(footer, child => isValidElement<ButtonProps>(child) && child.type === Button ? cloneElement(child, { state: 'skeleton' }) : child) : footer}</div></div>}
   </div>;
 }
