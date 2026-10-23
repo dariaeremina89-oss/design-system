@@ -516,22 +516,26 @@ export function Calendar({
                   const current = today.getFullYear() === date.getFullYear() && today.getMonth() === monthIndex;
                   const disabled = !periodHasAvailableDate(date, minDate, maxDate, isDateDisabled);
                   return (
-                    <button
+                    <div
                       key={label}
-                      type="button"
-                      className={joinClassNames(
-                        'fdoc-calendar__choice',
-                        selected && 'fdoc-calendar__choice--selected',
-                        current && !selected && 'fdoc-calendar__choice--today',
-                      )}
+                      className="fdoc-calendar__choice-cell"
                       role="gridcell"
                       aria-selected={selected || undefined}
                       aria-disabled={disabled || undefined}
-                      disabled={disabled}
-                      onClick={() => handleMonthChoice(monthIndex)}
                     >
-                      {label}
-                    </button>
+                      <button
+                        type="button"
+                        className={joinClassNames(
+                          'fdoc-calendar__choice',
+                          selected && 'fdoc-calendar__choice--selected',
+                          current && !selected && 'fdoc-calendar__choice--today',
+                        )}
+                        disabled={disabled}
+                        onClick={() => handleMonthChoice(monthIndex)}
+                      >
+                        {label}
+                      </button>
+                    </div>
                   );
                 })
               : years.map(year => {
@@ -539,22 +543,26 @@ export function Calendar({
                   const current = today.getFullYear() === year;
                   const disabled = !yearHasAvailableDate(year, minDate, maxDate, isDateDisabled);
                   return (
-                    <button
+                    <div
                       key={year}
-                      type="button"
-                      className={joinClassNames(
-                        'fdoc-calendar__choice',
-                        selected && 'fdoc-calendar__choice--selected',
-                        current && !selected && 'fdoc-calendar__choice--today',
-                      )}
+                      className="fdoc-calendar__choice-cell"
                       role="gridcell"
                       aria-selected={selected || undefined}
                       aria-disabled={disabled || undefined}
-                      disabled={disabled}
-                      onClick={() => handleYearChoice(year)}
                     >
-                      {year}
-                    </button>
+                      <button
+                        type="button"
+                        className={joinClassNames(
+                          'fdoc-calendar__choice',
+                          selected && 'fdoc-calendar__choice--selected',
+                          current && !selected && 'fdoc-calendar__choice--today',
+                        )}
+                        disabled={disabled}
+                        onClick={() => handleYearChoice(year)}
+                      >
+                        {year}
+                      </button>
+                    </div>
                   );
                 })}
           </div>
