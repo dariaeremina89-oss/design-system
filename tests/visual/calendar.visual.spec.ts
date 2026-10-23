@@ -43,7 +43,10 @@ test('Calendar Year contains 24 years in a 4-column grid', async ({ page }) => {
 
   const yearButtons = calendar.locator('.fdoc-calendar__choice');
   await expect(yearButtons).toHaveCount(24);
-  await expect(calendar.locator('.fdoc-calendar__choices')).toHaveCSS('grid-template-columns', /repeat\(4,/);
+  const columns = await calendar.locator('.fdoc-calendar__choices').evaluate(element =>
+    getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length,
+  );
+  expect(columns).toBe(4);
 });
 
 test('RangeCalendar matches desktop Figma structure and mobile scroll', async ({ page }) => {
