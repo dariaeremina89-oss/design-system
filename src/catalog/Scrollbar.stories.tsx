@@ -23,6 +23,7 @@ const meta = {
   title: 'Components/Elements/Scrollbar',
   component: Scrollbar,
   tags: ['autodocs', 'ready'],
+  args: { viewportRef: { current: null } },
   parameters: {
     layout: 'centered',
     docs: { description: { component: componentDocs('Scrollbar') } },

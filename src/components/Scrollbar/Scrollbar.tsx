@@ -3,13 +3,12 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-  type PointerEvent as ReactPointerEvent,
-  type RefObject,
+  type PointerEvent as ReactPointerEvent
 } from 'react';
 import './Scrollbar.css';
 
 export interface ScrollbarProps {
-  viewportRef: RefObject<HTMLElement | null>;
+  viewportRef: { readonly current: HTMLElement | null };
   minThumbSize?: number;
   className?: string;
   'data-testid'?: string;
