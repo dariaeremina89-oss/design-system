@@ -1,0 +1,249 @@
+.fdoc-calendar,
+.fdoc-range-calendar {
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: var(--radius-small);
+  background: var(--background-base-default);
+  box-shadow: var(--shadow-s);
+  color: var(--text-base-default);
+  font-family: var(--font-family-sans);
+}
+
+.fdoc-calendar {
+  width: 288px;
+}
+
+.fdoc-calendar__header {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 32px;
+  align-items: center;
+  min-height: 56px;
+  padding: var(--space-12) var(--space-20);
+}
+
+.fdoc-calendar__header--single-action {
+  grid-template-columns: 32px minmax(0, 1fr) 32px;
+}
+
+.fdoc-calendar__period {
+  min-width: 0;
+  height: 32px;
+  padding: var(--space-4) var(--space-8);
+  border: 0;
+  border-radius: var(--radius-small);
+  background: transparent;
+  color: var(--text-base-default);
+  font: inherit;
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-20);
+  text-align: center;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fdoc-calendar__period:hover {
+  background: var(--background-base-secondary);
+}
+
+.fdoc-calendar__period:focus-visible,
+.fdoc-calendar__choice:focus-visible,
+.fdoc-calendar__day:focus-visible {
+  outline: var(--border-middle) solid var(--border-primary-default);
+  outline-offset: 0;
+}
+
+.fdoc-calendar__header-spacer {
+  width: 32px;
+  height: 32px;
+}
+
+.fdoc-calendar__weekdays,
+.fdoc-calendar__week {
+  display: grid;
+  grid-template-columns: repeat(7, 32px);
+  column-gap: var(--space-4);
+  padding-inline: var(--space-20);
+}
+
+.fdoc-calendar__weekdays {
+  min-height: 32px;
+  align-items: center;
+  color: var(--text-base-secondary);
+  font-size: var(--font-size-14);
+  line-height: var(--line-height-20);
+  text-align: center;
+}
+
+.fdoc-calendar__date-grid {
+  display: grid;
+  gap: var(--space-4);
+  padding-bottom: var(--space-20);
+}
+
+.fdoc-calendar__day-shell {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+
+.fdoc-calendar__day {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: var(--space-2);
+  border: 0;
+  border-radius: var(--radius-large);
+  background: transparent;
+  color: var(--text-base-default);
+  font: inherit;
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-20);
+  cursor: pointer;
+}
+
+.fdoc-calendar__day:hover:not(:disabled):not(.fdoc-calendar__day--selected) {
+  background: var(--background-base-secondary);
+}
+
+.fdoc-calendar__day--today {
+  border: var(--border-small) solid var(--border-accent-default);
+  color: var(--text-accent-secondary);
+}
+
+.fdoc-calendar__day--selected {
+  background: var(--background-primary-default);
+  color: var(--text-primary-default);
+}
+
+.fdoc-calendar__day:disabled {
+  color: var(--text-base-default-disabled);
+  cursor: not-allowed;
+}
+
+.fdoc-calendar__day-empty {
+  width: 32px;
+  height: 32px;
+}
+
+.fdoc-calendar__range-fill {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: -2px;
+  right: -2px;
+  background: var(--background-primary-tertiary);
+}
+
+.fdoc-calendar__day-shell--range-start .fdoc-calendar__range-fill {
+  left: 50%;
+}
+
+.fdoc-calendar__day-shell--range-end .fdoc-calendar__range-fill {
+  right: 50%;
+}
+
+.fdoc-calendar__day-shell--range-single .fdoc-calendar__range-fill {
+  display: none;
+}
+
+.fdoc-calendar__choices {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-16) var(--space-4);
+  min-height: 208px;
+  padding: var(--space-6) var(--space-20) var(--space-20);
+}
+
+.fdoc-calendar__choice {
+  min-width: 0;
+  height: 32px;
+  padding: var(--space-4);
+  border: 0;
+  border-radius: var(--radius-large);
+  background: transparent;
+  color: var(--text-base-default);
+  font: inherit;
+  font-size: var(--font-size-14);
+  line-height: var(--line-height-20);
+  cursor: pointer;
+}
+
+.fdoc-calendar__choice:hover:not(:disabled):not(.fdoc-calendar__choice--selected) {
+  background: var(--background-base-secondary);
+}
+
+.fdoc-calendar__choice--selected {
+  background: var(--background-primary-default);
+  color: var(--text-primary-default);
+}
+
+.fdoc-calendar__choice--today {
+  border: var(--border-small) solid var(--border-accent-default);
+  color: var(--text-accent-secondary);
+}
+
+.fdoc-calendar__choice:disabled {
+  color: var(--text-base-default-disabled);
+  cursor: not-allowed;
+}
+
+.fdoc-calendar__actions {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-8);
+  min-height: 56px;
+  padding: var(--space-12) var(--space-16);
+  border-top: var(--border-small) solid var(--border-base-tertiary);
+}
+
+.fdoc-range-calendar {
+  width: 576px;
+}
+
+.fdoc-range-calendar__months {
+  display: flex;
+  width: 100%;
+}
+
+.fdoc-range-calendar__month {
+  width: 288px;
+  flex: 0 0 288px;
+}
+
+.fdoc-range-calendar__mobile-next {
+  display: none;
+}
+
+@media (max-width: 639px) {
+  .fdoc-range-calendar {
+    width: 288px;
+    max-width: 100%;
+  }
+
+  .fdoc-range-calendar__month--secondary {
+    display: none;
+  }
+
+  .fdoc-range-calendar__mobile-next {
+    display: inline-flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fdoc-calendar__period,
+  .fdoc-calendar__choice,
+  .fdoc-calendar__day {
+    scroll-behavior: auto;
+  }
+}
