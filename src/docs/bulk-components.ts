@@ -453,6 +453,76 @@ const pagination = componentDoc({
   checklist: ['Проверены 0, 1, 2–4 и много страниц.','Counter корректен на последней странице.','Нет дублирующих Ellipsis.','Arrows блокируются на краях.','Long Numbers не создают overflow.'],
 });
 
+const calendar = componentDoc({
+  purpose: '**Calendar** — самостоятельный календарь выбора одной даты. Компонент не зависит от поля и может использоваться отдельно в форме, модальном окне или другом контейнере.',
+  anatomy: 'Header с текущим периодом и навигацией → дни недели → сетка дат или сетка Month / Year → опциональная панель действий.',
+  api: '- value / defaultValue — выбранная дата;\n- visibleMonth / defaultVisibleMonth — отображаемый месяц;\n- view / defaultView: date / month / year;\n- minDate / maxDate / isDateDisabled — ограничения выбора;\n- showActions, applyText / cancelText, onApply / onCancel;\n- onValueChange, onVisibleMonthChange, onViewChange.',
+  variants: 'Date соответствует календарной сетке 288 px. Month показывает 12 месяцев, Year — 16 лет. Панель действий опциональна и не требуется для standalone-сценариев с мгновенным применением.',
+  geometry: 'Ширина 288 px. Header 56 px. Ячейка дня 32 × 32, gap 4 px, горизонтальные поля сетки 20 px. Нижняя панель действий 56 px.',
+  behavior: 'Стрелки меняют месяц, год или блок лет в зависимости от текущего view. Клик по периоду переводит Date → Month → Year; выбор года возвращает Month, выбор месяца — Date. Ограниченные даты не выбираются.',
+  responsive: 'Геометрия дня и типографика не уменьшаются. Calendar остается шириной 288 px и должен размещаться внутри доступного контейнера без horizontal overflow.',
+  accessibility: 'Дни — нативные button внутри grid. Выбранная дата использует aria-pressed. Disabled-даты нативно недоступны. Навигация и переключение периода имеют доступные имена.',
+  checklist: [
+    'Calendar можно использовать без DatePicker.',
+    'Date / Month / Year переключаются без потери выбранной даты.',
+    'Min / max / custom disabled блокируют выбор.',
+    'Сегодня и выбранная дата имеют независимые состояния.',
+    'Панель действий может быть скрыта.',
+  ],
+});
+
+const rangeCalendar = componentDoc({
+  purpose: '**RangeCalendar** — самостоятельный календарь выбора диапазона дат. Он не зависит от RangePicker и подходит для любого сценария, где календарь показывается напрямую.',
+  anatomy: 'Один или два календарных месяца + общая range-подсветка + опциональная панель действий.',
+  api: '- value / defaultValue: { start, end };\n- visibleMonth / defaultVisibleMonth;\n- months: responsive / 1 / 2;\n- minDate / maxDate / isDateDisabled;\n- showActions, onApply / onCancel;\n- onValueChange / onVisibleMonthChange.',
+  variants: 'Desktop Figma-вариант показывает два месяца рядом, Mobile — один. Значение responsive использует эту схему автоматически.',
+  geometry: 'Один месяц 288 px, два месяца 576 px. Ячейка дня 32 × 32. Range-background проходит между началом и окончанием диапазона, endpoints остаются круглыми selected-днями.',
+  behavior: 'Первый клик задает start. Второй клик завершает диапазон; если вторая дата раньше первой, компонент автоматически упорядочивает start / end. После завершенного диапазона следующий клик начинает новый.',
+  responsive: 'При ширине меньше 640 px responsive-вариант показывает один месяц 288 px; на desktop — два месяца 576 px. Это правило принадлежит самому RangeCalendar, а не RangePicker.',
+  accessibility: 'Каждый день остается отдельной кнопкой; начало и конец диапазона имеют aria-pressed. Недоступные даты исключаются из выбора.',
+  checklist: [
+    'RangeCalendar работает отдельно от поля.',
+    'Responsive: 2 месяца desktop / 1 mobile.',
+    'Диапазон корректно упорядочивается.',
+    'Start / middle / end визуально различимы.',
+    'Apply недоступен до заполнения start и end.',
+  ],
+});
+
+const datePicker = componentDoc({
+  purpose: '**DatePicker** — поле даты, которое объединяет Input и Calendar. Calendar остается самостоятельным компонентом и не зависит от DatePicker.',
+  anatomy: 'Input с Label / Caption / Error → кнопка calendar справа → popup с Calendar.',
+  api: '- value / defaultValue: Date | null;\n- open / defaultOpen / onOpenChange;\n- minDate / maxDate / isDateDisabled;\n- calendarProps — настройки вложенного Calendar;\n- остальные field props наследуют Input.',
+  variants: 'Medium 56 и Small 48 используют геометрию Input. Filled / Error / Disabled / Skeleton наследуют существующие состояния поля.',
+  behavior: 'Ручной ввод автоматически форматируется по маске ДД.ММ.ГГГГ с placeholder __.__.____. Кнопка справа открывает Calendar. Выбор в popup сначала меняет draft; значение поля обновляется после действия «Выбрать». Escape, Cancel и outside click закрывают popup без применения draft.',
+  responsive: 'Поле остается fluid. Popup использует Calendar 288 px и не уменьшает его типографику.',
+  accessibility: 'Кнопка календаря сообщает aria-haspopup / aria-expanded / aria-controls. Popup имеет role=dialog, а поле сохраняет всю семантику Input.',
+  checklist: [
+    'Маска даты __.__.____ работает при ручном вводе.',
+    'Calendar открывается и закрывается без потери фокуса поля.',
+    'Cancel не применяет draft.',
+    'Apply синхронизирует поле и Date value.',
+    'Disabled / Error / Small совпадают с Input.',
+  ],
+});
+
+const rangePicker = componentDoc({
+  purpose: '**RangePicker** — поле диапазона дат, которое объединяет Input и RangeCalendar. RangeCalendar при этом остается доступен как отдельный компонент.',
+  anatomy: 'Input периода → кнопка calendar → popup с RangeCalendar.',
+  api: '- value / defaultValue: { start, end };\n- open / defaultOpen / onOpenChange;\n- minDate / maxDate / isDateDisabled;\n- calendarProps — настройки RangeCalendar;\n- остальные field props наследуют Input.',
+  variants: 'Medium 56 и Small 48 наследуются от Input. Popup по умолчанию использует RangeCalendar months=responsive.',
+  behavior: 'Ручной ввод форматируется как __.__.____ — __.__.____. Popup хранит draft диапазона и применяет его только после подтверждения. После Cancel или outside click текущее значение поля не меняется.',
+  responsive: 'По умолчанию RangePicker показывает 2 месяца на desktop и 1 на mobile, потому что использует responsive-режим RangeCalendar.',
+  accessibility: 'Кнопка календаря сообщает состояние popup. Поле использует семантику Input, popup — dialog, даты — button/grid.',
+  checklist: [
+    'RangePicker не содержит собственной реализации календарной сетки.',
+    'Ручной ввод поддерживает маску двух дат.',
+    'Responsive popup: 2 месяца desktop / 1 mobile.',
+    'Apply доступен только для полного диапазона.',
+    'Cancel не меняет сохраненное значение.',
+  ],
+});
+
 const docs: Record<string, string> = {
   Autocomplete: autocomplete,
   AsyncAutocomplete: asyncAutocomplete,
@@ -480,6 +550,10 @@ const docs: Record<string, string> = {
   Breadcrumbs: breadcrumbs,
   Tabs: tabs,
   Pagination: pagination,
+  Calendar: calendar,
+  RangeCalendar: rangeCalendar,
+  DatePicker: datePicker,
+  RangePicker: rangePicker,
 };
 
 export function componentDocs(name: string) {
