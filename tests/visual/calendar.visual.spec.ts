@@ -91,6 +91,7 @@ test('DatePicker uses 24px calendar icon and Calendar without buttons by default
 
   const input = page.getByRole('textbox');
   const button = page.getByTestId('date-picker-button');
+  const buttonBeforeOpen = await button.boundingBox();
   await expect(input).toHaveAttribute('placeholder', '__.__.____');
   await expect(button).toHaveCSS('width', '32px');
   await expect(button).toHaveCSS('height', '32px');
@@ -107,13 +108,24 @@ test('DatePicker uses 24px calendar icon and Calendar without buttons by default
   const popup = page.getByTestId('date-picker-popup');
   const field = page.getByTestId('input-field');
   await expect(popup).toBeVisible();
+
+  const buttonAfterOpen = await button.boundingBox();
+  expect(buttonBeforeOpen).not.toBeNull();
+  expect(buttonAfterOpen).not.toBeNull();
+  expect(Math.abs(buttonAfterOpen!.x - buttonBeforeOpen!.x)).toBeLessThanOrEqual(0.5);
+  expect(Math.abs(buttonAfterOpen!.y - buttonBeforeOpen!.y)).toBeLessThanOrEqual(0.5);
   await expect(page.getByTestId('calendar-actions')).toHaveCount(0);
 
   const fieldBox = await field.boundingBox();
   const popupBox = await popup.boundingBox();
   expect(fieldBox).not.toBeNull();
   expect(popupBox).not.toBeNull();
-  expect(Math.abs(popupBox!.y - (fieldBox!.y + fieldBox!.height + 8))).toBeLessThanOrEqual(1);
+  expect(Math.abs(popupBox!.y - (fieldBox!.y + fieldBox!.height))).toBeLessThanOrEqual(1);
+
+  const helper = page.locator('.fdoc-field__helper');
+  const helperBox = await helper.boundingBox();
+  expect(helperBox).not.toBeNull();
+  expect(popupBox!.y).toBeLessThan(helperBox!.y + helperBox!.height);
 
   const visibleCalendar = page.getByTestId('date-picker-popup').getByTestId('calendar');
   const day = visibleCalendar.locator('[data-testid^="calendar-day-"]:not(:disabled)').filter({ hasText: /^24$/ }).first();
