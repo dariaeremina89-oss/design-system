@@ -62,6 +62,11 @@ export function RangePicker({
   const [textValue, setTextValue] = useState(() => formatRangeValue(controlledValue ?? defaultValue));
   const [draftValue, setDraftValue] = useState<DateRange>(controlledValue ?? defaultValue);
 
+  const setOpen = (next: boolean) => {
+    if (controlledOpen === undefined) setInternalOpen(next);
+    onOpenChange?.(next);
+  };
+
   useEffect(() => {
     if (controlledValue !== undefined) setTextValue(formatRangeValue(controlledValue));
   }, [controlledValue]);
@@ -79,11 +84,6 @@ export function RangePicker({
     document.addEventListener('pointerdown', handlePointerDown);
     return () => document.removeEventListener('pointerdown', handlePointerDown);
   }, [open]);
-
-  const setOpen = (next: boolean) => {
-    if (controlledOpen === undefined) setInternalOpen(next);
-    onOpenChange?.(next);
-  };
 
   const commit = (next: DateRange) => {
     if (controlledValue === undefined) setInternalValue(next);
