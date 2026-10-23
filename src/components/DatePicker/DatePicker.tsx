@@ -71,6 +71,11 @@ export function DatePicker({
   const [textValue, setTextValue] = useState(() => formatDateValue(controlledValue ?? defaultValue));
   const [draftValue, setDraftValue] = useState<Date | null>(controlledValue ?? defaultValue);
 
+  const setOpen = (next: boolean) => {
+    if (controlledOpen === undefined) setInternalOpen(next);
+    onOpenChange?.(next);
+  };
+
   useEffect(() => {
     if (controlledValue !== undefined) setTextValue(formatDateValue(controlledValue));
   }, [controlledValue]);
@@ -88,11 +93,6 @@ export function DatePicker({
     document.addEventListener('pointerdown', handlePointerDown);
     return () => document.removeEventListener('pointerdown', handlePointerDown);
   }, [open]);
-
-  const setOpen = (next: boolean) => {
-    if (controlledOpen === undefined) setInternalOpen(next);
-    onOpenChange?.(next);
-  };
 
   const commit = (next: Date | null) => {
     if (controlledValue === undefined) setInternalValue(next);
