@@ -24,6 +24,8 @@ test('Calendar matches Figma header and day geometry', async ({ page }) => {
 
   await expect(previous).toHaveCSS('width', '32px');
   await expect(previous).toHaveCSS('height', '32px');
+  await expect(previous).toHaveCSS('padding-left', '4px');
+  await expect(previous).toHaveCSS('padding-right', '4px');
   await expect(previous.locator('[data-icon="arrow-chevron-left"]')).toHaveCSS('width', '24px');
   await expect(previous.locator('[data-icon="arrow-chevron-left"]')).toHaveCSS('height', '24px');
   await expect(next.locator('[data-icon="arrow-chevron-right"]')).toHaveCSS('width', '24px');
@@ -38,7 +40,7 @@ test('Calendar matches Figma header and day geometry', async ({ page }) => {
   await expect(selectedValue).toHaveCSS('height', '28px');
 });
 
-test('Calendar Year contains 24 years in a 4-column grid', async ({ page }) => {
+test('Calendar Year contains 16 years in a 4-column grid', async ({ page }) => {
   await page.goto('/iframe.html?id=components-datetime-calendar--year&viewMode=story');
 
   const calendar = page.getByTestId('calendar');
@@ -46,7 +48,7 @@ test('Calendar Year contains 24 years in a 4-column grid', async ({ page }) => {
   await expect(calendar).toHaveAttribute('data-calendar-view', 'year');
 
   const yearButtons = calendar.locator('.fdoc-calendar__choice');
-  await expect(yearButtons).toHaveCount(24);
+  await expect(yearButtons).toHaveCount(16);
   const columns = await calendar.locator('.fdoc-calendar__choices').evaluate(element =>
     getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length,
   );
@@ -94,14 +96,24 @@ test('DatePicker uses 24px calendar icon and Calendar without buttons by default
   await expect(button).toHaveCSS('height', '32px');
   await expect(button.locator('[data-icon="calendar"]')).toHaveCSS('width', '24px');
   await expect(button.locator('[data-icon="calendar"]')).toHaveCSS('height', '24px');
+  await expect(button).toHaveCSS('padding-left', '4px');
+  await expect(button).toHaveCSS('padding-right', '4px');
   await expect(page.getByTestId('input-field')).toHaveCSS('padding-right', '8px');
 
   await input.fill('23102026');
   await expect(input).toHaveValue('23.10.2026');
 
   await button.click();
-  await expect(page.getByTestId('date-picker-popup')).toBeVisible();
+  const popup = page.getByTestId('date-picker-popup');
+  const field = page.getByTestId('input-field');
+  await expect(popup).toBeVisible();
   await expect(page.getByTestId('calendar-actions')).toHaveCount(0);
+
+  const fieldBox = await field.boundingBox();
+  const popupBox = await popup.boundingBox();
+  expect(fieldBox).not.toBeNull();
+  expect(popupBox).not.toBeNull();
+  expect(Math.abs(popupBox!.y - (fieldBox!.y + fieldBox!.height + 8))).toBeLessThanOrEqual(1);
 
   const visibleCalendar = page.getByTestId('date-picker-popup').getByTestId('calendar');
   const day = visibleCalendar.locator('[data-testid^="calendar-day-"]:not(:disabled)').filter({ hasText: /^24$/ }).first();
