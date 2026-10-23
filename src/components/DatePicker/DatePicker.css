@@ -19,6 +19,36 @@
   flex: 0 0 auto;
 }
 
+.fdoc-date-picker--open .fdoc-input__field,
+.fdoc-range-picker--open .fdoc-input__field {
+  border-width: var(--border-middle);
+  border-color: var(--border-primary-default);
+  padding: calc(var(--space-12) - var(--border-small));
+}
+
+.fdoc-date-picker--open .fdoc-input--small .fdoc-input__field,
+.fdoc-range-picker--open .fdoc-input--small .fdoc-input__field {
+  padding-top: calc(var(--space-8) - var(--border-small));
+  padding-bottom: calc(var(--space-8) - var(--border-small));
+}
+
+.fdoc-date-picker--open .fdoc-input__field--error,
+.fdoc-range-picker--open .fdoc-input__field--error {
+  border-color: var(--border-error-default);
+}
+
+.fdoc-range-calendar__period-popover {
+  position: absolute;
+  z-index: 1;
+  top: 48px;
+  left: 0;
+}
+
+.fdoc-range-calendar__period-popover--right {
+  right: 0;
+  left: auto;
+}
+
 @media (max-width: 639px) {
   .fdoc-date-picker__popup,
   .fdoc-range-picker__popup {
