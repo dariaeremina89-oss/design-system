@@ -160,6 +160,7 @@ function CalendarArrow({
       iconSize={24}
       size="small"
       color="neutral"
+      className="fdoc-calendar__arrow"
       aria-label={ariaLabel ?? (direction === 'previous' ? 'Предыдущий месяц' : 'Следующий месяц')}
       onClick={onClick}
       disabled={disabled}
