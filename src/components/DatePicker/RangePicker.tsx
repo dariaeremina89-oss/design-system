@@ -3,6 +3,7 @@ import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { RangeCalendar, type RangeCalendarProps } from '../Calendar/RangeCalendar';
 import { Input, type InputProps } from '../Input/Input';
 import {
+  compareDays,
   formatRangeValue,
   maskRangeInput,
   parseRangeValue,
@@ -100,8 +101,17 @@ export function RangePicker({
     }
     const parsed = parseRangeValue(nextText);
     if (parsed) {
-      if (controlledValue === undefined) setInternalValue(parsed);
-      onValueChange?.(parsed);
+      const startAllowed = (!minDate || compareDays(parsed.start!, minDate) >= 0)
+        && (!maxDate || compareDays(parsed.start!, maxDate) <= 0)
+        && !isDateDisabled?.(parsed.start!);
+      const endAllowed = (!minDate || compareDays(parsed.end!, minDate) >= 0)
+        && (!maxDate || compareDays(parsed.end!, maxDate) <= 0)
+        && !isDateDisabled?.(parsed.end!);
+
+      if (startAllowed && endAllowed) {
+        if (controlledValue === undefined) setInternalValue(parsed);
+        onValueChange?.(parsed);
+      }
     }
   };
 
@@ -166,6 +176,7 @@ export function RangePicker({
         >
           <RangeCalendar
             {...calendarProps}
+            showActions
             value={draftValue}
             defaultVisibleMonth={draftValue.start ?? currentValue.start ?? new Date()}
             minDate={minDate}
