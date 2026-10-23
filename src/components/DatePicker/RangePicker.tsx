@@ -86,6 +86,7 @@ export function RangePicker({
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const currentValue = controlledValue ?? internalValue;
   const open = controlledOpen ?? internalOpen;
+  const calendarOpen = open && calendarSelection && !disabled && !skeleton;
   const [textValue, setTextValue] = useState(() => formatRangeValue(controlledValue ?? defaultValue));
   const [draftValue, setDraftValue] = useState<DateRange>(controlledValue ?? defaultValue);
   const resolvedManualInput = manualInput || !calendarSelection;
@@ -170,10 +171,10 @@ export function RangePicker({
   return (
     <div
       ref={rootRef}
-      className={joinClassNames('fdoc-range-picker', open && 'fdoc-range-picker--open')}
+      className={joinClassNames('fdoc-range-picker', calendarOpen && 'fdoc-range-picker--open')}
       data-testid={testId}
       onKeyDown={event => {
-        if (event.key === 'Escape' && open) {
+        if (event.key === 'Escape' && calendarOpen) {
           event.stopPropagation();
           closeCalendar(true, !calendarButtons);
         }
@@ -190,6 +191,7 @@ export function RangePicker({
         inputMode="numeric"
         maxLength={23}
         autoComplete="off"
+        aria-controls={calendarOpen ? popupId : undefined}
         readOnly={!resolvedManualInput}
         onChange={handleInputChange}
         onBlur={onBlur}
@@ -202,8 +204,8 @@ export function RangePicker({
             className="fdoc-range-picker__calendar-button"
             aria-label={open ? 'Закрыть календарь' : 'Открыть календарь'}
             aria-haspopup="dialog"
-            aria-expanded={open}
-            aria-controls={open ? popupId : undefined}
+            aria-expanded={calendarOpen}
+            aria-controls={calendarOpen ? popupId : undefined}
             disabled={disabled}
             onClick={event => {
               calendarButtonRef.current = event.currentTarget;
@@ -226,7 +228,7 @@ export function RangePicker({
         data-testid="range-picker-input"
       />
 
-      {open && calendarSelection && !disabled && !skeleton && (
+      {calendarOpen && (
         <div
           id={popupId}
           className="fdoc-range-picker__popup"
