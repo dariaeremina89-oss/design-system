@@ -1,8 +1,8 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent } from 'react';
-import { usePickerPopoverPosition } from './usePickerPopoverPosition';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { Calendar, type CalendarProps } from '../Calendar/Calendar';
 import { Input, type InputProps } from '../Input/Input';
+import { Popup } from '../Menu/Popup';
 import {
   compareDays,
   formatDateValue,
@@ -79,9 +79,7 @@ export function DatePicker({
   ...inputProps
 }: DatePickerProps) {
   const popupId = useId();
-  const rootRef = useRef<HTMLDivElement>(null);
   const fieldRef = useRef<HTMLDivElement>(null);
-  const popupRef = useRef<HTMLDivElement>(null);
   const calendarButtonRef = useRef<HTMLButtonElement | null>(null);
   const [internalValue, setInternalValue] = useState<Date | null>(defaultValue);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
@@ -92,7 +90,6 @@ export function DatePicker({
   const [draftValue, setDraftValue] = useState<Date | null>(controlledValue ?? defaultValue);
   const resolvedManualInput = manualInput || !calendarSelection;
   const calendarButtons = calendarProps?.showActions ?? false;
-  const popupStyle = usePickerPopoverPosition(calendarOpen, fieldRef, popupRef);
 
   const setOpen = (next: boolean) => {
     if (controlledOpen === undefined) setInternalOpen(next);
@@ -116,15 +113,6 @@ export function DatePicker({
   useEffect(() => {
     if (!open) return;
     setDraftValue(currentValue);
-  }, [open, currentValue]);
-
-  useEffect(() => {
-    if (!open) return;
-    const handlePointerDown = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) closeCalendar();
-    };
-    document.addEventListener('pointerdown', handlePointerDown);
-    return () => document.removeEventListener('pointerdown', handlePointerDown);
   }, [open, currentValue]);
 
   const commit = (next: Date | null) => {
@@ -161,7 +149,6 @@ export function DatePicker({
 
   return (
     <div
-      ref={rootRef}
       className={joinClassNames('fdoc-date-picker', calendarOpen && 'fdoc-date-picker--open')}
       data-testid={testId}
       onKeyDown={event => {
@@ -220,33 +207,39 @@ export function DatePicker({
       />
 
       {calendarOpen && (
-        <div
-          ref={popupRef}
-          id={popupId}
-          className="fdoc-date-picker__popup"
-          style={popupStyle}
-          role="dialog"
-          aria-label="Выбор даты"
-          data-testid="date-picker-popup"
+        <Popup
+          anchor={fieldRef}
+          placement="auto"
+          gap={0}
+          maxHeight={640}
+          onDismiss={reason => closeCalendar(reason === 'escape')}
         >
-          <Calendar
-            {...calendarProps}
-            type="date"
-            showActions={calendarButtons}
-            value={draftValue}
-            defaultVisibleMonth={draftValue ?? currentValue ?? new Date()}
-            minDate={minDate}
-            maxDate={maxDate}
-            isDateDisabled={isDateDisabled}
-            onValueChange={handleCalendarValueChange}
-            onCancel={() => closeCalendar(true)}
-            onApply={next => {
-              if (next) commit(next);
-              setOpen(false);
-              restoreCalendarButtonFocus();
-            }}
-          />
-        </div>
+          <div
+            id={popupId}
+            className="fdoc-date-picker__popup"
+            role="dialog"
+            aria-label="Выбор даты"
+            data-testid="date-picker-popup"
+          >
+            <Calendar
+              {...calendarProps}
+              type="date"
+              showActions={calendarButtons}
+              value={draftValue}
+              defaultVisibleMonth={draftValue ?? currentValue ?? new Date()}
+              minDate={minDate}
+              maxDate={maxDate}
+              isDateDisabled={isDateDisabled}
+              onValueChange={handleCalendarValueChange}
+              onCancel={() => closeCalendar(true)}
+              onApply={next => {
+                if (next) commit(next);
+                setOpen(false);
+                restoreCalendarButtonFocus();
+              }}
+            />
+          </div>
+        </Popup>
       )}
     </div>
   );
