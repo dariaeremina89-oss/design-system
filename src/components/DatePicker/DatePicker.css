@@ -37,18 +37,6 @@
   border-color: var(--border-error-default);
 }
 
-.fdoc-range-calendar__period-popover {
-  position: absolute;
-  z-index: 1;
-  top: 48px;
-  left: 0;
-}
-
-.fdoc-range-calendar__period-popover--right {
-  right: 0;
-  left: auto;
-}
-
 @media (max-width: 639px) {
   .fdoc-date-picker__popup,
   .fdoc-range-picker__popup {
