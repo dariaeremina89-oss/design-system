@@ -1,8 +1,8 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent } from 'react';
-import { usePickerPopoverPosition } from './usePickerPopoverPosition';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { RangeCalendar, type RangeCalendarProps } from '../Calendar/RangeCalendar';
 import { Input, type InputProps } from '../Input/Input';
+import { Popup } from '../Menu/Popup';
 import {
   compareDays,
   formatRangeValue,
@@ -81,9 +81,7 @@ export function RangePicker({
   ...inputProps
 }: RangePickerProps) {
   const popupId = useId();
-  const rootRef = useRef<HTMLDivElement>(null);
   const fieldRef = useRef<HTMLDivElement>(null);
-  const popupRef = useRef<HTMLDivElement>(null);
   const calendarButtonRef = useRef<HTMLButtonElement | null>(null);
   const [internalValue, setInternalValue] = useState<DateRange>(defaultValue);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
@@ -94,7 +92,6 @@ export function RangePicker({
   const [draftValue, setDraftValue] = useState<DateRange>(controlledValue ?? defaultValue);
   const resolvedManualInput = manualInput || !calendarSelection;
   const calendarButtons = calendarProps?.showActions ?? true;
-  const popupStyle = usePickerPopoverPosition(calendarOpen, fieldRef, popupRef);
 
   const setOpen = (next: boolean) => {
     if (controlledOpen === undefined) setInternalOpen(next);
@@ -145,17 +142,6 @@ export function RangePicker({
     setDraftValue(currentValue);
   }, [open, currentValue]);
 
-  useEffect(() => {
-    if (!open) return;
-    const handlePointerDown = (event: PointerEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        closeCalendar(false, !calendarButtons);
-      }
-    };
-    document.addEventListener('pointerdown', handlePointerDown);
-    return () => document.removeEventListener('pointerdown', handlePointerDown);
-  }, [open, currentValue, draftValue, calendarButtons]);
-
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!resolvedManualInput) return;
     const nextText = maskRangeInput(event.currentTarget.value);
@@ -174,7 +160,6 @@ export function RangePicker({
 
   return (
     <div
-      ref={rootRef}
       className={joinClassNames('fdoc-range-picker', calendarOpen && 'fdoc-range-picker--open')}
       data-testid={testId}
       onKeyDown={event => {
@@ -234,42 +219,48 @@ export function RangePicker({
       />
 
       {calendarOpen && (
-        <div
-          ref={popupRef}
-          id={popupId}
-          className="fdoc-range-picker__popup"
-          style={popupStyle}
-          role="dialog"
-          aria-label="Выбор периода"
-          data-testid="range-picker-popup"
+        <Popup
+          anchor={fieldRef}
+          placement="auto"
+          gap={0}
+          maxHeight={640}
+          onDismiss={reason => closeCalendar(reason === 'escape', !calendarButtons)}
         >
-          <RangeCalendar
-            {...calendarProps}
-            showActions={calendarButtons}
-            value={draftValue}
-            defaultVisibleMonth={draftValue.start ?? currentValue.start ?? new Date()}
-            minDate={minDate}
-            maxDate={maxDate}
-            isDateDisabled={isDateDisabled}
-            minRange={minRange}
-            maxRange={maxRange}
-            months={calendarProps?.months ?? 'responsive'}
-            onValueChange={setDraftValue}
-            onComplete={next => {
-              if (!calendarButtons) {
-                commit(next);
+          <div
+            id={popupId}
+            className="fdoc-range-picker__popup"
+            role="dialog"
+            aria-label="Выбор периода"
+            data-testid="range-picker-popup"
+          >
+            <RangeCalendar
+              {...calendarProps}
+              showActions={calendarButtons}
+              value={draftValue}
+              defaultVisibleMonth={draftValue.start ?? currentValue.start ?? new Date()}
+              minDate={minDate}
+              maxDate={maxDate}
+              isDateDisabled={isDateDisabled}
+              minRange={minRange}
+              maxRange={maxRange}
+              months={calendarProps?.months ?? 'responsive'}
+              onValueChange={setDraftValue}
+              onComplete={next => {
+                if (!calendarButtons) {
+                  commit(next);
+                  setOpen(false);
+                  restoreCalendarButtonFocus();
+                }
+              }}
+              onCancel={() => closeCalendar(true)}
+              onApply={next => {
+                if (isRangeAllowed(next)) commit(next);
                 setOpen(false);
                 restoreCalendarButtonFocus();
-              }
-            }}
-            onCancel={() => closeCalendar(true)}
-            onApply={next => {
-              if (isRangeAllowed(next)) commit(next);
-              setOpen(false);
-              restoreCalendarButtonFocus();
-            }}
-          />
-        </div>
+              }}
+            />
+          </div>
+        </Popup>
       )}
     </div>
   );
