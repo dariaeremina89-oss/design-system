@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent } from 'react';
+import { usePickerPopoverPosition } from './usePickerPopoverPosition';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 import { Calendar, type CalendarProps } from '../Calendar/Calendar';
 import { Input, type InputProps } from '../Input/Input';
@@ -79,6 +80,8 @@ export function DatePicker({
 }: DatePickerProps) {
   const popupId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const fieldRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
   const calendarButtonRef = useRef<HTMLButtonElement | null>(null);
   const [internalValue, setInternalValue] = useState<Date | null>(defaultValue);
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
@@ -89,6 +92,7 @@ export function DatePicker({
   const [draftValue, setDraftValue] = useState<Date | null>(controlledValue ?? defaultValue);
   const resolvedManualInput = manualInput || !calendarSelection;
   const calendarButtons = calendarProps?.showActions ?? false;
+  const popupStyle = usePickerPopoverPosition(calendarOpen, fieldRef, popupRef);
 
   const setOpen = (next: boolean) => {
     if (controlledOpen === undefined) setInternalOpen(next);
@@ -180,6 +184,7 @@ export function DatePicker({
         autoComplete="off"
         aria-controls={calendarOpen ? popupId : undefined}
         readOnly={!resolvedManualInput}
+        fieldRef={fieldRef}
         onChange={handleInputChange}
         onBlur={onBlur}
         trailingContent={calendarSelection ? (
@@ -216,8 +221,10 @@ export function DatePicker({
 
       {calendarOpen && (
         <div
+          ref={popupRef}
           id={popupId}
           className="fdoc-date-picker__popup"
+          style={popupStyle}
           role="dialog"
           aria-label="Выбор даты"
           data-testid="date-picker-popup"
