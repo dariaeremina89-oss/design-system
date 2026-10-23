@@ -11,7 +11,6 @@ test('Calendar matches Figma header and day geometry', async ({ page }) => {
   await expect(calendar).toHaveCSS('width', '288px');
   const periodText = period.locator('.fdoc-calendar__period-text');
   expect(await periodText.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
-  expect(await period.evaluate(element => element.getBoundingClientRect().width)).not.toBe(132);
   await expect(period.locator('[data-icon="arrow-drop-down"]')).toHaveCSS('width', '24px');
   await expect(period.locator('[data-icon="arrow-drop-down"]')).toHaveCSS('height', '24px');
 
@@ -43,6 +42,12 @@ test('Calendar matches Figma header and day geometry', async ({ page }) => {
   const selectedValue = calendar.locator('.fdoc-calendar__day--selected .fdoc-calendar__day-value');
   await expect(selectedValue).toHaveCSS('width', '28px');
   await expect(selectedValue).toHaveCSS('height', '28px');
+
+  const datePeriodWidth = (await period.boundingBox())!.width;
+  await period.click();
+  await expect(calendar).toHaveAttribute('data-calendar-view', 'month');
+  expect(await periodText.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  expect((await period.boundingBox())!.width).toBeLessThan(datePeriodWidth);
 });
 
 test('Calendar Year contains 24 years in a 4-column grid', async ({ page }) => {
