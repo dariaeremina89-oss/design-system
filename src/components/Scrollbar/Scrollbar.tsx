@@ -68,7 +68,7 @@ export function Scrollbar({ viewportRef, minThumbSize = 32, className = '', 'dat
     const target=Math.min(maxTravel,Math.max(0,event.clientY-rect.top-4-metrics.thumbSize/2));viewport.scrollTop=(target/maxTravel)*maxScroll;
   };
 
-  return <div ref={trackRef} className={`fdoc-scrollbar ${className}`} data-visible={metrics.visible||undefined} data-testid={testId} aria-hidden="true" onPointerDown={jump} hidden={!metrics.visible}>
+  return <div ref={trackRef} className={`fdoc-scrollbar ${className}`} data-visible={metrics.visible||undefined} data-testid={testId} aria-hidden="true" onPointerDown={jump}>
     <div className="fdoc-scrollbar__thumb" style={{height:`${metrics.thumbSize}px`,transform:`translateY(${metrics.thumbOffset}px)`}}
       onPointerDown={startDrag} onPointerMove={drag} onPointerUp={stopDrag} onPointerCancel={stopDrag}/>
   </div>;
