@@ -120,14 +120,20 @@ test('DatePicker uses 24px calendar icon and Calendar without buttons by default
   await expect(button.locator('[data-icon="calendar"]')).toHaveCSS('height', '24px');
   await expect(button).toHaveCSS('padding-left', '4px');
   await expect(button).toHaveCSS('padding-right', '4px');
-  await expect(page.getByTestId('input-field')).toHaveCSS('padding-right', '8px');
+  const field = page.getByTestId('input-field');
+  await expect(field).toHaveCSS('padding-right', '8px');
+
+  await button.focus();
+  await expect(field).toHaveCSS('border-width', '2px');
+  const buttonFocusedBorder = await field.evaluate(element => getComputedStyle(element).borderColor);
+  await field.hover();
+  expect(await field.evaluate(element => getComputedStyle(element).borderColor)).toBe(buttonFocusedBorder);
 
   await input.fill('23102026');
   await expect(input).toHaveValue('23.10.2026');
 
   await button.click();
   const popup = page.getByTestId('date-picker-popup');
-  const field = page.getByTestId('input-field');
   await expect(popup).toBeVisible();
   const focusedBorder = await field.evaluate(element => getComputedStyle(element).borderColor);
   await field.hover();
