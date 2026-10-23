@@ -18,19 +18,45 @@ describe('DatePicker', () => {
     expect(value.getDate()).toBe(23);
   });
 
-  it('opens Calendar and commits the draft only on apply', () => {
+  it('uses Calendar without Buttons by default and applies a date immediately', () => {
     render(<DatePicker defaultValue={new Date(2026, 9, 10)} />);
 
     const input = screen.getByRole('textbox');
     fireEvent.click(screen.getByTestId('date-picker-button'));
     expect(screen.getByTestId('date-picker-popup')).toBeInTheDocument();
+    expect(screen.queryByTestId('calendar-actions')).not.toBeInTheDocument();
 
+    fireEvent.click(screen.getByTestId('calendar-day-2026-10-15'));
+    expect(input).toHaveValue('15.10.2026');
+    expect(screen.queryByTestId('date-picker-popup')).not.toBeInTheDocument();
+  });
+
+  it('keeps a draft when Calendar Buttons are enabled', () => {
+    render(
+      <DatePicker
+        defaultValue={new Date(2026, 9, 10)}
+        defaultOpen
+        calendarProps={{ showActions: true }}
+      />,
+    );
+
+    const input = screen.getByRole('textbox');
     fireEvent.click(screen.getByTestId('calendar-day-2026-10-15'));
     expect(input).toHaveValue('10.10.2026');
 
     fireEvent.click(screen.getByRole('button', { name: 'Выбрать' }));
     expect(input).toHaveValue('15.10.2026');
     expect(screen.queryByTestId('date-picker-popup')).not.toBeInTheDocument();
+  });
+
+  it('supports manual input only and calendar only modes', () => {
+    const { rerender } = render(<DatePicker calendarSelection={false} />);
+    expect(screen.queryByTestId('date-picker-button')).not.toBeInTheDocument();
+    expect(screen.getByRole('textbox')).not.toHaveAttribute('readonly');
+
+    rerender(<DatePicker manualInput={false} defaultValue={new Date(2026, 9, 10)} />);
+    expect(screen.getByRole('textbox')).toHaveAttribute('readonly');
+    expect(screen.getByTestId('date-picker-button')).toBeInTheDocument();
   });
 
   it('closes the popup on Escape', () => {
@@ -67,6 +93,16 @@ describe('RangePicker', () => {
     const range = change.mock.calls.at(-1)?.[0];
     expect(range.start.getDate()).toBe(10);
     expect(range.end.getDate()).toBe(20);
+  });
+
+  it('supports Manual input and Calendar selection independently', () => {
+    const { rerender } = render(<RangePicker calendarSelection={false} />);
+    expect(screen.queryByTestId('range-picker-button')).not.toBeInTheDocument();
+    expect(screen.getByRole('textbox')).not.toHaveAttribute('readonly');
+
+    rerender(<RangePicker manualInput={false} />);
+    expect(screen.getByRole('textbox')).toHaveAttribute('readonly');
+    expect(screen.getByTestId('range-picker-button')).toBeInTheDocument();
   });
 
   it('opens the responsive RangeCalendar', () => {
