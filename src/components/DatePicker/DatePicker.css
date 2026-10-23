@@ -19,6 +19,18 @@
   flex: 0 0 auto;
 }
 
+.fdoc-date-picker .fdoc-input__field,
+.fdoc-range-picker .fdoc-input__field {
+  padding-right: var(--space-8);
+}
+
+.fdoc-date-picker .fdoc-input__field:has(.fdoc-input__control:focus),
+.fdoc-range-picker .fdoc-input__field:has(.fdoc-input__control:focus),
+.fdoc-date-picker--open .fdoc-input__field,
+.fdoc-range-picker--open .fdoc-input__field {
+  padding-right: calc(var(--space-8) - var(--border-small));
+}
+
 .fdoc-date-picker--open .fdoc-input__field,
 .fdoc-range-picker--open .fdoc-input__field {
   border-width: var(--border-middle);
