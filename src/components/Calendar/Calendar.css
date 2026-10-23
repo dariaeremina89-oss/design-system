@@ -45,6 +45,10 @@
   gap: var(--space-8);
 }
 
+.fdoc-calendar__arrow.fdoc-button-icon {
+  padding: var(--space-4);
+}
+
 .fdoc-calendar__range-period {
   display: flex;
   flex: 1 1 auto;
