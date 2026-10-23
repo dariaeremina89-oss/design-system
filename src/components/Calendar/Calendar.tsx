@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Button } from '../Button/Button';
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
+import { Icon } from '../Icon/Icon';
 import {
   MONTH_LABELS_SHORT,
   WEEKDAY_LABELS,
@@ -11,27 +12,31 @@ import {
   formatMonthYear,
   isDateWithinRange,
   isSameDay,
-  isSameMonth,
   startOfDay,
   startOfMonth,
 } from './dateUtils';
 import './Calendar.css';
 
-export type CalendarView = 'date' | 'month' | 'year';
+export type CalendarType = 'date' | 'month' | 'year';
+export type CalendarView = CalendarType;
 
 export interface CalendarProps {
+  /** Итоговое значение Calendar: дата, месяц или год. */
+  type?: CalendarType;
   value?: Date | null;
   defaultValue?: Date | null;
   onValueChange?: (value: Date | null) => void;
   visibleMonth?: Date;
   defaultVisibleMonth?: Date;
   onVisibleMonthChange?: (month: Date) => void;
+  /** Управление внутренним уровнем навигации. Обычно достаточно type. */
   view?: CalendarView;
   defaultView?: CalendarView;
   onViewChange?: (view: CalendarView) => void;
   minDate?: Date;
   maxDate?: Date;
   isDateDisabled?: (date: Date) => boolean;
+  /** Buttons из Figma. При false итоговое значение применяется сразу. */
   showActions?: boolean;
   applyText?: string;
   cancelText?: string;
@@ -42,22 +47,28 @@ export interface CalendarProps {
   'data-testid'?: string;
 }
 
-type CalendarMonthPanelProps = {
+export type CalendarMonthHeaderLayout = 'single' | 'range-left' | 'range-right' | 'none';
+
+export type CalendarMonthPanelProps = {
   month: Date;
   selectedDate?: Date | null;
   rangeStart?: Date | null;
   rangeEnd?: Date | null;
+  previewStart?: Date | null;
+  previewEnd?: Date | null;
   minDate?: Date;
   maxDate?: Date;
   isDateDisabled?: (date: Date) => boolean;
   onSelectDate: (date: Date) => void;
+  onHoverDate?: (date: Date | null) => void;
   onPeriodClick?: () => void;
+  periodOpen?: boolean;
   onPrevious?: () => void;
   onNext?: () => void;
-  showPrevious?: boolean;
-  showNext?: boolean;
-  previousButtonClassName?: string;
-  nextButtonClassName?: string;
+  previousDisabled?: boolean;
+  nextDisabled?: boolean;
+  headerLayout?: CalendarMonthHeaderLayout;
+  showWeekdays?: boolean;
   className?: string;
   'data-testid'?: string;
 };
@@ -66,7 +77,7 @@ function joinClassNames(...classes: Array<string | false | undefined>) {
   return classes.filter(Boolean).join(' ');
 }
 
-function isDisabledDate(
+export function isCalendarDateDisabled(
   date: Date,
   minDate?: Date,
   maxDate?: Date,
@@ -77,22 +88,112 @@ function isDisabledDate(
   return Boolean(isDateDisabled?.(date));
 }
 
+function periodHasAvailableDate(
+  month: Date,
+  minDate?: Date,
+  maxDate?: Date,
+  isDateDisabled?: (date: Date) => boolean,
+) {
+  const days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
+  for (let day = 1; day <= days; day += 1) {
+    if (!isCalendarDateDisabled(new Date(month.getFullYear(), month.getMonth(), day), minDate, maxDate, isDateDisabled)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function yearHasAvailableDate(
+  year: number,
+  minDate?: Date,
+  maxDate?: Date,
+  isDateDisabled?: (date: Date) => boolean,
+) {
+  for (let month = 0; month < 12; month += 1) {
+    if (periodHasAvailableDate(new Date(year, month, 1), minDate, maxDate, isDateDisabled)) return true;
+  }
+  return false;
+}
+
+function CalendarPeriodButton({
+  label,
+  open = false,
+  onClick,
+  disabled = false,
+  centered = false,
+}: {
+  label: string;
+  open?: boolean;
+  onClick?: () => void;
+  disabled?: boolean;
+  centered?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      className={joinClassNames('fdoc-calendar__period', centered && 'fdoc-calendar__period--centered')}
+      onClick={onClick}
+      disabled={disabled}
+      aria-expanded={open}
+      data-testid="calendar-period"
+    >
+      <span className="fdoc-calendar__period-text">{label}</span>
+      <Icon name={open ? 'arrow-drop-up' : 'arrow-drop-down'} size={24} />
+    </button>
+  );
+}
+
+function CalendarArrow({
+  direction,
+  onClick,
+  disabled,
+}: {
+  direction: 'previous' | 'next';
+  onClick?: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <ButtonIcon
+      icon={direction === 'previous' ? 'arrow-chevron-left' : 'arrow-chevron-right'}
+      iconSize={24}
+      size="small"
+      color="neutral"
+      aria-label={direction === 'previous' ? 'Предыдущий период' : 'Следующий период'}
+      onClick={onClick}
+      disabled={disabled}
+      data-testid={direction === 'previous' ? 'calendar-previous' : 'calendar-next'}
+    />
+  );
+}
+
+export function CalendarWeekdays() {
+  return (
+    <div className="fdoc-calendar__weekdays" aria-hidden="true" data-testid="calendar-weekdays">
+      {WEEKDAY_LABELS.map(label => <span key={label}>{label}</span>)}
+    </div>
+  );
+}
+
 export function CalendarMonthPanel({
   month,
   selectedDate,
   rangeStart,
   rangeEnd,
+  previewStart,
+  previewEnd,
   minDate,
   maxDate,
   isDateDisabled,
   onSelectDate,
+  onHoverDate,
   onPeriodClick,
+  periodOpen = false,
   onPrevious,
   onNext,
-  showPrevious = true,
-  showNext = true,
-  previousButtonClassName,
-  nextButtonClassName,
+  previousDisabled = false,
+  nextDisabled = false,
+  headerLayout = 'single',
+  showWeekdays = true,
   className,
   'data-testid': testId,
 }: CalendarMonthPanelProps) {
@@ -104,47 +205,48 @@ export function CalendarMonthPanel({
   }, [month]);
   const today = startOfDay(new Date());
 
+  const header = headerLayout === 'single' ? (
+    <div className="fdoc-calendar__header fdoc-calendar__header--single">
+      <CalendarPeriodButton
+        label={formatMonthYear(month)}
+        open={periodOpen}
+        onClick={onPeriodClick}
+      />
+      <div className="fdoc-calendar__arrows">
+        <CalendarArrow direction="previous" onClick={onPrevious} disabled={previousDisabled} />
+        <CalendarArrow direction="next" onClick={onNext} disabled={nextDisabled} />
+      </div>
+    </div>
+  ) : headerLayout === 'range-left' ? (
+    <div className="fdoc-calendar__header fdoc-calendar__header--range-left">
+      <CalendarArrow direction="previous" onClick={onPrevious} disabled={previousDisabled} />
+      <div className="fdoc-calendar__range-period">
+        <CalendarPeriodButton
+          label={formatMonthYear(month)}
+          open={periodOpen}
+          onClick={onPeriodClick}
+          centered
+        />
+      </div>
+    </div>
+  ) : headerLayout === 'range-right' ? (
+    <div className="fdoc-calendar__header fdoc-calendar__header--range-right">
+      <div className="fdoc-calendar__range-period">
+        <CalendarPeriodButton
+          label={formatMonthYear(month)}
+          open={periodOpen}
+          onClick={onPeriodClick}
+          centered
+        />
+      </div>
+      <CalendarArrow direction="next" onClick={onNext} disabled={nextDisabled} />
+    </div>
+  ) : null;
+
   return (
     <div className={joinClassNames('fdoc-calendar__month-panel', className)} data-testid={testId}>
-      <div className="fdoc-calendar__header">
-        {showPrevious ? (
-          <ButtonIcon
-            icon="arrow-chevron-left"
-            size="small"
-            color="neutral"
-            aria-label="Предыдущий месяц"
-            onClick={onPrevious}
-            className={previousButtonClassName}
-            data-testid="calendar-previous"
-          />
-        ) : <span className="fdoc-calendar__header-spacer" aria-hidden="true" />}
-
-        <button
-          type="button"
-          className="fdoc-calendar__period"
-          onClick={onPeriodClick}
-          disabled={!onPeriodClick}
-          data-testid="calendar-period"
-        >
-          {formatMonthYear(month)}
-        </button>
-
-        {showNext ? (
-          <ButtonIcon
-            icon="arrow-chevron-right"
-            size="small"
-            color="neutral"
-            aria-label="Следующий месяц"
-            onClick={onNext}
-            className={nextButtonClassName}
-            data-testid="calendar-next"
-          />
-        ) : <span className="fdoc-calendar__header-spacer" aria-hidden="true" />}
-      </div>
-
-      <div className="fdoc-calendar__weekdays" aria-hidden="true">
-        {WEEKDAY_LABELS.map(label => <span key={label}>{label}</span>)}
-      </div>
+      {header}
+      {showWeekdays && <CalendarWeekdays />}
 
       <div className="fdoc-calendar__date-grid" role="grid">
         {weeks.map((week, weekIndex) => (
@@ -154,7 +256,7 @@ export function CalendarMonthPanel({
                 return <span className="fdoc-calendar__day-empty" role="gridcell" key={`empty-${dayIndex}`} />;
               }
 
-              const disabled = isDisabledDate(date, minDate, maxDate, isDateDisabled);
+              const disabled = isCalendarDateDisabled(date, minDate, maxDate, isDateDisabled);
               const selected = isSameDay(date, selectedDate);
               const todayState = isSameDay(date, today);
               const rangeStartState = isSameDay(date, rangeStart);
@@ -162,6 +264,10 @@ export function CalendarMonthPanel({
               const rangeMiddle = isDateWithinRange(date, rangeStart ?? null, rangeEnd ?? null);
               const rangeSingle = rangeStartState && rangeEndState;
               const hasRangeFill = rangeStartState || rangeEndState || rangeMiddle;
+              const previewStartState = isSameDay(date, previewStart);
+              const previewEndState = isSameDay(date, previewEnd);
+              const previewMiddle = isDateWithinRange(date, previewStart ?? null, previewEnd ?? null);
+              const hasPreview = !hasRangeFill && (previewStartState || previewEndState || previewMiddle);
 
               return (
                 <span
@@ -170,11 +276,13 @@ export function CalendarMonthPanel({
                     rangeStartState && 'fdoc-calendar__day-shell--range-start',
                     rangeEndState && 'fdoc-calendar__day-shell--range-end',
                     rangeSingle && 'fdoc-calendar__day-shell--range-single',
+                    hasPreview && 'fdoc-calendar__day-shell--range-preview',
                   )}
                   role="gridcell"
                   key={date.toISOString()}
                 >
                   {hasRangeFill && <span className="fdoc-calendar__range-fill" aria-hidden="true" />}
+                  {hasPreview && <span className="fdoc-calendar__range-preview-fill" aria-hidden="true" />}
                   <button
                     type="button"
                     className={joinClassNames(
@@ -185,6 +293,9 @@ export function CalendarMonthPanel({
                     disabled={disabled}
                     aria-pressed={selected || rangeStartState || rangeEndState || undefined}
                     aria-label={new Intl.DateTimeFormat('ru-RU', { dateStyle: 'long' }).format(date)}
+                    onMouseEnter={() => onHoverDate?.(date)}
+                    onMouseLeave={() => onHoverDate?.(null)}
+                    onFocus={() => onHoverDate?.(date)}
                     onClick={() => onSelectDate(date)}
                     data-testid={`calendar-day-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`}
                   >
@@ -222,6 +333,7 @@ export function CalendarActions({
 }
 
 export function Calendar({
+  type = 'date',
   value: controlledValue,
   defaultValue = null,
   onValueChange,
@@ -229,7 +341,7 @@ export function Calendar({
   defaultVisibleMonth,
   onVisibleMonthChange,
   view: controlledView,
-  defaultView = 'date',
+  defaultView,
   onViewChange,
   minDate,
   maxDate,
@@ -243,11 +355,12 @@ export function Calendar({
   'aria-label': ariaLabel = 'Календарь',
   'data-testid': testId = 'calendar',
 }: CalendarProps) {
+  const baseView: CalendarView = type;
   const [internalValue, setInternalValue] = useState<Date | null>(defaultValue);
   const [internalVisibleMonth, setInternalVisibleMonth] = useState(() =>
     startOfMonth(defaultVisibleMonth ?? defaultValue ?? new Date()),
   );
-  const [internalView, setInternalView] = useState<CalendarView>(defaultView);
+  const [internalView, setInternalView] = useState<CalendarView>(defaultView ?? baseView);
   const value = controlledValue !== undefined ? controlledValue : internalValue;
   const visibleMonth = startOfMonth(controlledVisibleMonth ?? internalVisibleMonth);
   const view = controlledView ?? internalView;
@@ -264,19 +377,68 @@ export function Calendar({
     onViewChange?.(next);
   };
 
-  const selectDate = (date: Date) => {
+  const selectFinalValue = (date: Date) => {
     if (controlledValue === undefined) setInternalValue(date);
     onValueChange?.(date);
+    if (!showActions) onApply?.(date);
   };
 
   const changePage = (direction: -1 | 1) => {
     if (view === 'date') setVisibleMonth(addMonths(visibleMonth, direction));
     else if (view === 'month') setVisibleMonth(addYears(visibleMonth, direction));
-    else setVisibleMonth(addYears(visibleMonth, direction * 16));
+    else setVisibleMonth(addYears(visibleMonth, direction * 24));
   };
 
-  const yearStart = Math.floor(visibleMonth.getFullYear() / 16) * 16;
-  const years = Array.from({ length: 16 }, (_, index) => yearStart + index);
+  const currentPeriodAvailable = (target: Date) => {
+    if (view === 'date') return periodHasAvailableDate(target, minDate, maxDate, isDateDisabled);
+    if (view === 'month') return yearHasAvailableDate(target.getFullYear(), minDate, maxDate, isDateDisabled);
+    const rangeStart = target.getFullYear() - 14;
+    return Array.from({ length: 24 }, (_, index) => rangeStart + index)
+      .some(year => yearHasAvailableDate(year, minDate, maxDate, isDateDisabled));
+  };
+
+  const previousTarget = view === 'date'
+    ? addMonths(visibleMonth, -1)
+    : view === 'month'
+      ? addYears(visibleMonth, -1)
+      : addYears(visibleMonth, -24);
+  const nextTarget = view === 'date'
+    ? addMonths(visibleMonth, 1)
+    : view === 'month'
+      ? addYears(visibleMonth, 1)
+      : addYears(visibleMonth, 24);
+
+  const yearStart = visibleMonth.getFullYear() - 14;
+  const years = Array.from({ length: 24 }, (_, index) => yearStart + index);
+
+  const periodLabel = view === 'month'
+    ? String(visibleMonth.getFullYear())
+    : `${yearStart}–${yearStart + 23}`;
+
+  const handlePeriodClick = () => {
+    if (view === 'date') setView('month');
+    else if (view === 'month') setView('year');
+    else if (type !== 'year') setView(type === 'date' ? 'month' : type);
+  };
+
+  const handleMonthChoice = (monthIndex: number) => {
+    const date = new Date(visibleMonth.getFullYear(), monthIndex, 1);
+    if (type === 'month') {
+      selectFinalValue(date);
+      return;
+    }
+    setVisibleMonth(date);
+    setView('date');
+  };
+
+  const handleYearChoice = (year: number) => {
+    if (type === 'year') {
+      selectFinalValue(new Date(year, 0, 1));
+      return;
+    }
+    setVisibleMonth(new Date(year, visibleMonth.getMonth(), 1));
+    setView('month');
+  };
 
   return (
     <div
@@ -284,56 +446,59 @@ export function Calendar({
       role="group"
       aria-label={ariaLabel}
       data-testid={testId}
+      data-calendar-type={type}
       data-calendar-view={view}
     >
       {view === 'date' ? (
         <CalendarMonthPanel
           month={visibleMonth}
-          selectedDate={value}
+          selectedDate={type === 'date' ? value : null}
           minDate={minDate}
           maxDate={maxDate}
           isDateDisabled={isDateDisabled}
-          onSelectDate={selectDate}
-          onPeriodClick={() => setView('month')}
+          onSelectDate={selectFinalValue}
+          onPeriodClick={handlePeriodClick}
+          periodOpen={false}
           onPrevious={() => changePage(-1)}
           onNext={() => changePage(1)}
+          previousDisabled={!currentPeriodAvailable(previousTarget)}
+          nextDisabled={!currentPeriodAvailable(nextTarget)}
+          headerLayout="single"
         />
       ) : (
         <>
-          <div className="fdoc-calendar__header">
-            <ButtonIcon
-              icon="arrow-chevron-left"
-              size="small"
-              color="neutral"
-              aria-label={view === 'month' ? 'Предыдущий год' : 'Предыдущие годы'}
-              onClick={() => changePage(-1)}
-              data-testid="calendar-previous"
+          <div className="fdoc-calendar__header fdoc-calendar__header--single">
+            <CalendarPeriodButton
+              label={periodLabel}
+              open
+              onClick={handlePeriodClick}
             />
-            <button
-              type="button"
-              className="fdoc-calendar__period"
-              onClick={() => view === 'month' && setView('year')}
-              disabled={view === 'year'}
-              data-testid="calendar-period"
-            >
-              {view === 'month' ? visibleMonth.getFullYear() : `${yearStart}–${yearStart + 15}`}
-            </button>
-            <ButtonIcon
-              icon="arrow-chevron-right"
-              size="small"
-              color="neutral"
-              aria-label={view === 'month' ? 'Следующий год' : 'Следующие годы'}
-              onClick={() => changePage(1)}
-              data-testid="calendar-next"
-            />
+            <div className="fdoc-calendar__arrows">
+              <CalendarArrow
+                direction="previous"
+                onClick={() => changePage(-1)}
+                disabled={!currentPeriodAvailable(previousTarget)}
+              />
+              <CalendarArrow
+                direction="next"
+                onClick={() => changePage(1)}
+                disabled={!currentPeriodAvailable(nextTarget)}
+              />
+            </div>
           </div>
 
           <div className="fdoc-calendar__choices" role="grid">
             {view === 'month'
               ? MONTH_LABELS_SHORT.map((label, monthIndex) => {
                   const date = new Date(visibleMonth.getFullYear(), monthIndex, 1);
-                  const selected = Boolean(value && value.getFullYear() === date.getFullYear() && value.getMonth() === monthIndex);
-                  const isToday = today.getFullYear() === date.getFullYear() && today.getMonth() === monthIndex;
+                  const selected = Boolean(
+                    type === 'month'
+                    && value
+                    && value.getFullYear() === date.getFullYear()
+                    && value.getMonth() === monthIndex,
+                  );
+                  const current = today.getFullYear() === date.getFullYear() && today.getMonth() === monthIndex;
+                  const disabled = !periodHasAvailableDate(date, minDate, maxDate, isDateDisabled);
                   return (
                     <button
                       key={label}
@@ -341,20 +506,19 @@ export function Calendar({
                       className={joinClassNames(
                         'fdoc-calendar__choice',
                         selected && 'fdoc-calendar__choice--selected',
-                        isToday && !selected && 'fdoc-calendar__choice--today',
+                        current && !selected && 'fdoc-calendar__choice--today',
                       )}
-                      onClick={() => {
-                        setVisibleMonth(date);
-                        setView('date');
-                      }}
+                      disabled={disabled}
+                      onClick={() => handleMonthChoice(monthIndex)}
                     >
                       {label}
                     </button>
                   );
                 })
               : years.map(year => {
-                  const selected = value?.getFullYear() === year;
-                  const isToday = today.getFullYear() === year;
+                  const selected = type === 'year' && value?.getFullYear() === year;
+                  const current = today.getFullYear() === year;
+                  const disabled = !yearHasAvailableDate(year, minDate, maxDate, isDateDisabled);
                   return (
                     <button
                       key={year}
@@ -362,12 +526,10 @@ export function Calendar({
                       className={joinClassNames(
                         'fdoc-calendar__choice',
                         selected && 'fdoc-calendar__choice--selected',
-                        isToday && !selected && 'fdoc-calendar__choice--today',
+                        current && !selected && 'fdoc-calendar__choice--today',
                       )}
-                      onClick={() => {
-                        setVisibleMonth(new Date(year, visibleMonth.getMonth(), 1));
-                        setView('month');
-                      }}
+                      disabled={disabled}
+                      onClick={() => handleYearChoice(year)}
                     >
                       {year}
                     </button>
