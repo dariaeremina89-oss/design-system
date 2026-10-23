@@ -57,7 +57,7 @@ describe('Calendar', () => {
     fireEvent.click(screen.getByTestId('calendar-period'));
     expect(root).toHaveAttribute('data-calendar-view', 'year');
 
-    expect(within(root).getAllByRole('button').filter(button => /^\d{4}$/.test(button.textContent ?? ''))).toHaveLength(16);
+    expect(within(root).getAllByRole('button').filter(button => /^\d{4}$/.test(button.textContent ?? ''))).toHaveLength(24);
 
     fireEvent.click(screen.getByRole('button', { name: '2026' }));
     expect(root).toHaveAttribute('data-calendar-view', 'month');
