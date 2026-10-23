@@ -35,7 +35,7 @@
 .fdoc-calendar__header--range-right {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--space-8);
   padding: var(--space-12) var(--space-20) var(--space-12) var(--space-48);
 }
 
@@ -108,6 +108,10 @@
 }
 
 .fdoc-calendar__choice:focus-visible {
+  outline: 0;
+}
+
+.fdoc-calendar__choice:focus-visible .fdoc-calendar__choice-value {
   outline: var(--border-small) solid var(--border-accent-default);
   outline-offset: 0;
 }
@@ -303,12 +307,15 @@
 }
 
 .fdoc-calendar__choice {
-  width: 56px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   min-width: 0;
-  height: 28px;
-  padding: var(--space-4);
+  height: 32px;
+  padding: var(--space-2) 0;
   border: 0;
-  border-radius: var(--radius-large);
   background: transparent;
   color: var(--text-base-default);
   font: inherit;
@@ -317,48 +324,71 @@
   cursor: pointer;
 }
 
-.fdoc-calendar__choice:hover:not(:disabled):not(.fdoc-calendar__choice--selected) {
+.fdoc-calendar__choice-value {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 28px;
+  padding: var(--space-4);
+  border-radius: var(--radius-large);
+}
+
+.fdoc-calendar__choice:hover:not(:disabled):not(.fdoc-calendar__choice--selected) .fdoc-calendar__choice-value {
   background: var(--transparent-background-base-hover);
 }
 
 .fdoc-calendar__choice--selected {
-  background: var(--background-primary-default);
   color: var(--text-primary-default);
 }
 
+.fdoc-calendar__choice--selected .fdoc-calendar__choice-value {
+  background: var(--background-primary-default);
+}
+
 .fdoc-calendar__choice--today {
-  border: var(--border-small) solid var(--border-accent-default);
   color: var(--text-accent-secondary);
 }
 
-.fdoc-calendar__choice--today:hover:not(:disabled) {
+.fdoc-calendar__choice--today .fdoc-calendar__choice-value {
+  border: var(--border-small) solid var(--border-accent-default);
+}
+
+.fdoc-calendar__choice--today:hover:not(:disabled) .fdoc-calendar__choice-value {
   background: var(--transparent-background-accent-hover);
 }
 
-.fdoc-calendar__choice--today:active:not(:disabled) {
+.fdoc-calendar__choice--today:active:not(:disabled) .fdoc-calendar__choice-value {
   background: var(--transparent-background-accent-pressed);
 }
 
-.fdoc-calendar__choice--today:focus-visible {
+.fdoc-calendar__choice--today:focus-visible .fdoc-calendar__choice-value {
   background: var(--transparent-background-accent-focused);
 }
 
-.fdoc-calendar__choice--selected:hover:not(:disabled) {
+.fdoc-calendar__choice--selected:hover:not(:disabled) .fdoc-calendar__choice-value {
   background: var(--background-primary-default-hover);
 }
 
-.fdoc-calendar__choice--selected:active:not(:disabled) {
+.fdoc-calendar__choice--selected:active:not(:disabled) .fdoc-calendar__choice-value {
   background: var(--background-primary-default-pressed);
 }
 
 .fdoc-calendar__choice--selected:disabled {
-  background: var(--background-primary-default-disabled);
   color: var(--text-primary-default-disabled);
 }
 
+.fdoc-calendar__choice--selected:disabled .fdoc-calendar__choice-value {
+  background: var(--background-primary-default-disabled);
+}
+
 .fdoc-calendar__choice--today:disabled {
-  border-color: var(--border-accent-disabled);
   color: var(--text-accent-secondary-disabled);
+}
+
+.fdoc-calendar__choice--today:disabled .fdoc-calendar__choice-value {
+  border-color: var(--border-accent-disabled);
 }
 
 .fdoc-calendar__choice:disabled {

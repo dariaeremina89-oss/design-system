@@ -534,7 +534,7 @@ export function Calendar({
                         disabled={disabled}
                         onClick={() => handleMonthChoice(monthIndex)}
                       >
-                        {label}
+                        <span className="fdoc-calendar__choice-value">{label}</span>
                       </button>
                     </div>
                   );
@@ -561,7 +561,7 @@ export function Calendar({
                         disabled={disabled}
                         onClick={() => handleYearChoice(year)}
                       >
-                        {year}
+                        <span className="fdoc-calendar__choice-value">{year}</span>
                       </button>
                     </div>
                   );

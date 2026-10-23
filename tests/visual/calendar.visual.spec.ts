@@ -13,14 +13,17 @@ test('Calendar matches Figma header and day geometry', async ({ page }) => {
   await expect(period.locator('[data-icon="arrow-drop-down"]')).toHaveCSS('width', '24px');
   await expect(period.locator('[data-icon="arrow-drop-down"]')).toHaveCSS('height', '24px');
 
+  const calendarBox = await calendar.boundingBox();
   const periodBox = await period.boundingBox();
   const previousBox = await previous.boundingBox();
   const nextBox = await next.boundingBox();
+  expect(calendarBox).not.toBeNull();
   expect(periodBox).not.toBeNull();
   expect(previousBox).not.toBeNull();
   expect(nextBox).not.toBeNull();
-  expect(periodBox!.x).toBeLessThan(previousBox!.x);
-  expect(previousBox!.x).toBeLessThan(nextBox!.x);
+  expect(Math.abs(periodBox!.x - calendarBox!.x - 20)).toBeLessThanOrEqual(0.5);
+  expect(Math.abs(previousBox!.x - calendarBox!.x - 196)).toBeLessThanOrEqual(0.5);
+  expect(Math.abs(nextBox!.x - calendarBox!.x - 236)).toBeLessThanOrEqual(0.5);
 
   await expect(previous).toHaveCSS('width', '32px');
   await expect(previous).toHaveCSS('height', '32px');
@@ -49,6 +52,9 @@ test('Calendar Year contains 24 years in a 4-column grid', async ({ page }) => {
 
   const yearButtons = calendar.locator('.fdoc-calendar__choice');
   await expect(yearButtons).toHaveCount(24);
+  await expect(yearButtons.first()).toHaveCSS('width', '59px');
+  await expect(yearButtons.first()).toHaveCSS('height', '32px');
+  await expect(yearButtons.first().locator('.fdoc-calendar__choice-value')).toHaveCSS('height', '28px');
   const columns = await calendar.locator('.fdoc-calendar__choices').evaluate(element =>
     getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length,
   );
@@ -72,6 +78,9 @@ test('RangeCalendar matches desktop Figma structure and mobile scroll', async ({
   await expect(secondMonth.locator('[data-testid="calendar-next"]')).toBeVisible();
   await expect(firstMonth.locator('[data-testid="calendar-previous"] [data-icon="arrow-chevron-left"]')).toHaveCSS('width', '24px');
   await expect(secondMonth.locator('[data-testid="calendar-next"] [data-icon="arrow-chevron-right"]')).toHaveCSS('width', '24px');
+  await expect(firstMonth.locator('.fdoc-calendar__range-period')).toHaveCSS('width', '180px');
+  await expect(secondMonth.locator('.fdoc-calendar__range-period')).toHaveCSS('width', '180px');
+  await expect(secondMonth.locator('.fdoc-calendar__header--range-right')).toHaveCSS('column-gap', '8px');
   await expect(range.locator('.fdoc-range-calendar__month--primary')).toHaveCSS('border-right-width', '1px');
 
   await page.setViewportSize({ width: 320, height: 700 });
