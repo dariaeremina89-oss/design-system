@@ -1,0 +1,27 @@
+.fdoc-date-picker,
+.fdoc-range-picker {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.fdoc-date-picker__popup,
+.fdoc-range-picker__popup {
+  position: absolute;
+  z-index: var(--layer-overlay);
+  top: calc(100% + var(--space-8));
+  left: 0;
+  max-width: calc(100vw - var(--space-32));
+}
+
+.fdoc-date-picker__calendar-button,
+.fdoc-range-picker__calendar-button {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 639px) {
+  .fdoc-date-picker__popup,
+  .fdoc-range-picker__popup {
+    max-width: calc(100vw - var(--space-32));
+  }
+}
