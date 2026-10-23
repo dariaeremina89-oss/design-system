@@ -147,10 +147,12 @@ function CalendarArrow({
   direction,
   onClick,
   disabled,
+  ariaLabel,
 }: {
   direction: 'previous' | 'next';
   onClick?: () => void;
   disabled?: boolean;
+  ariaLabel?: string;
 }) {
   return (
     <ButtonIcon
@@ -158,7 +160,7 @@ function CalendarArrow({
       iconSize={24}
       size="small"
       color="neutral"
-      aria-label={direction === 'previous' ? 'Предыдущий период' : 'Следующий период'}
+      aria-label={ariaLabel ?? (direction === 'previous' ? 'Предыдущий месяц' : 'Следующий месяц')}
       onClick={onClick}
       disabled={disabled}
       data-testid={direction === 'previous' ? 'calendar-previous' : 'calendar-next'}
@@ -166,10 +168,16 @@ function CalendarArrow({
   );
 }
 
+const WEEKDAY_ACCESSIBLE_LABELS = [
+  'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье',
+] as const;
+
 export function CalendarWeekdays() {
   return (
-    <div className="fdoc-calendar__weekdays" aria-hidden="true" data-testid="calendar-weekdays">
-      {WEEKDAY_LABELS.map(label => <span key={label}>{label}</span>)}
+    <div className="fdoc-calendar__weekdays" data-testid="calendar-weekdays">
+      {WEEKDAY_LABELS.map((label, index) => (
+        <span key={label} aria-label={WEEKDAY_ACCESSIBLE_LABELS[index]}>{label}</span>
+      ))}
     </div>
   );
 }
@@ -279,6 +287,8 @@ export function CalendarMonthPanel({
                     hasPreview && 'fdoc-calendar__day-shell--range-preview',
                   )}
                   role="gridcell"
+                  aria-selected={selected || rangeStartState || rangeEndState || undefined}
+                  aria-disabled={disabled || undefined}
                   key={date.toISOString()}
                 >
                   {hasRangeFill && <span className="fdoc-calendar__range-fill" aria-hidden="true" />}
@@ -291,8 +301,12 @@ export function CalendarMonthPanel({
                       (selected || rangeStartState || rangeEndState) && 'fdoc-calendar__day--selected',
                     )}
                     disabled={disabled}
-                    aria-pressed={selected || rangeStartState || rangeEndState || undefined}
-                    aria-label={new Intl.DateTimeFormat('ru-RU', { dateStyle: 'long' }).format(date)}
+                    aria-label={new Intl.DateTimeFormat('ru-RU', {
+                      weekday: 'long',
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                    }).format(date)}
                     onMouseEnter={() => onHoverDate?.(date)}
                     onMouseLeave={() => onHoverDate?.(null)}
                     onFocus={() => onHoverDate?.(date)}
@@ -478,11 +492,13 @@ export function Calendar({
                 direction="previous"
                 onClick={() => changePage(-1)}
                 disabled={!currentPeriodAvailable(previousTarget)}
+                ariaLabel={view === 'month' ? 'Предыдущий год' : 'Предыдущий диапазон лет'}
               />
               <CalendarArrow
                 direction="next"
                 onClick={() => changePage(1)}
                 disabled={!currentPeriodAvailable(nextTarget)}
+                ariaLabel={view === 'month' ? 'Следующий год' : 'Следующий диапазон лет'}
               />
             </div>
           </div>
@@ -508,6 +524,9 @@ export function Calendar({
                         selected && 'fdoc-calendar__choice--selected',
                         current && !selected && 'fdoc-calendar__choice--today',
                       )}
+                      role="gridcell"
+                      aria-selected={selected || undefined}
+                      aria-disabled={disabled || undefined}
                       disabled={disabled}
                       onClick={() => handleMonthChoice(monthIndex)}
                     >
@@ -528,6 +547,9 @@ export function Calendar({
                         selected && 'fdoc-calendar__choice--selected',
                         current && !selected && 'fdoc-calendar__choice--today',
                       )}
+                      role="gridcell"
+                      aria-selected={selected || undefined}
+                      aria-disabled={disabled || undefined}
                       disabled={disabled}
                       onClick={() => handleYearChoice(year)}
                     >
