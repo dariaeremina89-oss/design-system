@@ -157,7 +157,7 @@ describe('PriceInput', () => {
 
     fireEvent.change(input, { target: { value: '12a' } });
     expect(input).toHaveValue('12');
-    expect(screen.getByText(PRICE_INPUT_FORMAT_ERROR)).toBeInTheDocument();
+    expect(screen.getByTestId('input-error').textContent).toBe(PRICE_INPUT_FORMAT_ERROR);
 
     fireEvent.change(input, { target: { value: '12,3' } });
     expect(input).toHaveValue('12,3');
