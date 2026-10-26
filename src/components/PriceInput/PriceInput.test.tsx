@@ -164,6 +164,26 @@ describe('PriceInput', () => {
     expect(screen.queryByText(PRICE_INPUT_FORMAT_ERROR)).toBe(null);
   });
 
+  it('clears only the temporary format error on blur', () => {
+    const { rerender } = render(<PriceInput defaultValue="12" />);
+    const input = screen.getByRole('textbox');
+
+    fireEvent.change(input, { target: { value: '12a' } });
+    expect(screen.getByTestId('input-error').textContent).toBe(PRICE_INPUT_FORMAT_ERROR);
+
+    fireEvent.blur(input);
+    expect(screen.queryByTestId('input-error')).toBe(null);
+
+    rerender(<PriceInput value="0" min={1} max={PRICE_INPUT_MAX} />);
+    expect(screen.getByText(PRICE_INPUT_RANGE_ERROR)).toBeInTheDocument();
+    fireEvent.blur(screen.getByRole('textbox'));
+    expect(screen.getByText(PRICE_INPUT_RANGE_ERROR)).toBeInTheDocument();
+
+    rerender(<PriceInput value="12" error="Внешняя ошибка" />);
+    fireEvent.blur(screen.getByRole('textbox'));
+    expect(screen.getByText('Внешняя ошибка')).toBeInTheDocument();
+  });
+
   it('normalizes a typed decimal dot to a comma for alternate mobile locales', () => {
     render(<PriceInput defaultValue="12" />);
     const input = screen.getByRole('textbox');
