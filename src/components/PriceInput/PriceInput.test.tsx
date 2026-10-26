@@ -36,9 +36,9 @@ describe('PriceInput helpers', () => {
   });
 
   it('builds the format error from the configured separator', () => {
-    expect(PRICE_INPUT_FORMAT_ERROR).toBe('Можно вводить только цифры и «,»');
-    expect(getPriceFormatError(',')).toBe('Можно вводить только цифры и «,»');
-    expect(getPriceFormatError('.')).toBe('Можно вводить только цифры и «.»');
+    expect(PRICE_INPUT_FORMAT_ERROR).toBe('Можно ввести только цифры и ","');
+    expect(getPriceFormatError(',')).toBe('Можно ввести только цифры и ","');
+    expect(getPriceFormatError('.')).toBe('Можно ввести только цифры и "."');
   });
 
   it('allows format error copy to be overridden for another locale or scenario', () => {
