@@ -7,6 +7,7 @@ import {
   PRICE_INPUT_RANGE_ERROR,
   PriceInput,
   formatPriceValue,
+  getPriceFormatError,
   getPriceRangeError,
   isValidPriceValue,
   normalizePriceValue,
@@ -34,10 +35,10 @@ describe('PriceInput helpers', () => {
     expect(getPriceRangeError(1, 1000, 'USD')).toBe('Введите сумму от 1 до 1 000 $');
   });
 
-  it('keeps the default format error currency-neutral and comma-based', () => {
-    expect(PRICE_INPUT_FORMAT_ERROR).toBe('Введите сумму цифрами, дробную часть отделите запятой');
-    expect(PRICE_INPUT_FORMAT_ERROR.toLowerCase()).not.toContain('копе');
-    expect(PRICE_INPUT_FORMAT_ERROR).not.toContain('точк');
+  it('builds the format error from the configured separator', () => {
+    expect(PRICE_INPUT_FORMAT_ERROR).toBe('Можно вводить только цифры и «,»');
+    expect(getPriceFormatError(',')).toBe('Можно вводить только цифры и «,»');
+    expect(getPriceFormatError('.')).toBe('Можно вводить только цифры и «.»');
   });
 
   it('allows format error copy to be overridden for another locale or scenario', () => {
