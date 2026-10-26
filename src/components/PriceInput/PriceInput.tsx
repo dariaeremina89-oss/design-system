@@ -12,11 +12,15 @@ import './PriceInput.css';
 
 export const PRICE_INPUT_REQUIRED_ERROR = 'Обязательно для заполнения';
 export const PRICE_INPUT_RANGE_ERROR = 'Введите сумму от 1 до 9 999 999,99 ₽';
-export const PRICE_INPUT_FORMAT_ERROR = 'Введите сумму цифрами, дробную часть отделите запятой';
+export const PRICE_INPUT_FORMAT_ERROR = 'Можно вводить только цифры и «{separator}»';
 
 export const PRICE_INPUT_MIN = 1;
 export const PRICE_INPUT_MAX = 9_999_999.99;
 export const PRICE_INPUT_MAX_DIGITS = 9;
+
+export function getPriceFormatError(separator = ',') {
+  return PRICE_INPUT_FORMAT_ERROR.replace('{separator}', separator);
+}
 
 export function resolveCurrencySymbol(currency: string) {
   const value = currency.trim();
@@ -107,6 +111,8 @@ export interface PriceInputProps extends Omit<
   min?: number;
   /** Максимально допустимая сумма. */
   max?: number;
+  /** Разделитель дробной части, который подставляется в дефолтный текст ошибки. */
+  decimalSeparator?: string;
   /** Текст ошибки недопустимого формата. Можно переопределить для другой локали или сценария. */
   formatErrorText?: ReactNode;
   /** Изменение нормализованного значения. */
@@ -194,7 +200,8 @@ export function PriceInput({
   currency = '₽',
   min,
   max,
-  formatErrorText = PRICE_INPUT_FORMAT_ERROR,
+  decimalSeparator = ',',
+  formatErrorText,
   onValueChange,
   onClear,
   error: externalError,
@@ -223,8 +230,9 @@ export function PriceInput({
     && hasCompleteValue
     && !isValidPriceValue(normalizedValue, min, max);
   const rangeError = getPriceRangeError(min, max, currencySymbol);
+  const resolvedFormatError = formatErrorText ?? getPriceFormatError(decimalSeparator);
   const resolvedError = formatError
-    ? formatErrorText
+    ? resolvedFormatError
     : externalError ?? (hasRangeError ? rangeError : undefined);
   const digitCount = normalizedValue.replace(/\D/g, '').length;
   const resolvedCounter = counter === true
