@@ -4,6 +4,7 @@ import {
   useState,
   type ChangeEvent,
   type ClipboardEvent,
+  type FocusEvent,
   type Ref,
   type ReactNode,
 } from 'react';
@@ -211,6 +212,7 @@ export function PriceInput({
   label = 'Сумма',
   wrapperClassName = '',
   onPaste,
+  onBlur,
   ref,
   ...props
 }: PriceInputProps) {
@@ -269,6 +271,11 @@ export function PriceInput({
     onClear?.();
   }
 
+  function handleBlur(event: FocusEvent<HTMLInputElement>) {
+    setFormatError(false);
+    onBlur?.(event);
+  }
+
   function handlePaste(event: ClipboardEvent<HTMLInputElement>) {
     onPaste?.(event);
     if (event.defaultPrevented) return;
@@ -319,6 +326,7 @@ export function PriceInput({
         onChange={handleChange}
         onClear={handleClear}
         onPaste={handlePaste}
+        onBlur={handleBlur}
       />
     </div>
   );
