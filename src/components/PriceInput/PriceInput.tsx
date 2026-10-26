@@ -5,13 +5,14 @@ import {
   type ChangeEvent,
   type ClipboardEvent,
   type Ref,
+  type ReactNode,
 } from 'react';
 import { Input, type InputProps } from '../Input/Input';
 import './PriceInput.css';
 
 export const PRICE_INPUT_REQUIRED_ERROR = 'Обязательно для заполнения';
 export const PRICE_INPUT_RANGE_ERROR = 'Введите сумму от 1 до 9 999 999,99 ₽';
-export const PRICE_INPUT_FORMAT_ERROR = 'Введите сумму цифрами. Для дробной части используйте точку или запятую';
+export const PRICE_INPUT_FORMAT_ERROR = 'Введите сумму цифрами, дробную часть отделите запятой';
 
 export const PRICE_INPUT_MIN = 1;
 export const PRICE_INPUT_MAX = 9_999_999.99;
@@ -106,6 +107,8 @@ export interface PriceInputProps extends Omit<
   min?: number;
   /** Максимально допустимая сумма. */
   max?: number;
+  /** Текст ошибки недопустимого формата. Можно переопределить для другой локали или сценария. */
+  formatErrorText?: ReactNode;
   /** Изменение нормализованного значения. */
   onValueChange?: (value: string) => void;
   /** Вызывается после очистки значения. */
@@ -191,6 +194,7 @@ export function PriceInput({
   currency = '₽',
   min,
   max,
+  formatErrorText = PRICE_INPUT_FORMAT_ERROR,
   onValueChange,
   onClear,
   error: externalError,
@@ -220,7 +224,7 @@ export function PriceInput({
     && !isValidPriceValue(normalizedValue, min, max);
   const rangeError = getPriceRangeError(min, max, currencySymbol);
   const resolvedError = formatError
-    ? PRICE_INPUT_FORMAT_ERROR
+    ? formatErrorText
     : externalError ?? (hasRangeError ? rangeError : undefined);
   const digitCount = normalizedValue.replace(/\D/g, '').length;
   const resolvedCounter = counter === true

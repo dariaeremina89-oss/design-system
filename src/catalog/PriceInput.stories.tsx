@@ -10,7 +10,7 @@ import { controlsParameters, pickFieldControls } from '../docs/story-controls';
 
 const controlOrder = [
   'label', 'required', 'value', 'defaultValue', 'currency',
-  'min', 'max', 'caption', 'error', 'counter', 'maxLength', 'size',
+  'min', 'max', 'formatErrorText', 'caption', 'error', 'counter', 'maxLength', 'size',
   'clearable', 'disabled', 'skeleton',
   'onValueChange', 'onClear', 'onFocus', 'onBlur', 'onKeyDown',
 ] as const;
@@ -56,6 +56,11 @@ const meta = {
     max: {
       control: 'number',
       description: 'Максимально допустимая сумма. Не передавайте, если верхней границы нет.',
+      table: { category: 'Validation' },
+    },
+    formatErrorText: {
+      control: 'text',
+      description: 'Текст ошибки недопустимого формата. Дефолтный текст использует запятую; для другой локали или сценария его можно переопределить.',
       table: { category: 'Validation' },
     },
   },
@@ -149,5 +154,19 @@ export const Skeleton: Story = {
 
 export const SkeletonSmall: Story = {
   args: { skeleton: true, size: 'small' },
+};
+
+export const SkeletonToggleGeometry: Story = {
+  render: args => {
+    const [skeleton, setSkeleton] = useState(false);
+    return (
+      <div>
+        <button type="button" data-testid="price-input-skeleton-toggle" onClick={() => setSkeleton(value => !value)}>
+          Toggle skeleton
+        </button>
+        <PriceInput {...args} skeleton={skeleton} />
+      </div>
+    );
+  },
 };
 

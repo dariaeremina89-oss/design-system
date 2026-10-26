@@ -180,7 +180,7 @@ test('PriceInput normalizes decimal dot and rejects unsupported manual input', a
 
   await input.fill('12a');
   await expect(input).toHaveValue('12,5');
-  await expect(page.getByTestId('input-error')).toContainText('Введите сумму цифрами. Для дробной части используйте точку или запятую');
+  await expect(page.getByTestId('input-error')).toContainText('Введите сумму цифрами, дробную часть отделите запятой');
 });
 
 
@@ -226,4 +226,21 @@ test('PriceInput skeleton matches shared Input Figma geometry', async ({ page })
   const smallRootBox = await smallRoot.boundingBox();
   expect(smallRootBox).not.toBeNull();
   expect(Math.abs(smallRootBox!.height - 88)).toBeLessThanOrEqual(0.5);
+});
+
+
+test('PriceInput does not shift height when skeleton is toggled on the same instance', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-priceinput--skeleton-toggle-geometry&viewMode=story');
+
+  const priceInput = page.getByTestId('price-input');
+  const toggle = page.getByTestId('price-input-skeleton-toggle');
+  const before = await priceInput.boundingBox();
+  expect(before).not.toBeNull();
+
+  await toggle.click();
+  await expect(page.getByTestId('input-skeleton')).toBeVisible();
+
+  const after = await priceInput.boundingBox();
+  expect(after).not.toBeNull();
+  expect(Math.abs(after!.height - before!.height)).toBeLessThanOrEqual(0.5);
 });

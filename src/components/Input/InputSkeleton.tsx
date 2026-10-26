@@ -1,7 +1,7 @@
 import { Children, isValidElement, type ReactNode } from 'react';
 import type { IconName } from '../Icon/Icon';
 import { Skeleton } from '../Skeleton/Skeleton';
-import { FieldClearButton } from '../TextField/TextField';
+import { FieldClearButton, FieldHelper, FieldLabel } from '../TextField/TextField';
 import type { InputSize } from './Input';
 
 export interface InputSkeletonProps {
@@ -79,11 +79,7 @@ export function InputSkeleton({
   testId,
   wrapperClassName,
 }: InputSkeletonProps) {
-  const hasLabel = hasRenderableContent(label);
   const hasDescription = hasRenderableContent(description);
-  const hasError = hasRenderableContent(error);
-  const hasCaption = hasRenderableContent(caption);
-  const hasHelperText = hasError || hasCaption;
   const hasCounter = counter !== undefined
     && counter !== null
     && counter !== false
@@ -99,28 +95,13 @@ export function InputSkeleton({
       aria-hidden="true"
       data-testid={testId ?? 'input-skeleton'}
     >
-      {hasLabel && (
-        <div className="fdoc-input__label fdoc-field__label" data-testid="input-skeleton-label">
-          <span className="fdoc-input__label-text fdoc-field__label-text">
-            <Skeleton
-              className="fdoc-input__skeleton--label"
-              data-testid="input-skeleton-label-text"
-              width="64px"
-              textSize="caption"
-              shape="text"
-            />
-            {required && (
-              <Skeleton
-                className="fdoc-input__skeleton--required"
-                data-testid="input-skeleton-required"
-                width="var(--font-size-12)"
-                textSize="caption"
-                shape="text"
-              />
-            )}
-          </span>
-        </div>
-      )}
+      <FieldLabel
+        prefix="input"
+        label={label}
+        inputId=""
+        required={required}
+        skeleton
+      />
 
       <div
         className={joinClassNames(
@@ -192,32 +173,14 @@ export function InputSkeleton({
         {trailingContent}
       </div>
 
-      {(hasHelperText || hasCounter) && (
-        <div className="fdoc-input__helper fdoc-field__helper" data-testid="input-skeleton-helper">
-          {hasHelperText && (
-            <span className="fdoc-input__caption fdoc-field__caption" data-testid="input-skeleton-helper-text">
-              <Skeleton
-                className="fdoc-input__skeleton--helper"
-                data-testid="input-skeleton-helper-shape"
-                width="64px"
-                textSize="caption"
-                shape="text"
-              />
-            </span>
-          )}
-          {hasCounter && (
-            <span className="fdoc-input__counter fdoc-field__counter" data-testid="input-skeleton-counter">
-              <Skeleton
-                className="fdoc-input__skeleton--counter"
-                data-testid="input-skeleton-counter-shape"
-                width="40px"
-                textSize="caption"
-                shape="text"
-              />
-            </span>
-          )}
-        </div>
-      )}
+      <FieldHelper
+        prefix="input"
+        error={error}
+        caption={caption}
+        hasCounter={hasCounter}
+        resolvedCounter={counter === true ? '' : counter}
+        skeleton
+      />
     </div>
   );
 }

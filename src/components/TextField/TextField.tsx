@@ -106,9 +106,25 @@ export function FieldLabel({ prefix, label, inputId, required, disabled, isError
       className={joinClassNames(`fdoc-${prefix}__label`, 'fdoc-field__label', isError && !skeleton && 'fdoc-field__label--error', disabled && !skeleton && 'fdoc-field__label--disabled', isError && disabled && !skeleton && 'fdoc-field__label--error-disabled')}
       data-testid={`${prefix}${skeleton ? '-skeleton' : ''}-label`}>
       <span className={`fdoc-${prefix}__label-text fdoc-field__label-text`}>
-        {skeleton ? <Skeleton width="64px" shape="text" textSize="caption" data-testid={`${prefix}-skeleton-label-text`} /> : label}
+        {skeleton ? (
+          <Skeleton
+            className={`fdoc-${prefix}__skeleton--label`}
+            width="64px"
+            shape="text"
+            textSize="caption"
+            data-testid={`${prefix}-skeleton-label-text`}
+          />
+        ) : label}
         {required && (skeleton
-          ? <Skeleton width="var(--font-size-12)" shape="text" textSize="caption" />
+          ? (
+            <Skeleton
+              className={`fdoc-${prefix}__skeleton--required`}
+              width="var(--font-size-12)"
+              shape="text"
+              textSize="caption"
+              data-testid={`${prefix}-skeleton-required`}
+            />
+          )
           : <span className={`fdoc-${prefix}__required fdoc-field__required`} aria-hidden="true">*</span>)}
       </span>
     </Tag>

@@ -34,6 +34,10 @@
   pointer-events: none;
 }
 
+.fdoc-input__field--skeleton .fdoc-input__content {
+  min-height: var(--line-height-24);
+}
+
 .fdoc-input__field:has(.fdoc-input__control:focus),
 .fdoc-input__field.fdoc-field__field--focused {
   padding: calc(var(--space-12) - var(--border-small));

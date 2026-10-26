@@ -34,9 +34,16 @@ describe('PriceInput helpers', () => {
     expect(getPriceRangeError(1, 1000, 'USD')).toBe('Введите сумму от 1 до 1 000 $');
   });
 
-  it('keeps the format error currency-neutral', () => {
-    expect(PRICE_INPUT_FORMAT_ERROR).toBe('Введите сумму цифрами. Для дробной части используйте точку или запятую');
+  it('keeps the default format error currency-neutral and comma-based', () => {
+    expect(PRICE_INPUT_FORMAT_ERROR).toBe('Введите сумму цифрами, дробную часть отделите запятой');
     expect(PRICE_INPUT_FORMAT_ERROR.toLowerCase()).not.toContain('копе');
+    expect(PRICE_INPUT_FORMAT_ERROR).not.toContain('точк');
+  });
+
+  it('allows format error copy to be overridden for another locale or scenario', () => {
+    render(<PriceInput defaultValue="12" currency="USD" formatErrorText="Use the expected amount format" />);
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '12a' } });
+    expect(screen.getByText('Use the expected amount format')).toBeInTheDocument();
   });
 
   it('formats thousands with non-breaking spaces', () => {
