@@ -29,7 +29,7 @@ const meta = {
   decorators: [Story => <div style={{ width: '100%', maxWidth: 440 }}><Story /></div>],
   args: {
     label: 'Сумма',
-    caption: 'Укажите сумму в рублях',
+    caption: 'Укажите сумму',
     currency: 'RUB',
     min: 1,
     max: 9_999_999.99,
@@ -145,5 +145,9 @@ export const Disabled: Story = {
 
 export const Skeleton: Story = {
   args: { skeleton: true },
+};
+
+export const SkeletonSmall: Story = {
+  args: { skeleton: true, size: 'small' },
 };
 

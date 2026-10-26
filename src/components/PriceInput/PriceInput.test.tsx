@@ -34,6 +34,11 @@ describe('PriceInput helpers', () => {
     expect(getPriceRangeError(1, 1000, 'USD')).toBe('Введите сумму от 1 до 1 000 $');
   });
 
+  it('keeps the format error currency-neutral', () => {
+    expect(PRICE_INPUT_FORMAT_ERROR).toBe('Введите сумму цифрами, отделив дробную часть точкой или запятой');
+    expect(PRICE_INPUT_FORMAT_ERROR.toLowerCase()).not.toContain('копе');
+  });
+
   it('formats thousands with non-breaking spaces', () => {
     expect(formatPriceValue('123456,78')).toBe('123\u00a0456,78');
   });

@@ -180,5 +180,50 @@ test('PriceInput normalizes decimal dot and rejects unsupported manual input', a
 
   await input.fill('12a');
   await expect(input).toHaveValue('12,5');
-  await expect(page.getByTestId('input-error')).toContainText('Введите сумму цифрами, отделив копейки запятой');
+  await expect(page.getByTestId('input-error')).toContainText('Введите сумму цифрами, отделив дробную часть точкой или запятой');
+});
+
+
+test('PriceInput skeleton matches shared Input Figma geometry', async ({ page }) => {
+  await page.goto('/iframe.html?id=components-inputs-priceinput--skeleton&viewMode=story');
+
+  const root = page.getByTestId('input-skeleton');
+  const label = page.getByTestId('input-skeleton-label');
+  const labelShape = page.getByTestId('input-skeleton-label-text');
+  const field = page.getByTestId('input-skeleton-field');
+  const helper = page.getByTestId('input-skeleton-helper');
+  const helperShape = page.getByTestId('input-skeleton-helper-shape');
+  const counterShape = page.getByTestId('input-skeleton-counter-shape');
+
+  await expect(labelShape).toHaveCSS('width', '64px');
+  await expect(labelShape).toHaveCSS('height', '16px');
+  await expect(field).toHaveCSS('min-height', '56px');
+  await expect(helperShape).toHaveCSS('width', '64px');
+  await expect(helperShape).toHaveCSS('height', '16px');
+  await expect(counterShape).toHaveCSS('width', '40px');
+  await expect(counterShape).toHaveCSS('height', '16px');
+
+  const rootBox = await root.boundingBox();
+  const labelBox = await label.boundingBox();
+  const labelShapeBox = await labelShape.boundingBox();
+  const fieldBox = await field.boundingBox();
+  const helperBox = await helper.boundingBox();
+  expect(rootBox).not.toBeNull();
+  expect(labelBox).not.toBeNull();
+  expect(labelShapeBox).not.toBeNull();
+  expect(fieldBox).not.toBeNull();
+  expect(helperBox).not.toBeNull();
+
+  expect(Math.abs(rootBox!.height - 96)).toBeLessThanOrEqual(0.5);
+  expect(Math.abs(labelShapeBox!.x - rootBox!.x - 12)).toBeLessThanOrEqual(0.5);
+  expect(Math.abs(fieldBox!.y - labelBox!.y - labelBox!.height - 4)).toBeLessThanOrEqual(0.5);
+  expect(Math.abs(helperBox!.y - fieldBox!.y - fieldBox!.height - 4)).toBeLessThanOrEqual(0.5);
+
+  await page.goto('/iframe.html?id=components-inputs-priceinput--skeleton-small&viewMode=story');
+  const smallRoot = page.getByTestId('input-skeleton');
+  const smallField = page.getByTestId('input-skeleton-field');
+  await expect(smallField).toHaveCSS('min-height', '48px');
+  const smallRootBox = await smallRoot.boundingBox();
+  expect(smallRootBox).not.toBeNull();
+  expect(Math.abs(smallRootBox!.height - 88)).toBeLessThanOrEqual(0.5);
 });

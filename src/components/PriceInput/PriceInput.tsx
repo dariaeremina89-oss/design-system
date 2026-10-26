@@ -11,7 +11,7 @@ import './PriceInput.css';
 
 export const PRICE_INPUT_REQUIRED_ERROR = 'Обязательно для заполнения';
 export const PRICE_INPUT_RANGE_ERROR = 'Введите сумму от 1 до 9 999 999,99 ₽';
-export const PRICE_INPUT_FORMAT_ERROR = 'Введите сумму цифрами, отделив копейки запятой';
+export const PRICE_INPUT_FORMAT_ERROR = 'Введите сумму цифрами, отделив дробную часть точкой или запятой';
 
 export const PRICE_INPUT_MIN = 1;
 export const PRICE_INPUT_MAX = 9_999_999.99;
@@ -94,7 +94,7 @@ export interface PriceInputProps extends Omit<
   | 'min'
   | 'max'
 > {
-  /** Нормализованное значение без разделителей тысяч, с запятой перед копейками. */
+  /** Нормализованное значение без разделителей тысяч, с запятой перед дробной частью. */
   value?: string;
   /** Начальное нормализованное значение. */
   defaultValue?: string;
