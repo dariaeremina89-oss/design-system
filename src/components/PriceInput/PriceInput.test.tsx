@@ -35,7 +35,7 @@ describe('PriceInput helpers', () => {
   });
 
   it('keeps the format error currency-neutral', () => {
-    expect(PRICE_INPUT_FORMAT_ERROR).toBe('Введите сумму цифрами, отделив дробную часть точкой или запятой');
+    expect(PRICE_INPUT_FORMAT_ERROR).toBe('Введите сумму цифрами. Для дробной части используйте точку или запятую');
     expect(PRICE_INPUT_FORMAT_ERROR.toLowerCase()).not.toContain('копе');
   });
 

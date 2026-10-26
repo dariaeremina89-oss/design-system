@@ -11,7 +11,7 @@ import './PriceInput.css';
 
 export const PRICE_INPUT_REQUIRED_ERROR = 'Обязательно для заполнения';
 export const PRICE_INPUT_RANGE_ERROR = 'Введите сумму от 1 до 9 999 999,99 ₽';
-export const PRICE_INPUT_FORMAT_ERROR = 'Введите сумму цифрами, отделив дробную часть точкой или запятой';
+export const PRICE_INPUT_FORMAT_ERROR = 'Введите сумму цифрами. Для дробной части используйте точку или запятую';
 
 export const PRICE_INPUT_MIN = 1;
 export const PRICE_INPUT_MAX = 9_999_999.99;
