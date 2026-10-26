@@ -12,14 +12,14 @@ import './PriceInput.css';
 
 export const PRICE_INPUT_REQUIRED_ERROR = 'Обязательно для заполнения';
 export const PRICE_INPUT_RANGE_ERROR = 'Введите сумму от 1 до 9 999 999,99 ₽';
-export const PRICE_INPUT_FORMAT_ERROR = 'Можно вводить только цифры и «,»';
+export const PRICE_INPUT_FORMAT_ERROR = 'Можно ввести только цифры и ","';
 
 export const PRICE_INPUT_MIN = 1;
 export const PRICE_INPUT_MAX = 9_999_999.99;
 export const PRICE_INPUT_MAX_DIGITS = 9;
 
 export function getPriceFormatError(separator = ',') {
-  return `Можно вводить только цифры и «${separator}»`;
+  return `Можно ввести только цифры и "${separator}"`;
 }
 
 export function resolveCurrencySymbol(currency: string) {
