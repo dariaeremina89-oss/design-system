@@ -180,7 +180,7 @@ test('PriceInput normalizes decimal dot and rejects unsupported manual input', a
 
   await input.fill('12a');
   await expect(input).toHaveValue('12,5');
-  await expect(page.getByTestId('input-error')).toContainText('Введите сумму цифрами, дробную часть отделите запятой');
+  await expect(page.getByTestId('input-error')).toContainText('Можно вводить только цифры и «,»');
 });
 
 
