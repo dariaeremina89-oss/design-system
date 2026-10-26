@@ -144,12 +144,12 @@ export function FieldHelper({ prefix, error, caption, hasCounter, resolvedCounte
       {(hasError || hasCaption) && <span id={skeleton ? undefined : errorId ?? captionId}
         className={joinClassNames(`fdoc-${prefix}__caption`, 'fdoc-field__caption', isError && !skeleton && 'fdoc-field__caption--error', disabled && !skeleton && 'fdoc-field__caption--disabled', isError && disabled && !skeleton && 'fdoc-field__caption--error-disabled')}
         data-testid={`${idPrefix}-${skeleton ? 'helper-text' : hasError ? 'error' : 'caption'}`}>
-        {skeleton ? <Skeleton width="64px" shape="text" textSize="caption" data-testid={`${idPrefix}-helper-shape`} /> : hasError ? error : caption}
+        {skeleton ? <Skeleton className={`fdoc-${prefix}__skeleton--helper`} width="64px" shape="text" textSize="caption" data-testid={`${idPrefix}-helper-shape`} /> : hasError ? error : caption}
       </span>}
       {hasCounter && <span id={skeleton ? undefined : counterId}
         className={joinClassNames(`fdoc-${prefix}__counter`, 'fdoc-field__counter', disabled && !skeleton && 'fdoc-field__counter--disabled')}
         data-testid={`${idPrefix}-counter`}>
-        {skeleton ? <Skeleton width="40px" shape="text" textSize="caption" data-testid={`${idPrefix}-counter-shape`} /> : resolvedCounter}
+        {skeleton ? <Skeleton className={`fdoc-${prefix}__skeleton--counter`} width="40px" shape="text" textSize="caption" data-testid={`${idPrefix}-counter-shape`} /> : resolvedCounter}
       </span>}
     </div>
   );
