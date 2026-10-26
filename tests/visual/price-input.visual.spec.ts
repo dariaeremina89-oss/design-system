@@ -180,7 +180,7 @@ test('PriceInput normalizes decimal dot and rejects unsupported manual input', a
 
   await input.fill('12a');
   await expect(input).toHaveValue('12,5');
-  await expect(page.getByTestId('input-error')).toContainText('Можно ввести только цифры и ","');
+  expect(await page.getByTestId('input-error').evaluate(element => element.textContent)).toBe('Можно ввести только цифры и ","');
 });
 
 
