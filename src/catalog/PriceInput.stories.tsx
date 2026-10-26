@@ -10,7 +10,7 @@ import { controlsParameters, pickFieldControls } from '../docs/story-controls';
 
 const controlOrder = [
   'label', 'required', 'value', 'defaultValue', 'currency',
-  'min', 'max', 'formatErrorText', 'caption', 'error', 'counter', 'maxLength', 'size',
+  'min', 'max', 'decimalSeparator', 'formatErrorText', 'caption', 'error', 'counter', 'maxLength', 'size',
   'clearable', 'disabled', 'skeleton',
   'onValueChange', 'onClear', 'onFocus', 'onBlur', 'onKeyDown',
 ] as const;
@@ -58,9 +58,14 @@ const meta = {
       description: 'Максимально допустимая сумма. Не передавайте, если верхней границы нет.',
       table: { category: 'Validation' },
     },
+    decimalSeparator: {
+      control: 'text',
+      description: 'Разделитель дробной части, который подставляется в стандартный текст ошибки формата.',
+      table: { category: 'Validation' },
+    },
     formatErrorText: {
       control: 'text',
-      description: 'Текст ошибки недопустимого формата. Дефолтный текст использует запятую; для другой локали или сценария его можно переопределить.',
+      description: 'Полностью переопределяет стандартный текст ошибки недопустимого формата.',
       table: { category: 'Validation' },
     },
   },
