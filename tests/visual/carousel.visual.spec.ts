@@ -1,5 +1,12 @@
 import {test,expect} from '@playwright/test';
 const story = (name:string) => `/iframe.html?id=components-navigation-carousel--${name}&viewMode=story`;
+const dotColors = async (page:any) => {
+  const carousel=page.getByTestId('carousel');
+  return {
+    selected: await carousel.locator('[aria-current="true"]').evaluate((el:any)=>getComputedStyle(el).backgroundColor),
+    default: await carousel.locator('.fdoc-carousel__dot:not([aria-current="true"])').first().evaluate((el:any)=>getComputedStyle(el).backgroundColor),
+  };
+};
 test('geometry, keyboard, overflow and reduced motion', async ({page}) => {
   await page.goto(story('many-items'));
   const carousel=page.getByTestId('carousel');
@@ -20,6 +27,16 @@ test('geometry, keyboard, overflow and reduced motion', async ({page}) => {
   await page.goto(story('narrow'));
   await expect(carousel).toBeVisible();
   expect((await carousel.boundingBox())!.width).toBeLessThanOrEqual(160);
+});
+
+test('dot colors stay the same in Secondary and Inverse light', async ({page}) => {
+  await page.goto(story('default'));
+  const secondary=await dotColors(page);
+
+  await page.goto(story('inverse-light'));
+  const inverse=await dotColors(page);
+
+  expect(inverse).toEqual(secondary);
 });
 test('drag follows pointer, commits, snaps back and handles rapid navigation', async ({page}) => {
   await page.goto(story('first-element'));
