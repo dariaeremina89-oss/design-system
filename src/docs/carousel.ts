@@ -26,7 +26,7 @@ Secondary в светлой теме; Inverse light в темной. Dot: Defaul
 Skeleton: цельная плашка 168 × 32, radius-full, background-base-skeleton, без кнопок и точек. Используется при первичной загрузке, в том числе пока количество элементов неизвестно; в узком контейнере сжимается до доступной ширины. Собран через общий компонент Skeleton.
 
 ### Геометрия и токены
-Контейнер: без боковых отступов, кнопки стрелок стоят у краев, radius-full, background-base-secondary / background-base-inverse-light. Группа: padding space-8, gap space-8. Dot: elements-8 × elements-8, выбранный — elements-16 × elements-8. Прозрачная зона нажатия расширена по вертикали до 32 px.
+Контейнер: height 32 px, width по контенту до 168 px, без padding, gap space-4 между Previous / Page indicators / Next, radius-full, background-base-secondary / background-base-inverse-light. Page indicators: max-width 96 px, без padding, gap space-8. Dot: elements-8 × elements-8, выбранный — elements-16 × elements-8. Прозрачная зона нажатия расширена по вертикали до 32 px.
 
 Dot используют один набор токенов независимо от Color Carousel: icon-base-inverse-secondary для обычной точки; icon-base-secondary для выбранной и Focused; icon-base-secondary-hover/-pressed/-disabled для состояний. Focus: border-small и border-base-secondary-focused, без изменения размеров.
 
@@ -35,18 +35,18 @@ Color Carousel влияет на фон контейнера и ButtonIcon ст�
 В репозитории ранее не было transition-токенов. Добавлены transition-duration-normal (200ms) и transition-easing-standard (cubic-bezier(0.2, 0, 0, 1)). Ширина и цвет точек используют их одновременно; соседние точки плавно перемещаются в flex-потоке. При reduced motion переходы отключаются.
 
 ### Поведение
-Нажатие выбранной точки ничего не меняет. Выбранная точка сохраняет DOM-узел при переключении. При более чем восьми точках прокручивается только группа индикаторов; стрелки остаются на месте, выбранная и сфокусированная точки видимы. Scrollbar скрыт.
+Нажатие выбранной точки ничего не меняет. Выбранная точка сохраняет DOM-узел при переключении. До шести Dot группа индикаторов отображается без внутренней прокрутки. При количестве Dot больше шести ширина Carousel не превышает 168 px и прокручивается только Page indicators; стрелки остаются на месте, выбранная и сфокусированная точки видимы. Scrollbar скрыт.
 
 В CarouselViewport контент следует за указателем. Порог переключения — 20% ширины, максимум 80 px, или скорость более 0.5 px/ms. Короткий drag возвращается назад; отмена жеста не переключает элемент. На границах применяется сопротивление. Вертикальное движение сохраняет прокрутку страницы. Повторный drag начинается с текущего положения перехода. Анимацию собственного контента задает потребитель.
 
 ### Адаптив
-Горизонтальная компоновка сохраняется. При недостатке места сужается область индикаторов. Размеры и шрифты не уменьшаются. Swipe работает на области контента.
+Горизонтальная компоновка сохраняется. Максимальная ширина Carousel — 168 px, поэтому на минимальной поддерживаемой ширине 320 px компонент не создает horizontal overflow. Размеры ButtonIcon и Dot не уменьшаются. Swipe работает на области контента.
 
 ### Доступность
 Кнопки связаны с контентом через aria-controls. Tab входит в группу на выбранной точке. Стрелки влево/вправо сразу переключают выбранный элемент и переносят фокус на новый активный Dot; Home/End сразу выбирают первый/последний Dot. При loop=true стрелки циклически переходят между первым и последним элементами. Enter/Space остаются нативным способом активации Dot. aria-current отмечает текущую точку. Неактивные слайды CarouselViewport имеют inert и aria-hidden; смена позиции объявляется через aria-live.
 
 ### Чеклист
-Проверьте переключение кнопками, точками, клавиатурой и свайпом; loop=false и loop=true; первый/последний элемент; короткий и отмененный drag; быстрые повторные действия; более восьми точек; узкую область; обе темы и reduced motion.
+Проверьте переключение кнопками, точками, клавиатурой и свайпом; loop=false и loop=true; первый/последний элемент; короткий и отмененный drag; быстрые повторные действия; более шести точек; максимальную ширину 168 px; обе темы и reduced motion.
 
-Источники: [Figma](https://www.figma.com/design/qfWNJqugbOC6RmiKKEv9Bb/F.Doc-Design-System?node-id=9881-8287), [описание](https://app.notion.com/p/2fe7ab6fc5d3809eaad0c758fb4e85e1), [референс Motion](https://examples.motion.dev/react/carousel-pagination-arrows). Боковые отступы панели убраны по уточнению. Отступы группы индикаторов взяты из описания от 15.10.2026. Цвета Dot сверены с компонентом Figma: отдельной палитры Dot для Inverse light нет.
+Источники: [Figma](https://www.figma.com/design/qfWNJqugbOC6RmiKKEv9Bb/F.Doc-Design-System?node-id=9881-8287), [описание](https://app.notion.com/p/2fe7ab6fc5d3809eaad0c758fb4e85e1), [референс Motion](https://examples.motion.dev/react/carousel-pagination-arrows). Геометрия сверена с актуальным компонентом Figma: Carousel 32 px по высоте и до 168 px по ширине, gap space-4; Page indicators до 96 px, без padding, gap space-8; одновременно без прокрутки помещается до шести Dot. Цвета Dot одинаковы для Secondary и Inverse light.
 `;

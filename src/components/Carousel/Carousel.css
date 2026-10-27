@@ -7,9 +7,12 @@
   display: inline-flex;
   align-items: center;
   box-sizing: border-box;
-  max-width: 100%;
+  width: fit-content;
+  max-width: 168px;
   min-width: 0;
-  padding-inline: 0;
+  height: var(--elements-32);
+  gap: var(--space-4);
+  padding: 0;
   border-radius: var(--radius-full);
   background: var(--background-base-secondary);
 }
@@ -32,10 +35,10 @@
   display: flex;
   align-items: center;
   gap: var(--space-8);
-  padding-inline: var(--space-8);
-  height: var(--elements-32);
+  padding: 0;
+  height: var(--elements-8);
   min-width: 0;
-  max-width: calc(8 * var(--elements-8) + 7 * var(--space-8) + var(--elements-8) + 2 * var(--space-8));
+  max-width: 96px;
   box-sizing: border-box;
   overflow-x: auto;
   scrollbar-width: none;

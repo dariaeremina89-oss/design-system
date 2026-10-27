@@ -15,6 +15,12 @@ test('geometry, keyboard, overflow and reduced motion', async ({page}) => {
   await expect(dot).toHaveCSS('width','16px');
   await expect(dot).toHaveCSS('height','8px');
   await expect(carousel.locator('.fdoc-carousel__arrow').first()).toHaveCSS('width','32px');
+  await expect(carousel).toHaveCSS('height','32px');
+  expect((await carousel.boundingBox())!.width).toBe(168);
+  const indicators=carousel.locator('.fdoc-carousel__indicators');
+  expect((await indicators.boundingBox())!.width).toBe(96);
+  await expect(indicators).toHaveCSS('column-gap','8px');
+  await expect(indicators).toHaveCSS('padding-left','0px');
   await carousel.getByRole('button',{name:'Перейти к элементу 1 из 16',exact:true}).focus();
   await page.keyboard.press('End');
   const lastDot=carousel.getByRole('button',{name:'Перейти к элементу 16 из 16',exact:true});
@@ -24,9 +30,6 @@ test('geometry, keyboard, overflow and reduced motion', async ({page}) => {
   await expect.poll(()=>carousel.locator('.fdoc-carousel__indicators').evaluate(el=>el.scrollLeft)).toBeGreaterThan(0);
   await page.emulateMedia({reducedMotion:'reduce'});
   await expect(dot).toHaveCSS('transition-duration','0s');
-  await page.goto(story('narrow'));
-  await expect(carousel).toBeVisible();
-  expect((await carousel.boundingBox())!.width).toBeLessThanOrEqual(160);
 });
 
 test('dot colors stay the same in Secondary and Inverse light', async ({page}) => {

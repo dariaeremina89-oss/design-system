@@ -47,8 +47,8 @@ export function Carousel({ count, index, defaultIndex = 0, onIndexChange, contro
     const dot = dots.current[i], container = viewport.current;
     if (!dot || !container) return;
     const d = dot.getBoundingClientRect(), v = container.getBoundingClientRect();
-    if (d.left < v.left + 8) container.scrollLeft += d.left - v.left - 8;
-    else if (d.right > v.right - 8) container.scrollLeft += d.right - v.right + 8;
+    if (d.left < v.left) container.scrollLeft += d.left - v.left;
+    else if (d.right > v.right) container.scrollLeft += d.right - v.right;
   }
   useEffect(() => {
     setLocalIndex(n => resolveIndex(n));
