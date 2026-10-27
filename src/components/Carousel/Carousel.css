@@ -14,11 +14,6 @@
   background: var(--background-base-secondary);
 }
 .fdoc-carousel[data-color='inverse-light'], [data-color-mode='dark'] .fdoc-carousel[data-color='auto'] {
-  --carousel-selected: var(--icon-base-inverse);
-  --carousel-hover: var(--icon-base-inverse-hover);
-  --carousel-pressed: var(--icon-base-inverse-pressed);
-  --carousel-disabled: var(--icon-base-inverse-disabled);
-  --carousel-focus: var(--border-base-inverse-focused);
   background: var(--background-base-inverse-light);
 }
 .fdoc-carousel[data-color='inverse-light'] .fdoc-carousel__arrow,
