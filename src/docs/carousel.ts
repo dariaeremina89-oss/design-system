@@ -28,9 +28,9 @@ Skeleton: цельная плашка 168 × 32, radius-full, background-base-sk
 ### Геометрия и токены
 Контейнер: без боковых отступов, кнопки стрелок стоят у краев, radius-full, background-base-secondary / background-base-inverse-light. Группа: padding space-8, gap space-8. Dot: elements-8 × elements-8, выбранный — elements-16 × elements-8. Прозрачная зона нажатия расширена по вертикали до 32 px.
 
-Secondary: icon-base-inverse-secondary для обычной точки; icon-base-secondary для выбранной и Focused, суффиксы -hover/-pressed/-disabled для состояний. Focus: border-small и border-base-secondary-focused, без изменения размеров.
+Dot используют один набор токенов независимо от Color Carousel: icon-base-inverse-secondary для обычной точки; icon-base-secondary для выбранной и Focused; icon-base-secondary-hover/-pressed/-disabled для состояний. Focus: border-small и border-base-secondary-focused, без изменения размеров.
 
-Inverse light: icon-base-inverse-secondary для обычной точки; icon-base-inverse для выбранной и Focused; icon-base-inverse-hover/-pressed/-disabled для состояний. Focus: border-base-inverse-focused.
+Color Carousel влияет на фон контейнера и ButtonIcon стрелок. В Inverse light стрелки используют фон background-base-inverse-light, hover/pressed — соответствующие inverse-light токены, а Disabled остается без фона.
 
 В репозитории ранее не было transition-токенов. Добавлены transition-duration-normal (200ms) и transition-easing-standard (cubic-bezier(0.2, 0, 0, 1)). Ширина и цвет точек используют их одновременно; соседние точки плавно перемещаются в flex-потоке. При reduced motion переходы отключаются.
 
@@ -48,5 +48,5 @@ Inverse light: icon-base-inverse-secondary для обычной точки; ico
 ### Чеклист
 Проверьте переключение кнопками, точками, клавиатурой и свайпом; loop=false и loop=true; первый/последний элемент; короткий и отмененный drag; быстрые повторные действия; более восьми точек; узкую область; обе темы и reduced motion.
 
-Источники: [Figma](https://www.figma.com/design/qfWNJqugbOC6RmiKKEv9Bb/F.Doc-Design-System?node-id=9881-8287), [описание](https://app.notion.com/p/2fe7ab6fc5d3809eaad0c758fb4e85e1), [референс Motion](https://examples.motion.dev/react/carousel-pagination-arrows). Боковые отступы панели убраны по уточнению. Отступы группы индикаторов и цвет выбранной точки Inverse light взяты из описания от 15.10.2026.
+Источники: [Figma](https://www.figma.com/design/qfWNJqugbOC6RmiKKEv9Bb/F.Doc-Design-System?node-id=9881-8287), [описание](https://app.notion.com/p/2fe7ab6fc5d3809eaad0c758fb4e85e1), [референс Motion](https://examples.motion.dev/react/carousel-pagination-arrows). Боковые отступы панели убраны по уточнению. Отступы группы индикаторов взяты из описания от 15.10.2026. Цвета Dot сверены с компонентом Figma: отдельной палитры Dot для Inverse light нет.
 `;
