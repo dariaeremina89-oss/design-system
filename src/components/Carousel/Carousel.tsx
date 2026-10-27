@@ -24,14 +24,22 @@ export interface CarouselProps extends Omit<HTMLAttributes<HTMLElement>, 'onChan
   controlsId: string;
   color?: CarouselColor;
   disabled?: boolean;
+  /** Циклическое переключение между первым и последним элементом. */
+  loop?: boolean;
   /** Скелетон панели при первичной загрузке. */
   isLoading?: boolean;
 }
-export function Carousel({ count, index, defaultIndex = 0, onIndexChange, controlsId, color = 'auto', disabled = false, isLoading = false, className = '', ...props }: CarouselProps) {
+export function Carousel({ count, index, defaultIndex = 0, onIndexChange, controlsId, color = 'auto', disabled = false, loop = false, isLoading = false, className = '', ...props }: CarouselProps) {
   const total = Number.isFinite(count) ? Math.max(0, Math.floor(count)) : 0;
   const clamp = (n: number) => Math.max(0, Math.min(total - 1, Number.isFinite(n) ? Math.floor(n) : 0));
+  const wrap = (n: number) => {
+    if (total <= 0) return 0;
+    const value = Number.isFinite(n) ? Math.floor(n) : 0;
+    return ((value % total) + total) % total;
+  };
+  const resolveIndex = (n: number) => loop ? wrap(n) : clamp(n);
   const [localIndex, setLocalIndex] = useState(defaultIndex);
-  const current = clamp(index ?? localIndex);
+  const current = resolveIndex(index ?? localIndex);
   const [focusIndex, setFocusIndex] = useState(current);
   const dots = useRef<Array<HTMLButtonElement | null>>([]);
   const viewport = useRef<HTMLDivElement>(null);
@@ -43,7 +51,7 @@ export function Carousel({ count, index, defaultIndex = 0, onIndexChange, contro
     else if (d.right > v.right - 8) container.scrollLeft += d.right - v.right + 8;
   }
   useEffect(() => {
-    setLocalIndex(n => clamp(n));
+    setLocalIndex(n => resolveIndex(n));
     setFocusIndex(current);
     reveal(current);
     const resize = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => reveal(current)) : null;
@@ -51,7 +59,7 @@ export function Carousel({ count, index, defaultIndex = 0, onIndexChange, contro
     return () => resize?.disconnect();
   }, [current, total, isLoading]);
   function select(next: number) {
-    next = clamp(next);
+    next = resolveIndex(next);
     if (disabled || next === current) return;
     if (index === undefined) setLocalIndex(next);
     onIndexChange?.(next);
@@ -59,15 +67,15 @@ export function Carousel({ count, index, defaultIndex = 0, onIndexChange, contro
   if (isLoading) return <Skeleton {...props} className={className} width={168} height="var(--elements-32)" style={{minWidth: 0, maxWidth: '100%', borderRadius: 'var(--radius-full)', ...props.style}} />;
   if (total < 2) return null;
   return <nav {...props} aria-label={props['aria-label'] ?? 'Навигация по элементам'} aria-controls={controlsId} className={`fdoc-carousel ${className}`} data-color={color} data-testid="carousel">
-    <ButtonIcon className="fdoc-carousel__arrow" size="small" color={color === 'inverse-light' ? 'inverse-light' : 'neutral'} icon="arrow-chevron-left" aria-label="Предыдущий элемент" aria-controls={controlsId} disabled={disabled || current === 0} onClick={() => select(current - 1)} />
+    <ButtonIcon className="fdoc-carousel__arrow" size="small" color={color === 'inverse-light' ? 'inverse-light' : 'neutral'} icon="arrow-chevron-left" aria-label="Предыдущий элемент" aria-controls={controlsId} disabled={disabled || (!loop && current === 0)} onClick={() => select(current - 1)} />
     <div className="fdoc-carousel__indicators" ref={viewport} role="group" aria-label="Выбор элемента" onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocusIndex(current); }}>
-      {Array.from({ length: total }, (_, i) => <CarouselDot key={i} ref={element => { dots.current[i] = element; }} selected={current === i} disabled={disabled} tabIndex={clamp(focusIndex) === i ? 0 : -1} aria-label={`Перейти к элементу ${i + 1} из ${total}`} aria-controls={controlsId} onClick={() => select(i)} onFocus={() => { setFocusIndex(i); reveal(i); }} onTransitionEnd={() => { if (i === current) reveal(current); }} onKeyDown={event => {
-        const target = event.key === 'ArrowRight' ? clamp(i + 1) : event.key === 'ArrowLeft' ? clamp(i - 1) : event.key === 'Home' ? 0 : event.key === 'End' ? total - 1 : null;
+      {Array.from({ length: total }, (_, i) => <CarouselDot key={i} ref={element => { dots.current[i] = element; }} selected={current === i} disabled={disabled} tabIndex={resolveIndex(focusIndex) === i ? 0 : -1} aria-label={`Перейти к элементу ${i + 1} из ${total}`} aria-controls={controlsId} onClick={() => select(i)} onFocus={() => { setFocusIndex(i); reveal(i); }} onTransitionEnd={() => { if (i === current) reveal(current); }} onKeyDown={event => {
+        const target = event.key === 'ArrowRight' ? resolveIndex(i + 1) : event.key === 'ArrowLeft' ? resolveIndex(i - 1) : event.key === 'Home' ? 0 : event.key === 'End' ? total - 1 : null;
         if (target === null) return;
         event.preventDefault();
         dots.current[target]?.focus();
       }} />)}
     </div>
-    <ButtonIcon className="fdoc-carousel__arrow" size="small" color={color === 'inverse-light' ? 'inverse-light' : 'neutral'} icon="arrow-chevron-right" aria-label="Следующий элемент" aria-controls={controlsId} disabled={disabled || current === total - 1} onClick={() => select(current + 1)} />
+    <ButtonIcon className="fdoc-carousel__arrow" size="small" color={color === 'inverse-light' ? 'inverse-light' : 'neutral'} icon="arrow-chevron-right" aria-label="Следующий элемент" aria-controls={controlsId} disabled={disabled || (!loop && current === total - 1)} onClick={() => select(current + 1)} />
   </nav>;
 }
