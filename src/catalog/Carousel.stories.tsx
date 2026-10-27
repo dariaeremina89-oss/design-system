@@ -11,13 +11,13 @@ function Demo(args: CarouselProps) {
   const current = args.index ?? Math.min(index, Math.max(0, args.count - 1));
   const change = (next: number) => { setIndex(next); args.onIndexChange?.(next); };
   return <div style={{width: 'min(100%, 480px)', display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0, gap: 16, justifyItems: 'center'}}>
-    <CarouselViewport id={id} index={current} onIndexChange={change} disabled={args.disabled}>
+    <CarouselViewport id={id} index={current} onIndexChange={change} disabled={args.disabled} loop={args.loop}>
       {Array.from({length: args.count}, (_, i) => <div key={i} style={{boxSizing:'border-box',minHeight:200,padding:32,background:'var(--background-base-secondary)',borderRadius:'var(--radius-large)',display:'grid',alignContent:'center',gap:8}}><Typography variant="h3-heading">Элемент {i + 1}</Typography><Typography>Перетащи карточку или используй навигацию ниже.</Typography></div>)}
     </CarouselViewport>
     <Carousel {...args} controlsId={id} index={current} onIndexChange={change}/>
   </div>;
 }
-const meta = { title: 'Components/Navigation/Carousel', component: Carousel, tags:['autodocs','ready'], parameters:{layout:'padded',docs:{description:{component:carouselDocs + qualityDocs('Carousel')}}}, args:{count:6,defaultIndex:2,controlsId:'carousel-content',color:'auto',disabled:false,isLoading:false}, argTypes:{count:{control:{type:'number',min:0,max:50}},index:{control:'number'},defaultIndex:{control:'number'},color:{control:'radio',options:['auto','secondary','inverse-light']},disabled:{control:'boolean'},isLoading:{control:'boolean'},onIndexChange:{action:'indexChange'}}, render:args=><Demo {...args}/> } satisfies Meta<typeof Carousel>;
+const meta = { title: 'Components/Navigation/Carousel', component: Carousel, tags:['autodocs','ready'], parameters:{layout:'padded',docs:{description:{component:carouselDocs + qualityDocs('Carousel')}}}, args:{count:6,defaultIndex:2,controlsId:'carousel-content',color:'auto',disabled:false,loop:false,isLoading:false}, argTypes:{count:{control:{type:'number',min:0,max:50}},index:{control:'number'},defaultIndex:{control:'number'},color:{control:'radio',options:['auto','secondary','inverse-light']},disabled:{control:'boolean'},loop:{control:'boolean'},isLoading:{control:'boolean'},onIndexChange:{action:'indexChange'}}, render:args=><Demo {...args}/> } satisfies Meta<typeof Carousel>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default:Story = {parameters:{storyCheck:'Переключение кнопками и точками, плавное изменение ширины и цвета. Перетаскивание мышью и свайп по карточке.'}};
@@ -26,6 +26,7 @@ export const LastElement:Story = {args:{defaultIndex:5}};
 export const ManyItems:Story = {args:{count:16,defaultIndex:0},parameters:{storyCheck:'Видимая область рассчитана на восемь точек. Стрелки фиксированы; выбранная точка автоматически видна.'}};
 export const Narrow:Story = {args:{count:16},decorators:[Story=><div style={{width:160,maxWidth:'100%'}}><Story/></div>]};
 export const Disabled:Story = {args:{disabled:true}};
+export const Loop:Story = {args:{loop:true,defaultIndex:0},parameters:{storyCheck:'Циклический режим: Previous с первого элемента ведет на последний, Next с последнего — на первый. Клавиатурные стрелки работают так же.'}};
 export const OneItem:Story = {args:{count:1,defaultIndex:0},parameters:{storyCheck:'Один элемент контента: навигация скрыта.'}};
 export const InverseLight:Story = {args:{color:'inverse-light'}};
 function PanelState({color, defaultIndex = 2, disabled = false}: Pick<CarouselProps, 'color' | 'defaultIndex' | 'disabled'>) {
