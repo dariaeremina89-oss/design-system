@@ -73,7 +73,9 @@ export function Carousel({ count, index, defaultIndex = 0, onIndexChange, contro
         const target = event.key === 'ArrowRight' ? resolveIndex(i + 1) : event.key === 'ArrowLeft' ? resolveIndex(i - 1) : event.key === 'Home' ? 0 : event.key === 'End' ? total - 1 : null;
         if (target === null) return;
         event.preventDefault();
-        dots.current[target]?.focus();
+        select(target);
+        setFocusIndex(target);
+        queueMicrotask(() => dots.current[target]?.focus());
       }} />)}
     </div>
     <ButtonIcon className="fdoc-carousel__arrow" size="small" color={color === 'inverse-light' ? 'inverse-light' : 'neutral'} icon="arrow-chevron-right" aria-label="Следующий элемент" aria-controls={controlsId} disabled={disabled || (!loop && current === total - 1)} onClick={() => select(current + 1)} />
