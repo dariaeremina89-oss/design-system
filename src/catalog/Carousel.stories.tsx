@@ -57,21 +57,18 @@ export const States:Story = {
 };
 
 export const DotStates:Story = {
-  parameters:{storyCheck:"Состояния отдельных Dot: без выбора и с выбором, в обеих цветовых схемах."},
-  render:()=> <div style={{display:'grid',gap:24,justifyItems:'start'}}>
-    {(['secondary','inverse-light'] as const).map(color=><div key={color} style={{display:'grid',gap:16,maxWidth:'100%'}}>
-      <Typography>{color}</Typography>
-      {[false,true].map(selected=><div key={String(selected)} style={{display:'grid',gap:8}}>
-        <Typography>{selected ? 'Выбран' : 'Не выбран'}</Typography>
-        <div style={{display:'flex',gap:24,flexWrap:'wrap'}}>
-          {(['default','hover','focused','pressed','disabled'] as const).map(state=><div key={state} style={{display:'grid',gap:8,justifyItems:'center'}}>
-            <div className="fdoc-carousel" data-color={color} style={{width:48,height:32,justifyContent:'center'}}>
-              <CarouselDot state={state} selected={selected} aria-label={`${state}, ${selected ? 'выбран' : 'не выбран'}`}/>
-            </div>
-            <Typography>{state}</Typography>
-          </div>)}
-        </div>
-      </div>)}
+  parameters:{storyCheck:"Состояния Dot используют один набор токенов независимо от Color Carousel."},
+  render:()=> <div style={{display:'grid',gap:16,justifyItems:'start'}}>
+    {[false,true].map(selected=><div key={String(selected)} style={{display:'grid',gap:8}}>
+      <Typography>{selected ? 'Выбран' : 'Не выбран'}</Typography>
+      <div style={{display:'flex',gap:24,flexWrap:'wrap'}}>
+        {(['default','hover','focused','pressed','disabled'] as const).map(state=><div key={state} style={{display:'grid',gap:8,justifyItems:'center'}}>
+          <div className="fdoc-carousel" data-color="secondary" style={{width:48,height:32,justifyContent:'center'}}>
+            <CarouselDot state={state} selected={selected} aria-label={`${state}, ${selected ? 'выбран' : 'не выбран'}`}/>
+          </div>
+          <Typography>{state}</Typography>
+        </div>)}
+      </div>
     </div>)}
   </div>,
 };
