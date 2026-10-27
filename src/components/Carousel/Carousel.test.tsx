@@ -24,17 +24,39 @@ describe('Carousel', () => {
     expect(screen.getByLabelText('Следующий элемент')).toBeDisabled();
     expect(screen.getByLabelText('Перейти к элементу 3 из 3')).toHaveAttribute('aria-current','true');
   });
-  it('arrows move only focus; Enter selects, Tab returns to selected dot', async () => {
+  it('keyboard navigation changes the active dot and keeps focus with it', async () => {
     const user=userEvent.setup(); render(<Carousel count={4} defaultIndex={1} controlsId="slides"/>);
     await user.tab(); await user.tab();
     expect(screen.getByLabelText('Перейти к элементу 2 из 4')).toHaveFocus();
+
     await user.keyboard('{ArrowRight}');
     expect(screen.getByLabelText('Перейти к элементу 3 из 4')).toHaveFocus();
-    expect(screen.getByLabelText('Перейти к элементу 2 из 4')).toHaveAttribute('aria-current','true');
-    await user.keyboard('{Enter}');
     expect(screen.getByLabelText('Перейти к элементу 3 из 4')).toHaveAttribute('aria-current','true');
-    await user.keyboard('{Home}'); await user.tab(); await user.tab({shift:true});
-    expect(screen.getByLabelText('Перейти к элементу 3 из 4')).toHaveFocus();
+
+    await user.keyboard('{Home}');
+    expect(screen.getByLabelText('Перейти к элементу 1 из 4')).toHaveFocus();
+    expect(screen.getByLabelText('Перейти к элементу 1 из 4')).toHaveAttribute('aria-current','true');
+
+    await user.keyboard('{End}');
+    expect(screen.getByLabelText('Перейти к элементу 4 из 4')).toHaveFocus();
+    expect(screen.getByLabelText('Перейти к элементу 4 из 4')).toHaveAttribute('aria-current','true');
+  });
+
+  it('loops keyboard and arrow navigation only when loop is enabled', async () => {
+    const user=userEvent.setup();
+    const { rerender } = render(<Carousel count={3} defaultIndex={0} controlsId="slides" loop />);
+
+    expect(screen.getByLabelText('Предыдущий элемент')).not.toBeDisabled();
+    await user.click(screen.getByLabelText('Предыдущий элемент'));
+    expect(screen.getByLabelText('Перейти к элементу 3 из 3')).toHaveAttribute('aria-current','true');
+
+    screen.getByLabelText('Перейти к элементу 3 из 3').focus();
+    await user.keyboard('{ArrowRight}');
+    expect(screen.getByLabelText('Перейти к элементу 1 из 3')).toHaveFocus();
+    expect(screen.getByLabelText('Перейти к элементу 1 из 3')).toHaveAttribute('aria-current','true');
+
+    rerender(<Carousel count={3} defaultIndex={0} controlsId="slides" />);
+    expect(screen.getByLabelText('Предыдущий элемент')).toBeDisabled();
   });
   it('controlled selection waits for parent and clamps when count shrinks', () => {
     const change=vi.fn(); const {rerender}=render(<Carousel count={10} index={8} controlsId="slides" onIndexChange={change}/>);
