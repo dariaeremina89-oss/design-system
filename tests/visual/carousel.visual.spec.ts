@@ -10,9 +10,9 @@ test('geometry, keyboard, overflow and reduced motion', async ({page}) => {
   await expect(carousel.locator('.fdoc-carousel__arrow').first()).toHaveCSS('width','32px');
   await carousel.getByRole('button',{name:'Перейти к элементу 1 из 16',exact:true}).focus();
   await page.keyboard.press('End');
-  await expect(carousel.getByRole('button',{name:'Перейти к элементу 16 из 16',exact:true})).toBeFocused();
-  await expect(dot).toHaveAttribute('aria-label','Перейти к элементу 1 из 16');
-  await page.keyboard.press('Enter');
+  const lastDot=carousel.getByRole('button',{name:'Перейти к элементу 16 из 16',exact:true});
+  await expect(lastDot).toBeFocused();
+  await expect(lastDot).toHaveAttribute('aria-current','true');
   await expect(carousel.getByRole('button',{name:'Следующий элемент',exact:true})).toBeDisabled();
   await expect.poll(()=>carousel.locator('.fdoc-carousel__indicators').evaluate(el=>el.scrollLeft)).toBeGreaterThan(0);
   await page.emulateMedia({reducedMotion:'reduce'});
