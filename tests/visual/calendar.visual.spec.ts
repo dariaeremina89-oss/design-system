@@ -123,10 +123,12 @@ test('RangeCalendar preview uses rounded outer edges without a fill', async ({ p
 
   await expect(startFill).toHaveCSS('left', '2px');
   await expect(startFill).toHaveCSS('border-top-style', 'dashed');
+  await expect(startFill).toHaveCSS('border-left-style', 'dashed');
   await expect(startFill).toHaveCSS('border-top-left-radius', '16px');
   await expect(middleFill).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(endFill).toHaveCSS('right', '2px');
   await expect(endFill).toHaveCSS('border-top-style', 'dashed');
+  await expect(endFill).toHaveCSS('border-right-style', 'dashed');
   await expect(endFill).toHaveCSS('border-top-right-radius', '16px');
 });
 

@@ -287,8 +287,8 @@
 .fdoc-calendar__day-shell--range-preview-single .fdoc-calendar__range-preview-fill {
   left: 2px;
   right: 2px;
-  border-left: var(--border-small) solid var(--border-base-secondary);
-  border-right: var(--border-small) solid var(--border-base-secondary);
+  border-left: var(--border-small) dashed var(--border-base-secondary);
+  border-right: var(--border-small) dashed var(--border-base-secondary);
   border-radius: var(--radius-large);
 }
 
