@@ -64,6 +64,12 @@ function focusable(root: HTMLElement) {
   );
 }
 
+function isInteractiveTarget(target: EventTarget | null) {
+  return target instanceof HTMLElement && Boolean(
+    target.closest('button, a[href], input, textarea, select, [role="button"], [contenteditable="true"]'),
+  );
+}
+
 export function BottomSheet({
   open,
   onClose,
@@ -149,7 +155,7 @@ export function BottomSheet({
 
     const start = (event: TouchEvent) => {
       const point = event.touches[0];
-      if (!point) return;
+      if (!point || isInteractiveTarget(event.target)) return;
       const target = event.target instanceof HTMLElement ? event.target : null;
       const content = target?.closest('.fdoc-bottom-sheet__content') as HTMLElement | null;
       begin(point.clientY, content);
@@ -222,7 +228,7 @@ export function BottomSheet({
             }
           }}
           onPointerDown={(event: ReactPointerEvent<HTMLDivElement>) => {
-            if (event.pointerType !== 'mouse') return;
+            if (event.pointerType !== 'mouse' || isInteractiveTarget(event.target)) return;
             const content = (event.target as HTMLElement).closest('.fdoc-bottom-sheet__content') as HTMLElement | null;
             begin(event.clientY, content, event.pointerId);
             event.currentTarget.setPointerCapture?.(event.pointerId);

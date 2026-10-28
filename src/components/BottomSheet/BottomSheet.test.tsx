@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
+import { Button } from '../Button/Button';
 import { BottomSheet } from './BottomSheet';
 
 afterEach(() => {
@@ -20,7 +21,7 @@ describe('BottomSheet', () => {
         open
         onClose={() => {}}
         aria-label="Дополнительная информация"
-        footer={<button>Продолжить</button>}
+        footer={<Button>Продолжить</Button>}
       >
         <p>Текст</p>
       </BottomSheet>,
@@ -91,7 +92,7 @@ describe('BottomSheet', () => {
   it('does not close from disabled or prevented footer actions', () => {
     const close = vi.fn();
     const { rerender } = render(
-      <BottomSheet open onClose={close} aria-label="Действия" footer={<button disabled>Продолжить</button>}>
+      <BottomSheet open onClose={close} aria-label="Действия" footer={<Button disabled>Продолжить</Button>}>
         <p>Контент</p>
       </BottomSheet>,
     );
@@ -104,7 +105,7 @@ describe('BottomSheet', () => {
         open
         onClose={close}
         aria-label="Действия"
-        footer={<button onClick={event => event.preventDefault()}>Остаться</button>}
+        footer={<Button onClick={event => event.preventDefault()}>Остаться</Button>}
       >
         <p>Контент</p>
       </BottomSheet>,
@@ -115,7 +116,7 @@ describe('BottomSheet', () => {
 
   it('contains Tab focus only in modal mode', () => {
     render(
-      <BottomSheet open onClose={() => {}} aria-label="Действия" footer={<><button>Первый</button><button>Второй</button></>}>
+      <BottomSheet open onClose={() => {}} aria-label="Действия" footer={<><Button>Первый</Button><Button>Второй</Button></>}>
         <button>Контент</button>
       </BottomSheet>,
     );

@@ -50,7 +50,7 @@ const meta = {
   },
   argTypes: {
     open: { control: false },
-    onClose: { description: 'Запрос закрытия: scrim, escape или swipe.' },
+    onClose: { description: 'Запрос закрытия: scrim, escape, swipe или action.' },
     scrim: { control: 'boolean' },
     align: { control: 'radio', options: ['left', 'center'] },
     closeOnScrim: { control: 'boolean' },
