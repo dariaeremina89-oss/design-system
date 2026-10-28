@@ -11,8 +11,18 @@ test('Calendar matches Figma header and day geometry', async ({ page }) => {
   await expect(calendar).toHaveCSS('width', '288px');
   const periodText = period.locator('.fdoc-calendar__period-text');
   expect(await periodText.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
-  await expect(period.locator('[data-icon="arrow-drop-down"]')).toHaveCSS('width', '24px');
-  await expect(period.locator('[data-icon="arrow-drop-down"]')).toHaveCSS('height', '24px');
+  const periodIcon = period.locator('[data-icon="arrow-drop-down"]');
+  await expect(periodIcon).toHaveCSS('width', '24px');
+  await expect(periodIcon).toHaveCSS('height', '24px');
+  const secondaryIcon = await page.evaluate(() => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--icon-base-secondary)';
+    document.body.appendChild(probe);
+    const resolved = getComputedStyle(probe).color;
+    probe.remove();
+    return resolved;
+  });
+  await expect(periodIcon).toHaveCSS('color', secondaryIcon);
 
   const calendarBox = await calendar.boundingBox();
   const periodBox = await period.boundingBox();
@@ -46,6 +56,7 @@ test('Calendar matches Figma header and day geometry', async ({ page }) => {
   const datePeriodWidth = (await period.boundingBox())!.width;
   await period.click();
   await expect(calendar).toHaveAttribute('data-calendar-view', 'month');
+  await expect(period.locator('[data-icon="arrow-drop-up"]')).toBeVisible();
   expect(await periodText.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
   expect((await period.boundingBox())!.width).toBeLessThan(datePeriodWidth);
 });

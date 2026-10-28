@@ -485,7 +485,7 @@ export function Calendar({
           <div className="fdoc-calendar__header fdoc-calendar__header--single">
             <CalendarPeriodButton
               label={periodLabel}
-              open
+              open={view !== baseView}
               onClick={handlePeriodClick}
             />
             <div className="fdoc-calendar__arrows">

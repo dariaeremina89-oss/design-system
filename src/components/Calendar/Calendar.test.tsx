@@ -63,6 +63,40 @@ describe('Calendar', () => {
     expect(root).toHaveAttribute('data-calendar-view', 'month');
   });
 
+  it('uses down icon for the base view and up icon only for a higher selection level', () => {
+    const { rerender } = render(
+      <Calendar
+        type="date"
+        defaultVisibleMonth={new Date(2026, 9, 1)}
+        showActions={false}
+      />,
+    );
+
+    expect(screen.getByTestId('calendar-period').querySelector('[data-icon="arrow-drop-down"]')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('calendar-period'));
+    expect(screen.getByTestId('calendar-period').querySelector('[data-icon="arrow-drop-up"]')).toBeInTheDocument();
+
+    rerender(
+      <Calendar
+        type="month"
+        defaultVisibleMonth={new Date(2026, 9, 1)}
+        showActions={false}
+      />,
+    );
+    expect(screen.getByTestId('calendar-period').querySelector('[data-icon="arrow-drop-down"]')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('calendar-period'));
+    expect(screen.getByTestId('calendar-period').querySelector('[data-icon="arrow-drop-up"]')).toBeInTheDocument();
+
+    rerender(
+      <Calendar
+        type="year"
+        defaultVisibleMonth={new Date(2026, 9, 1)}
+        showActions={false}
+      />,
+    );
+    expect(screen.getByTestId('calendar-period').querySelector('[data-icon="arrow-drop-down"]')).toBeInTheDocument();
+  });
+
   it('returns a month as the final value for Type=month', () => {
     const change = vi.fn();
     render(

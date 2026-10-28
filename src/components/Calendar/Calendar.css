@@ -89,6 +89,7 @@
 
 .fdoc-calendar__period > .fdoc-icon {
   flex: 0 0 var(--elements-24);
+  color: var(--icon-base-secondary);
 }
 
 .fdoc-calendar__period:hover:not(:disabled) {
@@ -98,6 +99,10 @@
 .fdoc-calendar__period:disabled {
   color: var(--text-base-default-disabled);
   cursor: default;
+}
+
+.fdoc-calendar__period:disabled > .fdoc-icon {
+  color: var(--icon-base-secondary-disabled);
 }
 
 .fdoc-calendar__period:focus-visible {
