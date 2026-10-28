@@ -509,8 +509,7 @@ export function Calendar({
               ? MONTH_LABELS_SHORT.map((label, monthIndex) => {
                   const date = new Date(visibleMonth.getFullYear(), monthIndex, 1);
                   const selected = Boolean(
-                    type === 'month'
-                    && value
+                    value
                     && value.getFullYear() === date.getFullYear()
                     && value.getMonth() === monthIndex,
                   );
@@ -540,7 +539,7 @@ export function Calendar({
                   );
                 })
               : years.map(year => {
-                  const selected = type === 'year' && value?.getFullYear() === year;
+                  const selected = value?.getFullYear() === year;
                   const current = today.getFullYear() === year;
                   const disabled = !yearHasAvailableDate(year, minDate, maxDate, isDateDisabled);
                   return (

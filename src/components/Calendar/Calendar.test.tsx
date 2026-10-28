@@ -97,6 +97,42 @@ describe('Calendar', () => {
     expect(screen.getByTestId('calendar-period').querySelector('[data-icon="arrow-drop-down"]')).toBeInTheDocument();
   });
 
+  it('shows the selected month and year while navigating Type=date', () => {
+    render(
+      <Calendar
+        type="date"
+        defaultValue={new Date(2024, 4, 18)}
+        defaultVisibleMonth={new Date(2024, 4, 1)}
+        showActions={false}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId('calendar-period'));
+    const may = screen.getByRole('button', { name: 'Май' });
+    expect(may).toHaveClass('fdoc-calendar__choice--selected');
+    expect(may.closest('[role="gridcell"]')).toHaveAttribute('aria-selected', 'true');
+
+    fireEvent.click(screen.getByTestId('calendar-period'));
+    const year = screen.getByRole('button', { name: '2024' });
+    expect(year).toHaveClass('fdoc-calendar__choice--selected');
+    expect(year.closest('[role="gridcell"]')).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('shows the selected year while navigating Type=month', () => {
+    render(
+      <Calendar
+        type="month"
+        defaultValue={new Date(2024, 4, 1)}
+        defaultVisibleMonth={new Date(2024, 4, 1)}
+        showActions={false}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'Май' })).toHaveClass('fdoc-calendar__choice--selected');
+    fireEvent.click(screen.getByTestId('calendar-period'));
+    expect(screen.getByRole('button', { name: '2024' })).toHaveClass('fdoc-calendar__choice--selected');
+  });
+
   it('returns a month as the final value for Type=month', () => {
     const change = vi.fn();
     render(
