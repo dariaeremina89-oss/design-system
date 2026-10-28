@@ -13,7 +13,7 @@ import { Scrollbar } from '../Scrollbar/Scrollbar';
 import { PortalContainer } from '../Dialog/PortalContainer';
 import './BottomSheet.css';
 
-export type BottomSheetCloseReason = 'scrim' | 'escape' | 'swipe';
+export type BottomSheetCloseReason = 'scrim' | 'escape' | 'swipe' | 'action';
 export type BottomSheetAlign = 'left' | 'center';
 
 export interface BottomSheetProps {
@@ -253,7 +253,21 @@ export function BottomSheet({
             </div>
             <Scrollbar viewportRef={contentRef} data-testid={testId + '-scrollbar'} />
           </div>
-          {footer && <footer className="fdoc-bottom-sheet__footer" data-testid={testId + '-footer'}>{footer}</footer>}
+          {footer && (
+            <footer
+              className="fdoc-bottom-sheet__footer"
+              data-testid={testId + '-footer'}
+              onClick={event => {
+                if (event.defaultPrevented) return;
+                const target = event.target instanceof HTMLElement ? event.target : null;
+                const button = target?.closest('button');
+                if (!button || button.disabled || !event.currentTarget.contains(button)) return;
+                onClose('action');
+              }}
+            >
+              {footer}
+            </footer>
+          )}
           <div ref={setPortal} className="fdoc-bottom-sheet__portals" />
         </div>
       </PortalContainer.Provider>

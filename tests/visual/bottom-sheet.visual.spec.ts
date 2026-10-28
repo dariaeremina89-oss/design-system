@@ -42,6 +42,14 @@ for (const width of [360, 320]) {
   });
 }
 
+test('Footer Button action closes BottomSheet', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 640 });
+  await page.goto(story('default'));
+  await page.getByRole('button', { name: 'Открыть Bottom Sheet' }).click();
+  await page.getByRole('button', { name: 'Продолжить' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+});
+
 test('Content scrolls while Handle and Buttons stay fixed', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 320, height: 568 });

@@ -18,8 +18,8 @@ function TextBlock({ center = false }: { center?: boolean }) {
 function Demo({ args, buttons = 2, children }: { args: BottomSheetProps; buttons?: 0 | 1 | 2; children?: ReactNode }) {
   const [open, setOpen] = useState(false);
   const footer = buttons === 0 ? undefined : <>
-    <Button size="large" fullWidth onClick={() => setOpen(false)}>Продолжить</Button>
-    {buttons === 2 && <Button size="large" color="secondary" fullWidth onClick={() => setOpen(false)}>Отмена</Button>}
+    <Button size="large" fullWidth>Продолжить</Button>
+    {buttons === 2 && <Button size="large" color="secondary" fullWidth>Отмена</Button>}
   </>;
   return <div style={{minHeight:560,padding:16,boxSizing:'border-box',background:'var(--background-base-secondary)'}}>
     <Typography variant="caption">Bottom Sheet используется в мобильном интерфейсе.</Typography>

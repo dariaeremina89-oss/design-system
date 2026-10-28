@@ -76,6 +76,43 @@ describe('BottomSheet', () => {
     expect(document.body.style.overflow).toBe('auto');
   });
 
+  it('closes after an enabled footer Button action', () => {
+    const close = vi.fn();
+    render(
+      <BottomSheet open onClose={close} aria-label="Действия" footer={<button>Продолжить</button>}>
+        <p>Контент</p>
+      </BottomSheet>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Продолжить' }));
+    expect(close).toHaveBeenLastCalledWith('action');
+  });
+
+  it('does not close from disabled or prevented footer actions', () => {
+    const close = vi.fn();
+    const { rerender } = render(
+      <BottomSheet open onClose={close} aria-label="Действия" footer={<button disabled>Продолжить</button>}>
+        <p>Контент</p>
+      </BottomSheet>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Продолжить' }));
+    expect(close).not.toHaveBeenCalled();
+
+    rerender(
+      <BottomSheet
+        open
+        onClose={close}
+        aria-label="Действия"
+        footer={<button onClick={event => event.preventDefault()}>Остаться</button>}
+      >
+        <p>Контент</p>
+      </BottomSheet>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Остаться' }));
+    expect(close).not.toHaveBeenCalled();
+  });
+
   it('contains Tab focus only in modal mode', () => {
     render(
       <BottomSheet open onClose={() => {}} aria-label="Действия" footer={<><button>Первый</button><button>Второй</button></>}>
