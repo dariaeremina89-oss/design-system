@@ -37,12 +37,8 @@ export interface CodeInputProps {
   type?: CodeInputType;
   /** Количество ячеек для Type=code. Figma поддерживает 4, 5 или 6. */
   length?: CodeInputLength;
-  /** Группировка вводимых цифр для Type=phone. Сумма значений задает количество ячеек. */
-  phoneGroups?: readonly number[];
-  /** Неизменяемая часть номера перед вводимыми цифрами. */
-  phonePrefix?: ReactNode;
-  /** Неизменяемая часть номера после вводимых цифр. */
-  phoneSuffix?: ReactNode;
+  /** Шаблон Type=phone: # обозначает одну вводимую цифру; группы # задают группировку, текст до/после остается статичным. */
+  template?: string;
   /** Размер ячеек для Type=code: Medium 56 или Small 48. Type=phone всегда использует Small. */
   size?: CodeInputSize;
   /** Подпись над кодом. */
@@ -99,6 +95,20 @@ function replaceFrom(value: string, start: number, insertion: string, length: nu
   return chars.join('').slice(0, length);
 }
 
+const DEFAULT_PHONE_TEMPLATE = '#######';
+
+function parsePhoneTemplate(source: string | undefined) {
+  const template = source?.includes('#') ? source : DEFAULT_PHONE_TEMPLATE;
+  const firstCell = template.indexOf('#');
+  const lastCell = template.lastIndexOf('#');
+  const groups = Array.from(template.slice(firstCell, lastCell + 1).matchAll(/#+/g), match => match[0].length);
+  return {
+    prefix: template.slice(0, firstCell).trimEnd(),
+    suffix: template.slice(lastCell + 1).trimStart(),
+    groups,
+  };
+}
+
 export function CodeInput({
   id: providedId,
   name,
@@ -106,9 +116,7 @@ export function CodeInput({
   defaultValue = '',
   type = 'code',
   length = 6,
-  phoneGroups = [7],
-  phonePrefix,
-  phoneSuffix,
+  template,
   size = 'medium',
   label = 'Код',
   caption,
@@ -133,15 +141,12 @@ export function CodeInput({
   const generatedId = useId();
   const id = providedId ?? generatedId;
   const resolvedSize: CodeInputSize = type === 'phone' ? 'small' : size;
-  const normalizedPhoneGroups = phoneGroups.filter(
-    groupLength => Number.isInteger(groupLength) && groupLength > 0,
-  );
-  const resolvedPhoneGroups = normalizedPhoneGroups.length > 0 ? normalizedPhoneGroups : [1];
+  const phoneTemplate = parsePhoneTemplate(template);
   const cellCount = type === 'phone'
-    ? resolvedPhoneGroups.reduce((sum, groupLength) => sum + groupLength, 0)
+    ? phoneTemplate.groups.reduce((sum, groupLength) => sum + groupLength, 0)
     : length;
   let phoneOffset = 0;
-  const phoneGroupIndexes = resolvedPhoneGroups.map(groupLength => {
+  const phoneGroupIndexes = phoneTemplate.groups.map(groupLength => {
     const indexes = Array.from({ length: groupLength }, (_, index) => phoneOffset + index);
     phoneOffset += groupLength;
     return indexes;
@@ -449,8 +454,8 @@ export function CodeInput({
       >
         {type === 'phone' ? (
           <>
-            {hasRenderableContent(phonePrefix) && renderPhoneAffix(
-              phonePrefix,
+            {hasRenderableContent(phoneTemplate.prefix) && renderPhoneAffix(
+              phoneTemplate.prefix,
               'code-input-phone-prefix',
             )}
             <span className="fdoc-code-input__phone-parts" data-testid="code-input-phone-parts">
@@ -464,8 +469,8 @@ export function CodeInput({
                 </span>
               ))}
             </span>
-            {hasRenderableContent(phoneSuffix) && renderPhoneAffix(
-              phoneSuffix,
+            {hasRenderableContent(phoneTemplate.suffix) && renderPhoneAffix(
+              phoneTemplate.suffix,
               'code-input-phone-suffix',
             )}
           </>

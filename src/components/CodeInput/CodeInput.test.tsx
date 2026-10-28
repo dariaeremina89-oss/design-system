@@ -11,13 +11,11 @@ beforeAll(() => {
 });
 
 describe('CodeInput', () => {
-  it('renders configurable phone groups with independent prefix and suffix', () => {
+  it('derives phone prefix, groups and suffix from template', () => {
     render(
       <CodeInput
         type="phone"
-        phonePrefix="+7 9"
-        phoneGroups={[2, 3, 2]}
-        phoneSuffix="88"
+        template="+7 9 ## ### ## 88"
         label="Телефон"
       />,
     );
@@ -35,7 +33,7 @@ describe('CodeInput', () => {
       <CodeInput
         type="phone"
         size="medium"
-        phoneGroups={[2, 3, 2]}
+        template="## ### ##"
         label="Телефон"
       />,
     );
@@ -44,13 +42,12 @@ describe('CodeInput', () => {
     expect(screen.getByTestId('code-input')).not.toHaveClass('fdoc-code-input--medium');
   });
 
-  it('derives phone length from groups instead of Code length', () => {
+  it('derives phone length from template instead of Code length', () => {
     render(
       <CodeInput
         type="phone"
         length={4}
-        phonePrefix="+44"
-        phoneGroups={[4, 3, 3]}
+        template="+44 #### ### ###"
         label="Телефон"
       />,
     );
@@ -63,7 +60,7 @@ describe('CodeInput', () => {
     render(
       <CodeInput
         type="phone"
-        phoneGroups={[2, 3, 2]}
+        template="## ### ##"
         onValueChange={change}
         label="Телефон"
       />,
@@ -151,7 +148,7 @@ describe('CodeInput', () => {
     render(
       <CodeInput
         type="phone"
-        phoneGroups={[2, 2]}
+        template="## ##"
         defaultValue="1234"
         mask
         label="Телефон"
@@ -270,9 +267,7 @@ describe('CodeInput', () => {
       <CodeInput
         type="phone"
         skeleton
-        phonePrefix="+7 9"
-        phoneGroups={[2, 3, 2]}
-        phoneSuffix="88"
+        template="+7 9 ## ### ## 88"
         label="Телефон"
       />,
     );
@@ -290,9 +285,7 @@ describe('CodeInput', () => {
         type="phone"
         skeleton
         defaultValue="1234567"
-        phonePrefix="+7 9"
-        phoneGroups={[2, 3, 2]}
-        phoneSuffix="88"
+        template="+7 9 ## ### ## 88"
         label="Телефон"
       />,
     );

@@ -5,8 +5,7 @@ import { qualityDocs } from '../docs/quality';
 import { controlsParameters, pickFieldControls } from '../docs/story-controls';
 
 const controlOrder = [
-  'label', 'required', 'value', 'defaultValue', 'type', 'length',
-  'phoneGroups', 'phonePrefix', 'phoneSuffix', 'size',
+  'label', 'required', 'value', 'defaultValue', 'type', 'length', 'template', 'size',
   'mask', 'maskDelay', 'caption', 'error', 'disabled', 'skeleton', 'autoFocus',
   'onValueChange', 'onFocus', 'onBlur', 'onKeyDown',
 ] as const;
@@ -59,19 +58,9 @@ const meta = {
       description: 'Размер Type=code. Для Type=phone всегда используется Small 48, как в Figma.',
       table: { category: 'Appearance' },
     },
-    phoneGroups: {
-      control: 'object',
-      description: 'Размеры групп вводимых цифр для Type=phone. Сумма значений определяет количество ячеек.',
-      table: { category: 'Appearance' },
-    },
-    phonePrefix: {
+    template: {
       control: 'text',
-      description: 'Неизменяемая часть номера перед ячейками.',
-      table: { category: 'Content' },
-    },
-    phoneSuffix: {
-      control: 'text',
-      description: 'Неизменяемая часть номера после ячеек.',
+      description: 'Шаблон Type=phone: каждый # — одна вводимая цифра; последовательности # образуют группы, текст до и после остается статичным.',
       table: { category: 'Content' },
     },
     mask: {
@@ -121,9 +110,7 @@ export const Skeleton: Story = {
         type="phone"
         label="Phone · Empty"
         skeleton
-        phonePrefix="+7 9"
-        phoneGroups={[2, 3, 2]}
-        phoneSuffix="88"
+        template="+7 9 ## ### ## 88"
         caption={undefined}
       />
       <CodeInput
@@ -132,9 +119,7 @@ export const Skeleton: Story = {
         label="Phone · Filled"
         skeleton
         defaultValue="1234567"
-        phonePrefix="+7 9"
-        phoneGroups={[2, 3, 2]}
-        phoneSuffix="88"
+        template="+7 9 ## ### ## 88"
         caption={undefined}
       />
     </div>
@@ -192,14 +177,12 @@ export const PhoneFigmaExample: Story = {
     length: undefined,
     label: 'Введите пропущенные цифры',
     caption: undefined,
-    phonePrefix: '+7 9',
-    phoneGroups: [2, 3, 2],
-    phoneSuffix: '88',
+    template: '+7 9 ## ### ## 88',
   },
   parameters: {
     docs: {
       description: {
-        story: 'Структура Type=Phone из Figma: статичная часть номера + группы вводимых цифр 2 / 3 / 2 + статичная часть справа. Между ячейками внутри группы space-4, между группами space-12.',
+        story: 'Структура Type=Phone из Figma задается одним template: статичная часть номера + группы вводимых цифр 2 / 3 / 2 + статичная часть справа. Между ячейками внутри группы space-4, между группами space-12.',
       },
     },
   },
@@ -212,9 +195,7 @@ export const PhoneFigmaFilled: Story = {
     length: undefined,
     label: 'Введите пропущенные цифры',
     caption: undefined,
-    phonePrefix: '+7 9',
-    phoneGroups: [2, 3, 2],
-    phoneSuffix: '88',
+    template: '+7 9 ## ### ## 88',
     defaultValue: '1234567',
   },
 };
@@ -226,9 +207,7 @@ export const PhoneFigmaError: Story = {
     length: undefined,
     label: 'Введите пропущенные цифры',
     caption: undefined,
-    phonePrefix: '+7 9',
-    phoneGroups: [2, 3, 2],
-    phoneSuffix: '88',
+    template: '+7 9 ## ### ## 88',
     defaultValue: '1234567',
     error: 'Проверьте введенные цифры',
   },
@@ -241,14 +220,12 @@ export const PhoneCustomGrouping: Story = {
     length: undefined,
     label: 'Номер телефона',
     caption: 'Группировка и количество цифр задаются сценарием',
-    phonePrefix: '+44',
-    phoneGroups: [4, 3, 3],
-    phoneSuffix: undefined,
+    template: '+44 #### ### ###',
   },
   parameters: {
     docs: {
       description: {
-        story: 'Phone не привязан к российской маске: количество цифр задается суммой phoneGroups, их визуальное расположение — размерами групп, prefix и suffix настраиваются отдельно.',
+        story: 'Phone не привязан к российской маске: template одновременно задает статичный текст до и после, количество вводимых цифр и их группировку через #.',
       },
     },
   },
