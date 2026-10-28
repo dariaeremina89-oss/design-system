@@ -10,6 +10,33 @@ import { Meta } from '@storybook/addon-docs/blocks';
     Связанные правки объединять в итоговое изменение, не перечислять коммиты.
     Новую дату добавлять сверху только при первом обновлении за этот день. */}
 
+## 28.10.2026
+
+### BottomSheet
+
+- Заглушка заменена рабочим BottomSheet по Figma и описанию: Scrim опционален, Handle обязателен, Content универсален, Buttons и Scrollbar появляются по сценарию.
+- Геометрия приведена к Figma: padding 16 px по бокам и снизу, Handle 32 × 4 px внутри блока 28 px, Content без лишних внутренних отступов, Scrollbar у правого края шторки.
+- Добавлены закрытие по Scrim, Escape, свайпу вниз и действиям Buttons. Drag не перехватывает Button, Link, Input, Textarea, Select и другие интерактивные элементы.
+- Модальный вариант блокирует фон, удерживает фокус и возвращает его на trigger; без Scrim фон остается интерактивным.
+- Исправлены двойные отступы Typography внутри Content и мигание TT Commons при первом открытии; webfont предзагружается в Storybook.
+- Добавлены Docs, stories, unit- и browser-проверки свайпа, геометрии, фокуса и действий.
+
+### Calendar / RangeCalendar / DatePicker / RangePicker
+
+- Selection menu Calendar использует `--icon-base-secondary`; базовый уровень показывает arrow-drop-down, более высокий уровень выбора — arrow-drop-up.
+- Month и Year при навигации теперь показывают Selected для значения Calendar, а Current остается отдельным состоянием и не перекрывает Selected.
+- Range preview синхронизирован с Figma `x / Range`: без фоновой заливки, с непрерывными верхней / нижней границами и скругленными внешними краями Start / End.
+- Range fill перекрывает межъячеечный gap 4 px; крайние Selected dates сохраняют круг 28 px.
+- RangePicker по Cancel возвращает последний примененный диапазон и сбрасывает временный draft, anchor и hover перед следующим открытием.
+- Добавлены unit- и browser-проверки Selected month/year, range edges, preview и Cancel.
+
+### CodeInput
+
+- Type=phone переведен на единый `template`: каждый `#` задает одну вводимую цифру, последовательности `#` образуют группы, текст до первой и после последней группы остается статичным.
+- Удалены отдельные `phonePrefix`, `phoneSuffix` и `phoneGroups`; количество ячеек Phone полностью определяется template.
+- Phone Skeleton сохраняет ту же структуру template: статичные части заменяются текстовым Skeleton, Empty / Filled и группировка ячеек остаются синхронизированы.
+- Storybook Controls разделены по Type: `length`, `size`, `mask` и `maskDelay` показываются только для Code, `template` — только для Phone.
+
 ## 23.10.2026
 
 ### Calendar / RangeCalendar / DatePicker / RangePicker

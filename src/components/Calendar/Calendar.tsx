@@ -276,6 +276,7 @@ export function CalendarMonthPanel({
               const previewStartState = isSameDay(date, previewStart);
               const previewEndState = isSameDay(date, previewEnd);
               const previewMiddle = isDateWithinRange(date, previewStart ?? null, previewEnd ?? null);
+              const previewSingle = previewStartState && previewEndState;
               const hasPreview = !hasRangeFill && (previewStartState || previewEndState || previewMiddle);
 
               return (
@@ -286,6 +287,9 @@ export function CalendarMonthPanel({
                     rangeEndState && 'fdoc-calendar__day-shell--range-end',
                     rangeSingle && 'fdoc-calendar__day-shell--range-single',
                     hasPreview && 'fdoc-calendar__day-shell--range-preview',
+                    hasPreview && previewStartState && 'fdoc-calendar__day-shell--range-preview-start',
+                    hasPreview && previewEndState && 'fdoc-calendar__day-shell--range-preview-end',
+                    hasPreview && previewSingle && 'fdoc-calendar__day-shell--range-preview-single',
                   )}
                   role="gridcell"
                   aria-selected={selected || rangeStartState || rangeEndState || undefined}

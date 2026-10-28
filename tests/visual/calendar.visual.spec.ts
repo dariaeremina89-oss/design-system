@@ -88,6 +88,25 @@ test('Calendar Year contains 24 years in a 4-column grid', async ({ page }) => {
   expect(columns).toBe(4);
 });
 
+test('RangeCalendar preview uses rounded outer edges without a fill', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 700 });
+  await page.goto('/iframe.html?id=components-datetime-rangecalendar--empty&viewMode=story');
+
+  const firstMonth = page.getByTestId('range-calendar-month-1');
+  await firstMonth.getByTestId('calendar-day-2026-10-1').click();
+  await firstMonth.getByTestId('calendar-day-2026-10-20').hover();
+
+  const startFill = firstMonth.getByTestId('calendar-day-2026-10-1').locator('xpath=..').locator('.fdoc-calendar__range-preview-fill');
+  const middleFill = firstMonth.getByTestId('calendar-day-2026-10-10').locator('xpath=..').locator('.fdoc-calendar__range-preview-fill');
+  const endFill = firstMonth.getByTestId('calendar-day-2026-10-20').locator('xpath=..').locator('.fdoc-calendar__range-preview-fill');
+
+  await expect(startFill).toHaveCSS('left', '2px');
+  await expect(startFill).toHaveCSS('border-top-left-radius', '16px');
+  await expect(middleFill).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(endFill).toHaveCSS('right', '2px');
+  await expect(endFill).toHaveCSS('border-top-right-radius', '16px');
+});
+
 test('RangeCalendar matches desktop Figma structure and mobile scroll', async ({ page }) => {
   await page.setViewportSize({ width: 900, height: 700 });
   await page.goto('/iframe.html?id=components-datetime-rangecalendar--default&viewMode=story');

@@ -196,6 +196,30 @@ describe('RangeCalendar', () => {
     expect(range.end.getDate()).toBe(10);
   });
 
+  it('renders preview with open middle and rounded outer edges', () => {
+    render(
+      <RangeCalendar
+        defaultVisibleMonth={new Date(2026, 8, 1)}
+        defaultValue={{ start: null, end: null }}
+        months={1}
+        showActions={false}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId('calendar-day-2026-9-1'));
+    fireEvent.mouseEnter(screen.getByTestId('calendar-day-2026-9-24'));
+
+    const startShell = screen.getByTestId('calendar-day-2026-9-1').closest('.fdoc-calendar__day-shell');
+    const middleShell = screen.getByTestId('calendar-day-2026-9-10').closest('.fdoc-calendar__day-shell');
+    const endShell = screen.getByTestId('calendar-day-2026-9-24').closest('.fdoc-calendar__day-shell');
+
+    expect(startShell).toHaveClass('fdoc-calendar__day-shell--range-preview-start');
+    expect(middleShell).toHaveClass('fdoc-calendar__day-shell--range-preview');
+    expect(middleShell).not.toHaveClass('fdoc-calendar__day-shell--range-preview-start');
+    expect(middleShell).not.toHaveClass('fdoc-calendar__day-shell--range-preview-end');
+    expect(endShell).toHaveClass('fdoc-calendar__day-shell--range-preview-end');
+  });
+
   it('prevents selecting a range through a disabled date', () => {
     const change = vi.fn();
     render(
