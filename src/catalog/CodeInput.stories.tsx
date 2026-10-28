@@ -49,28 +49,33 @@ const meta = {
     length: {
       control: 'radio',
       options: [4, 5, 6],
-      description: 'Количество ячеек только для Type=code.',
+      description: 'Количество ячеек Type=code.',
+      if: { arg: 'type', eq: 'code' },
       table: { category: 'Appearance' },
     },
     size: {
       control: 'radio',
       options: ['medium', 'small'],
-      description: 'Размер Type=code. Для Type=phone всегда используется Small 48, как в Figma.',
+      description: 'Размер Type=code.',
+      if: { arg: 'type', eq: 'code' },
       table: { category: 'Appearance' },
     },
     template: {
       control: 'text',
       description: 'Шаблон Type=phone: каждый # — одна вводимая цифра; последовательности # образуют группы, текст до и после остается статичным.',
+      if: { arg: 'type', eq: 'phone' },
       table: { category: 'Content' },
     },
     mask: {
       control: 'boolean',
-      description: 'Маскирует введенные цифры звездочкой. Используется только для Type=code.',
+      description: 'Маскирует введенные цифры звездочкой.',
+      if: { arg: 'type', eq: 'code' },
       table: { category: 'Behavior' },
     },
     maskDelay: {
       control: { type: 'number', min: 0, step: 100 },
       description: 'Задержка перед маскированием введенной цифры, мс. По умолчанию 800.',
+      if: { arg: 'type', eq: 'code' },
       table: { category: 'Behavior' },
     },
     autoFocus: {
