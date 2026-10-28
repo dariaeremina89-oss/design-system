@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { DatePicker } from './DatePicker';
 import { RangePicker } from './RangePicker';
@@ -93,6 +93,36 @@ describe('RangePicker', () => {
     const range = change.mock.calls.at(-1)?.[0];
     expect(range.start.getDate()).toBe(10);
     expect(range.end.getDate()).toBe(20);
+  });
+
+  it('restores the applied range after Cancel', () => {
+    render(
+      <RangePicker
+        defaultOpen
+        defaultValue={{
+          start: new Date(2026, 9, 10),
+          end: new Date(2026, 9, 20),
+        }}
+      />,
+    );
+
+    const firstMonth = screen.getByTestId('range-calendar-month-1');
+    fireEvent.click(within(firstMonth).getByTestId('calendar-day-2026-10-5'));
+    fireEvent.click(within(firstMonth).getByTestId('calendar-day-2026-10-8'));
+
+    expect(within(firstMonth).getByTestId('calendar-day-2026-10-5')).toHaveClass('fdoc-calendar__day--selected');
+    expect(screen.getByRole('textbox')).toHaveValue('10.10.2026 — 20.10.2026');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Отменить' }));
+    expect(screen.queryByTestId('range-picker-popup')).not.toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveValue('10.10.2026 — 20.10.2026');
+
+    fireEvent.click(screen.getByTestId('range-picker-button'));
+    const reopenedMonth = screen.getByTestId('range-calendar-month-1');
+    expect(within(reopenedMonth).getByTestId('calendar-day-2026-10-10')).toHaveClass('fdoc-calendar__day--selected');
+    expect(within(reopenedMonth).getByTestId('calendar-day-2026-10-20')).toHaveClass('fdoc-calendar__day--selected');
+    expect(within(reopenedMonth).getByTestId('calendar-day-2026-10-5')).not.toHaveClass('fdoc-calendar__day--selected');
+    expect(within(reopenedMonth).getByTestId('calendar-day-2026-10-8')).not.toHaveClass('fdoc-calendar__day--selected');
   });
 
   it('supports Manual input and Calendar selection independently', () => {

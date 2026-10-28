@@ -96,6 +96,17 @@ test('RangeCalendar matches desktop Figma structure and mobile scroll', async ({
   const firstMonth = page.getByTestId('range-calendar-month-1');
   const secondMonth = page.getByTestId('range-calendar-month-2');
 
+  const rangeStart = firstMonth.getByTestId('calendar-day-2026-10-10');
+  const rangeEnd = firstMonth.getByTestId('calendar-day-2026-10-20');
+  await expect(rangeStart.locator('.fdoc-calendar__day-value')).toHaveCSS('border-radius', '16px');
+  await expect(rangeEnd.locator('.fdoc-calendar__day-value')).toHaveCSS('border-radius', '16px');
+  const startFill = rangeStart.locator('xpath=..').locator('.fdoc-calendar__range-fill');
+  const endFill = rangeEnd.locator('xpath=..').locator('.fdoc-calendar__range-fill');
+  await expect(startFill).toHaveCSS('left', '16px');
+  await expect(startFill).toHaveCSS('right', '-4px');
+  await expect(endFill).toHaveCSS('left', '-4px');
+  await expect(endFill).toHaveCSS('right', '16px');
+
   await expect(range).toHaveCSS('width', '576px');
   await expect(firstMonth).toBeVisible();
   await expect(secondMonth).toBeVisible();
@@ -200,6 +211,28 @@ test('DatePicker supports calendar-only and manual-input-only modes', async ({ p
   await page.goto('/iframe.html?id=components-datetime-datepicker--manual-input-only&viewMode=story');
   await expect(page.getByRole('textbox')).not.toHaveAttribute('readonly');
   await expect(page.getByTestId('date-picker-button')).toHaveCount(0);
+});
+
+test('RangePicker Cancel restores the applied range', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 800 });
+  await page.goto('/iframe.html?id=components-datetime-rangepicker--open&viewMode=story');
+
+  const popup = page.getByTestId('range-picker-popup');
+  const firstMonth = popup.getByTestId('range-calendar-month-1');
+  await firstMonth.getByTestId('calendar-day-2026-10-5').click();
+  await firstMonth.getByTestId('calendar-day-2026-10-8').click();
+  await expect(firstMonth.getByTestId('calendar-day-2026-10-5')).toHaveClass(/fdoc-calendar__day--selected/);
+
+  await popup.getByRole('button', { name: 'Отменить' }).click();
+  await expect(popup).toHaveCount(0);
+  await expect(page.getByRole('textbox')).toHaveValue('10.10.2026 — 20.10.2026');
+
+  await page.getByTestId('range-picker-button').click();
+  const reopened = page.getByTestId('range-picker-popup').getByTestId('range-calendar-month-1');
+  await expect(reopened.getByTestId('calendar-day-2026-10-10')).toHaveClass(/fdoc-calendar__day--selected/);
+  await expect(reopened.getByTestId('calendar-day-2026-10-20')).toHaveClass(/fdoc-calendar__day--selected/);
+  await expect(reopened.getByTestId('calendar-day-2026-10-5')).not.toHaveClass(/fdoc-calendar__day--selected/);
+  await expect(reopened.getByTestId('calendar-day-2026-10-8')).not.toHaveClass(/fdoc-calendar__day--selected/);
 });
 
 test('RangePicker opens desktop and mobile RangeCalendar without overflow', async ({ page }) => {

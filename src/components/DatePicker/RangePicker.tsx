@@ -91,6 +91,7 @@ export function RangePicker({
   const calendarOpen = open && calendarSelection && !disabled && !skeleton;
   const [textValue, setTextValue] = useState(() => formatRangeValue(controlledValue ?? defaultValue));
   const [draftValue, setDraftValue] = useState<DateRange>(controlledValue ?? defaultValue);
+  const [calendarSession, setCalendarSession] = useState(0);
   const resolvedManualInput = manualInput || !calendarSelection;
   const calendarButtons = calendarProps?.showActions ?? true;
 
@@ -127,9 +128,14 @@ export function RangePicker({
     onValueChange?.(next);
   };
 
+  const resetDraft = () => {
+    setDraftValue(currentValue);
+    setCalendarSession(session => session + 1);
+  };
+
   const closeCalendar = (restoreFocus = false, applyDraft = false) => {
     if (applyDraft && isRangeAllowed(draftValue)) commit(draftValue);
-    else setDraftValue(currentValue);
+    else resetDraft();
     setOpen(false);
     if (restoreFocus) restoreCalendarButtonFocus();
   };
@@ -141,6 +147,7 @@ export function RangePicker({
   useEffect(() => {
     if (!open) return;
     setDraftValue(currentValue);
+    setCalendarSession(session => session + 1);
   }, [open, currentValue]);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -238,6 +245,7 @@ export function RangePicker({
             data-testid="range-picker-popup"
           >
             <RangeCalendar
+              key={calendarSession}
               {...calendarProps}
               showActions={calendarButtons}
               value={draftValue}
