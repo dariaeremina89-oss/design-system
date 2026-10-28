@@ -256,29 +256,31 @@ export function RangeCalendar({
         )}
       </div>
 
-      <div className="fdoc-range-calendar__mobile" data-testid="range-calendar-mobile">
-        <div className="fdoc-range-calendar__mobile-weekdays">
-          <CalendarWeekdays />
-        </div>
-        <div className="fdoc-range-calendar__mobile-scroll-area">
-          <div ref={mobileScrollRef} className="fdoc-range-calendar__mobile-scroll fdoc-scrollbar-viewport">
-          {mobileMonths.map(month => (
-            <section key={month.toISOString()} data-testid="range-calendar-mobile-month">
-              <div className="fdoc-range-calendar__mobile-month-title">
-                {formatMonthYear(month)}
-              </div>
-              <CalendarMonthPanel
-                {...panelProps}
-                month={month}
-                headerLayout="none"
-                showWeekdays={false}
-              />
-            </section>
-          ))}
+      {months === 'responsive' && (
+        <div className="fdoc-range-calendar__mobile" data-testid="range-calendar-mobile">
+          <div className="fdoc-range-calendar__mobile-weekdays">
+            <CalendarWeekdays />
           </div>
-          <Scrollbar viewportRef={mobileScrollRef} data-testid="range-calendar-scrollbar" />
+          <div className="fdoc-range-calendar__mobile-scroll-area">
+            <div ref={mobileScrollRef} className="fdoc-range-calendar__mobile-scroll fdoc-scrollbar-viewport">
+              {mobileMonths.map(month => (
+                <section key={month.toISOString()} data-testid="range-calendar-mobile-month">
+                  <div className="fdoc-range-calendar__mobile-month-title">
+                    {formatMonthYear(month)}
+                  </div>
+                  <CalendarMonthPanel
+                    {...panelProps}
+                    month={month}
+                    headerLayout="none"
+                    showWeekdays={false}
+                  />
+                </section>
+              ))}
+            </div>
+            <Scrollbar viewportRef={mobileScrollRef} data-testid="range-calendar-scrollbar" />
+          </div>
         </div>
-      </div>
+      )}
 
       {showActions && (
         <CalendarActions
