@@ -57,8 +57,17 @@ test('Calendar matches Figma header and day geometry', async ({ page }) => {
   await period.click();
   await expect(calendar).toHaveAttribute('data-calendar-view', 'month');
   await expect(period.locator('[data-icon="arrow-drop-up"]')).toBeVisible();
+  const selectedMonth = calendar.getByRole('button', { name: 'Окт' });
+  await expect(selectedMonth).toHaveClass(/fdoc-calendar__choice--selected/);
+  await expect(selectedMonth).not.toHaveClass(/fdoc-calendar__choice--today/);
   expect(await periodText.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
   expect((await period.boundingBox())!.width).toBeLessThan(datePeriodWidth);
+
+  await period.click();
+  await expect(calendar).toHaveAttribute('data-calendar-view', 'year');
+  const selectedYear = calendar.getByRole('button', { name: '2026' });
+  await expect(selectedYear).toHaveClass(/fdoc-calendar__choice--selected/);
+  await expect(selectedYear).not.toHaveClass(/fdoc-calendar__choice--today/);
 });
 
 test('Calendar Year contains 24 years in a 4-column grid', async ({ page }) => {
