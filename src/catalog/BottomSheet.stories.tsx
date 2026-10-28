@@ -10,7 +10,7 @@ function TextBlock({ center = false }: { center?: boolean }) {
   return <div style={{ display: 'grid', gap: 8, width: '100%', justifyItems: center ? 'center' : 'stretch' }}>
     <Typography as="h2" variant="h3-heading">Заголовок Bottom Sheet</Typography>
     <div style={{ display: 'grid', gap: 4, width: '100%' }}>
-      <Typography>Основной текст Bottom Sheet, возможно, в несколько строк.</Typography>
+      <Typography style={{ color: 'var(--text-base-secondary)' }}>Основной текст Bottom Sheet, возможно, в несколько строк.</Typography>
     </div>
   </div>;
 }
