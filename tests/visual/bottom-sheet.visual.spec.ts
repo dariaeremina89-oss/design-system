@@ -4,6 +4,7 @@ const story = (name: string) => '/iframe.html?id=components-overlays-bottomsheet
 
 for (const width of [360, 320]) {
   test('BottomSheet matches mobile geometry at ' + width + 'px', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width, height: 640 });
     await page.goto(story('default'));
     const trigger = page.getByRole('button', { name: 'Открыть Bottom Sheet' });
@@ -31,6 +32,7 @@ for (const width of [360, 320]) {
 }
 
 test('Content scrolls while Handle and Buttons stay fixed', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 320, height: 568 });
   await page.goto(story('scroll'));
   await page.getByRole('button', { name: 'Открыть Bottom Sheet' }).click();
