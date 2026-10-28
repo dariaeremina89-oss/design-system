@@ -175,6 +175,8 @@ export type {
 
 export { Dialog } from './components/Dialog/Dialog';
 export type { DialogProps } from './components/Dialog/Dialog';
+export { BottomSheet } from './components/BottomSheet/BottomSheet';
+export type { BottomSheetProps, BottomSheetCloseReason, BottomSheetAlign } from './components/BottomSheet/BottomSheet';
 export { Carousel, CarouselDot } from './components/Carousel/Carousel';
 export type { CarouselProps, CarouselColor, CarouselDotProps, CarouselDotState } from './components/Carousel/Carousel';
 export { CarouselViewport } from './components/Carousel/CarouselViewport';
