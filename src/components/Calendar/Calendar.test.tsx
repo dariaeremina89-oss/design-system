@@ -206,12 +206,13 @@ describe('RangeCalendar', () => {
       />,
     );
 
-    fireEvent.click(screen.getByTestId('calendar-day-2026-9-1'));
-    fireEvent.mouseEnter(screen.getByTestId('calendar-day-2026-9-24'));
+    const firstMonth = screen.getByTestId('range-calendar-month-1');
+    fireEvent.click(within(firstMonth).getByTestId('calendar-day-2026-9-1'));
+    fireEvent.mouseEnter(within(firstMonth).getByTestId('calendar-day-2026-9-24'));
 
-    const startShell = screen.getByTestId('calendar-day-2026-9-1').closest('.fdoc-calendar__day-shell');
-    const middleShell = screen.getByTestId('calendar-day-2026-9-10').closest('.fdoc-calendar__day-shell');
-    const endShell = screen.getByTestId('calendar-day-2026-9-24').closest('.fdoc-calendar__day-shell');
+    const startShell = within(firstMonth).getByTestId('calendar-day-2026-9-1').closest('.fdoc-calendar__day-shell');
+    const middleShell = within(firstMonth).getByTestId('calendar-day-2026-9-10').closest('.fdoc-calendar__day-shell');
+    const endShell = within(firstMonth).getByTestId('calendar-day-2026-9-24').closest('.fdoc-calendar__day-shell');
 
     expect(startShell).toHaveClass('fdoc-calendar__day-shell--range-preview-start');
     expect(middleShell).toHaveClass('fdoc-calendar__day-shell--range-preview');

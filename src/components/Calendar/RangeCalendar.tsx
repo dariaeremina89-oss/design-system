@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Calendar,
   CalendarActions,
@@ -37,6 +37,8 @@ export interface RangeCalendarProps {
   cancelText?: string;
   onApply?: (value: DateRange) => void;
   onCancel?: () => void;
+  /** Внутренний сигнал сброса незавершенного выбора без изменения примененного value. */
+  resetKey?: string | number;
   className?: string;
   'aria-label'?: string;
   'data-testid'?: string;
@@ -88,6 +90,7 @@ export function RangeCalendar({
   cancelText = 'Отменить',
   onApply,
   onCancel,
+  resetKey,
   className,
   'aria-label': ariaLabel = 'Выбор периода',
   'data-testid': testId = 'range-calendar',
@@ -110,6 +113,12 @@ export function RangeCalendar({
     () => Array.from({ length: 12 }, (_, index) => addMonths(visibleMonth, index - 1)),
     [visibleMonth],
   );
+
+  useEffect(() => {
+    setAnchorDate(null);
+    setHoverDate(null);
+    setPeriodTarget(null);
+  }, [resetKey]);
 
   const setVisibleMonth = (next: Date) => {
     const normalized = startOfMonth(next);

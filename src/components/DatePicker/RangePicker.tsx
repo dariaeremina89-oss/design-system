@@ -245,8 +245,8 @@ export function RangePicker({
             data-testid="range-picker-popup"
           >
             <RangeCalendar
-              key={calendarSession}
               {...calendarProps}
+              resetKey={calendarSession}
               showActions={calendarButtons}
               value={draftValue}
               defaultVisibleMonth={draftValue.start ?? currentValue.start ?? new Date()}
