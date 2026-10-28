@@ -20,7 +20,18 @@ for (const width of [360, 320]) {
     await expect(sheet).toHaveCSS('border-top-right-radius', '16px');
 
     const handle = page.getByTestId('bottom-sheet-handle');
-    expect(Math.round((await handle.boundingBox())!.height)).toBe(28);
+    const handleBox = await handle.boundingBox();
+    expect(Math.round(handleBox!.x)).toBe(16);
+    expect(Math.round(handleBox!.width)).toBe(width - 32);
+    expect(Math.round(handleBox!.height)).toBe(28);
+    const content = page.getByTestId('bottom-sheet-content');
+    const contentBox = await content.boundingBox();
+    expect(Math.round(contentBox!.x)).toBe(16);
+    expect(Math.round(contentBox!.width)).toBe(width - 32);
+    const footer = page.getByTestId('bottom-sheet-footer');
+    const footerBox = await footer.boundingBox();
+    expect(Math.round(footerBox!.x)).toBe(16);
+    expect(Math.round(footerBox!.width)).toBe(width - 32);
     const bar = handle.locator('.fdoc-bottom-sheet__handle-bar');
     expect(Math.round((await bar.boundingBox())!.width)).toBe(32);
     expect(Math.round((await bar.boundingBox())!.height)).toBe(4);
@@ -70,9 +81,21 @@ test('Scrim closes, no-Scrim leaves background interactive, swipe closes', async
   const box = await handle.boundingBox();
   const x = box!.x + box!.width / 2;
   const y = box!.y + box!.height / 2;
-  await page.mouse.move(x, y);
-  await page.mouse.down();
-  await page.mouse.move(x, y + 120, { steps: 5 });
-  await page.mouse.up();
+  await page.evaluate(({ x, y }) => {
+    const target = document.querySelector('[data-testid="bottom-sheet-handle"]');
+    if (!target) throw new Error('Bottom Sheet handle not found');
+    const touch = (clientY: number) => new Touch({
+      identifier: 1,
+      target,
+      clientX: x,
+      clientY,
+      radiusX: 1,
+      radiusY: 1,
+      force: 1,
+    });
+    target.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, cancelable: true, touches: [touch(y)] }));
+    target.dispatchEvent(new TouchEvent('touchmove', { bubbles: true, cancelable: true, touches: [touch(y + 120)] }));
+    target.dispatchEvent(new TouchEvent('touchend', { bubbles: true, cancelable: true, touches: [] }));
+  }, { x, y });
   await expect(page.getByRole('dialog')).toHaveCount(0);
 });

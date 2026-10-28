@@ -23,7 +23,7 @@
   width: 100%;
   max-height: calc(100dvh - var(--fdoc-bottom-sheet-top-inset));
   margin: 0;
-  padding: 0 0 var(--space-16);
+  padding: 0 var(--space-16) var(--space-16);
   color: var(--text-base-default);
   background: var(--background-base-default);
   border-radius: var(--radius-large) var(--radius-large) 0 0;
@@ -35,7 +35,6 @@
   flex: none;
   box-sizing: border-box;
   height: 28px;
-  margin-inline: var(--space-16);
   padding-block: var(--space-12);
   display: flex;
   align-items: center;
@@ -55,6 +54,9 @@
   flex: 1 1 auto;
   min-height: 0;
 }
+.fdoc-bottom-sheet__content-region > .fdoc-scrollbar {
+  right: calc(-1 * var(--space-16));
+}
 .fdoc-bottom-sheet__content {
   flex: 1 1 auto;
   min-width: 0;
@@ -62,7 +64,7 @@
   overflow: auto;
   overscroll-behavior: contain;
   box-sizing: border-box;
-  padding: 0 var(--space-16);
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -85,7 +87,7 @@
   gap: var(--space-12);
   box-sizing: border-box;
   width: 100%;
-  padding: var(--space-16) var(--space-16) 0;
+  padding: var(--space-16) 0 0;
   background: var(--background-base-default);
 }
 .fdoc-bottom-sheet__footer > .fdoc-button {

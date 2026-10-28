@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -6,7 +7,6 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject,
-  type TouchEvent as ReactTouchEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { Scrollbar } from '../Scrollbar/Scrollbar';
@@ -47,6 +47,7 @@ type SwipeState = {
   lastY: number;
   startedAt: number;
   content: HTMLElement | null;
+  mode: 'pending' | 'sheet' | 'scroll';
 };
 
 let modalLocks = 0;
@@ -104,14 +105,17 @@ export function BottomSheet({
     };
   }, [open, scrim, initialFocusRef]);
 
-  if (!open || typeof document === 'undefined') return null;
-
   const updateDrag = (currentY: number) => {
     const state = swipe.current;
     const sheet = sheetRef.current;
-    if (!state || !sheet || (state.content && state.content.scrollTop > 0)) return;
+    if (!state || !sheet) return;
+    const rawDelta = currentY - state.startY;
+    if (state.mode === 'pending' && Math.abs(rawDelta) >= 6) {
+      state.mode = rawDelta > 0 && (!state.content || state.content.scrollTop <= 0) ? 'sheet' : 'scroll';
+    }
+    if (state.mode !== 'sheet') return;
     state.lastY = currentY;
-    const delta = Math.max(0, currentY - state.startY);
+    const delta = Math.max(0, rawDelta);
     if (delta <= 0) return;
     sheet.style.transition = 'none';
     sheet.style.transform = 'translateY(' + delta + 'px)';
@@ -121,7 +125,7 @@ export function BottomSheet({
     const state = swipe.current;
     const sheet = sheetRef.current;
     swipe.current = null;
-    if (!state || !sheet) return;
+    if (!state || !sheet || state.mode !== 'sheet') return;
     const delta = Math.max(0, state.lastY - state.startY);
     const duration = Math.max(1, performance.now() - state.startedAt);
     const threshold = Math.min(96, Math.max(48, sheet.getBoundingClientRect().height * 0.2));
@@ -136,8 +140,46 @@ export function BottomSheet({
 
   const begin = (clientY: number, content: HTMLElement | null, pointerId?: number) => {
     if (!swipeToClose) return;
-    swipe.current = { pointerId, startY: clientY, lastY: clientY, startedAt: performance.now(), content };
+    swipe.current = { pointerId, startY: clientY, lastY: clientY, startedAt: performance.now(), content, mode: 'pending' };
   };
+
+  useEffect(() => {
+    const sheet = sheetRef.current;
+    if (!open || !sheet || !swipeToClose) return;
+
+    const start = (event: TouchEvent) => {
+      const point = event.touches[0];
+      if (!point) return;
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      const content = target?.closest('.fdoc-bottom-sheet__content') as HTMLElement | null;
+      begin(point.clientY, content);
+    };
+    const move = (event: TouchEvent) => {
+      const point = event.touches[0];
+      if (!point || !swipe.current) return;
+      updateDrag(point.clientY);
+      if (swipe.current?.mode === 'sheet' && event.cancelable) event.preventDefault();
+    };
+    const end = () => {
+      const state = swipe.current;
+      if (!state) return;
+      if (state.mode === 'sheet') finishDrag();
+      else swipe.current = null;
+    };
+
+    sheet.addEventListener('touchstart', start, { passive: true });
+    sheet.addEventListener('touchmove', move, { passive: false });
+    sheet.addEventListener('touchend', end);
+    sheet.addEventListener('touchcancel', end);
+    return () => {
+      sheet.removeEventListener('touchstart', start);
+      sheet.removeEventListener('touchmove', move);
+      sheet.removeEventListener('touchend', end);
+      sheet.removeEventListener('touchcancel', end);
+    };
+  }, [open, swipeToClose]);
+
+  if (!open || typeof document === 'undefined') return null;
 
   return createPortal(
     <div className="fdoc-bottom-sheet-layer" data-scrim={scrim || undefined} data-testid={testId + '-layer'}>
@@ -196,18 +238,6 @@ export function BottomSheet({
             finishDrag();
           }}
           onPointerCancel={() => finishDrag()}
-          onTouchStart={(event: ReactTouchEvent<HTMLDivElement>) => {
-            const point = event.touches[0];
-            if (!point) return;
-            const content = (event.target as HTMLElement).closest('.fdoc-bottom-sheet__content') as HTMLElement | null;
-            begin(point.clientY, content);
-          }}
-          onTouchMove={(event: ReactTouchEvent<HTMLDivElement>) => {
-            const point = event.touches[0];
-            if (point) updateDrag(point.clientY);
-          }}
-          onTouchEnd={() => finishDrag()}
-          onTouchCancel={() => finishDrag()}
         >
           <div className="fdoc-bottom-sheet__handle" data-testid={testId + '-handle'} aria-hidden="true">
             <span className="fdoc-bottom-sheet__handle-bar" />
