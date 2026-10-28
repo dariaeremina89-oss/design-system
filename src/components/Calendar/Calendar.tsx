@@ -277,7 +277,7 @@ export function CalendarMonthPanel({
               const previewEndState = isSameDay(date, previewEnd);
               const previewMiddle = isDateWithinRange(date, previewStart ?? null, previewEnd ?? null);
               const previewSingle = previewStartState && previewEndState;
-              const hasPreview = !hasRangeFill && (previewStartState || previewEndState || previewMiddle);
+              const hasPreview = previewStartState || previewEndState || previewMiddle;
 
               return (
                 <span
