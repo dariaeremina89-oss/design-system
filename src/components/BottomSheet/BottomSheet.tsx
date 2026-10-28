@@ -93,12 +93,11 @@ export function BottomSheet({
       previousOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
     }
-    queueMicrotask(() => {
-      const sheet = sheetRef.current;
-      if (!sheet) return;
+    const sheet = sheetRef.current;
+    if (sheet) {
       const target = initialFocusRef?.current ?? focusable(sheet)[0] ?? sheet;
       target.focus();
-    });
+    }
     return () => {
       if (--modalLocks === 0) document.body.style.overflow = previousOverflow;
       if (previousFocus?.isConnected) previousFocus.focus();
