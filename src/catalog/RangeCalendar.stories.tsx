@@ -46,6 +46,27 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+export const CalendarRangeDesktop: Story = {
+  name: 'Calendar Range Desktop',
+  args: {
+    months: 2,
+    showActions: true,
+    defaultVisibleMonth: OCTOBER_2026,
+    defaultValue: {
+      start: new Date(2026, 9, 10),
+      end: new Date(2026, 9, 20),
+    },
+  },
+  parameters: {
+    viewport: { defaultViewport: 'desktop' },
+    docs: {
+      description: {
+        story: 'Desktop-вариант Type=Range из Figma: два месяца по 288 px, общая ширина 576 px и footer 56 px с действиями «Отменить» / «Выбрать».',
+      },
+    },
+  },
+};
+
 export const Empty: Story = {
   args: { defaultValue: { start: null, end: null } },
 };

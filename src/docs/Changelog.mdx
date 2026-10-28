@@ -25,7 +25,8 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 - Selection menu Calendar использует `--icon-base-secondary`; базовый уровень показывает arrow-drop-down, более высокий уровень выбора — arrow-drop-up.
 - Month и Year при навигации теперь показывают Selected для значения Calendar, а Current остается отдельным состоянием и не перекрывает Selected.
-- Range preview синхронизирован с Figma `x / Range`: без фоновой заливки, с непрерывными верхней / нижней границами и скругленными внешними краями Start / End.
+- Добавлен отдельный story `Calendar Range Desktop` по Figma Type=Range: 576 × 344, два месяца по 288 px и footer 56 px с действиями «Отменить» / «Выбрать».
+- Range preview синхронизирован с Figma `x / Range`: без фоновой заливки, с пунктирным контуром 2 / 2 и скругленными внешними краями Start / End.
 - Range fill перекрывает межъячеечный gap 4 px; крайние Selected dates сохраняют круг 28 px.
 - RangePicker по Cancel возвращает последний примененный диапазон и сбрасывает временный draft, anchor и hover перед следующим открытием.
 - Добавлены unit- и browser-проверки Selected month/year, range edges, preview и Cancel.

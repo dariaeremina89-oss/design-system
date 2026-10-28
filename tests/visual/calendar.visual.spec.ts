@@ -88,6 +88,27 @@ test('Calendar Year contains 24 years in a 4-column grid', async ({ page }) => {
   expect(columns).toBe(4);
 });
 
+test('Calendar Range Desktop matches Figma 576 by 344 geometry', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 700 });
+  await page.goto('/iframe.html?id=components-datetime-rangecalendar--calendar-range-desktop&viewMode=story');
+
+  const range = page.getByTestId('range-calendar');
+  await expect(range).toHaveCSS('width', '576px');
+  const box = await range.boundingBox();
+  expect(box).not.toBeNull();
+  expect(Math.abs(box!.height - 344)).toBeLessThanOrEqual(1);
+
+  const firstMonth = page.getByTestId('range-calendar-month-1');
+  const secondMonth = page.getByTestId('range-calendar-month-2');
+  await expect(firstMonth).toHaveCSS('width', '288px');
+  await expect(secondMonth).toHaveCSS('width', '288px');
+
+  const actions = page.getByTestId('calendar-actions');
+  await expect(actions).toHaveCSS('min-height', '56px');
+  await expect(actions.getByRole('button', { name: 'Отменить' })).toBeVisible();
+  await expect(actions.getByRole('button', { name: 'Выбрать' })).toBeVisible();
+});
+
 test('RangeCalendar preview uses rounded outer edges without a fill', async ({ page }) => {
   await page.setViewportSize({ width: 900, height: 700 });
   await page.goto('/iframe.html?id=components-datetime-rangecalendar--empty&viewMode=story');
@@ -101,9 +122,11 @@ test('RangeCalendar preview uses rounded outer edges without a fill', async ({ p
   const endFill = firstMonth.getByTestId('calendar-day-2026-10-20').locator('xpath=..').locator('.fdoc-calendar__range-preview-fill');
 
   await expect(startFill).toHaveCSS('left', '2px');
+  await expect(startFill).toHaveCSS('border-top-style', 'dashed');
   await expect(startFill).toHaveCSS('border-top-left-radius', '16px');
   await expect(middleFill).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(endFill).toHaveCSS('right', '2px');
+  await expect(endFill).toHaveCSS('border-top-style', 'dashed');
   await expect(endFill).toHaveCSS('border-top-right-radius', '16px');
 });
 

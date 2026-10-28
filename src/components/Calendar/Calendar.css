@@ -267,20 +267,20 @@
 
 .fdoc-calendar__range-preview-fill {
   box-sizing: border-box;
-  border-top: var(--border-small) solid var(--border-base-secondary);
-  border-bottom: var(--border-small) solid var(--border-base-secondary);
+  border-top: var(--border-small) dashed var(--border-base-secondary);
+  border-bottom: var(--border-small) dashed var(--border-base-secondary);
   background: transparent;
 }
 
 .fdoc-calendar__day-shell--range-preview-start .fdoc-calendar__range-preview-fill {
   left: 2px;
-  border-left: var(--border-small) solid var(--border-base-secondary);
+  border-left: var(--border-small) dashed var(--border-base-secondary);
   border-radius: var(--radius-large) 0 0 var(--radius-large);
 }
 
 .fdoc-calendar__day-shell--range-preview-end .fdoc-calendar__range-preview-fill {
   right: 2px;
-  border-right: var(--border-small) solid var(--border-base-secondary);
+  border-right: var(--border-small) dashed var(--border-base-secondary);
   border-radius: 0 var(--radius-large) var(--radius-large) 0;
 }
 
