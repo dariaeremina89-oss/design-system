@@ -1,6 +1,7 @@
 @import "../../styles/typography-skeleton.css";
 
 .fdoc-typography {
+  margin: 0;
   font-family: var(--typography-family);
   font-weight: var(--typography-weight);
   font-size: var(--typography-size);

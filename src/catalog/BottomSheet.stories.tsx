@@ -7,9 +7,11 @@ import { bottomSheetDocs } from '../docs/bottom-sheet';
 import { qualityDocs } from '../docs/quality';
 
 function TextBlock({ center = false }: { center?: boolean }) {
-  return <div style={{display:'grid',gap:8,width:'100%',justifyItems:center?'center':'stretch'}}>
+  return <div style={{ display: 'grid', gap: 8, width: '100%', justifyItems: center ? 'center' : 'stretch' }}>
     <Typography as="h2" variant="h3-heading">Заголовок Bottom Sheet</Typography>
-    <Typography>Основной текст Bottom Sheet, возможно, в несколько строк.</Typography>
+    <div style={{ display: 'grid', gap: 4, width: '100%' }}>
+      <Typography>Основной текст Bottom Sheet, возможно, в несколько строк.</Typography>
+    </div>
   </div>;
 }
 
