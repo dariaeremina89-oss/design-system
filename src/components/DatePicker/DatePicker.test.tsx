@@ -103,6 +103,7 @@ describe('RangePicker', () => {
           start: new Date(2026, 9, 10),
           end: new Date(2026, 9, 20),
         }}
+        calendarProps={{ months: 1 }}
       />,
     );
 
