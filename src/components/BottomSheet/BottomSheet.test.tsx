@@ -30,7 +30,7 @@ describe('BottomSheet', () => {
     const sheet = screen.getByRole('dialog', { name: 'Дополнительная информация' });
     expect(sheet).toHaveAttribute('aria-modal', 'true');
     expect(document.body.style.overflow).toBe('hidden');
-    expect(screen.getByText('Продолжить')).toHaveFocus();
+    expect(screen.getByRole('button', { name: 'Продолжить' })).toHaveFocus();
     expect(screen.getByTestId('bottom-sheet-handle')).toBeVisible();
     expect((await axe(baseElement)).violations).toEqual([]);
 
@@ -80,7 +80,7 @@ describe('BottomSheet', () => {
   it('closes after an enabled footer Button action', () => {
     const close = vi.fn();
     render(
-      <BottomSheet open onClose={close} aria-label="Действия" footer={<button>Продолжить</button>}>
+      <BottomSheet open onClose={close} aria-label="Действия" footer={<Button>Продолжить</Button>}>
         <p>Контент</p>
       </BottomSheet>,
     );
@@ -122,7 +122,7 @@ describe('BottomSheet', () => {
     );
     const sheet = screen.getByRole('dialog');
     const first = screen.getByText('Контент');
-    const last = screen.getByText('Второй');
+    const last = screen.getByRole('button', { name: 'Второй' });
     last.focus();
     fireEvent.keyDown(sheet, { key: 'Tab' });
     expect(first).toHaveFocus();
