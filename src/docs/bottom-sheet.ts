@@ -53,4 +53,4 @@ export const bottomSheetDocs = [
   'Button, Scrollbar, ItemRow, Textarea, Selection controls, Chips, Dialog.',
   '',
   'Источники: [Figma](https://www.figma.com/design/qfWNJqugbOC6RmiKKEv9Bb/F.Doc-Design-System?node-id=8129-3491), [описание](https://app.notion.com/p/2fe7ab6fc5d380c880cefa21db196d4f).',
-].join('\\n');
+].join('\n');
