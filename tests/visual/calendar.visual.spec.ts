@@ -107,6 +107,12 @@ test('Calendar Range Desktop matches Figma 576 by 344 geometry', async ({ page }
   await expect(actions).toHaveCSS('min-height', '56px');
   await expect(actions.getByRole('button', { name: 'Отменить' })).toBeVisible();
   await expect(actions.getByRole('button', { name: 'Выбрать' })).toBeVisible();
+
+  await page.setViewportSize({ width: 320, height: 700 });
+  await expect(range).toHaveCSS('width', '288px');
+  await expect(range.locator('.fdoc-range-calendar__desktop')).toBeHidden();
+  await expect(page.getByTestId('range-calendar-mobile')).toBeVisible();
+  await expect(range.locator('.fdoc-range-calendar__mobile-scroll')).toHaveCSS('overflow-y', 'auto');
 });
 
 test('RangeCalendar preview uses rounded outer edges without a fill', async ({ page }) => {
