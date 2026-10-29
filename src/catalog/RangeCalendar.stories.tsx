@@ -50,7 +50,7 @@ export const Default: Story = {};
 export const CalendarRangeDesktop: Story = {
   name: 'Calendar Range Desktop',
   args: {
-    months: 2,
+    months: 'responsive',
     showActions: true,
     defaultVisibleMonth: SEPTEMBER_2026,
     defaultValue: {
