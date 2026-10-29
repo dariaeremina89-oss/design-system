@@ -3,6 +3,7 @@ import { RangeCalendar } from '../components/Calendar/RangeCalendar';
 import { componentDocs } from '../docs/bulk-components';
 import { qualityDocs } from '../docs/quality';
 
+const SEPTEMBER_2026 = new Date(2026, 8, 1);
 const OCTOBER_2026 = new Date(2026, 9, 1);
 
 const meta = {
@@ -51,9 +52,9 @@ export const CalendarRangeDesktop: Story = {
   args: {
     months: 2,
     showActions: true,
-    defaultVisibleMonth: OCTOBER_2026,
+    defaultVisibleMonth: SEPTEMBER_2026,
     defaultValue: {
-      start: new Date(2026, 9, 10),
+      start: new Date(2026, 8, 10),
       end: new Date(2026, 9, 20),
     },
   },
